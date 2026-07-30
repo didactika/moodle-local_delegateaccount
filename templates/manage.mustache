@@ -1,0 +1,242 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_delegateaccount/manage
+
+    Management dashboard template for the delegated accounts plugin.
+
+    Example context (json):
+    {
+        "can_manage": true,
+        "assign_url": "#",
+        "bulk_action_url": "#",
+        "form_url": "#",
+        "sesskey": "abC123XyZ",
+        "has_any_links": true,
+        "search": "admin",
+        "has_links": true,
+        "has_filters": true,
+        "has_pagination": false,
+        "pagination_html": "",
+        "links": [
+            {
+                "id": 1,
+                "realname": "John Doe (john@example.com)",
+                "delname": "Admin User (admin@example.com)",
+                "timecreated": "10 Jan 2026",
+                "delete_url": "#"
+            }
+        ]
+    }
+}}
+<div class="local-delegateaccount-dashboard">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">{{#str}}manage_accounts, local_delegateaccount{{/str}}</h2>
+        <div class="btn-toolbar">
+            {{#can_manage}}
+                <a href="{{assign_url}}" class="btn btn-primary">
+                    <i class="fa fa-plus mr-2"></i>{{#str}}link_new_accounts, local_delegateaccount{{/str}}
+                </a>
+            {{/can_manage}}
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+            {{#can_manage}}
+                <div class="bulk-actions d-none" id="bulk-actions-bar">
+                    <span class="selected-count font-weight-bold mr-2">
+                        <span id="selected-count">0</span> {{#str}}select, core_completion{{/str}}
+                    </span>
+                    <button type="submit" form="bulk-form" name="action" value="delete" class="btn btn-sm btn-danger bulk-btn-delete">
+                        <i class="fa fa-trash mr-1"></i>{{#str}}delete, core{{/str}}
+                    </button>
+                </div>
+            {{/can_manage}}
+        </div>
+
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filtersDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-filter mr-1"></i>
+                {{#str}}filters, core{{/str}}
+                {{#has_any_links}}
+                    {{#search}}
+                        <span class="badge badge-primary ml-1">!</span>
+                    {{/search}}
+                {{/has_any_links}}
+            </button>
+            <div class="dropdown-menu dropdown-menu-right p-3" style="min-width: 290px;" aria-labelledby="filtersDropdown" onclick="event.stopPropagation();">
+                <form method="get" action="{{form_url}}" id="filter-form">
+                    <div class="mb-3">
+                        <label for="search" class="font-weight-bold">{{#str}}search, core{{/str}}</label>
+                        <input type="text" name="search" id="search" value="{{search}}" class="form-control" placeholder="{{#str}}search, core{{/str}}...">
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{form_url}}" class="btn btn-sm btn-secondary">
+                            <i class="fa fa-times mr-1"></i>{{#str}}clear, core{{/str}}
+                        </a>
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <i class="fa fa-check mr-1"></i>{{#str}}apply, core{{/str}}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{#can_manage}}
+        <form id="bulk-form" method="post" action="{{bulk_action_url}}" style="display: none;">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+        </form>
+    {{/can_manage}}
+
+    {{#has_links}}
+        <div class="table-responsive card">
+            <table class="table table-striped table-hover mb-0">
+                <thead class="thead-light">
+                <tr>
+                    {{#can_manage}}
+                        <th class="text-center" style="width: 40px;">
+                            <input type="checkbox" id="select-all" title="{{#str}}selectall, core{{/str}}">
+                        </th>
+                    {{/can_manage}}
+                    <th>{{#str}}realuser, local_delegateaccount{{/str}}</th>
+                    <th>{{#str}}delegateduser, local_delegateaccount{{/str}}</th>
+                    <th>{{#str}}timecreated, local_delegateaccount{{/str}}</th>
+                    <th class="text-right">{{#str}}actions, core{{/str}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#links}}
+                    <tr>
+                        {{#can_manage}}
+                            <td class="text-center">
+                                <input type="checkbox" name="ids[]" value="{{id}}" form="bulk-form" class="config-checkbox">
+                            </td>
+                        {{/can_manage}}
+                        <td><strong>{{realname}}</strong></td>
+                        <td>{{delname}}</td>
+                        <td><small class="text-muted">{{timecreated}}</small></td>
+                        <td class="text-right">
+                            <div class="btn-group btn-group-sm">
+                                {{#can_manage}}
+                                    <a href="{{delete_url}}" class="btn btn-outline-danger" title="{{#str}}delete, core{{/str}}">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                {{/can_manage}}
+                            </div>
+                        </td>
+                    </tr>
+                {{/links}}
+                </tbody>
+            </table>
+        </div>
+    {{/has_links}}
+
+    {{^has_links}}
+        <div class="alert alert-info shadow-sm text-center py-4 mt-3">
+            <i class="fa fa-info-circle fa-2x mb-2 d-block text-secondary"></i>
+            {{#has_filters}}
+                {{#str}}no_accounts_linked, local_delegateaccount{{/str}}
+            {{/has_filters}}
+            {{^has_filters}}
+                {{#str}}no_accounts_linked, local_delegateaccount{{/str}}
+            {{/has_filters}}
+        </div>
+    {{/has_links}}
+
+    {{#has_pagination}}
+        <nav aria-label="Pagination" class="mt-4">
+            {{{pagination_html}}}
+        </nav>
+    {{/has_pagination}}
+</div>
+
+{{#js}}
+    require(['jquery', 'core/notification', 'core/str'], function($, Notification, Str) {
+    var $selectAll = $('#select-all');
+    var $checkboxes = $('.config-checkbox');
+    var $bulkBar = $('#bulk-actions-bar');
+    var $selectedCount = $('#selected-count');
+
+    function updateBulkBar() {
+    var $checked = $checkboxes.filter(':checked');
+    var count = $checked.length;
+    $selectedCount.text(count);
+
+    if (count > 0) {
+    $bulkBar.removeClass('d-none').show();
+    } else {
+    $bulkBar.addClass('d-none').hide();
+    }
+    }
+
+    $selectAll.on('change', function() {
+    $checkboxes.prop('checked', this.checked);
+    updateBulkBar();
+    });
+
+    $checkboxes.on('change', function() {
+    var allChecked = $checkboxes.length > 0 && $checkboxes.length === $checkboxes.filter(':checked').length;
+    $selectAll.prop('checked', allChecked);
+    updateBulkBar();
+    });
+
+    updateBulkBar();
+
+    $('#bulk-form').on('submit', function(e) {
+    e.preventDefault();
+    var form = this;
+
+    Str.get_strings([
+    {key: 'areyousure', component: 'core'},
+    {key: 'delete', component: 'core'}
+    ]).done(function(s) {
+    Notification.confirm(
+    s[1],
+    s[0],
+    s[1],
+    null,
+    function() {
+    form.submit();
+    }
+    );
+    });
+    });
+
+    $(document).on('click', '.btn-outline-danger', function(e) {
+    e.preventDefault();
+    var deleteUrl = $(this).attr('href');
+
+    Str.get_strings([
+    {key: 'areyousure', component: 'core'},
+    {key: 'delete', component: 'core'}
+    ]).done(function(s) {
+    Notification.confirm(
+    s[1],
+    s[0],
+    s[1],
+    null,
+    function() {
+    window.location.href = deleteUrl;
+    }
+    );
+    });
+    });
+    });
+{{/js}}
