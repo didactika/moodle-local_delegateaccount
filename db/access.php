@@ -15,14 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Languages configuration for the local_delegateaccount plugin.
+ * Plugin capabilities for the local_delegateaccount plugin.
  *
  * @package   local_delegateaccount
  * @copyright 2026, Miguel Rivas <miguelrivasmorantes@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Delegate Account';
+$capabilities = [
+    'local/delegateaccount:use' => [
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_DATALOSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+        ],
+    ],
 
-$string['delegateaccount:use'] = 'Log in as a delegated account';
-$string['delegateaccount:manage'] = 'Manage delegated accounts links';
+    'local/delegateaccount:manage' => [
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_CONFIG | RISK_DATALOSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+];
