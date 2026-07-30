@@ -18,13 +18,13 @@
  * Version metadata for the local_delegateaccount plugin.
  *
  * @package   local_delegateaccount
- * @copyright 2026, Miguel Rivas <miguelrivasmorantes@gmail.com>
+ * @copyright 2026, Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026072900;
+$plugin->version = 2026073000;
 $plugin->requires = 2024100700;
 $plugin->component = 'local_delegateaccount';
 $plugin->release   = '1.0.0';
