@@ -23,7 +23,7 @@
     {
         "title": "Delegated accounts",
         "back": "Back",
-        "links": [
+        "delegations": [
             {
                 "url": "https://moodle.example.com/local/delegateaccount/loginas.php?id=3&sesskey=123",
                 "fullname": "John Doe"
@@ -41,9 +41,9 @@
         </div>
         <div class="dropdown-divider"></div>
         <div class="items h-100 overflow-auto" role="menu">
-            {{#links}}
+            {{#delegations}}
                 <a href="{{url}}" class="dropdown-item ps-5 text-truncate" title="{{fullname}}" role="menuitem" tabindex="-1">{{fullname}}</a>
-            {{/links}}
+            {{/delegations}}
         </div>
     </div>
 </div>

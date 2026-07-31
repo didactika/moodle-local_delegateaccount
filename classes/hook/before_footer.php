@@ -53,7 +53,7 @@ class before_footer {
             return;
         }
 
-        $links = [];
+        $delegations = [];
         foreach ($accounts as $account) {
             $fakeuser = clone($account);
             $url = new \moodle_url('/local/delegateaccount/loginas.php', [
@@ -61,7 +61,7 @@ class before_footer {
                 'sesskey' => sesskey()
             ]);
 
-            $links[] = [
+            $delegations[] = [
                 'fullname' => s(fullname($fakeuser)),
                 'url' => $url->out(false)
             ];
@@ -70,7 +70,7 @@ class before_footer {
         $templatedata = [
             'title' => get_string('pluginname', 'local_delegateaccount'),
             'back' => get_string('back'),
-            'links' => $links
+            'delegations' => $delegations
         ];
 
         $PAGE->requires->js_call_amd('local_delegateaccount/usermenu', 'init', [$templatedata]);

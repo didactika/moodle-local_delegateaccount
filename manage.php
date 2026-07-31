@@ -46,14 +46,14 @@ $PAGE->set_title(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
 
 $totalcount = manager::count_delegations($search);
-$links = manager::get_delegations($page, $perpage, $search);
+$delegations = manager::get_delegations($page, $perpage, $search);
 
-$linksdata = [];
-foreach ($links as $link) {
+$delegationsdata = [];
+foreach ($delegations as $delegation) {
     $realuser = new \stdClass();
     $deluser = new \stdClass();
 
-    foreach ($link as $key => $value) {
+    foreach ($delegation as $key => $value) {
         if (strpos($key, 'real') === 0 && $key !== 'realemail') {
             $realuser->{substr($key, 4)} = $value;
         } elseif (strpos($key, 'del') === 0 && $key !== 'delemail') {
@@ -61,14 +61,14 @@ foreach ($links as $link) {
         }
     }
 
-    $linksdata[] = [
-        'id' => $link->id,
-        'realname' => fullname($realuser) . " ({$link->realemail})",
-        'delname' => fullname($deluser) . " ({$link->delemail})",
-        'timecreated' => userdate($link->timecreated),
+    $delegationsdata[] = [
+        'id' => $delegation->id,
+        'realname' => fullname($realuser) . " ({$delegation->realemail})",
+        'delname' => fullname($deluser) . " ({$delegation->delemail})",
+        'timecreated' => userdate($delegation->timecreated),
         'delete_url' => (new moodle_url('/local/delegateaccount/bulk_actions.php', [
             'action' => 'delete',
-            'ids[]' => $link->id,
+            'ids[]' => $delegation->id,
             'sesskey' => sesskey()
         ]))->out(false)
     ];
@@ -77,9 +77,9 @@ foreach ($links as $link) {
 $pagingbar = new \core\output\paging_bar($totalcount, $page, $perpage, $PAGE->url);
 
 $templatedata = [
-    'has_links' => count($linksdata) > 0,
-    'has_any_links' => manager::count_delegations('') > 0,
-    'links' => $linksdata,
+    'has_delegations' => count($delegationsdata) > 0,
+    'has_any_delegations' => manager::count_delegations('') > 0,
+    'delegations' => $delegationsdata,
     'assign_url' => (new moodle_url('/local/delegateaccount/assign.php'))->out(false),
     'bulk_action_url' => (new moodle_url('/local/delegateaccount/bulk_actions.php'))->out(false),
     'form_url' => (new moodle_url('/local/delegateaccount/manage.php'))->out(false),

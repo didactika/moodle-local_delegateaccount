@@ -9,17 +9,17 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="realuserid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the real user logging in"/>
                 <FIELD NAME="delegateduserid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the delegated account they can access"/>
-                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the link was created"/>
-                <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the admin who created this assignment"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the delegation was created"/>
+                <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the admin who created this delegation"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for local_delegateaccount"/>
-                <KEY NAME="realuserid" TYPE="foreign" FIELDS="realuserid" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key linking to the real user"/>
-                <KEY NAME="delegateduserid" TYPE="foreign" FIELDS="delegateduserid" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key linking to the delegated user"/>
-                <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key linking to the admin who created the record"/>
+                <KEY NAME="realuserid" TYPE="foreign" FIELDS="realuserid" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key referencing the real user"/>
+                <KEY NAME="delegateduserid" TYPE="foreign" FIELDS="delegateduserid" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key referencing the delegated user"/>
+                <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key referencing the admin who created the record"/>
             </KEYS>
             <INDEXES>
-                <INDEX NAME="real_delegated_unique" UNIQUE="true" FIELDS="realuserid, delegateduserid" COMMENT="Prevents duplicate assignments between a real user and a delegated account"/>
+                <INDEX NAME="real_delegated_unique" UNIQUE="true" FIELDS="realuserid, delegateduserid" COMMENT="Prevents duplicate delegations between a real user and a delegated account"/>
             </INDEXES>
         </TABLE>
     </TABLES>

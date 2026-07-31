@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 /**
- * Form to assign new delegated accounts to real users.
+ * Form to create new delegations between users.
  *
  * @package    local_delegateaccount
  * @copyright  2026, Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
@@ -32,7 +32,7 @@ class assign_form extends \moodleform {
         global $DB;
         $mform = $this->_form;
 
-        $mform->addElement('header', 'general', get_string('link_new_accounts', 'local_delegateaccount'));
+        $mform->addElement('header', 'general', get_string('create_delegations', 'local_delegateaccount'));
 
         $users = $DB->get_records_menu('user', ['deleted' => 0, 'suspended' => 0], 'lastname ASC', 'id, ' . $DB->sql_fullname());
 

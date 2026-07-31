@@ -35,8 +35,8 @@ $url = new moodle_url('/local/delegateaccount/assign.php');
 $dashboardurl = new moodle_url('/local/delegateaccount/manage.php');
 
 $PAGE->set_url($url);
-$PAGE->set_title(get_string('link_new_accounts', 'local_delegateaccount'));
-$PAGE->set_heading(get_string('link_new_accounts', 'local_delegateaccount'));
+$PAGE->set_title(get_string('create_delegations', 'local_delegateaccount'));
+$PAGE->set_heading(get_string('create_delegations', 'local_delegateaccount'));
 
 $mform = new assign_form();
 
@@ -46,9 +46,9 @@ if ($mform->is_cancelled()) {
     $createdcount = manager::create_delegations($data->realuserids, $data->delegateduserids);
 
     if ($createdcount > 0) {
-        \core\notification::success(get_string('linked_success', 'local_delegateaccount'));
+        \core\notification::success(get_string('delegations_created_success', 'local_delegateaccount'));
     } else {
-        \core\notification::warning(get_string('no_links_created', 'local_delegateaccount'));
+        \core\notification::warning(get_string('no_delegations_created', 'local_delegateaccount'));
     }
     redirect($dashboardurl);
 }
