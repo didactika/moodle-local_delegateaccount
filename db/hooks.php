@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for the local_delegateaccount plugin.
+ * Hooks definition for the local_delegateaccount plugin.
  *
- * @package   local_delegateaccount
- * @copyright 2026, Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    local_delegateaccount
+ * @copyright  2026, Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026073100;
-$plugin->requires = 2024100700;
-$plugin->component = 'local_delegateaccount';
-$plugin->release   = '1.0.0';
-$plugin->supported = [405, 405];
-$plugin->maturity = MATURITY_ALPHA;
+$callbacks = [
+    [
+        'hook' => \core\hook\output\before_footer_html_generation::class,
+        'callback' => [\local_delegateaccount\hook\before_footer::class, 'execute'],
+    ],
+];

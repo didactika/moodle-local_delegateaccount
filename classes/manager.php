@@ -173,4 +173,25 @@ class manager {
 
         return $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
     }
+
+    /**
+     * Retrieves the accounts a specific user is allowed to log into.
+     *
+     * @param int $userid The real user ID.
+     * @return array List of delegated accounts.
+     */
+    public static function get_delegated_accounts_for_user(int $userid): array {
+        global $DB;
+
+        $userfields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
+
+        $sql = "SELECT da.id, da.delegateduserid, $userfields
+                  FROM {local_delegateaccount} da
+                  JOIN {user} u ON u.id = da.delegateduserid
+                 WHERE da.realuserid = :realuserid
+                   AND u.deleted = 0
+                   AND u.suspended = 0";
+
+        return $DB->get_records_sql($sql, ['realuserid' => $userid]);
+    }
 }
