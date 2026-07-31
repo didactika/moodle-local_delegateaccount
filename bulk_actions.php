@@ -32,9 +32,14 @@ require_sesskey();
 $PAGE->set_url(new moodle_url('/local/delegateaccount/bulk_actions.php'));
 $PAGE->set_context($systemcontext);
 
+$dashboardurl = new moodle_url('/local/delegateaccount/manage.php');
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    redirect($dashboardurl);
+}
+
 $action = required_param('action', PARAM_ALPHA);
 $ids = optional_param_array('ids', [], PARAM_INT);
-$dashboardurl = new moodle_url('/local/delegateaccount/manage.php');
 
 if (empty($ids)) {
     redirect(

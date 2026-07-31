@@ -62,7 +62,7 @@
                     <span class="selected-count font-weight-bold mr-2">
                         <span id="selected-count">0</span> {{#str}}select, core_completion{{/str}}
                     </span>
-                    <button type="submit" form="bulk-form" name="action" value="delete" class="btn btn-sm btn-danger bulk-btn-delete">
+                    <button type="submit" form="bulk-form" class="btn btn-sm btn-danger bulk-btn-delete">
                         <i class="fa fa-trash mr-1"></i>{{#str}}delete, core{{/str}}
                     </button>
                 </div>
@@ -102,6 +102,7 @@
     {{#can_manage}}
         <form id="bulk-form" method="post" action="{{bulk_action_url}}" style="display: none;">
             <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <input type="hidden" name="action" value="delete">
         </form>
     {{/can_manage}}
 
