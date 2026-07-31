@@ -40,7 +40,7 @@ require_capability('local/delegateaccount:use', $syscontext);
 
 $realuserid = $USER->id;
 
-if (!manager::link_exists($realuserid, $targetuserid)) {
+if (!manager::delegation_exists($realuserid, $targetuserid)) {
     throw new \moodle_exception('error_unauthorized', 'local_delegateaccount');
 }
 

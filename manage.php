@@ -45,8 +45,8 @@ $PAGE->set_url($dashboardurl);
 $PAGE->set_title(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
 
-$totalcount = manager::count_links($search);
-$links = manager::get_links_paginated($page, $perpage, $search);
+$totalcount = manager::count_delegations($search);
+$links = manager::get_delegations($page, $perpage, $search);
 
 $linksdata = [];
 foreach ($links as $link) {
@@ -78,7 +78,7 @@ $pagingbar = new \core\output\paging_bar($totalcount, $page, $perpage, $PAGE->ur
 
 $templatedata = [
     'has_links' => count($linksdata) > 0,
-    'has_any_links' => manager::count_links('') > 0,
+    'has_any_links' => manager::count_delegations('') > 0,
     'links' => $linksdata,
     'assign_url' => (new moodle_url('/local/delegateaccount/assign.php'))->out(false),
     'bulk_action_url' => (new moodle_url('/local/delegateaccount/bulk_actions.php'))->out(false),

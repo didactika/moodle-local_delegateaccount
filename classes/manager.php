@@ -28,19 +28,38 @@ defined('MOODLE_INTERNAL') || die();
 class manager {
 
     /**
-     * Assigns multiple delegated accounts to multiple real users.
+     * Creates delegations between multiple real users and multiple delegated accounts.
      *
      * @param array $realuserids Array of real user IDs.
      * @param array $delegateduserids Array of delegated account user IDs.
-     * @return int Number of successfully created links.
+     * @return int Number of successfully created delegations.
      */
-    public static function assign_accounts(array $realuserids, array $delegateduserids): int {
+    public static function create_delegations(array $realuserids, array $delegateduserids): int {
         global $DB, $USER;
+
+        if (empty($realuserids) || empty($delegateduserids)) {
+            return 0;
+        }
+
+        list($realin, $realparams) = $DB->get_in_or_equal($realuserids, SQL_PARAMS_NAMED, 'real');
+        list($delin, $delparams) = $DB->get_in_or_equal($delegateduserids, SQL_PARAMS_NAMED, 'del');
+        $params = array_merge($realparams, $delparams);
+
+        $sql = "SELECT id, " . $DB->sql_concat('realuserid', "'-'", 'delegateduserid') . " AS delegationkey
+                  FROM {local_delegateaccount}
+                 WHERE realuserid $realin AND delegateduserid $delin";
+
+        $existing = $DB->get_records_sql_menu($sql, $params);
+        $existingmap = array_flip($existing);
+
         $count = 0;
+        $transaction = $DB->start_delegated_transaction();
 
         foreach ($realuserids as $realid) {
             foreach ($delegateduserids as $delid) {
-                if ($realid == $delid || self::link_exists((int)$realid, (int)$delid)) {
+                $key = "{$realid}-{$delid}";
+
+                if ($realid == $delid || isset($existingmap[$key])) {
                     continue;
                 }
 
@@ -51,16 +70,25 @@ class manager {
                 $record->usercreated = $USER->id;
 
                 $DB->insert_record('local_delegateaccount', $record);
+
+                $existingmap[$key] = true;
                 $count++;
             }
         }
+
+        $transaction->allow_commit();
+
         return $count;
     }
 
     /**
-     * Checks if a specific link already exists.
+     * Checks if a specific delegation already exists.
+     *
+     * @param int $realuserid The real user ID.
+     * @param int $delegateduserid The delegated user ID.
+     * @return bool True if the delegation exists.
      */
-    public static function link_exists(int $realuserid, int $delegateduserid): bool {
+    public static function delegation_exists(int $realuserid, int $delegateduserid): bool {
         global $DB;
         return $DB->record_exists('local_delegateaccount', [
             'realuserid' => $realuserid,
@@ -69,47 +97,26 @@ class manager {
     }
 
     /**
-     * Deletes a specific link by its ID.
+     * Deletes delegated account records by their primary keys.
+     *
+     * @param array $delegationids Array of primary key IDs from the local_delegateaccount table.
      */
-    public static function delete_link(int $id): void {
+    public static function delete_delegations(array $delegationids): void {
         global $DB;
-        $DB->delete_records('local_delegateaccount', ['id' => $id]);
-    }
-
-    /**
-     * Retrieves all assigned links formatted for display.
-     */
-    public static function get_all_links(): array {
-        global $DB;
-        $sql = "SELECT da.id,
-                       u1.firstname AS realfirstname, u1.lastname AS reallastname, u1.email AS realemail,
-                       u2.firstname AS delfirstname, u2.lastname AS dellastname, u2.email AS delemail,
-                       da.timecreated
-                  FROM {local_delegateaccount} da
-                  JOIN {user} u1 ON u1.id = da.realuserid
-                  JOIN {user} u2 ON u2.id = da.delegateduserid
-              ORDER BY u1.lastname ASC, u2.lastname ASC";
-
-        return $DB->get_records_sql($sql);
-    }
-
-    /**
-     * Deletes multiple links at once (Bulk action).
-     * @param array $ids Array of link IDs.
-     */
-    public static function bulk_delete(array $ids): void {
-        global $DB;
-        if (empty($ids)) {
+        if (empty($delegationids)) {
             return;
         }
-        list($inorsql, $params) = $DB->get_in_or_equal($ids);
+        list($inorsql, $params) = $DB->get_in_or_equal($delegationids);
         $DB->delete_records_select('local_delegateaccount', "id $inorsql", $params);
     }
 
     /**
-     * Builds the SQL for filtering links.
+     * Builds the SQL for filtering delegations based on user details.
+     *
+     * @param string $search The search query string.
+     * @return array A list containing the SQL WHERE clause and its parameters.
      */
-    private static function get_filters_sql(string $search): array {
+    private static function get_delegations_filters_sql(string $search): array {
         global $DB;
 
         $sqlwhere = "1=1";
@@ -134,11 +141,14 @@ class manager {
     }
 
     /**
-     * Counts the total number of links (used for pagination).
+     * Counts the total number of delegations (useful for pagination).
+     *
+     * @param string $search The search query string.
+     * @return int The total count of delegation records.
      */
-    public static function count_links(string $search = ''): int {
+    public static function count_delegations(string $search = ''): int {
         global $DB;
-        list($sqlwhere, $params) = self::get_filters_sql($search);
+        list($sqlwhere, $params) = self::get_delegations_filters_sql($search);
 
         $sql = "SELECT COUNT(da.id) 
                   FROM {local_delegateaccount} da
@@ -150,11 +160,16 @@ class manager {
     }
 
     /**
-     * Retrieves links paginated and filtered.
+     * Retrieves delegations, optionally paginated and filtered.
+     *
+     * @param int $page The current page number (0-indexed). Defaults to 0.
+     * @param int $perpage The number of records per page. 0 means all records.
+     * @param string $search The search query string.
+     * @return array Array of paginated delegation records including user details.
      */
-    public static function get_links_paginated(int $page, int $perpage, string $search = ''): array {
+    public static function get_delegations(int $page = 0, int $perpage = 0, string $search = ''): array {
         global $DB;
-        list($sqlwhere, $params) = self::get_filters_sql($search);
+        list($sqlwhere, $params) = self::get_delegations_filters_sql($search);
 
         $userfields1 = \core_user\fields::for_name()->get_sql('u1', false, 'real', '', false)->selects;
         $userfields2 = \core_user\fields::for_name()->get_sql('u2', false, 'del', '', false)->selects;
@@ -171,16 +186,17 @@ class manager {
                  WHERE $sqlwhere
               ORDER BY da.timecreated DESC";
 
-        return $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
+        $limitfrom = $page * $perpage;
+        return $DB->get_records_sql($sql, $params, $limitfrom, $perpage);
     }
 
     /**
-     * Retrieves the accounts a specific user is allowed to log into.
+     * Retrieves the target accounts a specific real user has been delegated to.
      *
-     * @param int $userid The real user ID.
-     * @return array List of delegated accounts.
+     * @param int $realuserid The real user ID.
+     * @return array List of target user accounts they can log into.
      */
-    public static function get_delegated_accounts_for_user(int $userid): array {
+    public static function get_delegated_accounts_for_user(int $realuserid): array {
         global $DB;
 
         $userfields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
@@ -192,6 +208,6 @@ class manager {
                    AND u.deleted = 0
                    AND u.suspended = 0";
 
-        return $DB->get_records_sql($sql, ['realuserid' => $userid]);
+        return $DB->get_records_sql($sql, ['realuserid' => $realuserid]);
     }
 }

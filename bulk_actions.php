@@ -46,7 +46,7 @@ if (empty($ids)) {
 }
 
 if ($action === 'delete') {
-    \local_delegateaccount\manager::bulk_delete($ids);
+    \local_delegateaccount\manager::delete_delegations($ids);
     $message = get_string('deleted', 'core') . ': ' . count($ids);
     redirect($dashboardurl, $message, null, \core\output\notification::NOTIFY_SUCCESS);
 }

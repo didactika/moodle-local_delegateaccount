@@ -43,9 +43,9 @@ $mform = new assign_form();
 if ($mform->is_cancelled()) {
     redirect($dashboardurl);
 } else if ($data = $mform->get_data()) {
-    $creados = manager::assign_accounts($data->realuserids, $data->delegateduserids);
+    $createdcount = manager::create_delegations($data->realuserids, $data->delegateduserids);
 
-    if ($creados > 0) {
+    if ($createdcount > 0) {
         \core\notification::success(get_string('linked_success', 'local_delegateaccount'));
     } else {
         \core\notification::warning(get_string('no_links_created', 'local_delegateaccount'));
