@@ -15,42 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Bulk action handler for delegated accounts management.
+ * Backwards-compatible entry point for delegation bulk actions.
  *
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../config.php');
-
-$systemcontext = context_system::instance();
-require_login();
-require_capability('local/delegateaccount:manage', $systemcontext);
-require_sesskey();
-
-$PAGE->set_url(new moodle_url('/local/delegateaccount/bulk_actions.php'));
-$PAGE->set_context($systemcontext);
-
-$dashboardurl = new moodle_url('/local/delegateaccount/manage.php');
-
-$action = required_param('action', PARAM_ALPHA);
-$ids = optional_param_array('ids', [], PARAM_INT);
-
-if (empty($ids)) {
-    redirect(
-        $dashboardurl,
-        get_string('noselected', 'core'),
-        null,
-        \core\output\notification::NOTIFY_WARNING
-    );
-}
-
-if ($action === 'delete') {
-    \local_delegateaccount\manager::delete_delegations($ids);
-    $message = get_string('deleted', 'core') . ': ' . count($ids);
-    redirect($dashboardurl, $message, null, \core\output\notification::NOTIFY_SUCCESS);
-}
-
-redirect($dashboardurl);
+require_once(__DIR__ . '/pages/bulk_actions.php');
