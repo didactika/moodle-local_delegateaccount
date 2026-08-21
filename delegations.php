@@ -32,10 +32,15 @@ use local_delegateaccount\table\delegated_accounts_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 $context = context_system::instance();
-if (!has_any_capability([
-    'local/delegateaccount:view',
-    'local/delegateaccount:manage',
-], $context)) {
+if (
+    !has_any_capability(
+        [
+            'local/delegateaccount:view',
+            'local/delegateaccount:manage',
+        ],
+        $context
+    )
+) {
     require_capability('local/delegateaccount:view', $context);
 }
 
@@ -55,7 +60,16 @@ if ($action === 'revoke' && data_submitted()) {
         'activekey' => 0,
     ], '*', MUST_EXIST);
     manager::revoke_delegations([(int)$delegation->id]);
-    \core\notification::success(get_string('deleted_success', 'local_delegateaccount'));
+
+    // The page may already be in its body state after the external-page setup.
+    // Queue the notification explicitly so redirect() can still send its HTTP header.
+    if (!isset($SESSION->notifications) || !is_array($SESSION->notifications)) {
+        $SESSION->notifications = [];
+    }
+    $SESSION->notifications[] = (object) [
+        'message' => get_string('deleted_success', 'local_delegateaccount'),
+        'type' => \core\notification::SUCCESS,
+    ];
     redirect($url);
 }
 
@@ -81,9 +95,11 @@ if (!manager::can_use_delegated_accounts($realuserid)) {
     );
 }
 
-if (manager::can_use_delegated_accounts($realuserid) &&
+if (
+    manager::can_use_delegated_accounts($realuserid) &&
         (has_capability('local/delegateaccount:create', $context) ||
-        has_capability('local/delegateaccount:manage', $context))) {
+        has_capability('local/delegateaccount:manage', $context))
+) {
     echo $OUTPUT->single_button(
         new moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $realuserid]),
         get_string('add_delegation', 'local_delegateaccount'),

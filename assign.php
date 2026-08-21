@@ -32,10 +32,15 @@ use local_delegateaccount\form\assign_form;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 $context = context_system::instance();
-if (!has_any_capability([
-    'local/delegateaccount:create',
-    'local/delegateaccount:manage',
-], $context)) {
+if (
+    !has_any_capability(
+        [
+            'local/delegateaccount:create',
+            'local/delegateaccount:manage',
+        ],
+        $context
+    )
+) {
     require_capability('local/delegateaccount:create', $context);
 }
 

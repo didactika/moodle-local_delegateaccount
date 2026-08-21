@@ -31,10 +31,15 @@ use local_delegateaccount\manager;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 $context = context_system::instance();
-if (!has_any_capability([
-    'local/delegateaccount:update',
-    'local/delegateaccount:manage',
-], $context)) {
+if (
+    !has_any_capability(
+        [
+            'local/delegateaccount:update',
+            'local/delegateaccount:manage',
+        ],
+        $context
+    )
+) {
     require_capability('local/delegateaccount:update', $context);
 }
 
@@ -45,7 +50,12 @@ $delegation = $DB->get_record('local_delegateaccount', [
     'realuserid' => $realuserid,
     'activekey' => 0,
 ], '*', MUST_EXIST);
-$delegateduser = $DB->get_record('user', ['id' => $delegation->delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
+$delegateduser = $DB->get_record(
+    'user',
+    ['id' => $delegation->delegateduserid, 'deleted' => 0],
+    '*',
+    MUST_EXIST
+);
 $url = new moodle_url('/local/delegateaccount/edit.php', [
     'realuserid' => $realuserid,
     'delegationid' => $delegationid,
@@ -67,7 +77,16 @@ if ($mform->is_cancelled()) {
         (int)$data->timeend,
         $notificationmode
     );
-    \core\notification::success(get_string('delegation_updated_success', 'local_delegateaccount'));
+
+    // The external-page setup can place the page in its body state. Store a
+    // session notification instead of emitting output before the redirect.
+    if (!isset($SESSION->notifications) || !is_array($SESSION->notifications)) {
+        $SESSION->notifications = [];
+    }
+    $SESSION->notifications[] = (object) [
+        'message' => get_string('delegation_updated_success', 'local_delegateaccount'),
+        'type' => \core\notification::SUCCESS,
+    ];
     redirect($backurl);
 }
 

@@ -30,10 +30,15 @@ use local_delegateaccount\manager;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 $context = context_system::instance();
-if (!has_any_capability([
-    'local/delegateaccount:view',
-    'local/delegateaccount:manage',
-], $context)) {
+if (
+    !has_any_capability(
+        [
+            'local/delegateaccount:view',
+            'local/delegateaccount:manage',
+        ],
+        $context
+    )
+) {
     require_capability('local/delegateaccount:view', $context);
 }
 
@@ -68,7 +73,7 @@ $auditusers = empty($audituserids) ? [] : $DB->get_records_list(
     '',
     'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic'
 );
-$getfullname = static function(int $userid) use ($auditusers): string {
+$getfullname = static function (int $userid) use ($auditusers): string {
     return isset($auditusers[$userid])
         ? fullname($auditusers[$userid])
         : get_string('delegation_unknown_user', 'local_delegateaccount');

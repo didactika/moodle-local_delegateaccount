@@ -157,10 +157,16 @@ if ($hassiteconfig) {
     $ADMIN->add('localplugins', $settings);
 }
 
-if ($hassiteconfig || has_any_capability([
-    'local/delegateaccount:view',
-    'local/delegateaccount:manage',
-], context_system::instance())) {
+if (
+    $hassiteconfig ||
+    has_any_capability(
+        [
+            'local/delegateaccount:view',
+            'local/delegateaccount:manage',
+        ],
+        context_system::instance()
+    )
+) {
     $managepage = new admin_externalpage(
         'local_delegateaccount_manage',
         get_string('manage_accounts', 'local_delegateaccount'),

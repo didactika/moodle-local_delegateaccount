@@ -37,10 +37,15 @@ $realuserid = required_param('realuserid', PARAM_INT);
 $delegateduserid = required_param('delegateduserid', PARAM_INT);
 $realuser = $DB->get_record('user', ['id' => $realuserid, 'deleted' => 0], '*', MUST_EXIST);
 $delegateduser = $DB->get_record('user', ['id' => $delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
-if (!$DB->record_exists('local_delegateaccount', [
-    'realuserid' => $realuserid,
-    'delegateduserid' => $delegateduserid,
-])) {
+if (
+    !$DB->record_exists(
+        'local_delegateaccount',
+        [
+            'realuserid' => $realuserid,
+            'delegateduserid' => $delegateduserid,
+        ]
+    )
+) {
     throw new moodle_exception('error_unauthorized', 'local_delegateaccount');
 }
 

@@ -125,7 +125,17 @@ class delegated_accounts_table extends \table_sql {
      */
     public function col_status($row): string {
         $status = manager::get_delegation_status($row);
-        return get_string('delegation_status_' . $status, 'local_delegateaccount');
+        $classes = [
+            manager::STATUS_ACTIVE => 'badge badge-success',
+            manager::STATUS_SCHEDULED => 'badge badge-info',
+            manager::STATUS_EXPIRED => 'badge badge-warning',
+            manager::STATUS_REVOKED => 'badge badge-secondary',
+        ];
+
+        return $this->render_badge(
+            get_string('delegation_status_' . $status, 'local_delegateaccount'),
+            $classes[$status] ?? 'badge badge-secondary'
+        );
     }
 
     /**
@@ -135,7 +145,7 @@ class delegated_accounts_table extends \table_sql {
      * @return string Formatted start date.
      */
     public function col_timestart($row): string {
-        return userdate((int)$row->timestart);
+        return $this->render_badge(userdate((int)$row->timestart), 'badge badge-light border font-weight-normal');
     }
 
     /**
@@ -146,10 +156,13 @@ class delegated_accounts_table extends \table_sql {
      */
     public function col_timeend($row): string {
         if ((int)$row->timeend === 0) {
-            return get_string('delegation_no_end', 'local_delegateaccount');
+            return $this->render_badge(
+                get_string('delegation_no_end', 'local_delegateaccount'),
+                'badge badge-light border font-weight-normal'
+            );
         }
 
-        return userdate((int)$row->timeend);
+        return $this->render_badge(userdate((int)$row->timeend), 'badge badge-light border font-weight-normal');
     }
 
     /**
@@ -160,10 +173,26 @@ class delegated_accounts_table extends \table_sql {
      */
     public function col_lastaccess($row): string {
         if ((int)$row->lastaccess === 0) {
-            return get_string('no_delegated_access', 'local_delegateaccount');
+            return $this->render_badge(get_string('no_delegated_access', 'local_delegateaccount'), 'badge badge-secondary');
         }
 
-        return userdate((int)$row->lastaccess);
+        return $this->render_badge(userdate((int)$row->lastaccess), 'badge badge-light border font-weight-normal');
+    }
+
+    /**
+     * Renders a compact, accessible table value through the plugin template.
+     *
+     * @param string $label Human-readable lifecycle value.
+     * @param string $class Moodle Bootstrap classes selected by this table.
+     * @return string Rendered badge.
+     */
+    private function render_badge(string $label, string $class): string {
+        global $OUTPUT;
+
+        return $OUTPUT->render_from_template('local_delegateaccount/delegation_badge', [
+            'class' => $class,
+            'label' => $label,
+        ]);
     }
 
     /**
@@ -225,8 +254,10 @@ class delegated_accounts_table extends \table_sql {
             );
         }
 
-        if (!has_capability('local/delegateaccount:revoke', $this->context) ||
-                manager::get_delegation_status($row) === manager::STATUS_REVOKED) {
+        if (
+            !has_capability('local/delegateaccount:revoke', $this->context) ||
+            manager::get_delegation_status($row) === manager::STATUS_REVOKED
+        ) {
             return implode('', $actions);
         }
 
