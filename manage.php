@@ -39,7 +39,7 @@ $search = optional_param('search', '', PARAM_TEXT);
 $dashboardurl = new moodle_url('/local/delegateaccount/manage.php', [
     'page' => $page,
     'perpage' => $perpage,
-    'search' => $search
+    'search' => $search,
 ]);
 
 $PAGE->set_url($dashboardurl);
@@ -57,7 +57,7 @@ foreach ($delegations as $delegation) {
     foreach ($delegation as $key => $value) {
         if (strpos($key, 'real') === 0 && $key !== 'realemail') {
             $realuser->{substr($key, 4)} = $value;
-        } elseif (strpos($key, 'del') === 0 && $key !== 'delemail') {
+        } else if (strpos($key, 'del') === 0 && $key !== 'delemail') {
             $deluser->{substr($key, 3)} = $value;
         }
     }
@@ -70,8 +70,8 @@ foreach ($delegations as $delegation) {
         'delete_url' => (new moodle_url('/local/delegateaccount/bulk_actions.php', [
             'action' => 'delete',
             'ids[]' => $delegation->id,
-            'sesskey' => sesskey()
-        ]))->out(false)
+            'sesskey' => sesskey(),
+        ]))->out(false),
     ];
 }
 

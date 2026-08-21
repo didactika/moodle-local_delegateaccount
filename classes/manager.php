@@ -16,8 +16,6 @@
 
 namespace local_delegateaccount;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Manager class for handling delegated accounts business logic.
  *
@@ -27,7 +25,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
-
     /**
      * Creates delegations between multiple real users and multiple delegated accounts.
      *
@@ -42,8 +39,8 @@ class manager {
             return 0;
         }
 
-        list($realin, $realparams) = $DB->get_in_or_equal($realuserids, SQL_PARAMS_NAMED, 'real');
-        list($delin, $delparams) = $DB->get_in_or_equal($delegateduserids, SQL_PARAMS_NAMED, 'del');
+        [$realin, $realparams] = $DB->get_in_or_equal($realuserids, SQL_PARAMS_NAMED, 'real');
+        [$delin, $delparams] = $DB->get_in_or_equal($delegateduserids, SQL_PARAMS_NAMED, 'del');
         $params = array_merge($realparams, $delparams);
 
         $sql = "SELECT id, " . $DB->sql_concat('realuserid', "'-'", 'delegateduserid') . " AS delegationkey
@@ -93,7 +90,7 @@ class manager {
         global $DB;
         return $DB->record_exists('local_delegateaccount', [
             'realuserid' => $realuserid,
-            'delegateduserid' => $delegateduserid
+            'delegateduserid' => $delegateduserid,
         ]);
     }
 
@@ -107,7 +104,7 @@ class manager {
         if (empty($delegationids)) {
             return;
         }
-        list($inorsql, $params) = $DB->get_in_or_equal($delegationids);
+        [$inorsql, $params] = $DB->get_in_or_equal($delegationids);
         $DB->delete_records_select('local_delegateaccount', "id $inorsql", $params);
     }
 
@@ -126,14 +123,14 @@ class manager {
         if (!empty($search)) {
             $searchparam = '%' . $DB->sql_like_escape(\core_text::strtolower($search)) . '%';
 
-            $sqlwhere .= " AND (
-                " . $DB->sql_like('u1.firstname', '?', false) . " OR 
-                " . $DB->sql_like('u1.lastname', '?', false) . " OR 
-                " . $DB->sql_like('u1.email', '?', false) . " OR 
-                " . $DB->sql_like('u2.firstname', '?', false) . " OR 
-                " . $DB->sql_like('u2.lastname', '?', false) . " OR 
-                " . $DB->sql_like('u2.email', '?', false) . "
-            )";
+            $sqlwhere .= ' AND (' . implode(' OR ', [
+                $DB->sql_like('u1.firstname', '?', false),
+                $DB->sql_like('u1.lastname', '?', false),
+                $DB->sql_like('u1.email', '?', false),
+                $DB->sql_like('u2.firstname', '?', false),
+                $DB->sql_like('u2.lastname', '?', false),
+                $DB->sql_like('u2.email', '?', false),
+            ]) . ')';
 
             $params = array_fill(0, 6, $searchparam);
         }
@@ -149,9 +146,9 @@ class manager {
      */
     public static function count_delegations(string $search = ''): int {
         global $DB;
-        list($sqlwhere, $params) = self::get_delegations_filters_sql($search);
+        [$sqlwhere, $params] = self::get_delegations_filters_sql($search);
 
-        $sql = "SELECT COUNT(da.id) 
+        $sql = "SELECT COUNT(da.id)
                   FROM {local_delegateaccount} da
                   JOIN {user} u1 ON u1.id = da.realuserid
                   JOIN {user} u2 ON u2.id = da.delegateduserid
@@ -170,7 +167,7 @@ class manager {
      */
     public static function get_delegations(int $page = 0, int $perpage = 0, string $search = ''): array {
         global $DB;
-        list($sqlwhere, $params) = self::get_delegations_filters_sql($search);
+        [$sqlwhere, $params] = self::get_delegations_filters_sql($search);
 
         $userfields1 = \core_user\fields::for_name()->get_sql('u1', false, 'real', '', false)->selects;
         $userfields2 = \core_user\fields::for_name()->get_sql('u2', false, 'del', '', false)->selects;

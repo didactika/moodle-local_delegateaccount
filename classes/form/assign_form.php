@@ -29,6 +29,9 @@ require_once($CFG->libdir . '/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assign_form extends \moodleform {
+    /**
+     * Defines the fields used to create account delegations.
+     */
     public function definition() {
         global $DB;
         $mform = $this->_form;

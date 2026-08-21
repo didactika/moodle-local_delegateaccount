@@ -30,7 +30,6 @@ use local_delegateaccount\manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class before_footer {
-
     /**
      * Executes the hook callback.
      *
@@ -59,19 +58,19 @@ class before_footer {
             $fakeuser = clone($account);
             $url = new \moodle_url('/local/delegateaccount/loginas.php', [
                 'id' => $account->delegateduserid,
-                'sesskey' => sesskey()
+                'sesskey' => sesskey(),
             ]);
 
             $delegations[] = [
                 'fullname' => s(fullname($fakeuser)),
-                'url' => $url->out(false)
+                'url' => $url->out(false),
             ];
         }
 
         $templatedata = [
             'title' => get_string('pluginname', 'local_delegateaccount'),
             'back' => get_string('back'),
-            'delegations' => $delegations
+            'delegations' => $delegations,
         ];
 
         $PAGE->requires->js_call_amd('local_delegateaccount/usermenu', 'init', [$templatedata]);
