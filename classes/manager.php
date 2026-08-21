@@ -431,11 +431,15 @@ class manager {
      * @param string $notificationmode Site, always, or never.
      */
     private static function validate_notification_mode(string $notificationmode): void {
-        if (!in_array($notificationmode, [
-            self::NOTIFICATION_SITE,
-            self::NOTIFICATION_ALWAYS,
-            self::NOTIFICATION_NEVER,
-        ], true)) {
+        if (!in_array(
+            $notificationmode,
+            [
+                self::NOTIFICATION_SITE,
+                self::NOTIFICATION_ALWAYS,
+                self::NOTIFICATION_NEVER,
+            ],
+            true
+        )) {
             throw new \coding_exception('Invalid delegation notification mode.');
         }
     }
