@@ -177,6 +177,18 @@ class delegated_accounts_table extends \table_sql {
             new \pix_icon('i/info', get_string('view_delegation_details', 'local_delegateaccount'), 'core')
         );
 
+        $canupdate = has_capability('local/delegateaccount:update', $this->context) ||
+            has_capability('local/delegateaccount:manage', $this->context);
+        if (manager::get_delegation_status($row) !== manager::STATUS_REVOKED && $canupdate) {
+            $actions[] = $OUTPUT->action_icon(
+                new \moodle_url('/local/delegateaccount/edit.php', [
+                    'realuserid' => $this->realuserid,
+                    'delegationid' => $row->id,
+                ]),
+                new \pix_icon('t/edit', get_string('edit_delegation', 'local_delegateaccount'), 'core')
+            );
+        }
+
         if (has_capability('local/delegateaccount:viewactivity', $this->context)) {
             $actions[] = $OUTPUT->action_icon(
                 new \moodle_url('/local/delegateaccount/activity.php', [
