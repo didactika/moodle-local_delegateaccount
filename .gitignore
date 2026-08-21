@@ -1,0 +1,17 @@
+/ci/
+/vendor/
+/moodledata/
+/.phpunit.cache/
+composer.lock
+
+lang/*
+!lang/en/
+!lang/en/**
+!lang/es/
+!lang/es/**
+!lang/fr/
+!lang/fr/**
+!lang/it/
+!lang/it/**
+!lang/pt/
+!lang/pt/**

@@ -1,0 +1,49 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_delegateaccount/usermenu_panel
+
+    Submenu panel for the delegated accounts injected into the user menu carousel.
+
+    Example context (json):
+    {
+        "title": "Delegated accounts",
+        "back": "Back",
+        "delegations": [
+            {
+                "url": "https://moodle.example.com/local/delegateaccount/loginas.php?id=3&sesskey=123",
+                "fullname": "John Doe"
+            }
+        ]
+    }
+}}
+<div id="carousel-item-delegatedaccounts" class="carousel-item submenu" role="menu" tabindex="-1" aria-label="{{title}}" style="width: 233px; height: 309px;">
+    <div class="d-flex flex-column h-100">
+        <div class="header">
+            <button type="button" class="btn btn-icon carousel-navigation-link text-decoration-none text-body" data-carousel-target-id="carousel-item-main" aria-label="{{back}}">
+                <span class="dir-rtl-hide">{{#pix}}i/arrow-left, core{{/pix}}</span>
+            </button>
+            <span class="pl-2">{{title}}</span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="items h-100 overflow-auto" role="menu">
+            {{#delegations}}
+                <a href="{{url}}" class="dropdown-item ps-5 text-truncate" title="{{fullname}}" role="menuitem" tabindex="-1">{{fullname}}</a>
+            {{/delegations}}
+        </div>
+    </div>
+</div>

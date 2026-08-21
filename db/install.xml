@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/delegateaccount/db" VERSION="2026073000" COMMENT="XMLDB file for local_delegateaccount"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <TABLE NAME="local_delegateaccount" COMMENT="Stores which real user can log in as which delegated account">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="realuserid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the real user logging in"/>
+                <FIELD NAME="delegateduserid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the delegated account they can access"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the delegation was created"/>
+                <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the admin who created this delegation"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for local_delegateaccount"/>
+                <KEY NAME="realuserid" TYPE="foreign" FIELDS="realuserid" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key referencing the real user"/>
+                <KEY NAME="delegateduserid" TYPE="foreign" FIELDS="delegateduserid" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key referencing the delegated user"/>
+                <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key referencing the admin who created the record"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="real_delegated_unique" UNIQUE="true" FIELDS="realuserid, delegateduserid" COMMENT="Prevents duplicate delegations between a real user and a delegated account"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
+</XMLDB>
