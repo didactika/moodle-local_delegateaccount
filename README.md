@@ -48,6 +48,19 @@ php admin/cli/upgrade.php --non-interactive
 5. Moodle displays its normal session-switching state. Return to the original
    account before selecting another delegated account.
 
+Site administrators can configure the maximum number of current or scheduled
+accounts per authorised user, a maximum validity period, whether an end date
+is mandatory, protection for site-administrator accounts, and a safe size
+limit for bulk actions. Notification policy, recipients and language templates
+are configured under **Site administration > Plugins > Local plugins >
+Delegate account**. A later management-form increment will expose those
+notification choices to the person creating a delegation.
+
+When notification is enabled, Moodle delivers a plain-text message through its
+standard popup and email processors. The message is resolved in each
+recipient's language, uses only documented placeholders, and records only the
+delivery time in the delegation record; it does not duplicate message content.
+
 `local/delegateaccount:manage` remains available while sites transition to
 the granular `:view`, `:create`, `:update`, `:revoke` and `:viewactivity`
 capabilities. A user needs `local/delegateaccount:use` and an active,

@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for the local_delegateaccount plugin.
+ * Message provider declarations for the local_delegateaccount plugin.
  *
  * @package    local_delegateaccount
- * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,9 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026082102;
-$plugin->requires = 2024100700;
-$plugin->component = 'local_delegateaccount';
-$plugin->release   = '1.0.0';
-$plugin->supported = [405, 502];
-$plugin->maturity = MATURITY_ALPHA;
+$messageproviders = [
+    'delegationnotification' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
+];

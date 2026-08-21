@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - English, Spanish, Portuguese, Italian and French language packs.
 - Delegation validity periods, logical revocation, lifecycle audit events and
   granular management capabilities.
+- Site-wide limits for delegation quantity, duration, bulk actions and
+  privileged target accounts, plus configurable notification policy and
+  per-language templates.
+- Moodle popup and email notifications that honour the effective policy,
+  selected recipients and safely validated templates.
 
 ### Changed
 

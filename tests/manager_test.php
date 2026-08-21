@@ -148,4 +148,88 @@ final class manager_test extends \advanced_testcase {
         $this->assertGreaterThan(0, (int) $delegation->timerevoked);
         $this->assertFalse(manager::delegation_exists((int) $authoriseduser->id, (int) $targetuser->id));
     }
+
+    /**
+     * Applies the site notification policy to a requested delegation choice.
+     */
+    public function test_notification_policy_overrides_requested_choice(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('notificationpolicy', manager::NOTIFICATION_ALWAYS, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $targetuser = $generator->create_user();
+
+        manager::create_delegations(
+            [(int) $authoriseduser->id],
+            [(int) $targetuser->id],
+            ['notificationmode' => manager::NOTIFICATION_NEVER]
+        );
+
+        $delegation = $DB->get_record('local_delegateaccount', [
+            'realuserid' => $authoriseduser->id,
+            'delegateduserid' => $targetuser->id,
+        ], '*', MUST_EXIST);
+        $this->assertSame(manager::NOTIFICATION_ALWAYS, $delegation->notificationmode);
+    }
+
+    /**
+     * Rejects an open-ended delegation when the site requires an end date.
+     */
+    public function test_open_ended_delegation_can_be_disabled(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('allowopenended', 0, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $targetuser = $generator->create_user();
+
+        $this->expectException(\moodle_exception::class);
+        manager::create_delegations([(int) $authoriseduser->id], [(int) $targetuser->id]);
+    }
+
+    /**
+     * Limits the number of current or scheduled targets for each authorised user.
+     */
+    public function test_delegation_limit_is_enforced_per_authorised_user(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('maxdelegationsperuser', 1, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $firsttarget = $generator->create_user();
+        $secondtarget = $generator->create_user();
+
+        manager::create_delegations([(int) $authoriseduser->id], [(int) $firsttarget->id]);
+
+        $this->expectException(\moodle_exception::class);
+        manager::create_delegations([(int) $authoriseduser->id], [(int) $secondtarget->id]);
+    }
+
+    /**
+     * Rejects suspended users and protects site administrator target accounts.
+     */
+    public function test_ineligible_and_privileged_targets_are_rejected(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $suspendedtarget = $generator->create_user();
+        $suspendedtarget->suspended = 1;
+        $DB->update_record('user', $suspendedtarget);
+
+        try {
+            manager::create_delegations([(int) $authoriseduser->id], [(int) $suspendedtarget->id]);
+            $this->fail('A suspended target must be rejected.');
+        } catch (\moodle_exception $exception) {
+            $this->assertSame('error_ineligibleuser', $exception->errorcode);
+        }
+
+        $this->expectException(\moodle_exception::class);
+        manager::create_delegations([(int) $authoriseduser->id], [(int) $USER->id]);
+    }
 }

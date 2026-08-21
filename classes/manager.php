@@ -69,12 +69,15 @@ class manager {
         $now = time();
         $timestart = (int)($options['timestart'] ?? $now);
         $timeend = (int)($options['timeend'] ?? 0);
-        $notificationmode = (string)($options['notificationmode'] ?? self::NOTIFICATION_SITE);
+        $notificationmode = self::resolve_notification_mode(
+            (string) ($options['notificationmode'] ?? self::NOTIFICATION_SITE)
+        );
         self::validate_period($timestart, $timeend);
         self::validate_notification_mode($notificationmode);
 
         $realuserids = array_values(array_unique(array_map('intval', $realuserids)));
         $delegateduserids = array_values(array_unique(array_map('intval', $delegateduserids)));
+        self::validate_users($realuserids, $delegateduserids);
 
         [$realin, $realparams] = $DB->get_in_or_equal($realuserids, SQL_PARAMS_NAMED, 'real');
         [$delin, $delparams] = $DB->get_in_or_equal($delegateduserids, SQL_PARAMS_NAMED, 'del');
@@ -89,41 +92,62 @@ class manager {
         $existing = $DB->get_records_sql_menu($sql, $params);
         $existingmap = array_flip($existing);
 
-        $count = 0;
-        $transaction = $DB->start_delegated_transaction();
-
+        $candidates = [];
+        $newcounts = [];
         foreach ($realuserids as $realid) {
             foreach ($delegateduserids as $delid) {
                 $key = "{$realid}-{$delid}";
 
-                if ($realid == $delid || isset($existingmap[$key])) {
+                if ($realid === $delid || isset($existingmap[$key])) {
                     continue;
                 }
 
-                $record = new \stdClass();
-                $record->realuserid = (int)$realid;
-                $record->delegateduserid = (int)$delid;
-                $record->timecreated = $now;
-                $record->usercreated = $USER->id;
-                $record->timestart = $timestart;
-                $record->timeend = $timeend;
-                $record->timemodified = $now;
-                $record->usermodified = $USER->id;
-                $record->timerevoked = 0;
-                $record->userrevoked = 0;
-                $record->activekey = 0;
-                $record->notificationmode = $notificationmode;
-                $record->timenotified = 0;
-
-                $record->id = (int)$DB->insert_record('local_delegateaccount', $record);
-                self::trigger_event('delegation_created', $record, (int)$USER->id);
-
-                $existingmap[$key] = true;
-                $count++;
+                $candidates[] = (object) [
+                    'realuserid' => $realid,
+                    'delegateduserid' => $delid,
+                ];
+                $newcounts[$realid] = ($newcounts[$realid] ?? 0) + 1;
             }
         }
 
+        self::validate_bulk_operation_count(count($candidates));
+        self::validate_delegation_limit($newcounts);
+
+        $count = 0;
+        $createddelegations = [];
+        $transaction = $DB->start_delegated_transaction();
+
+        foreach ($candidates as $candidate) {
+            $record = new \stdClass();
+            $record->realuserid = $candidate->realuserid;
+            $record->delegateduserid = $candidate->delegateduserid;
+            $record->timecreated = $now;
+            $record->usercreated = (int) $USER->id;
+            $record->timestart = $timestart;
+            $record->timeend = $timeend;
+            $record->timemodified = $now;
+            $record->usermodified = (int) $USER->id;
+            $record->timerevoked = 0;
+            $record->userrevoked = 0;
+            $record->activekey = 0;
+            $record->notificationmode = $notificationmode;
+            $record->timenotified = 0;
+
+            $record->id = (int) $DB->insert_record('local_delegateaccount', $record);
+            self::trigger_event('delegation_created', $record, (int) $USER->id);
+            $createddelegations[] = $record;
+            $count++;
+        }
+
         $transaction->allow_commit();
+
+        foreach ($createddelegations as $delegation) {
+            notification_manager::notify(
+                $delegation,
+                notification_manager::ACTION_CREATED,
+                (int) $USER->id
+            );
+        }
 
         return $count;
     }
@@ -168,6 +192,7 @@ class manager {
         }
 
         $delegationids = array_values(array_unique(array_map('intval', $delegationids)));
+        self::validate_bulk_operation_count(count($delegationids));
         [$inorsql, $params] = $DB->get_in_or_equal($delegationids, SQL_PARAMS_NAMED, 'delegation');
         $records = $DB->get_records_select(
             'local_delegateaccount',
@@ -180,6 +205,7 @@ class manager {
         }
 
         $now = time();
+        $revokeddelegations = [];
         $transaction = $DB->start_delegated_transaction();
         foreach ($records as $record) {
             $record->timerevoked = $now;
@@ -189,8 +215,17 @@ class manager {
             $record->activekey = (int)$record->id;
             $DB->update_record('local_delegateaccount', $record);
             self::trigger_event('delegation_revoked', $record, (int)$USER->id);
+            $revokeddelegations[] = $record;
         }
         $transaction->allow_commit();
+
+        foreach ($revokeddelegations as $delegation) {
+            notification_manager::notify(
+                $delegation,
+                notification_manager::ACTION_REVOKED,
+                (int) $USER->id
+            );
+        }
     }
 
     /**
@@ -211,7 +246,7 @@ class manager {
         global $DB, $USER;
 
         self::validate_period($timestart, $timeend);
-        self::validate_notification_mode($notificationmode);
+        $notificationmode = self::resolve_notification_mode($notificationmode);
         $record = $DB->get_record('local_delegateaccount', ['id' => $delegationid, 'activekey' => 0]);
 
         if ($record === false) {
@@ -374,6 +409,20 @@ class manager {
         if ($timestart <= 0 || ($timeend > 0 && $timeend <= $timestart)) {
             throw new \coding_exception('A delegation end date must be later than its start date.');
         }
+
+        if ($timeend === 0 && !self::get_config_bool('allowopenended', true)) {
+            throw new \moodle_exception('error_openendednotallowed', 'local_delegateaccount');
+        }
+
+        $maximumdurationdays = self::get_config_int('maximumdurationdays', 0);
+        if ($maximumdurationdays > 0 && $timeend > $timestart + ($maximumdurationdays * DAYSECS)) {
+            throw new \moodle_exception(
+                'error_maximumduration',
+                'local_delegateaccount',
+                '',
+                $maximumdurationdays
+            );
+        }
     }
 
     /**
@@ -389,6 +438,129 @@ class manager {
         ], true)) {
             throw new \coding_exception('Invalid delegation notification mode.');
         }
+    }
+
+    /**
+     * Resolves a requested notification decision against the site policy.
+     *
+     * @param string $notificationmode Requested notification mode.
+     * @return string Effective notification mode.
+     */
+    private static function resolve_notification_mode(string $notificationmode): string {
+        self::validate_notification_mode($notificationmode);
+
+        $policy = get_config('local_delegateaccount', 'notificationpolicy');
+        if ($policy === self::NOTIFICATION_ALWAYS) {
+            return self::NOTIFICATION_ALWAYS;
+        }
+        if ($policy === self::NOTIFICATION_NEVER) {
+            return self::NOTIFICATION_NEVER;
+        }
+
+        return $notificationmode;
+    }
+
+    /**
+     * Validates that requested users can participate in a delegation.
+     *
+     * @param array $realuserids Authorised user identifiers.
+     * @param array $delegateduserids Target user identifiers.
+     */
+    private static function validate_users(array $realuserids, array $delegateduserids): void {
+        global $DB;
+
+        $alluserids = array_values(array_unique(array_merge($realuserids, $delegateduserids)));
+        if (empty($alluserids) || min($alluserids) <= 0) {
+            throw new \moodle_exception('error_invaliduser', 'local_delegateaccount');
+        }
+
+        $users = $DB->get_records_list('user', 'id', $alluserids, '', 'id, deleted, suspended');
+        if (count($users) !== count($alluserids)) {
+            throw new \moodle_exception('error_invaliduser', 'local_delegateaccount');
+        }
+
+        foreach ($users as $user) {
+            if ((int) $user->deleted !== 0 || (int) $user->suspended !== 0) {
+                throw new \moodle_exception('error_ineligibleuser', 'local_delegateaccount');
+            }
+        }
+
+        if (self::get_config_bool('protectprivilegedtargets', true)) {
+            foreach ($delegateduserids as $delegateduserid) {
+                if (is_siteadmin($delegateduserid)) {
+                    throw new \moodle_exception('error_privilegedtarget', 'local_delegateaccount');
+                }
+            }
+        }
+    }
+
+    /**
+     * Enforces the configured limit of current or scheduled accounts per user.
+     *
+     * @param array $newcounts Number of candidate delegations indexed by authorised user ID.
+     */
+    private static function validate_delegation_limit(array $newcounts): void {
+        global $DB;
+
+        $maximum = self::get_config_int('maxdelegationsperuser', 10);
+        if ($maximum === 0 || empty($newcounts)) {
+            return;
+        }
+
+        [$inorsql, $params] = $DB->get_in_or_equal(array_keys($newcounts), SQL_PARAMS_NAMED, 'realuser');
+        $params['timeendnow'] = time();
+        $existingcounts = $DB->get_records_sql_menu(
+            "SELECT realuserid, COUNT(1)
+               FROM {local_delegateaccount}
+              WHERE realuserid $inorsql
+                AND activekey = 0
+                AND (timeend = 0 OR timeend > :timeendnow)
+           GROUP BY realuserid",
+            $params
+        );
+
+        foreach ($newcounts as $realuserid => $newcount) {
+            $existingcount = (int) ($existingcounts[$realuserid] ?? 0);
+            if ($existingcount + $newcount > $maximum) {
+                throw new \moodle_exception('error_maxdelegations', 'local_delegateaccount', '', $maximum);
+            }
+        }
+    }
+
+    /**
+     * Enforces the configured maximum number of records in one action.
+     *
+     * @param int $count Number of delegation records affected by the action.
+     */
+    private static function validate_bulk_operation_count(int $count): void {
+        $maximum = self::get_config_int('maxbulkoperations', 100);
+        if ($maximum > 0 && $count > $maximum) {
+            throw new \moodle_exception('error_maxbulkoperations', 'local_delegateaccount', '', $maximum);
+        }
+    }
+
+    /**
+     * Reads an integer plugin configuration value.
+     *
+     * @param string $name Configuration name.
+     * @param int $default Default value when the setting is absent.
+     * @return int Configured integer value.
+     */
+    private static function get_config_int(string $name, int $default): int {
+        $value = get_config('local_delegateaccount', $name);
+        return $value === false ? $default : (int) $value;
+    }
+
+    /**
+     * Reads a boolean plugin configuration value.
+     *
+     * @param string $name Configuration name.
+     * @param bool $default Default value when the setting is absent.
+     * @return bool Configured boolean value.
+     */
+    private static function get_config_bool(string $name, bool $default): bool {
+        $value = get_config('local_delegateaccount', $name);
+        return $value === false ? $default : (bool) $value;
     }
 
     /**
