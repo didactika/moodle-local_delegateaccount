@@ -30,19 +30,24 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class manage_filter_form extends \moodleform {
     /**
-     * Defines the searchable user filter and its standard Moodle submit control.
+     * Defines the user filters and their standard Moodle submit control.
      */
     public function definition() {
         $mform = $this->_form;
         $mform->updateAttributes(['method' => 'get']);
 
-        $mform->addElement(
-            'text',
-            'search',
-            get_string('search_authorised_users', 'local_delegateaccount'),
-            ['size' => 40]
-        );
-        $mform->setType('search', PARAM_TEXT);
-        $mform->addElement('submit', 'submitbutton', get_string('filter', 'core'));
+        foreach ([
+            'fullname' => get_string('fullname'),
+            'firstname' => get_string('firstname'),
+            'lastname' => get_string('lastname'),
+            'username' => get_string('username'),
+            'idnumber' => get_string('idnumber'),
+            'email' => get_string('email'),
+        ] as $name => $label) {
+            $mform->addElement('text', $name, $label, ['size' => 40]);
+            $mform->setType($name, PARAM_TEXT);
+        }
+
+        $mform->addElement('submit', 'submitbutton', get_string('apply'));
     }
 }

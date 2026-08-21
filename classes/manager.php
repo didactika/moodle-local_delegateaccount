@@ -51,6 +51,82 @@ class manager {
     public const NOTIFICATION_OPTIONAL = 'optional';
 
     /**
+     * Returns active users who currently have permission to use delegated accounts.
+     *
+     * @return array<int, string> User IDs mapped to display names.
+     */
+    public static function get_authorised_users(): array {
+        $context = \context_system::instance();
+        $users = \get_users_by_capability(
+            $context,
+            'local/delegateaccount:use',
+            'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
+                . 'u.lastnamephonetic, u.deleted, u.suspended',
+            'u.lastname ASC, u.firstname ASC'
+        );
+
+        $authorisedusers = [];
+        foreach ($users as $user) {
+            if ((int)$user->deleted === 0 && (int)$user->suspended === 0) {
+                $authorisedusers[(int)$user->id] = fullname($user);
+            }
+        }
+
+        return $authorisedusers;
+    }
+
+    /**
+     * Returns user IDs that retain delegation records but can no longer use them.
+     *
+     * @return int[] User IDs.
+     */
+    public static function get_historical_user_ids(): array {
+        global $DB;
+
+        $users = $DB->get_records_sql(
+            'SELECT DISTINCT u.id
+               FROM {user} u
+               JOIN {local_delegateaccount} da ON da.realuserid = u.id
+              WHERE u.deleted = 0'
+        );
+
+        $historicaluserids = [];
+        foreach ($users as $user) {
+            if (!self::can_use_delegated_accounts((int)$user->id)) {
+                $historicaluserids[] = (int)$user->id;
+            }
+        }
+
+        return $historicaluserids;
+    }
+
+    /**
+     * Determines whether a user can currently use an account delegation.
+     *
+     * @param int $userid User identifier.
+     * @return bool Whether the user is active and has the use capability.
+     */
+    public static function can_use_delegated_accounts(int $userid): bool {
+        global $DB;
+
+        $user = $DB->get_record('user', ['id' => $userid], 'id, deleted, suspended');
+        if (!$user || (int)$user->deleted !== 0 || (int)$user->suspended !== 0) {
+            return false;
+        }
+
+        return has_capability('local/delegateaccount:use', \context_system::instance(), $userid);
+    }
+
+    /**
+     * Determines whether site administrator accounts are protected as delegation targets.
+     *
+     * @return bool Whether privileged target protection is enabled.
+     */
+    public static function protect_privileged_targets(): bool {
+        return self::get_config_bool('protectprivilegedtargets', true);
+    }
+
+    /**
      * Creates delegations between multiple real users and multiple delegated accounts.
      *
      * @param array $realuserids Array of real user IDs.
@@ -492,7 +568,13 @@ class manager {
             }
         }
 
-        if (self::get_config_bool('protectprivilegedtargets', true)) {
+        foreach ($realuserids as $realuserid) {
+            if (!self::can_use_delegated_accounts($realuserid)) {
+                throw new \moodle_exception('error_unauthorised_realuser', 'local_delegateaccount');
+            }
+        }
+
+        if (self::protect_privileged_targets()) {
             foreach ($delegateduserids as $delegateduserid) {
                 if (is_siteadmin($delegateduserid)) {
                     throw new \moodle_exception('error_privilegedtarget', 'local_delegateaccount');

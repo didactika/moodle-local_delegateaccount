@@ -59,6 +59,12 @@ $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
+echo $OUTPUT->render_from_template('local_delegateaccount/report_description', [
+    'description' => get_string('delegated_activity_description', 'local_delegateaccount', (object)[
+        'authoriseduser' => fullname($realuser),
+        'delegateduser' => fullname($delegateduser),
+    ]),
+]);
 echo $OUTPUT->action_link(
     new moodle_url('/local/delegateaccount/delegations.php', ['realuserid' => $realuserid]),
     get_string('back'),

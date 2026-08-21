@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   action for active delegations.
 - Moodle-native GET filters, user pictures and compact lifecycle-information
   modals in the delegated-account management tables.
+- A standard report description for delegated activity, plus management tabs
+  that distinguish currently authorised users from retained historical users.
 
 ### Changed
 
@@ -40,3 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   expired nor revoked.
 - Management tables show separate active and scheduled delegation counts; the
   redundant combined count was removed.
+- The authorised-user overview now includes every active current holder of
+  `local/delegateaccount:use`, including users without a delegation. New
+  assignments are blocked for users who no longer hold that capability.

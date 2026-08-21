@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Paginated overview of users who have configured delegated accounts.
+ * Paginated overview of users eligible for delegated accounts or retaining history.
  *
  * @package    local_delegateaccount
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
@@ -37,18 +37,30 @@ class delegated_users_table extends \table_sql {
     /** @var \context_system Context used to evaluate action capabilities. */
     private \context_system $context;
 
+    /** @var bool Whether rows in this table can receive new delegations. */
+    private bool $allowsdelegationcreation;
+
     /**
      * Creates the user overview table.
      *
-     * @param \moodle_url $baseurl URL retaining table and search state.
-     * @param string $search Free-text user search.
+     * @param \moodle_url $baseurl URL retaining table and filter state.
+     * @param int[] $userids Users included by the selected management tab.
+     * @param array<string, string> $filters User filters.
+     * @param bool $allowsdelegationcreation Whether this tab contains authorised users.
      * @param \context_system $context System context for capabilities.
      */
-    public function __construct(\moodle_url $baseurl, string $search, \context_system $context) {
+    public function __construct(
+        \moodle_url $baseurl,
+        array $userids,
+        array $filters,
+        bool $allowsdelegationcreation,
+        \context_system $context
+    ) {
         global $DB;
 
         parent::__construct('local_delegateaccount_delegated_users');
         $this->context = $context;
+        $this->allowsdelegationcreation = $allowsdelegationcreation;
 
         $this->define_columns([
             'lastname',
@@ -72,7 +84,14 @@ class delegated_users_table extends \table_sql {
         $this->define_baseurl($baseurl);
         $this->set_attribute('id', 'local-delegateaccount-users');
 
-        [$where, $filterparams] = self::get_search_sql($search);
+        [$where, $filterparams] = self::get_filter_sql($filters);
+        if (empty($userids)) {
+            $where .= ' AND u.id = 0';
+        } else {
+            [$useridsql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'manageduser');
+            $where .= ' AND u.id ' . $useridsql;
+            $filterparams = array_merge($filterparams, $userparams);
+        }
         $now = time();
         $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename,
                    u.firstnamephonetic, u.lastnamephonetic, u.email, u.picture, u.imagealt,
@@ -80,7 +99,7 @@ class delegated_users_table extends \table_sql {
                          AND (da.timeend = 0 OR da.timeend > :activeto) THEN 1 ELSE 0 END) AS activecount,
                    SUM(CASE WHEN da.activekey = 0 AND da.timestart > :scheduledfrom
                          THEN 1 ELSE 0 END) AS scheduledcount';
-        $from = '{user} u JOIN {local_delegateaccount} da ON da.realuserid = u.id';
+        $from = '{user} u LEFT JOIN {local_delegateaccount} da ON da.realuserid = u.id';
         $groupby = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename,
                     u.firstnamephonetic, u.lastnamephonetic, u.email, u.picture, u.imagealt';
         $dataparams = array_merge($filterparams, [
@@ -89,7 +108,7 @@ class delegated_users_table extends \table_sql {
             'scheduledfrom' => $now,
         ]);
         $countsql = 'SELECT COUNT(DISTINCT u.id) FROM {user} u
-                       JOIN {local_delegateaccount} da ON da.realuserid = u.id
+                       LEFT JOIN {local_delegateaccount} da ON da.realuserid = u.id
                       WHERE ' . $where;
 
         $this->set_count_sql($countsql, $filterparams);
@@ -125,8 +144,8 @@ class delegated_users_table extends \table_sql {
             new \moodle_url('/local/delegateaccount/delegations.php', ['realuserid' => $row->id]),
             new \pix_icon('t/edit', get_string('manage_user_delegations', 'local_delegateaccount'), 'core')
         );
-        if (has_capability('local/delegateaccount:create', $this->context) ||
-                has_capability('local/delegateaccount:manage', $this->context)) {
+        if ($this->allowsdelegationcreation && (has_capability('local/delegateaccount:create', $this->context) ||
+                has_capability('local/delegateaccount:manage', $this->context))) {
             $actions[] = $OUTPUT->action_icon(
                 new \moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $row->id]),
                 new \pix_icon('t/add', get_string('add_delegation', 'local_delegateaccount'), 'core')
@@ -137,33 +156,29 @@ class delegated_users_table extends \table_sql {
     }
 
     /**
-     * Builds portable SQL for the free-text user filter.
+     * Builds portable SQL for the active user filters.
      *
-     * @param string $search Free-text user search.
+     * @param array<string, string> $filters User filters.
      * @return array{0: string, 1: array<string, string>} SQL and named parameters.
      */
-    private static function get_search_sql(string $search): array {
+    private static function get_filter_sql(array $filters): array {
         global $DB;
 
         $where = 'u.deleted = 0';
-        if ($search === '') {
-            return [$where, []];
-        }
-
-        $searchvalue = '%' . $DB->sql_like_escape(core_text::strtolower($search)) . '%';
-        $fields = [
-            'firstname',
-            'lastname',
-            'email',
-        ];
-        $clauses = [];
         $params = [];
-        foreach ($fields as $field) {
-            $param = 'search' . $field;
-            $clauses[] = $DB->sql_like($DB->sql_lower('u.' . $field), ':' . $param, false);
-            $params[$param] = $searchvalue;
+        foreach ($filters as $field => $value) {
+            if ($value === '') {
+                continue;
+            }
+
+            $param = 'filter' . $field;
+            $fieldsql = $field === 'fullname'
+                ? $DB->sql_fullname('u.firstname', 'u.lastname')
+                : 'u.' . $field;
+            $where .= ' AND ' . $DB->sql_like($DB->sql_lower($fieldsql), ':' . $param, false);
+            $params[$param] = '%' . $DB->sql_like_escape(core_text::strtolower($value)) . '%';
         }
 
-        return [$where . ' AND (' . implode(' OR ', $clauses) . ')', $params];
+        return [$where, $params];
     }
 }

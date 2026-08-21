@@ -41,8 +41,10 @@ php admin/cli/upgrade.php --non-interactive
 ## Using delegated accounts
 
 1. Go to **Site administration > Accounts > Manage delegated accounts**.
-2. Search or sort the authorised-user overview, then open the relevant user's
-   delegation list.
+2. Open **Authorised users** to browse every active user who currently has
+   `local/delegateaccount:use`, whether or not they already have a delegation.
+   Use the Moodle-style **Filters** control to narrow that list, then open the
+   relevant user's delegation list.
 3. Review each target account's lifecycle, validity dates and latest recorded
    use under delegated access. Select the information action to open the
    lifecycle details without leaving the list; its link remains available as a
@@ -55,6 +57,11 @@ php admin/cli/upgrade.php --non-interactive
    menu and choose an available target account.
 6. Moodle displays its normal session-switching state. Return to the original
    account before selecting another delegated account.
+
+The **Users without permission** tab retains people who have delegation
+records but no longer hold `local/delegateaccount:use`. It is intentionally
+read-only for new assignments, while preserving their delegation details and
+activity reports for audit and support work.
 
 Site administrators can configure the maximum number of current or scheduled
 accounts per authorised user, a maximum validity period, whether an end date
@@ -78,7 +85,9 @@ values for a later reactivation.
 `local/delegateaccount:manage` remains available while sites transition to
 the granular `:view`, `:create`, `:update`, `:revoke` and `:viewactivity`
 capabilities. A user needs `local/delegateaccount:use` and an active,
-explicit delegation record to access a target account.
+explicit delegation record to access a target account. The assignment form
+lists only current holders of that capability as authorised users, and the
+server enforces the same condition for every submitted request.
 
 The overview requires `local/delegateaccount:view`. Creating, adding and
 revoking records additionally require their respective granular capability.

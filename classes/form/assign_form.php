@@ -36,14 +36,13 @@ class assign_form extends \moodleform {
      * Defines the fields used to create account delegations.
      */
     public function definition() {
-        global $DB;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('create_delegations', 'local_delegateaccount'));
 
-        $users = $DB->get_records_menu('user', ['deleted' => 0, 'suspended' => 0], 'lastname ASC', 'id, ' . $DB->sql_fullname());
+        $authorisedusers = manager::get_authorised_users();
 
-        $mform->addElement('autocomplete', 'realuserids', get_string('realusers', 'local_delegateaccount'), $users, [
+        $mform->addElement('autocomplete', 'realuserids', get_string('realusers', 'local_delegateaccount'), $authorisedusers, [
             'multiple' => true,
             'placeholder' => get_string('search', 'core'),
         ]);
@@ -55,7 +54,8 @@ class assign_form extends \moodleform {
             $mform->setDefault('realuserids', [$realuserid]);
         }
 
-        $mform->addElement('autocomplete', 'delegateduserids', get_string('delegatedusers', 'local_delegateaccount'), $users, [
+        $mform->addElement('autocomplete', 'delegateduserids', get_string('delegatedusers', 'local_delegateaccount'),
+            $this->get_delegated_account_options(), [
             'multiple' => true,
             'placeholder' => get_string('search', 'core'),
         ]);
@@ -96,6 +96,27 @@ class assign_form extends \moodleform {
         }
 
         $this->add_action_buttons(true, get_string('savechanges'));
+    }
+
+    /**
+     * Returns active accounts that can safely be selected as delegation targets.
+     *
+     * @return array<int, string> User IDs mapped to display names.
+     */
+    private function get_delegated_account_options(): array {
+        global $DB;
+
+        $users = $DB->get_records('user', ['deleted' => 0, 'suspended' => 0], 'lastname ASC, firstname ASC',
+            'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic');
+        $options = [];
+        $protectprivilegedtargets = manager::protect_privileged_targets();
+        foreach ($users as $user) {
+            if (!$protectprivilegedtargets || !is_siteadmin($user->id)) {
+                $options[(int)$user->id] = fullname($user);
+            }
+        }
+
+        return $options;
     }
 
     /**

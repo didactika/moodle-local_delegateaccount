@@ -29,6 +29,7 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 use local_delegateaccount\form\manage_filter_form;
+use local_delegateaccount\manager;
 use local_delegateaccount\table\delegated_users_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
@@ -40,41 +41,66 @@ if (!has_any_capability([
     require_capability('local/delegateaccount:view', $context);
 }
 
-$search = optional_param('search', '', PARAM_TEXT);
-
-$dashboardurl = new moodle_url('/local/delegateaccount/manage.php', [
-    'search' => $search,
-]);
+$tab = optional_param('tab', 'authorised', PARAM_ALPHA);
+if (!in_array($tab, ['authorised', 'historical'], true)) {
+    $tab = 'authorised';
+}
+$filters = [];
+foreach (['fullname', 'firstname', 'lastname', 'username', 'idnumber', 'email'] as $field) {
+    $filters[$field] = optional_param($field, '', PARAM_TEXT);
+}
+$filterparams = array_filter($filters, static function(string $value): bool {
+    return $value !== '';
+});
+$dashboardurl = new moodle_url('/local/delegateaccount/manage.php', ['tab' => $tab] + $filterparams);
 
 $PAGE->set_url($dashboardurl);
 $PAGE->set_title(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
+$PAGE->requires->js_call_amd('local_delegateaccount/filter_toggle', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('manage_accounts', 'local_delegateaccount'));
+echo $OUTPUT->render_from_template('local_delegateaccount/report_description', [
+    'description' => get_string('manage_' . $tab . '_users_description', 'local_delegateaccount'),
+]);
 
-if (has_capability('local/delegateaccount:create', $context) ||
-        has_capability('local/delegateaccount:manage', $context)) {
-    echo $OUTPUT->single_button(
-        new moodle_url('/local/delegateaccount/assign.php'),
-        get_string('create_delegations', 'local_delegateaccount'),
-        'get',
-        ['class' => 'mb-3']
-    );
-}
+$tabs = [
+    new tabobject(
+        'authorised',
+        new moodle_url('/local/delegateaccount/manage.php', ['tab' => 'authorised'] + $filterparams),
+        get_string('manage_authorised_users', 'local_delegateaccount')
+    ),
+    new tabobject(
+        'historical',
+        new moodle_url('/local/delegateaccount/manage.php', ['tab' => 'historical'] + $filterparams),
+        get_string('manage_historical_users', 'local_delegateaccount')
+    ),
+];
+echo $OUTPUT->tabtree($tabs, $tab);
 
-$filterform = new manage_filter_form(new moodle_url('/local/delegateaccount/manage.php'));
-$filterform->set_data(['search' => $search]);
+$filterform = new manage_filter_form(new moodle_url('/local/delegateaccount/manage.php', ['tab' => $tab]));
+$filterform->set_data($filters);
+ob_start();
 $filterform->display();
-if ($search !== '') {
-    echo $OUTPUT->single_button(
-        new moodle_url('/local/delegateaccount/manage.php'),
-        get_string('clear', 'core'),
-        'get',
-        ['class' => 'mb-3']
-    );
-}
+$filterformhtml = ob_get_clean();
+$cancreate = has_capability('local/delegateaccount:create', $context) ||
+    has_capability('local/delegateaccount:manage', $context);
+echo $OUTPUT->render_from_template('local_delegateaccount/manage_actions', [
+    'cancreate' => $cancreate,
+    'assignurl' => (new moodle_url('/local/delegateaccount/assign.php'))->out(false),
+    'addlabel' => get_string('create_delegations', 'local_delegateaccount'),
+    'filterlabel' => get_string('filters'),
+    'filterform' => $filterformhtml,
+    'hasfilters' => !empty($filterparams),
+    'showfilters' => !empty($filterparams),
+    'reseturl' => (new moodle_url('/local/delegateaccount/manage.php', ['tab' => $tab]))->out(false),
+    'resetlabel' => get_string('reset'),
+]);
 
-$table = new delegated_users_table($dashboardurl, $search, $context);
+$userids = $tab === 'authorised'
+    ? array_keys(manager::get_authorised_users())
+    : manager::get_historical_user_ids();
+$table = new delegated_users_table($dashboardurl, $userids, $filters, $tab === 'authorised', $context);
 $table->out(25, true);
 echo $OUTPUT->footer();

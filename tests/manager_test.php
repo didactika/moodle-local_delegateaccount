@@ -39,6 +39,7 @@ final class manager_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $sourceuser = $generator->create_user();
         $targetuser = $generator->create_user();
+        $this->grant_delegated_account_use($sourceuser);
 
         $created = manager::create_delegations(
             [(int) $sourceuser->id],
@@ -68,6 +69,7 @@ final class manager_test extends \advanced_testcase {
         $sourceuser = $generator->create_user();
         $firsttarget = $generator->create_user();
         $secondtarget = $generator->create_user();
+        $this->grant_delegated_account_use($sourceuser);
 
         manager::create_delegations(
             [(int) $sourceuser->id],
@@ -96,6 +98,7 @@ final class manager_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $authoriseduser = $generator->create_user();
         $targetuser = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
         $now = time();
 
         $this->redirectEvents();
@@ -161,6 +164,7 @@ final class manager_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $authoriseduser = $generator->create_user();
         $targetuser = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
 
         manager::create_delegations(
             [(int) $authoriseduser->id],
@@ -185,6 +189,7 @@ final class manager_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $authoriseduser = $generator->create_user();
         $targetuser = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
 
         $this->expectException(\moodle_exception::class);
         manager::create_delegations([(int) $authoriseduser->id], [(int) $targetuser->id]);
@@ -201,6 +206,7 @@ final class manager_test extends \advanced_testcase {
         $authoriseduser = $generator->create_user();
         $firsttarget = $generator->create_user();
         $secondtarget = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
 
         manager::create_delegations([(int) $authoriseduser->id], [(int) $firsttarget->id]);
 
@@ -219,6 +225,7 @@ final class manager_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $authoriseduser = $generator->create_user();
         $suspendedtarget = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
         $suspendedtarget->suspended = 1;
         $DB->update_record('user', $suspendedtarget);
 
@@ -231,5 +238,38 @@ final class manager_test extends \advanced_testcase {
 
         $this->expectException(\moodle_exception::class);
         manager::create_delegations([(int) $authoriseduser->id], [(int) $USER->id]);
+    }
+
+    /**
+     * Rejects a source account that is not allowed to use delegated accounts.
+     */
+    public function test_delegation_requires_authorised_source_user(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $sourceuser = $generator->create_user();
+        $targetuser = $generator->create_user();
+
+        try {
+            manager::create_delegations([(int)$sourceuser->id], [(int)$targetuser->id]);
+            $this->fail('A source user without the use capability must be rejected.');
+        } catch (\moodle_exception $exception) {
+            $this->assertSame('error_unauthorised_realuser', $exception->errorcode);
+        }
+    }
+
+    /**
+     * Grants the test user the system capability required to use delegations.
+     *
+     * @param \stdClass $user Test user.
+     */
+    private function grant_delegated_account_use(\stdClass $user): void {
+        global $DB;
+
+        $context = \context_system::instance();
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'manager'], MUST_EXIST);
+        assign_capability('local/delegateaccount:use', CAP_ALLOW, $roleid, $context->id, true);
+        role_assign($roleid, $user->id, $context->id);
+        accesslib_clear_all_caches_for_unit_testing();
     }
 }

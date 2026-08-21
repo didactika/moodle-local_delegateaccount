@@ -74,8 +74,16 @@ echo $OUTPUT->action_link(
     new \pix_icon('t/left', '', 'core', ['class' => 'mr-1'])
 );
 
-if (has_capability('local/delegateaccount:create', $context) ||
-        has_capability('local/delegateaccount:manage', $context)) {
+if (!manager::can_use_delegated_accounts($realuserid)) {
+    echo $OUTPUT->notification(
+        get_string('delegations_user_not_authorised', 'local_delegateaccount'),
+        \core\output\notification::NOTIFY_INFO
+    );
+}
+
+if (manager::can_use_delegated_accounts($realuserid) &&
+        (has_capability('local/delegateaccount:create', $context) ||
+        has_capability('local/delegateaccount:manage', $context))) {
     echo $OUTPUT->single_button(
         new moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $realuserid]),
         get_string('add_delegation', 'local_delegateaccount'),
