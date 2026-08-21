@@ -15,23 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_delegateaccount/delegation_info_action
+    @template local_delegateaccount/delegations_actions
 
-    Progressive-enhancement trigger and hidden content for a delegation-info modal.
+    Navigation and creation actions for an authorised user's delegations.
 
     @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-
-    Example context (json):
-    {
-        "url": "https://moodle.example/local/delegateaccount/delegation.php?realuserid=2&delegationid=8",
-        "title": "Delegation details",
-        "contentid": "local-delegateaccount-delegation-info-8",
-        "content": "<dl><dt>Status</dt><dd>Active</dd></dl>"
-    }
 }}
-<a href="{{url}}" class="action-icon" data-action="local_delegateaccount-show-delegation-info" data-content-selector="#{{contentid}}" aria-label="{{title}}" title="{{title}}" aria-haspopup="dialog">
-    {{#pix}}req, core, {{title}}{{/pix}}
-</a>
-<div id="{{contentid}}" class="d-none" aria-hidden="true">{{{content}}}</div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <a class="btn btn-secondary" href="{{backurl}}">
+        {{#pix}}t/left, core{{/pix}}
+        {{backlabel}}
+    </a>
+    {{#cancreate}}
+        <a class="btn btn-primary" href="{{assignurl}}">{{addlabel}}</a>
+    {{/cancreate}}
+</div>

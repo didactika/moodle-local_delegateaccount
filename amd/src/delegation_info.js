@@ -23,7 +23,7 @@
  */
 
 import $ from 'jquery';
-import ModalFactory from 'core/modal_factory';
+import Modal from 'core/modal';
 import Notification from 'core/notification';
 
 const SELECTOR = '[data-action="local_delegateaccount-show-delegation-info"]';
@@ -41,10 +41,12 @@ export const init = () => {
             return;
         }
 
-        ModalFactory.create({
-            type: ModalFactory.types.DEFAULT,
+        Modal.create({
             title: trigger.attr('aria-label'),
             body: content.innerHTML,
+            isVerticallyCentered: true,
+            removeOnClose: true,
+            returnElement: trigger.get(0),
         }).then(modal => {
             modal.show();
             return modal;

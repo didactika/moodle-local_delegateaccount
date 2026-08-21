@@ -145,7 +145,7 @@ class delegated_accounts_table extends \table_sql {
      * @return string Formatted start date.
      */
     public function col_timestart($row): string {
-        return $this->render_badge(userdate((int)$row->timestart), 'badge badge-light border font-weight-normal');
+        return $this->render_badge(userdate((int)$row->timestart), 'badge badge-info font-weight-normal');
     }
 
     /**
@@ -158,11 +158,11 @@ class delegated_accounts_table extends \table_sql {
         if ((int)$row->timeend === 0) {
             return $this->render_badge(
                 get_string('delegation_no_end', 'local_delegateaccount'),
-                'badge badge-light border font-weight-normal'
+                'badge badge-info font-weight-normal'
             );
         }
 
-        return $this->render_badge(userdate((int)$row->timeend), 'badge badge-light border font-weight-normal');
+        return $this->render_badge(userdate((int)$row->timeend), 'badge badge-info font-weight-normal');
     }
 
     /**
@@ -176,7 +176,7 @@ class delegated_accounts_table extends \table_sql {
             return $this->render_badge(get_string('no_delegated_access', 'local_delegateaccount'), 'badge badge-secondary');
         }
 
-        return $this->render_badge(userdate((int)$row->lastaccess), 'badge badge-light border font-weight-normal');
+        return $this->render_badge(userdate((int)$row->lastaccess), 'badge badge-info font-weight-normal');
     }
 
     /**

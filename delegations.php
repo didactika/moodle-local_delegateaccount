@@ -80,33 +80,26 @@ $PAGE->requires->js_call_amd('local_delegateaccount/delegation_info', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('delegated_accounts_for', 'local_delegateaccount', fullname($realuser)));
-echo $OUTPUT->action_link(
-    new moodle_url('/local/delegateaccount/manage.php'),
-    get_string('back'),
-    null,
-    ['class' => 'btn btn-secondary mb-3'],
-    new \pix_icon('t/left', '', 'core', ['class' => 'mr-1'])
-);
-
-if (!manager::can_use_delegated_accounts($realuserid)) {
+$isauthorised = manager::can_use_delegated_accounts($realuserid);
+if (!$isauthorised) {
     echo $OUTPUT->notification(
         get_string('delegations_user_not_authorised', 'local_delegateaccount'),
         \core\output\notification::NOTIFY_INFO
     );
 }
 
-if (
-    manager::can_use_delegated_accounts($realuserid) &&
-        (has_capability('local/delegateaccount:create', $context) ||
-        has_capability('local/delegateaccount:manage', $context))
-) {
-    echo $OUTPUT->single_button(
-        new moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $realuserid]),
-        get_string('add_delegation', 'local_delegateaccount'),
-        'get',
-        ['class' => 'mb-3 ml-2']
+$cancreate = $isauthorised &&
+    (
+        has_capability('local/delegateaccount:create', $context) ||
+        has_capability('local/delegateaccount:manage', $context)
     );
-}
+echo $OUTPUT->render_from_template('local_delegateaccount/delegations_actions', [
+    'backurl' => (new moodle_url('/local/delegateaccount/manage.php'))->out(false),
+    'backlabel' => get_string('back'),
+    'cancreate' => $cancreate,
+    'assignurl' => (new moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $realuserid]))->out(false),
+    'addlabel' => get_string('add_delegation', 'local_delegateaccount'),
+]);
 
 $table = new delegated_accounts_table($url, $realuserid, $context);
 $table->out(25, true);

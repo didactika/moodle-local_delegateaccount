@@ -36,6 +36,7 @@ class manage_filter_form extends \moodleform {
      */
     public function definition() {
         $mform = $this->_form;
+        $mform->disable_form_change_checker();
         $mform->updateAttributes(['method' => 'get']);
         $mform->setAttributes(['class' => 'full-width-labels']);
 
