@@ -1,0 +1,37 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_delegateaccount/delegation_info_action
+
+    Progressive-enhancement trigger and hidden content for a delegation-info modal.
+
+    @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+    @copyright  2026 Didactika.org
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "url": "https://moodle.example/local/delegateaccount/delegation.php?realuserid=2&delegationid=8",
+        "title": "Delegation details",
+        "contentid": "local-delegateaccount-delegation-info-8",
+        "content": "<dl><dt>Status</dt><dd>Active</dd></dl>"
+    }
+}}
+<a href="{{url}}" data-action="local_delegateaccount-show-delegation-info" data-content-selector="#{{contentid}}" aria-label="{{title}}">
+    {{#pix}}i/info, core, {{title}}{{/pix}}
+</a>
+<div id="{{contentid}}" class="d-none" aria-hidden="true">{{{content}}}</div>

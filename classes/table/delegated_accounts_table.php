@@ -82,8 +82,9 @@ class delegated_accounts_table extends \table_sql {
         $this->set_attribute('id', 'local-delegateaccount-delegations');
 
         $fields = 'da.id, da.realuserid, da.delegateduserid, da.timestart, da.timeend,
-                   da.timerevoked, da.activekey, u.firstname, u.lastname, u.middlename,
+                   da.timerevoked, da.activekey, da.notificationmode, u.firstname, u.lastname, u.middlename,
                    u.alternatename, u.firstnamephonetic, u.lastnamephonetic, u.email,
+                   u.picture, u.imagealt,
                    COALESCE(MAX(log.timecreated), 0) AS lastaccess';
         $from = '{local_delegateaccount} da
                  JOIN {user} u ON u.id = da.delegateduserid
@@ -91,8 +92,9 @@ class delegated_accounts_table extends \table_sql {
                     AND log.realuserid = da.realuserid';
         $where = 'da.realuserid = :realuserid';
         $groupby = 'da.id, da.realuserid, da.delegateduserid, da.timestart, da.timeend,
-                    da.timerevoked, da.activekey, u.firstname, u.lastname, u.middlename,
-                    u.alternatename, u.firstnamephonetic, u.lastnamephonetic, u.email';
+                    da.timerevoked, da.activekey, da.notificationmode, u.firstname, u.lastname, u.middlename,
+                    u.alternatename, u.firstnamephonetic, u.lastnamephonetic, u.email,
+                    u.picture, u.imagealt';
         $countsql = 'SELECT COUNT(da.id) FROM {local_delegateaccount} da
                       WHERE da.realuserid = :realuserid';
 
@@ -107,7 +109,12 @@ class delegated_accounts_table extends \table_sql {
      * @return string Escaped full name.
      */
     public function col_lastname($row): string {
-        return fullname($row);
+        global $OUTPUT;
+
+        return $OUTPUT->render_from_template('local_delegateaccount/user_identity', [
+            'userpicture' => $OUTPUT->user_picture($row, ['size' => 35, 'link' => false]),
+            'fullname' => fullname($row),
+        ]);
     }
 
     /**
@@ -169,13 +176,32 @@ class delegated_accounts_table extends \table_sql {
         global $OUTPUT;
 
         $actions = [];
-        $actions[] = $OUTPUT->action_icon(
-            new \moodle_url('/local/delegateaccount/delegation.php', [
+        $title = get_string('delegation_details', 'local_delegateaccount');
+        $notificationkey = 'delegationnotificationmode_' . $row->notificationmode;
+        $notificationmode = get_string_manager()->string_exists($notificationkey, 'local_delegateaccount')
+            ? get_string($notificationkey, 'local_delegateaccount')
+            : get_string('delegationnotificationmode_never', 'local_delegateaccount');
+        $content = $OUTPUT->render_from_template('local_delegateaccount/delegation_modal_body', [
+            'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
+            'status' => get_string('delegation_status_' . manager::get_delegation_status($row), 'local_delegateaccount'),
+            'startlabel' => get_string('delegation_start', 'local_delegateaccount'),
+            'start' => userdate((int)$row->timestart),
+            'endlabel' => get_string('delegation_end', 'local_delegateaccount'),
+            'end' => (int)$row->timeend === 0
+                ? get_string('delegation_no_end', 'local_delegateaccount')
+                : userdate((int)$row->timeend),
+            'notificationmodelabel' => get_string('delegationnotificationmode', 'local_delegateaccount'),
+            'notificationmode' => $notificationmode,
+        ]);
+        $actions[] = $OUTPUT->render_from_template('local_delegateaccount/delegation_info_action', [
+            'url' => (new \moodle_url('/local/delegateaccount/delegation.php', [
                 'realuserid' => $this->realuserid,
                 'delegationid' => $row->id,
-            ]),
-            new \pix_icon('i/info', get_string('view_delegation_details', 'local_delegateaccount'), 'core')
-        );
+            ]))->out(false),
+            'title' => $title,
+            'contentid' => 'local-delegateaccount-delegation-info-' . $row->id,
+            'content' => $content,
+        ]);
 
         $canupdate = has_capability('local/delegateaccount:update', $this->context) ||
             has_capability('local/delegateaccount:manage', $this->context);

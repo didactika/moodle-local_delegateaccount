@@ -28,6 +28,7 @@ require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
+use local_delegateaccount\form\manage_filter_form;
 use local_delegateaccount\table\delegated_users_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
@@ -62,12 +63,17 @@ if (has_capability('local/delegateaccount:create', $context) ||
     );
 }
 
-echo $OUTPUT->render_from_template('local_delegateaccount/manage_filters', [
-    'formurl' => (new moodle_url('/local/delegateaccount/manage.php'))->out(false),
-    'search' => $search,
-    'clearurl' => (new moodle_url('/local/delegateaccount/manage.php'))->out(false),
-    'showclear' => $search !== '',
-]);
+$filterform = new manage_filter_form(new moodle_url('/local/delegateaccount/manage.php'));
+$filterform->set_data(['search' => $search]);
+$filterform->display();
+if ($search !== '') {
+    echo $OUTPUT->single_button(
+        new moodle_url('/local/delegateaccount/manage.php'),
+        get_string('clear', 'core'),
+        'get',
+        ['class' => 'mb-3']
+    );
+}
 
 $table = new delegated_users_table($dashboardurl, $search, $context);
 $table->out(25, true);

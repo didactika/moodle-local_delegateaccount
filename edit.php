@@ -67,7 +67,8 @@ if ($mform->is_cancelled()) {
         (int)$data->timeend,
         $notificationmode
     );
-    redirect($backurl, get_string('delegation_updated_success', 'local_delegateaccount'), null, \core\output\notification::NOTIFY_SUCCESS);
+    \core\notification::success(get_string('delegation_updated_success', 'local_delegateaccount'));
+    redirect($backurl);
 }
 
 $mform->set_data([

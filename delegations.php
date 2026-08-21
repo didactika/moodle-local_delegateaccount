@@ -55,12 +55,14 @@ if ($action === 'revoke' && data_submitted()) {
         'activekey' => 0,
     ], '*', MUST_EXIST);
     manager::revoke_delegations([(int)$delegation->id]);
-    redirect($url, get_string('deleted_success', 'local_delegateaccount'), null, \core\output\notification::NOTIFY_SUCCESS);
+    \core\notification::success(get_string('deleted_success', 'local_delegateaccount'));
+    redirect($url);
 }
 
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('delegated_accounts_for', 'local_delegateaccount', fullname($realuser)));
 $PAGE->set_heading(get_string('delegated_accounts_for', 'local_delegateaccount', fullname($realuser)));
+$PAGE->requires->js_call_amd('local_delegateaccount/delegation_info', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('delegated_accounts_for', 'local_delegateaccount', fullname($realuser)));

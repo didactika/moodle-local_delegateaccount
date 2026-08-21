@@ -44,8 +44,9 @@ php admin/cli/upgrade.php --non-interactive
 2. Search or sort the authorised-user overview, then open the relevant user's
    delegation list.
 3. Review each target account's lifecycle, validity dates and latest recorded
-   use under delegated access. The information action shows the people and
-   dates that created, modified or revoked the delegation. With the update
+   use under delegated access. Select the information action to open the
+   lifecycle details without leaving the list; its link remains available as a
+   full-page fallback when JavaScript is unavailable. With the update
    capability, adjust the validity dates and notification decision; revoke
    access from that list when it is no longer required.
 4. Add one or more target accounts for the selected user, then save the

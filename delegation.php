@@ -78,9 +78,15 @@ $templatecontext = [
     'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
     'status' => get_string('delegation_status_' . manager::get_delegation_status($delegation), 'local_delegateaccount'),
     'authoriseduserlabel' => get_string('realuser', 'local_delegateaccount'),
-    'authoriseduser' => fullname($realuser),
+    'authoriseduser' => $OUTPUT->render_from_template('local_delegateaccount/user_identity', [
+        'userpicture' => $OUTPUT->user_picture($realuser, ['size' => 35, 'link' => false]),
+        'fullname' => fullname($realuser),
+    ]),
     'delegateduserlabel' => get_string('delegateduser', 'local_delegateaccount'),
-    'delegateduser' => fullname($delegateduser),
+    'delegateduser' => $OUTPUT->render_from_template('local_delegateaccount/user_identity', [
+        'userpicture' => $OUTPUT->user_picture($delegateduser, ['size' => 35, 'link' => false]),
+        'fullname' => fullname($delegateduser),
+    ]),
     'startlabel' => get_string('delegation_start', 'local_delegateaccount'),
     'start' => userdate((int)$delegation->timestart),
     'endlabel' => get_string('delegation_end', 'local_delegateaccount'),

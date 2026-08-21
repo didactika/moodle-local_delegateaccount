@@ -74,6 +74,7 @@ $string['delegation_updated_success'] = 'La delegación se ha actualizado correc
 $string['delegationnotificationmode'] = 'Notificar a las personas afectadas';
 $string['delegationnotificationmode_always'] = 'Enviar una notificación';
 $string['delegationnotificationmode_desc'] = 'Elige si esta delegación envía una notificación a las personas afectadas.';
+$string['delegationnotificationmode_help'] = 'Elige si esta operación envía una notificación a las personas afectadas. Esta opción solo aparece cuando la política del sitio permite elegirla.';
 $string['delegationnotificationmode_never'] = 'No enviar una notificación';
 $string['delegationnotificationsubject'] = 'Acceso a cuenta delegada concedido';
 $string['delegations_created_success'] = 'Las delegaciones se han creado correctamente.';

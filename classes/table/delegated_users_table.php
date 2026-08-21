@@ -55,7 +55,6 @@ class delegated_users_table extends \table_sql {
             'email',
             'activecount',
             'scheduledcount',
-            'delegationcount',
             'actions',
         ]);
         $this->define_headers([
@@ -63,7 +62,6 @@ class delegated_users_table extends \table_sql {
             get_string('email'),
             get_string('active_delegations', 'local_delegateaccount'),
             get_string('scheduled_delegations', 'local_delegateaccount'),
-            get_string('delegation_count', 'local_delegateaccount'),
             get_string('actions'),
         ]);
         $this->sortable(true, 'lastname', SORT_ASC);
@@ -77,15 +75,14 @@ class delegated_users_table extends \table_sql {
         [$where, $filterparams] = self::get_search_sql($search);
         $now = time();
         $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename,
-                   u.firstnamephonetic, u.lastnamephonetic, u.email,
+                   u.firstnamephonetic, u.lastnamephonetic, u.email, u.picture, u.imagealt,
                    SUM(CASE WHEN da.activekey = 0 AND da.timestart <= :activefrom
                          AND (da.timeend = 0 OR da.timeend > :activeto) THEN 1 ELSE 0 END) AS activecount,
                    SUM(CASE WHEN da.activekey = 0 AND da.timestart > :scheduledfrom
-                         THEN 1 ELSE 0 END) AS scheduledcount,
-                   SUM(CASE WHEN da.activekey = 0 THEN 1 ELSE 0 END) AS delegationcount';
+                         THEN 1 ELSE 0 END) AS scheduledcount';
         $from = '{user} u JOIN {local_delegateaccount} da ON da.realuserid = u.id';
         $groupby = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename,
-                    u.firstnamephonetic, u.lastnamephonetic, u.email';
+                    u.firstnamephonetic, u.lastnamephonetic, u.email, u.picture, u.imagealt';
         $dataparams = array_merge($filterparams, [
             'activefrom' => $now,
             'activeto' => $now,
@@ -106,7 +103,12 @@ class delegated_users_table extends \table_sql {
      * @return string Escaped full name.
      */
     public function col_lastname($row): string {
-        return fullname($row);
+        global $OUTPUT;
+
+        return $OUTPUT->render_from_template('local_delegateaccount/user_identity', [
+            'userpicture' => $OUTPUT->user_picture($row, ['size' => 35, 'link' => false]),
+            'fullname' => fullname($row),
+        ]);
     }
 
     /**
@@ -117,11 +119,6 @@ class delegated_users_table extends \table_sql {
      */
     public function col_actions($row): string {
         global $OUTPUT;
-
-        if (!has_capability('local/delegateaccount:create', $this->context) &&
-                !has_capability('local/delegateaccount:manage', $this->context)) {
-            return '';
-        }
 
         $actions = [];
         $actions[] = $OUTPUT->action_icon(

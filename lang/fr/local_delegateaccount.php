@@ -74,6 +74,7 @@ $string['delegation_updated_success'] = 'La délégation a été mise à jour av
 $string['delegationnotificationmode'] = 'Notifier les personnes concernées';
 $string['delegationnotificationmode_always'] = 'Envoyer une notification';
 $string['delegationnotificationmode_desc'] = 'Choisissez si cette délégation envoie une notification aux personnes concernées.';
+$string['delegationnotificationmode_help'] = 'Choisissez si cette opération envoie une notification aux personnes concernées. Cette option apparaît uniquement lorsque la politique du site autorise ce choix.';
 $string['delegationnotificationmode_never'] = 'Ne pas envoyer de notification';
 $string['delegationnotificationsubject'] = 'Accès au compte délégué accordé';
 $string['delegations_created_success'] = 'Les délégations ont été créées avec succès.';

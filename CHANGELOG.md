@@ -30,9 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   pages also link to the corresponding standard-log activity report and expose
   read-only lifecycle and audit details, with a capability-protected edit
   action for active delegations.
+- Moodle-native GET filters, user pictures and compact lifecycle-information
+  modals in the delegated-account management tables.
 
 ### Changed
 
 - Standardised licensing, ownership metadata and release packaging.
 - Active delegated sessions now require a delegation that is neither scheduled,
   expired nor revoked.
+- Management tables show separate active and scheduled delegation counts; the
+  redundant combined count was removed.
