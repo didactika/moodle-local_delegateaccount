@@ -71,12 +71,6 @@ the granular `:view`, `:create`, `:update`, `:revoke` and `:viewactivity`
 capabilities. A user needs `local/delegateaccount:use` and an active,
 explicit delegation record to access a target account.
 
-## Page structure
-
-The implementation controllers live under `pages/`. The established root
-routes (`manage.php`, `assign.php` and `bulk_actions.php`) remain lightweight
-compatibility entry points, so existing bookmarks and links continue to work
-while the user interface evolves.
 
 ## Privacy and security
 
