@@ -16,16 +16,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Plugin capabilities for the local_delegateaccount plugin.
- *
- * @package    local_delegateaccount
- * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
- * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
- * @copyright  2026 Didactika.org
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 $capabilities = [
     'local/delegateaccount:use' => [
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS | RISK_DATALOSS,

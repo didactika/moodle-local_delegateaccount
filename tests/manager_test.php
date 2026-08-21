@@ -25,8 +25,8 @@ namespace local_delegateaccount;
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \local_delegateaccount\manager
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(manager::class)]
 final class manager_test extends \advanced_testcase {
     /**
      * Creates non-duplicate delegations and excludes self-delegation.
