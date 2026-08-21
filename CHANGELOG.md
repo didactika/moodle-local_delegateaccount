@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   per-language templates.
 - Moodle popup and email notifications that honour the effective policy,
   selected recipients and safely validated templates.
+- Localised, configurable notification subjects and a professional Mustache
+  default message, with optional rich replacement content; settings that are
+  not meaningful under a never-notify policy are dynamically hidden.
 
 ### Changed
 

@@ -56,10 +56,15 @@ are configured under **Site administration > Plugins > Local plugins >
 Delegate account**. A later management-form increment will expose those
 notification choices to the person creating a delegation.
 
-When notification is enabled, Moodle delivers a plain-text message through its
-standard popup and email processors. The message is resolved in each
-recipient's language, uses only documented placeholders, and records only the
-delivery time in the delegation record; it does not duplicate message content.
+When notification is enabled, Moodle delivers an accessible HTML message with
+a plain-text fallback through its standard popup and email processors. Its
+professional default is rendered by a Moodle Mustache template in each
+recipient's language. Site administrators can configure a subject and, when
+needed, replace that default with rich content using only documented
+placeholders. The plugin records only the delivery time; it does not duplicate
+message content in the delegation record. Selecting **Never notify** hides
+every dependent notification setting immediately and preserves its existing
+values for a later reactivation.
 
 `local/delegateaccount:manage` remains available while sites transition to
 the granular `:view`, `:create`, `:update`, `:revoke` and `:viewactivity`

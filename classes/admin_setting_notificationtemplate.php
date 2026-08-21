@@ -24,7 +24,7 @@ namespace local_delegateaccount;
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_notificationtemplate extends \admin_setting_configtextarea {
+class admin_setting_notificationtemplate extends \admin_setting_confightmleditor {
     /** @var string[] Template placeholders that may be expanded. */
     private const PLACEHOLDERS = [
         'authoriseduser',

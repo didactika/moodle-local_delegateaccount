@@ -72,28 +72,27 @@ class notification_manager {
 
             $recipient = $users[$recipientid];
             $language = empty($recipient->lang) ? current_language() : $recipient->lang;
-            $messagebody = self::render_template(
+            $messagehtml = self::render_template(
                 $language,
                 $delegation,
                 $users[$delegation->realuserid],
                 $users[$delegation->delegateduserid],
                 $users[$actorid],
+                $recipient,
                 $SITE
             );
+            $messagebody = html_to_text($messagehtml);
             $message = new \core\message\message();
             $message->component = 'local_delegateaccount';
             $message->name = 'delegationnotification';
             $message->userfrom = $sender;
             $message->userto = $recipient;
-            $message->subject = get_string_manager()->get_string(
-                'delegationnotificationsubject',
-                'local_delegateaccount',
-                null,
-                $language
-            );
+            $message->subject = self::get_subject($language);
             $message->fullmessage = $messagebody;
             $message->fullmessageformat = FORMAT_PLAIN;
-            $message->fullmessagehtml = nl2br(s($messagebody));
+            $message->fullmessagehtml = format_text($messagehtml, FORMAT_HTML, [
+                'context' => \context_system::instance(),
+            ]);
             $message->smallmessage = shorten_text($messagebody, 255);
             $message->notification = 1;
             $message->contexturl = (new \moodle_url('/local/delegateaccount/manage.php'))->out(false);
@@ -153,15 +152,16 @@ class notification_manager {
     }
 
     /**
-     * Expands a configured, language-specific plain text template.
+     * Renders the language-specific notification through its Mustache template.
      *
      * @param string $language Recipient language.
      * @param \stdClass $delegation Delegation database record.
      * @param \stdClass $authoriseduser Authorised user record.
      * @param \stdClass $delegateduser Target account record.
      * @param \stdClass $actor User who configured the action.
+     * @param \stdClass $recipient Notification recipient.
      * @param \stdClass $site Site record.
-     * @return string Rendered plain text notification.
+     * @return string Rendered HTML notification.
      */
     private static function render_template(
         string $language,
@@ -169,35 +169,112 @@ class notification_manager {
         \stdClass $authoriseduser,
         \stdClass $delegateduser,
         \stdClass $actor,
+        \stdClass $recipient,
         \stdClass $site
     ): string {
-        $template = get_config('local_delegateaccount', 'notificationtemplate_' . $language);
-        if ($template === false || $template === '') {
-            $template = get_string_manager()->get_string(
-                'notificationtemplatedefault',
+        global $OUTPUT;
+
+        $stringmanager = get_string_manager();
+        $authorisedname = fullname($authoriseduser);
+        $delegatedname = fullname($delegateduser);
+        $sitename = format_string($site->fullname, true);
+        $timestart = userdate((int) $delegation->timestart, '', $recipient->timezone);
+        $timeend = (int) $delegation->timeend === 0
+            ? $stringmanager->get_string('never', 'moodle', null, $language)
+            : userdate((int) $delegation->timeend, '', $recipient->timezone);
+        $content = get_config('local_delegateaccount', 'notificationtemplate_' . $language);
+        if ($content !== false && $content !== '') {
+            $content = self::replace_placeholders($content, [
+                'authoriseduser' => s($authorisedname),
+                'delegateduser' => s($delegatedname),
+                'actor' => s(fullname($actor)),
+                'timestart' => s($timestart),
+                'timeend' => s($timeend),
+                'sitefullname' => s($sitename),
+            ]);
+        }
+
+        return $OUTPUT->render_from_template('local_delegateaccount/notification_message', [
+            'hascustomcontent' => $content !== false && $content !== '',
+            'customcontent' => $content,
+            'greeting' => $stringmanager->get_string(
+                'notificationgreeting',
+                'local_delegateaccount',
+                $authorisedname,
+                $language
+            ),
+            'accessgranted' => $stringmanager->get_string(
+                'notificationaccessgranted',
                 'local_delegateaccount',
                 null,
                 $language
-            );
-        }
+            ),
+            'accountaccess' => $stringmanager->get_string(
+                'notificationaccountaccess',
+                'local_delegateaccount',
+                (object) [
+                    'delegateduser' => $delegatedname,
+                    'sitefullname' => $sitename,
+                ],
+                $language
+            ),
+            'accessstarts' => $stringmanager->get_string(
+                'notificationaccessstarts',
+                'local_delegateaccount',
+                null,
+                $language
+            ),
+            'accessends' => $stringmanager->get_string(
+                'notificationaccessends',
+                'local_delegateaccount',
+                null,
+                $language
+            ),
+            'timestart' => $timestart,
+            'timeend' => $timeend,
+            'supportmessage' => $stringmanager->get_string(
+                'notificationsupportmessage',
+                'local_delegateaccount',
+                null,
+                $language
+            ),
+        ]);
+    }
 
-        $values = [
-            'authoriseduser' => fullname($authoriseduser),
-            'delegateduser' => fullname($delegateduser),
-            'actor' => fullname($actor),
-            'timestart' => userdate((int) $delegation->timestart, '', $authoriseduser->timezone),
-            'timeend' => (int) $delegation->timeend === 0
-                ? get_string_manager()->get_string('never', 'moodle', null, $language)
-                : userdate((int) $delegation->timeend, '', $authoriseduser->timezone),
-            'sitefullname' => format_string($site->fullname, true),
-        ];
-
+    /**
+     * Replaces the supported variables in administrator-supplied notification content.
+     *
+     * @param string $content Trusted administrator-supplied HTML content.
+     * @param array<string, string> $values Escaped replacement values.
+     * @return string Content with placeholders replaced.
+     */
+    private static function replace_placeholders(string $content, array $values): string {
         return preg_replace_callback(
             '/\{\$a->([^}]+)\}/',
             static function (array $matches) use ($values): string {
                 return $values[$matches[1]] ?? '';
             },
-            $template
+            $content
+        );
+    }
+
+    /**
+     * Returns the configurable notification subject in the recipient language.
+     *
+     * @param string $language Recipient language.
+     * @return string Notification subject.
+     */
+    private static function get_subject(string $language): string {
+        $subject = get_config('local_delegateaccount', 'notificationsubject_' . $language);
+        if ($subject !== false && $subject !== '') {
+            return format_string($subject, true);
+        }
+
+        return get_string_manager()->get_string(
+            'delegationnotificationsubject',
+            'local_delegateaccount',
+            null,
+            $language
         );
     }
 }

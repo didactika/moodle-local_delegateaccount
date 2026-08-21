@@ -95,6 +95,11 @@ if ($hassiteconfig) {
                 'never' => get_string('notificationpolicy_never', 'local_delegateaccount'),
             ]
         ));
+
+        if (!defined('CLI_SCRIPT') || !CLI_SCRIPT) {
+            global $PAGE;
+            $PAGE->requires->js_call_amd('local_delegateaccount/notification_settings', 'init');
+        }
         $settings->add(new admin_setting_configselect(
             'local_delegateaccount/notificationrecipients',
             get_string('notificationrecipients', 'local_delegateaccount'),
@@ -122,17 +127,26 @@ if ($hassiteconfig) {
                 continue;
             }
 
-            $settings->add(new \local_delegateaccount\admin_setting_notificationtemplate(
-                'local_delegateaccount/notificationtemplate_' . $languagecode,
-                get_string('notificationtemplate', 'local_delegateaccount', $languagename),
-                get_string('notificationtemplate_desc', 'local_delegateaccount'),
+            $settings->add(new admin_setting_configtext(
+                'local_delegateaccount/notificationsubject_' . $languagecode,
+                get_string('notificationsubject', 'local_delegateaccount', $languagename),
+                get_string('notificationsubject_desc', 'local_delegateaccount'),
                 $stringmanager->get_string(
-                    'notificationtemplatedefault',
+                    'delegationnotificationsubject',
                     'local_delegateaccount',
                     null,
                     $languagecode
                 ),
-                PARAM_TEXT
+                PARAM_TEXT,
+                80
+            ));
+
+            $settings->add(new \local_delegateaccount\admin_setting_notificationtemplate(
+                'local_delegateaccount/notificationtemplate_' . $languagecode,
+                get_string('notificationtemplate', 'local_delegateaccount', $languagename),
+                get_string('notificationtemplate_desc', 'local_delegateaccount'),
+                '',
+                PARAM_RAW
             ));
         }
     }
