@@ -168,12 +168,28 @@ class delegated_accounts_table extends \table_sql {
     public function col_actions($row): string {
         global $OUTPUT;
 
-        if (!has_capability('local/delegateaccount:revoke', $this->context)) {
-            return '';
+        $actions = [];
+        $actions[] = $OUTPUT->action_icon(
+            new \moodle_url('/local/delegateaccount/delegation.php', [
+                'realuserid' => $this->realuserid,
+                'delegationid' => $row->id,
+            ]),
+            new \pix_icon('i/info', get_string('view_delegation_details', 'local_delegateaccount'), 'core')
+        );
+
+        if (has_capability('local/delegateaccount:viewactivity', $this->context)) {
+            $actions[] = $OUTPUT->action_icon(
+                new \moodle_url('/local/delegateaccount/activity.php', [
+                    'realuserid' => $this->realuserid,
+                    'delegateduserid' => $row->delegateduserid,
+                ]),
+                new \pix_icon('i/report', get_string('view_delegated_activity', 'local_delegateaccount'), 'core')
+            );
         }
 
-        if (manager::get_delegation_status($row) === manager::STATUS_REVOKED) {
-            return '';
+        if (!has_capability('local/delegateaccount:revoke', $this->context) ||
+                manager::get_delegation_status($row) === manager::STATUS_REVOKED) {
+            return implode('', $actions);
         }
 
         $url = new \moodle_url('/local/delegateaccount/delegations.php', [
@@ -182,11 +198,13 @@ class delegated_accounts_table extends \table_sql {
             'delegationid' => $row->id,
             'sesskey' => sesskey(),
         ]);
-        return $OUTPUT->single_button(
+        $actions[] = $OUTPUT->single_button(
             $url,
             get_string('revoke_delegation', 'local_delegateaccount'),
             'post',
             ['class' => 'btn btn-link btn-sm']
         );
+
+        return implode('', $actions);
     }
 }

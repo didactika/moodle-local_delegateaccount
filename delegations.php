@@ -32,10 +32,12 @@ use local_delegateaccount\table\delegated_accounts_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 $context = context_system::instance();
-require_any_capability([
+if (!has_any_capability([
     'local/delegateaccount:view',
     'local/delegateaccount:manage',
-], $context);
+], $context)) {
+    require_capability('local/delegateaccount:view', $context);
+}
 
 $realuserid = required_param('realuserid', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);

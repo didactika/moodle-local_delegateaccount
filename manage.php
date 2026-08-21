@@ -32,10 +32,12 @@ use local_delegateaccount\table\delegated_users_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 $context = context_system::instance();
-require_any_capability([
+if (!has_any_capability([
     'local/delegateaccount:view',
     'local/delegateaccount:manage',
-], $context);
+], $context)) {
+    require_capability('local/delegateaccount:view', $context);
+}
 
 $search = optional_param('search', '', PARAM_TEXT);
 

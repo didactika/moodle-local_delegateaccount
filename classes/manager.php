@@ -47,6 +47,9 @@ class manager {
     /** Do not notify the affected users. */
     public const NOTIFICATION_NEVER = 'never';
 
+    /** Allow the person creating a delegation to choose whether to notify. */
+    public const NOTIFICATION_OPTIONAL = 'optional';
+
     /**
      * Creates delegations between multiple real users and multiple delegated accounts.
      *

@@ -44,8 +44,9 @@ php admin/cli/upgrade.php --non-interactive
 2. Search or sort the authorised-user overview, then open the relevant user's
    delegation list.
 3. Review each target account's lifecycle, validity dates and latest recorded
-   use under delegated access. Revoke access from that list when it is no
-   longer required.
+   use under delegated access. The information action shows the people and
+   dates that created, modified or revoked the delegation. Revoke access from
+   that list when it is no longer required.
 4. Add one or more target accounts for the selected user, then save the
    delegation.
 5. The authorised person can open the **Delegate account** entry in their user
@@ -58,8 +59,9 @@ accounts per authorised user, a maximum validity period, whether an end date
 is mandatory, protection for site-administrator accounts, and a safe size
 limit for bulk actions. Notification policy, recipients and language templates
 are configured under **Site administration > Plugins > Local plugins >
-Delegate account**. A later management-form increment will expose those
-notification choices to the person creating a delegation.
+Delegate account**. The delegation form applies those boundaries directly:
+the person creating access selects its start and end dates, and can choose
+whether to notify affected users only when the site policy permits that choice.
 
 When notification is enabled, Moodle delivers an accessible HTML message with
 a plain-text fallback through its standard popup and email processors. Its
@@ -81,6 +83,10 @@ revoking records additionally require their respective granular capability.
 The last-access value is derived from Moodle's standard log store only when
 the authorised user acted through the delegated session; it never represents
 the target account's ordinary sign-ins.
+
+Users with `local/delegateaccount:viewactivity` can open the related report
+from an individual delegation. It contains only standard-log events where the
+target account was used through that authorised user's delegated session.
 
 
 ## Privacy and security

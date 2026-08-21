@@ -20,7 +20,6 @@
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
- * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -89,11 +88,14 @@ if ($hassiteconfig) {
             'local_delegateaccount/notificationpolicy',
             get_string('notificationpolicy', 'local_delegateaccount'),
             get_string('notificationpolicy_desc', 'local_delegateaccount'),
-            'optional',
+            \local_delegateaccount\manager::NOTIFICATION_OPTIONAL,
             [
-                'optional' => get_string('notificationpolicy_optional', 'local_delegateaccount'),
-                'always' => get_string('notificationpolicy_always', 'local_delegateaccount'),
-                'never' => get_string('notificationpolicy_never', 'local_delegateaccount'),
+                \local_delegateaccount\manager::NOTIFICATION_OPTIONAL =>
+                    get_string('notificationpolicy_optional', 'local_delegateaccount'),
+                \local_delegateaccount\manager::NOTIFICATION_ALWAYS =>
+                    get_string('notificationpolicy_always', 'local_delegateaccount'),
+                \local_delegateaccount\manager::NOTIFICATION_NEVER =>
+                    get_string('notificationpolicy_never', 'local_delegateaccount'),
             ]
         ));
 
@@ -155,7 +157,10 @@ if ($hassiteconfig) {
     $ADMIN->add('localplugins', $settings);
 }
 
-if ($hassiteconfig || has_capability('local/delegateaccount:manage', context_system::instance())) {
+if ($hassiteconfig || has_any_capability([
+    'local/delegateaccount:view',
+    'local/delegateaccount:manage',
+], context_system::instance())) {
     $managepage = new admin_externalpage(
         'local_delegateaccount_manage',
         get_string('manage_accounts', 'local_delegateaccount'),

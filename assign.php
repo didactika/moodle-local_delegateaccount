@@ -32,10 +32,12 @@ use local_delegateaccount\form\assign_form;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 $context = context_system::instance();
-require_any_capability([
+if (!has_any_capability([
     'local/delegateaccount:create',
     'local/delegateaccount:manage',
-], $context);
+], $context)) {
+    require_capability('local/delegateaccount:create', $context);
+}
 
 $realuserid = optional_param('realuserid', 0, PARAM_INT);
 $url = new moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $realuserid]);
@@ -50,7 +52,19 @@ $mform = new assign_form($url, ['realuserid' => $realuserid]);
 if ($mform->is_cancelled()) {
     redirect($dashboardurl);
 } else if ($data = $mform->get_data()) {
-    $createdcount = manager::create_delegations($data->realuserids, $data->delegateduserids);
+    $policy = get_config('local_delegateaccount', 'notificationpolicy') ?: manager::NOTIFICATION_OPTIONAL;
+    $notificationmode = $policy === manager::NOTIFICATION_OPTIONAL
+        ? $data->notificationmode
+        : $policy;
+    $createdcount = manager::create_delegations(
+        $data->realuserids,
+        $data->delegateduserids,
+        [
+            'timestart' => (int)$data->timestart,
+            'timeend' => (int)$data->timeend,
+            'notificationmode' => $notificationmode,
+        ]
+    );
 
     if ($createdcount > 0) {
         \core\notification::success(get_string('delegations_created_success', 'local_delegateaccount'));

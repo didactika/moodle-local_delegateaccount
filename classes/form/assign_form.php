@@ -20,6 +20,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
+use local_delegateaccount\manager;
+
 /**
  * Form to create new delegations between users.
  *
@@ -60,6 +62,71 @@ class assign_form extends \moodleform {
         $mform->addRule('delegateduserids', null, 'required', null, 'client');
         $mform->addHelpButton('delegateduserids', 'delegatedusers', 'local_delegateaccount');
 
+        $mform->addElement(
+            'date_time_selector',
+            'timestart',
+            get_string('delegation_start', 'local_delegateaccount')
+        );
+        $mform->setDefault('timestart', time());
+
+        $allowopenendedsetting = get_config('local_delegateaccount', 'allowopenended');
+        $allowopenended = $allowopenendedsetting === false ? true : (bool)$allowopenendedsetting;
+        $mform->addElement(
+            'date_time_selector',
+            'timeend',
+            get_string('delegation_end', 'local_delegateaccount'),
+            ['optional' => $allowopenended]
+        );
+
+        $policy = get_config('local_delegateaccount', 'notificationpolicy') ?: manager::NOTIFICATION_OPTIONAL;
+        if ($policy === manager::NOTIFICATION_OPTIONAL) {
+            $mform->addElement(
+                'select',
+                'notificationmode',
+                get_string('delegationnotificationmode', 'local_delegateaccount'),
+                [
+                    manager::NOTIFICATION_ALWAYS =>
+                        get_string('delegationnotificationmode_always', 'local_delegateaccount'),
+                    manager::NOTIFICATION_NEVER =>
+                        get_string('delegationnotificationmode_never', 'local_delegateaccount'),
+                ]
+            );
+            $mform->setDefault('notificationmode', manager::NOTIFICATION_ALWAYS);
+            $mform->addHelpButton('notificationmode', 'delegationnotificationmode', 'local_delegateaccount');
+        }
+
         $this->add_action_buttons(true, get_string('savechanges'));
+    }
+
+    /**
+     * Validates the requested delegation period before it reaches the manager.
+     *
+     * @param array $data Submitted form data.
+     * @param array $files Uploaded files.
+     * @return array Validation errors indexed by field name.
+     */
+    public function validation($data, $files): array {
+        $errors = parent::validation($data, $files);
+        $timestart = (int)$data['timestart'];
+        $timeend = (int)$data['timeend'];
+
+        $allowopenendedsetting = get_config('local_delegateaccount', 'allowopenended');
+        $allowopenended = $allowopenendedsetting === false ? true : (bool)$allowopenendedsetting;
+        if ($timeend === 0 && !$allowopenended) {
+            $errors['timeend'] = get_string('error_openendednotallowed', 'local_delegateaccount');
+        } else if ($timeend > 0 && $timeend <= $timestart) {
+            $errors['timeend'] = get_string('error_invalidperiod', 'local_delegateaccount');
+        }
+
+        $maximumdurationdays = (int)get_config('local_delegateaccount', 'maximumdurationdays');
+        if ($maximumdurationdays > 0 && $timeend > $timestart + ($maximumdurationdays * DAYSECS)) {
+            $errors['timeend'] = get_string(
+                'error_maximumduration',
+                'local_delegateaccount',
+                $maximumdurationdays
+            );
+        }
+
+        return $errors;
     }
 }

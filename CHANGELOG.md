@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A paginated, searchable and sortable authorised-user overview, plus an
   individual delegation list with lifecycle dates, last delegated access and
   safe POST-only revocation.
+- Delegation creation now records the selected validity period and, where the
+  site allows it, the creator's notification decision. Individual delegation
+  pages also link to the corresponding standard-log activity report and expose
+  read-only lifecycle and audit details.
 
 ### Changed
 
