@@ -24,7 +24,8 @@ require_once($CFG->libdir . '/formslib.php');
  * Form to create new delegations between users.
  *
  * @package    local_delegateaccount
- * @copyright  2026, Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assign_form extends \moodleform {

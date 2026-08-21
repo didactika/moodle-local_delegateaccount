@@ -21,9 +21,10 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Manager class for handling delegated accounts business logic.
  *
- * @package   local_delegateaccount
- * @copyright 2026, Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    local_delegateaccount
+ * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @copyright  2026 Didactika.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
 

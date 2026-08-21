@@ -18,7 +18,8 @@
  * Executes the login-as functionality for delegated accounts.
  *
  * @package    local_delegateaccount
- * @copyright  2026, Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

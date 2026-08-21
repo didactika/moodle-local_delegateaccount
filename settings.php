@@ -17,12 +17,14 @@
 /**
  * This file adds the settings pages to the navigation menu
  *
- * @package   local_delegateaccount
- * @copyright 2026, Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    local_delegateaccount
+ * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @copyright  2026 Didactika.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig || has_capability('local/delegateaccount:manage', context_system::instance())) {
     $managepage = new admin_externalpage(

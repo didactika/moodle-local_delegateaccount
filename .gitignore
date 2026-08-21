@@ -1,42 +1,17 @@
-# OS / System
-.DS_Store
-Thumbs.db
-desktop.ini
+/ci/
+/vendor/
+/moodledata/
+/.phpunit.cache/
+composer.lock
 
-# IDEs & Editors
-.vscode/
-.idea/
-.kiro/
-*.sublime-project
-*.sublime-workspace
-*.swp
-*.swo
-*~
-
-# Environment & Local Configs
-.env
-.env.*
-
-# Node / Build tools
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# PHP & Testing / Quality Assurance
-vendor/
-.phpunit.result.cache
-.php-cs-fixer.cache
-coverage/
-
-# Temporary / Backup / Patch files
-*.tmp
-*.temp
-*.bak
-*.orig
-*.rej
-.cache/
-
-# AI / Agents
-.agents
-skills-lock.json
+lang/*
+!lang/en/
+!lang/en/**
+!lang/es/
+!lang/es/**
+!lang/fr/
+!lang/fr/**
+!lang/it/
+!lang/it/**
+!lang/pt/
+!lang/pt/**

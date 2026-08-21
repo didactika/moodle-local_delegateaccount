@@ -1,0 +1,165 @@
+name: Moodle Plugin CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'MOODLE_*_STABLE'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: moodle-plugin-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  setup:
+    name: Build test matrix
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: build
+        shell: bash
+        run: |
+          set -euo pipefail
+          declare -A php_versions=(
+            [405]='8.1 8.2 8.3'
+            [502]='8.3 8.4'
+          )
+
+          supported=$(grep -oP '\$plugin->supported\s*=\s*\[\K[^\]]+' version.php)
+          entries='[]'
+
+          IFS=',' read -ra versions <<< "$supported"
+          for raw in "${versions[@]}"; do
+            moodle_version=$(echo "$raw" | tr -d '[:space:]')
+            if [[ -z "${php_versions[$moodle_version]+_}" ]]; then
+              echo "::error::No PHP compatibility entry exists for Moodle $moodle_version."
+              exit 1
+            fi
+
+            for php_version in ${php_versions[$moodle_version]}; do
+              for database in mariadb pgsql; do
+                entries=$(jq -c \
+                  --arg php "$php_version" \
+                  --arg branch "MOODLE_${moodle_version}_STABLE" \
+                  --arg database "$database" \
+                  '. + [{"php": $php, "moodle-branch": $branch, "database": $database}]' <<< "$entries")
+              done
+            done
+          done
+
+          matrix=$(jq -cn --argjson entries "$entries" '{include: $entries}')
+          printf 'matrix=%s\n' "$matrix" >> "$GITHUB_OUTPUT"
+
+  test:
+    name: Moodle ${{ matrix.moodle-branch }} - PHP ${{ matrix.php }} - ${{ matrix.database }}
+    needs: setup
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+          MYSQL_CHARACTER_SET_SERVER: utf8mb4
+          MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: plugin
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          ini-values: max_input_vars=5000
+          coverage: none
+
+      - name: Install moodle-plugin-ci
+        shell: bash
+        run: |
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+          echo "$(cd ci/bin && pwd)" >> "$GITHUB_PATH"
+          echo "$(cd ci/vendor/bin && pwd)" >> "$GITHUB_PATH"
+          sudo locale-gen en_AU.UTF-8
+
+      - name: Install Moodle and the plugin
+        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+        env:
+          DB: ${{ matrix.database }}
+          MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+          PHPMD_IGNORE_PATHS: tests
+
+      - name: PHP lint
+        run: moodle-plugin-ci phplint
+
+      - name: Moodle code checker
+        run: moodle-plugin-ci phpcs --max-warnings 0
+
+      - name: Moodle PHPDoc checker
+        run: moodle-plugin-ci phpdoc --max-warnings 0
+
+      - name: Validate plugin
+        run: moodle-plugin-ci validate
+
+      - name: Check upgrade savepoints
+        run: moodle-plugin-ci savepoints
+
+      - name: Lint Mustache templates
+        run: moodle-plugin-ci mustache
+
+      - name: Build AMD modules
+        run: moodle-plugin-ci grunt --max-lint-warnings 0
+
+      - name: Run PHPUnit tests
+        run: moodle-plugin-ci phpunit --fail-on-warning
+
+      - name: Run Behat tests
+        id: behat
+        run: moodle-plugin-ci behat --profile chrome
+
+      - name: Upload Behat failure output
+        if: failure() && steps.behat.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          name: behat-faildump-${{ matrix.moodle-branch }}-${{ matrix.php }}-${{ matrix.database }}
+          path: ${{ github.workspace }}/ci/behat_faildump
+          if-no-files-found: ignore
+          retention-days: 7
+
+  complete:
+    name: CI complete
+    if: always()
+    needs:
+      - setup
+      - test
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check required jobs
+        env:
+          SETUP: ${{ needs.setup.result }}
+          TEST: ${{ needs.test.result }}
+        run: |
+          test "$SETUP" = success
+          test "$TEST" = success

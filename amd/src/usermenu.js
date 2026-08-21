@@ -17,7 +17,8 @@
  * Injects the delegated accounts menu into the user menu carousel.
  *
  * @module     local_delegateaccount/usermenu
- * @copyright  2026, Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -1,0 +1,72 @@
+name: Release on version bump
+
+on:
+  push:
+    branches:
+      - main
+      - 'MOODLE_*_STABLE'
+    paths:
+      - version.php
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          release=$(awk -F"'" '/\$plugin->release/ { print $2; exit }' version.php)
+          maturity=$(awk -F= '/\$plugin->maturity/ { gsub(/[ ;\r]/, "", $2); print $2; exit }' version.php)
+          component=$(awk -F"'" '/\$plugin->component/ { print $2; exit }' version.php)
+          test -n "$release"
+          test -n "$maturity"
+          test -n "$component"
+          printf 'release=%s\n' "$release" >> "$GITHUB_OUTPUT"
+          printf 'maturity=%s\n' "$maturity" >> "$GITHUB_OUTPUT"
+          printf 'component=%s\n' "$component" >> "$GITHUB_OUTPUT"
+
+      - id: tag
+        if: steps.version.outputs.maturity != 'MATURITY_ALPHA'
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="v${{ steps.version.outputs.release }}"
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "name=$tag" >> "$GITHUB_OUTPUT"
+          fi
+
+      - id: package
+        if: steps.version.outputs.maturity != 'MATURITY_ALPHA' && steps.tag.outputs.exists == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          component='${{ steps.version.outputs.component }}'
+          shortname="${component#*_}"
+          filename="${component}-${{ steps.tag.outputs.name }}.zip"
+          git archive --format=zip --prefix="${shortname}/" --output="$filename" "$GITHUB_SHA"
+          echo "filename=$filename" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        if: steps.version.outputs.maturity != 'MATURITY_ALPHA' && steps.tag.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create '${{ steps.tag.outputs.name }}' '${{ steps.package.outputs.filename }}' \
+            --target '$GITHUB_SHA' \
+            --title '${{ steps.tag.outputs.name }}' \
+            --generate-notes
