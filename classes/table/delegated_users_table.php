@@ -84,7 +84,8 @@ class delegated_users_table extends \table_sql {
         $this->define_baseurl($baseurl);
         $this->set_attribute('id', 'local-delegateaccount-users');
 
-        [$where, $filterparams] = self::get_filter_sql($filters);
+        $now = time();
+        [$where, $filterparams] = self::get_filter_sql($filters, $now);
         if (empty($userids)) {
             $where .= ' AND u.id = 0';
         } else {
@@ -92,7 +93,6 @@ class delegated_users_table extends \table_sql {
             $where .= ' AND u.id ' . $useridsql;
             $filterparams = array_merge($filterparams, $userparams);
         }
-        $now = time();
         $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename,
                    u.firstnamephonetic, u.lastnamephonetic, u.email, u.picture, u.imagealt,
                    SUM(CASE WHEN da.activekey = 0 AND da.timestart <= :activefrom
@@ -144,8 +144,10 @@ class delegated_users_table extends \table_sql {
             new \moodle_url('/local/delegateaccount/delegations.php', ['realuserid' => $row->id]),
             new \pix_icon('t/edit', get_string('manage_user_delegations', 'local_delegateaccount'), 'core')
         );
-        if ($this->allowsdelegationcreation && (has_capability('local/delegateaccount:create', $this->context) ||
-                has_capability('local/delegateaccount:manage', $this->context))) {
+        if (
+            $this->allowsdelegationcreation && (has_capability('local/delegateaccount:create', $this->context) ||
+                has_capability('local/delegateaccount:manage', $this->context))
+        ) {
             $actions[] = $OUTPUT->action_icon(
                 new \moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $row->id]),
                 new \pix_icon('t/add', get_string('add_delegation', 'local_delegateaccount'), 'core')
@@ -156,27 +158,65 @@ class delegated_users_table extends \table_sql {
     }
 
     /**
-     * Builds portable SQL for the active user filters.
+     * Builds portable SQL for the active delegated-account filters.
      *
      * @param array<string, string> $filters User filters.
+     * @param int $now Current Unix timestamp.
      * @return array{0: string, 1: array<string, string>} SQL and named parameters.
      */
-    private static function get_filter_sql(array $filters): array {
+    private static function get_filter_sql(array $filters, int $now): array {
         global $DB;
 
         $where = 'u.deleted = 0';
         $params = [];
-        foreach ($filters as $field => $value) {
-            if ($value === '') {
-                continue;
-            }
+        if ($filters['search'] !== '') {
+            $like = '%' . $DB->sql_like_escape(core_text::strtolower($filters['search'])) . '%';
+            $where .= ' AND (' . $DB->sql_like(
+                $DB->sql_lower($DB->sql_fullname('u.firstname', 'u.lastname')),
+                ':filterfullname',
+                false
+            ) . ' OR ' . $DB->sql_like($DB->sql_lower('u.username'), ':filterusername', false)
+                . ' OR ' . $DB->sql_like($DB->sql_lower('u.email'), ':filteremail', false)
+                . ' OR ' . $DB->sql_like($DB->sql_lower('u.idnumber'), ':filteridnumber', false) . ')';
+            $params['filterfullname'] = $like;
+            $params['filterusername'] = $like;
+            $params['filteremail'] = $like;
+            $params['filteridnumber'] = $like;
+        }
 
-            $param = 'filter' . $field;
-            $fieldsql = $field === 'fullname'
-                ? $DB->sql_fullname('u.firstname', 'u.lastname')
-                : 'u.' . $field;
-            $where .= ' AND ' . $DB->sql_like($DB->sql_lower($fieldsql), ':' . $param, false);
-            $params[$param] = '%' . $DB->sql_like_escape(core_text::strtolower($value)) . '%';
+        $status = $filters['delegationstatus'];
+        if ($status === 'none') {
+            $where .= ' AND NOT EXISTS (
+                SELECT 1
+                  FROM {local_delegateaccount} filterda
+                 WHERE filterda.realuserid = u.id
+            )';
+        } else if ($status !== '') {
+            $statuswhere = match ($status) {
+                manager::STATUS_ACTIVE => 'filterda.activekey = 0
+                    AND filterda.timestart <= :filterstatusstart
+                    AND (filterda.timeend = 0 OR filterda.timeend > :filterstatusend)',
+                manager::STATUS_SCHEDULED => 'filterda.activekey = 0
+                    AND filterda.timestart > :filterstatusscheduled',
+                manager::STATUS_EXPIRED => 'filterda.activekey = 0
+                    AND filterda.timeend > 0
+                    AND filterda.timeend <= :filterstatusexpired',
+                manager::STATUS_REVOKED => '(filterda.activekey <> 0 OR filterda.timerevoked > 0)',
+            };
+            $where .= ' AND EXISTS (
+                SELECT 1
+                  FROM {local_delegateaccount} filterda
+                 WHERE filterda.realuserid = u.id
+                   AND ' . $statuswhere . '
+            )';
+            if ($status === manager::STATUS_ACTIVE) {
+                $params['filterstatusstart'] = $now;
+                $params['filterstatusend'] = $now;
+            } else if ($status === manager::STATUS_SCHEDULED) {
+                $params['filterstatusscheduled'] = $now;
+            } else if ($status === manager::STATUS_EXPIRED) {
+                $params['filterstatusexpired'] = $now;
+            }
         }
 
         return [$where, $params];

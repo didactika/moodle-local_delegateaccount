@@ -72,6 +72,16 @@ class manager {
             }
         }
 
+        // Site administrators have every capability, including use, even when
+        // it is not represented by a role assignment in the capability query.
+        foreach (get_admins() as $administrator) {
+            if ((int)$administrator->suspended === 0) {
+                $authorisedusers[(int)$administrator->id] = fullname($administrator);
+            }
+        }
+
+        asort($authorisedusers, SORT_NATURAL | SORT_FLAG_CASE);
+
         return $authorisedusers;
     }
 
@@ -114,7 +124,11 @@ class manager {
             return false;
         }
 
-        return has_capability('local/delegateaccount:use', \context_system::instance(), $userid);
+        return is_siteadmin($userid) || has_capability(
+            'local/delegateaccount:use',
+            \context_system::instance(),
+            $userid
+        );
     }
 
     /**
@@ -510,15 +524,17 @@ class manager {
      * @param string $notificationmode Site, always, or never.
      */
     private static function validate_notification_mode(string $notificationmode): void {
-        if (!in_array(
-            $notificationmode,
-            [
-                self::NOTIFICATION_SITE,
-                self::NOTIFICATION_ALWAYS,
-                self::NOTIFICATION_NEVER,
-            ],
-            true
-        )) {
+        if (
+            !in_array(
+                $notificationmode,
+                [
+                    self::NOTIFICATION_SITE,
+                    self::NOTIFICATION_ALWAYS,
+                    self::NOTIFICATION_NEVER,
+                ],
+                true
+            )
+        ) {
             throw new \coding_exception('Invalid delegation notification mode.');
         }
     }

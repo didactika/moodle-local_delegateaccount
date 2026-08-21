@@ -23,22 +23,31 @@
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
-<div class="d-flex justify-content-end mb-3">
-    {{#cancreate}}
-        <a class="btn btn-primary mr-2" href="{{assignurl}}">{{addlabel}}</a>
-    {{/cancreate}}
-    <button class="btn btn-secondary" type="button" data-action="local_delegateaccount-toggle-manage-filters"
-        data-target="#local-delegateaccount-manage-filters" aria-controls="local-delegateaccount-manage-filters"
-        aria-expanded="{{#showfilters}}true{{/showfilters}}{{^showfilters}}false{{/showfilters}}">
-        {{#pix}}i/filter, core, {{filterlabel}}{{/pix}}
-        {{filterlabel}}
-    </button>
-</div>
-<div id="local-delegateaccount-manage-filters" class="collapse{{#showfilters}} show{{/showfilters}}">
-    <div class="card card-body mb-3">
-        {{{filterform}}}
-        {{#hasfilters}}
-            <div><a href="{{reseturl}}">{{resetlabel}}</a></div>
-        {{/hasfilters}}
+<div class="reportbuilder-wrapper">
+    <div class="d-flex justify-content-end mb-3">
+        {{#cancreate}}
+            <a class="btn btn-primary mr-2" href="{{assignurl}}">{{addlabel}}</a>
+        {{/cancreate}}
+        <div class="dropdown">
+            <button class="btn btn-secondary" type="button" id="local-delegateaccount-filters-button"
+                data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="{{#showfilters}}true{{/showfilters}}{{^showfilters}}false{{/showfilters}}">
+                {{#pix}}i/filter, core, {{filterlabel}}{{/pix}}
+                {{filterlabel}}
+            </button>
+            <div class="filters-dropdown dropdown-menu dropdown-menu-right moodle-has-zindex{{#showfilters}} show{{/showfilters}}"
+                aria-labelledby="local-delegateaccount-filters-button">
+                <div class="reportbuilder-filters-sidebar scroll-shadow">
+                    <div class="px-3 pt-3">
+                        <div class="reportbuilder-filters-wrapper">
+                            {{{filterform}}}
+                        </div>
+                        {{#hasfilters}}
+                            <div class="pb-3"><a href="{{reseturl}}">{{resetlabel}}</a></div>
+                        {{/hasfilters}}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
