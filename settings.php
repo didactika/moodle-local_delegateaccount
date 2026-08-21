@@ -20,6 +20,7 @@
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -159,7 +160,7 @@ if ($hassiteconfig || has_capability('local/delegateaccount:manage', context_sys
         'local_delegateaccount_manage',
         get_string('manage_accounts', 'local_delegateaccount'),
         new moodle_url('/local/delegateaccount/manage.php'),
-        'local/delegateaccount:manage'
+        'local/delegateaccount:view'
     );
     $ADMIN->add('accounts', $managepage);
 }

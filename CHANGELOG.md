@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Localised, configurable notification subjects and a professional Mustache
   default message, with optional rich replacement content; settings that are
   not meaningful under a never-notify policy are dynamically hidden.
+- A paginated, searchable and sortable authorised-user overview, plus an
+  individual delegation list with lifecycle dates, last delegated access and
+  safe POST-only revocation.
 
 ### Changed
 

@@ -25,6 +25,7 @@ require_once($CFG->libdir . '/formslib.php');
  *
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,6 +47,11 @@ class assign_form extends \moodleform {
         ]);
         $mform->addRule('realuserids', null, 'required', null, 'client');
         $mform->addHelpButton('realuserids', 'realusers', 'local_delegateaccount');
+
+        $realuserid = (int)($this->_customdata['realuserid'] ?? 0);
+        if ($realuserid > 0) {
+            $mform->setDefault('realuserids', [$realuserid]);
+        }
 
         $mform->addElement('autocomplete', 'delegateduserids', get_string('delegatedusers', 'local_delegateaccount'), $users, [
             'multiple' => true,

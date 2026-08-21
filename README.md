@@ -41,11 +41,16 @@ php admin/cli/upgrade.php --non-interactive
 ## Using delegated accounts
 
 1. Go to **Site administration > Accounts > Manage delegated accounts**.
-2. Select the people who may access another account.
-3. Select the target accounts they may access, then save the delegation.
-4. The authorised person can open the **Delegate account** entry in their user
+2. Search or sort the authorised-user overview, then open the relevant user's
+   delegation list.
+3. Review each target account's lifecycle, validity dates and latest recorded
+   use under delegated access. Revoke access from that list when it is no
+   longer required.
+4. Add one or more target accounts for the selected user, then save the
+   delegation.
+5. The authorised person can open the **Delegate account** entry in their user
    menu and choose an available target account.
-5. Moodle displays its normal session-switching state. Return to the original
+6. Moodle displays its normal session-switching state. Return to the original
    account before selecting another delegated account.
 
 Site administrators can configure the maximum number of current or scheduled
@@ -70,6 +75,12 @@ values for a later reactivation.
 the granular `:view`, `:create`, `:update`, `:revoke` and `:viewactivity`
 capabilities. A user needs `local/delegateaccount:use` and an active,
 explicit delegation record to access a target account.
+
+The overview requires `local/delegateaccount:view`. Creating, adding and
+revoking records additionally require their respective granular capability.
+The last-access value is derived from Moodle's standard log store only when
+the authorised user acted through the delegated session; it never represents
+the target account's ordinary sign-ins.
 
 
 ## Privacy and security

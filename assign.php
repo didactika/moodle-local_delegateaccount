@@ -19,6 +19,7 @@
  *
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,16 +31,21 @@ use local_delegateaccount\manager;
 use local_delegateaccount\form\assign_form;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-require_capability('local/delegateaccount:manage', context_system::instance());
+$context = context_system::instance();
+require_any_capability([
+    'local/delegateaccount:create',
+    'local/delegateaccount:manage',
+], $context);
 
-$url = new moodle_url('/local/delegateaccount/assign.php');
+$realuserid = optional_param('realuserid', 0, PARAM_INT);
+$url = new moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $realuserid]);
 $dashboardurl = new moodle_url('/local/delegateaccount/manage.php');
 
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('create_delegations', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('create_delegations', 'local_delegateaccount'));
 
-$mform = new assign_form();
+$mform = new assign_form($url, ['realuserid' => $realuserid]);
 
 if ($mform->is_cancelled()) {
     redirect($dashboardurl);
