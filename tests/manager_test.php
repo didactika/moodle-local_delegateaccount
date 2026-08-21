@@ -84,4 +84,68 @@ final class manager_test extends \advanced_testcase {
         $this->assertFalse(manager::delegation_exists((int) $sourceuser->id, (int) $firsttarget->id));
         $this->assertTrue(manager::delegation_exists((int) $sourceuser->id, (int) $secondtarget->id));
     }
+
+    /**
+     * Records the configurable lifecycle of a delegation and its audit events.
+     */
+    public function test_delegation_lifecycle_preserves_audit_evidence(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $targetuser = $generator->create_user();
+        $now = time();
+
+        $this->redirectEvents();
+        $created = manager::create_delegations(
+            [(int) $authoriseduser->id],
+            [(int) $targetuser->id],
+            [
+                'timestart' => $now + 60,
+                'timeend' => $now + 3600,
+                'notificationmode' => manager::NOTIFICATION_NEVER,
+            ]
+        );
+        $events = $this->redirectEvents();
+
+        $this->assertSame(1, $created);
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(\local_delegateaccount\event\delegation_created::class, $events[0]);
+        $this->assertSame((int) $USER->id, (int) $events[0]->userid);
+        $this->assertSame((int) $authoriseduser->id, (int) $events[0]->relateduserid);
+        $this->assertSame((int) $targetuser->id, (int) $events[0]->other['delegateduserid']);
+
+        $delegation = $DB->get_record('local_delegateaccount', [
+            'realuserid' => $authoriseduser->id,
+            'delegateduserid' => $targetuser->id,
+        ], '*', MUST_EXIST);
+        $this->assertSame(manager::STATUS_SCHEDULED, manager::get_delegation_status($delegation, $now));
+
+        $this->redirectEvents();
+        $this->assertTrue(manager::update_delegation(
+            (int) $delegation->id,
+            $now - 60,
+            0,
+            manager::NOTIFICATION_ALWAYS
+        ));
+        $events = $this->redirectEvents();
+
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(\local_delegateaccount\event\delegation_updated::class, $events[0]);
+        $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegation->id], '*', MUST_EXIST);
+        $this->assertSame(manager::STATUS_ACTIVE, manager::get_delegation_status($delegation, $now));
+
+        $this->redirectEvents();
+        manager::revoke_delegations([(int) $delegation->id]);
+        $events = $this->redirectEvents();
+
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(\local_delegateaccount\event\delegation_revoked::class, $events[0]);
+        $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegation->id], '*', MUST_EXIST);
+        $this->assertSame((int) $delegation->id, (int) $delegation->activekey);
+        $this->assertGreaterThan(0, (int) $delegation->timerevoked);
+        $this->assertFalse(manager::delegation_exists((int) $authoriseduser->id, (int) $targetuser->id));
+    }
 }

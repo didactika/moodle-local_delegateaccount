@@ -48,19 +48,23 @@ php admin/cli/upgrade.php --non-interactive
 5. Moodle displays its normal session-switching state. Return to the original
    account before selecting another delegated account.
 
-Only users with `local/delegateaccount:manage` can create or remove
-delegations. A user needs `local/delegateaccount:use` and an explicit
-delegation record to access a target account.
+`local/delegateaccount:manage` remains available while sites transition to
+the granular `:view`, `:create`, `:update`, `:revoke` and `:viewactivity`
+capabilities. A user needs `local/delegateaccount:use` and an active,
+explicit delegation record to access a target account.
 
 ## Privacy and security
 
-Delegations contain the source account, target account, administrator who
-created the record, and creation time. The plugin exposes this information to
-Moodle's privacy subsystem and restricts management to the system context.
+Delegations contain the source account, target account, the people who create,
+modify or revoke the record, its validity period, and the notification choice.
+The plugin exposes this information to Moodle's privacy subsystem and records
+each lifecycle change in Moodle's standard log store. Management remains
+restricted to the system context.
 
 Before granting access, confirm that the target account is appropriate for the
 service, support or administrative purpose. Remove the delegation when that
-purpose ends. Delegated access is not suitable for sharing personal
+purpose ends. Revocation preserves the audit record while immediately blocking
+new delegated sessions. Delegated access is not suitable for sharing personal
 credentials or for avoiding normal role and permission design.
 
 ## Languages
