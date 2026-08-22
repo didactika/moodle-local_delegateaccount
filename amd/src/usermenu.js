@@ -25,7 +25,7 @@
 import $ from 'jquery';
 
 const SOURCE = '[data-region="local-delegateaccount-usermenu-source"]';
-const FALLBACK_LINK = 'a[href*="/local/delegateaccount/accounts.php"]';
+const FALLBACK_LINK = 'a[href*="/local/delegateaccount/pages/accounts.php"]';
 
 /**
  * Adds the prepared submenu to Moodle's existing user-menu carousel.

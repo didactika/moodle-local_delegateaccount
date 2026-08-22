@@ -156,7 +156,7 @@ final class bulk_edit_dynamic_form extends dynamic_form {
      * @return moodle_url Delegation page URL.
      */
     protected function get_page_url_for_dynamic_submission(): moodle_url {
-        return new moodle_url('/local/delegateaccount/delegations.php', [
+        return new moodle_url('/local/delegateaccount/pages/delegations.php', [
             'realuserid' => $this->optional_param('realuserid', 0, PARAM_INT),
         ]);
     }

@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 use local_delegateaccount\manager;
@@ -50,11 +50,11 @@ $delegation = $DB->get_record('local_delegateaccount', [
 ], '*', MUST_EXIST);
 $realuser = $DB->get_record('user', ['id' => $delegation->realuserid, 'deleted' => 0], '*', MUST_EXIST);
 $delegateduser = $DB->get_record('user', ['id' => $delegation->delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
-$url = new moodle_url('/local/delegateaccount/delegation.php', [
+$url = new moodle_url('/local/delegateaccount/pages/delegation.php', [
     'realuserid' => $realuserid,
     'delegationid' => $delegationid,
 ]);
-$backurl = new moodle_url('/local/delegateaccount/delegations.php', ['realuserid' => $realuserid]);
+$backurl = new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid]);
 $title = get_string('delegation_details', 'local_delegateaccount');
 
 $notificationkey = 'delegationnotificationmode_' . $delegation->notificationmode;

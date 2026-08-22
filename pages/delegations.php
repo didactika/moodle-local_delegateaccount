@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -69,7 +69,7 @@ $urlparams = ['realuserid' => $realuserid, 'status' => $status];
 if ($search !== '') {
     $urlparams['search'] = $search;
 }
-$url = new moodle_url('/local/delegateaccount/delegations.php', $urlparams);
+$url = new moodle_url('/local/delegateaccount/pages/delegations.php', $urlparams);
 
 if (in_array($action, ['revoke', 'bulk_revoke'], true) && data_submitted()) {
     require_capability('local/delegateaccount:revoke', $context);
@@ -122,7 +122,7 @@ $PAGE->set_title(get_string('delegated_accounts_for', 'local_delegateaccount', f
 $PAGE->set_heading(get_string('delegated_accounts_for', 'local_delegateaccount', fullname($realuser)));
 $PAGE->requires->js_call_amd('local_delegateaccount/delegation_info', 'init');
 $PAGE->requires->js_call_amd('local_delegateaccount/delegation_revoke', 'init');
-$PAGE->requires->js_call_amd('local_delegateaccount/filter_toggle', 'init');
+$PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
 $PAGE->requires->js_call_amd('local_delegateaccount/management_modals', 'init');
 
 echo $OUTPUT->header();
@@ -154,14 +154,14 @@ foreach ($statuslabels as $statuskey => $statuslabel) {
     }
     $tabs[] = new tabobject(
         'delegation-status-' . $statuskey,
-        new moodle_url('/local/delegateaccount/delegations.php', $tabparams),
+        new moodle_url('/local/delegateaccount/pages/delegations.php', $tabparams),
         $statuslabel
     );
 }
 echo $OUTPUT->tabtree($tabs, 'delegation-status-' . $status);
 
 $filterform = new delegations_filter_form(
-    new moodle_url('/local/delegateaccount/delegations.php'),
+    new moodle_url('/local/delegateaccount/pages/delegations.php'),
     ['realuserid' => $realuserid, 'status' => $status]
 );
 $filterform->set_data(['search' => $search]);
@@ -176,7 +176,7 @@ $canupdate = $status !== manager::STATUS_REVOKED &&
         has_capability('local/delegateaccount:manage', $context)
     );
 echo $OUTPUT->render_from_template('local_delegateaccount/delegation/toolbar', [
-    'backurl' => (new moodle_url('/local/delegateaccount/manage.php'))->out(false),
+    'backurl' => (new moodle_url('/local/delegateaccount/pages/manage.php'))->out(false),
     'backlabel' => get_string('back'),
     'canrevoke' => $canrevoke,
     'canupdate' => $canupdate,
@@ -184,14 +184,13 @@ echo $OUTPUT->render_from_template('local_delegateaccount/delegation/toolbar', [
     'editselectedlabel' => get_string('edit_selected_delegations', 'local_delegateaccount'),
     'revokeselectedlabel' => get_string('revoke_selected', 'local_delegateaccount'),
     'cancreate' => $cancreate,
-    'assignurl' => (new moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $realuserid]))->out(false),
+    'assignurl' => (new moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $realuserid]))->out(false),
     'addlabel' => get_string('add_delegation', 'local_delegateaccount'),
     'filterid' => 'local-delegateaccount-delegations-filters',
     'filterlabel' => get_string('filters'),
     'filterform' => $filterformhtml,
     'hasfilters' => $search !== '',
-    'showfilters' => $search !== '',
-    'reseturl' => (new moodle_url('/local/delegateaccount/delegations.php', [
+    'reseturl' => (new moodle_url('/local/delegateaccount/pages/delegations.php', [
         'realuserid' => $realuserid,
         'status' => $status,
     ]))->out(false),

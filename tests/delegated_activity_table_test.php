@@ -92,4 +92,42 @@ final class delegated_activity_table_test extends \advanced_testcase {
 
         $this->assertSame($selectedday + DAYSECS, $table->sql->params['filterdateto']);
     }
+
+    /**
+     * Renders the standard report identity, context and network columns from a Moodle event.
+     */
+    public function test_standard_log_columns_render_from_event_data(): void {
+        $this->resetAfterTest();
+        $actor = $this->getDataGenerator()->create_user();
+        $account = $this->getDataGenerator()->create_user();
+        $event = \core\event\user_loggedin::create([
+            'objectid' => $account->id,
+            'relateduserid' => $account->id,
+            'other' => ['username' => $account->username],
+        ]);
+        $row = (object)$event->get_data();
+        $row->id = 42;
+        $row->realuserid = $actor->id;
+        $row->origin = 'web';
+        $row->ip = '127.0.0.1';
+        $row->other = serialize($row->other);
+
+        $delegation = (object) [
+            'realuserid' => $actor->id,
+            'delegateduserid' => $account->id,
+            'timestart' => 1,
+            'timeend' => 0,
+            'timerevoked' => 0,
+        ];
+        $table = new delegated_activity_table(new \moodle_url('/'), $delegation);
+
+        $this->assertStringContainsString(fullname($actor), $table->col_fullnameuser($row));
+        $this->assertStringContainsString(fullname($account), $table->col_relatedfullnameuser($row));
+        $this->assertStringContainsString(get_string('coresystem'), $table->col_context($row));
+        $this->assertSame(get_string('coresystem'), $table->col_component($row));
+        $this->assertSame('web', $table->col_origin($row));
+        $this->assertStringContainsString('127.0.0.1', $table->col_ip($row));
+        $this->assertNotSame('-', $table->col_eventname($row));
+        $this->assertNotSame('-', $table->col_description($row));
+    }
 }

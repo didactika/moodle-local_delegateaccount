@@ -104,10 +104,12 @@ represents the target account's ordinary sign-ins.
 Users with `local/delegateaccount:viewactivity` can open the related report
 from an individual delegation. It contains only standard-log events where the
 target account was used through that authorised user's selected delegation
-period. Repeated delegations between the same users remain separate, and the
+period. Its columns follow Moodle's standard log report: time, acting user,
+affected user, event context, component, event name, description, origin and IP
+address. Repeated delegations between the same users remain separate, and the
 report uses Moodle's standard 25-row pagination. Day-only date, component and
-action filters can narrow that immutable period but can never expose activity before
-access began or after it ended.
+action filters can narrow that immutable period but can never expose activity
+before access began or after it ended.
 
 ## Web services
 

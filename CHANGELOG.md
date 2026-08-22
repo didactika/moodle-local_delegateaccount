@@ -76,3 +76,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Compact form normalisation now targets Moodle's actual date-selector
   container, keeping optional end-date calendars on the control row at desktop
   widths; filter dropdowns also remove nested action margins and unused space.
+- Filter panels now use Moodle's native Bootstrap dropdown behaviour and a
+  compact responsive form surface instead of maintaining a parallel toggle
+  implementation.
+- The delegated activity report now mirrors Moodle's standard log report with
+  actor, affected user, context, component, event, description, origin and IP
+  columns while retaining delegation-period filtering and 25-row pagination.
+- Browser-facing controllers now live under `pages/`, matching the repository's
+  established Moodle plugin structure without duplicate root entry points.

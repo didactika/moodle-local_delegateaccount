@@ -188,7 +188,7 @@ final class assign_dynamic_form extends dynamic_form {
      * @return moodle_url Assignment page URL.
      */
     protected function get_page_url_for_dynamic_submission(): moodle_url {
-        return new moodle_url('/local/delegateaccount/assign.php', [
+        return new moodle_url('/local/delegateaccount/pages/assign.php', [
             'realuserid' => $this->optional_param('realuserid', 0, PARAM_INT),
         ]);
     }

@@ -319,7 +319,7 @@ class delegated_accounts_table extends \table_sql {
             'notificationmode' => $notificationmode,
         ]);
         $actions[] = $OUTPUT->render_from_template('local_delegateaccount/delegation/info_action', [
-            'url' => (new \moodle_url('/local/delegateaccount/delegation.php', [
+            'url' => (new \moodle_url('/local/delegateaccount/pages/delegation.php', [
                 'realuserid' => $this->realuserid,
                 'delegationid' => $row->id,
             ]))->out(false),
@@ -332,7 +332,7 @@ class delegated_accounts_table extends \table_sql {
             has_capability('local/delegateaccount:manage', $this->context);
         if (manager::get_delegation_status($row) !== manager::STATUS_REVOKED && $canupdate) {
             $actions[] = $OUTPUT->action_icon(
-                new \moodle_url('/local/delegateaccount/edit.php', [
+                new \moodle_url('/local/delegateaccount/pages/edit.php', [
                     'realuserid' => $this->realuserid,
                     'delegationid' => $row->id,
                 ]),
@@ -348,7 +348,7 @@ class delegated_accounts_table extends \table_sql {
 
         if (has_capability('local/delegateaccount:viewactivity', $this->context)) {
             $actions[] = $OUTPUT->action_icon(
-                new \moodle_url('/local/delegateaccount/activity.php', [
+                new \moodle_url('/local/delegateaccount/pages/activity.php', [
                     'realuserid' => $this->realuserid,
                     'delegationid' => $row->id,
                 ]),

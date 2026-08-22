@@ -62,7 +62,7 @@ final class extend_user_menu_test extends \advanced_testcase {
         $this->assertCount(1, $items);
         $this->assertSame('link', $items[0]->itemtype);
         $this->assertSame('i/switch', $items[0]->pix);
-        $this->assertStringContainsString('/local/delegateaccount/accounts.php', $items[0]->url->out(false));
+        $this->assertStringContainsString('/local/delegateaccount/pages/accounts.php', $items[0]->url->out(false));
         $this->assertStringNotContainsString('id=' . $futuretarget->id, $items[0]->url->out(false));
     }
 

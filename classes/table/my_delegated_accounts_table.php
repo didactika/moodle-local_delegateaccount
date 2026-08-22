@@ -119,7 +119,7 @@ final class my_delegated_accounts_table extends \table_sql {
         global $OUTPUT;
 
         return $OUTPUT->action_link(
-            new \moodle_url('/local/delegateaccount/loginas.php', [
+            new \moodle_url('/local/delegateaccount/pages/loginas.php', [
                 'id' => (int)$row->delegateduserid,
                 'sesskey' => sesskey(),
             ]),

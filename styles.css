@@ -14,10 +14,12 @@
     inset-inline-end: 0;
     width: 24rem;
     max-width: calc(100vw - 2rem);
-    max-height: calc(100vh - 8rem);
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    padding: 0;
     overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    overflow-y: visible;
 }
 
 .local-delegateaccount-filter-menu .local-delegateaccount-filter-content {
@@ -25,9 +27,15 @@
     min-width: 0;
 }
 
+.local-delegateaccount-filter-menu .mform,
+.local-delegateaccount-filter-menu .mform > div {
+    margin: 0;
+    min-height: 0;
+}
+
 .local-delegateaccount-filter-menu .fitem {
     display: block;
-    margin-bottom: .75rem;
+    margin-bottom: .625rem;
     margin-left: 0;
     margin-right: 0;
 }
@@ -57,15 +65,15 @@
 .local-delegateaccount-filter-menu .fitem.femptylabel {
     border-top: 0;
     margin-bottom: 0;
-    margin-top: .75rem;
+    margin-top: .5rem;
     padding-top: 0;
 }
 
 .local-delegateaccount-filter-menu .fitem.femptylabel::before {
     content: "";
     display: block;
-    width: calc(100% - 2rem);
-    margin: 0 auto 1rem;
+    width: calc(100% - 3rem);
+    margin: 0 auto .75rem;
     border-top: 1px solid var(--bs-border-color, #dee2e6);
 }
 
@@ -75,6 +83,10 @@
 
 .local-delegateaccount-filter-menu .fitem.femptylabel .fitem {
     margin-bottom: 0;
+}
+
+.local-delegateaccount-filter-menu .fitem.femptylabel .d-flex {
+    min-height: 0;
 }
 
 .local-delegateaccount-filter-menu .fitem input.form-control,
@@ -118,5 +130,8 @@
 @media (max-width: 575.98px) {
     .local-delegateaccount-filters .local-delegateaccount-filter-menu {
         width: calc(100vw - 2rem);
+        max-height: calc(100vh - 6rem);
+        overflow-y: auto;
+        overscroll-behavior: contain;
     }
 }

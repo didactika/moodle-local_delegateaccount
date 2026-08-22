@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 use local_delegateaccount\form\edit_form;
@@ -56,11 +56,11 @@ $delegateduser = $DB->get_record(
     '*',
     MUST_EXIST
 );
-$url = new moodle_url('/local/delegateaccount/edit.php', [
+$url = new moodle_url('/local/delegateaccount/pages/edit.php', [
     'realuserid' => $realuserid,
     'delegationid' => $delegationid,
 ]);
-$backurl = new moodle_url('/local/delegateaccount/delegations.php', ['realuserid' => $realuserid]);
+$backurl = new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid]);
 $title = get_string('edit_delegation', 'local_delegateaccount');
 $mform = new edit_form($url);
 

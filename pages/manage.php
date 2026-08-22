@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -73,12 +73,12 @@ if (
 $filterparams = array_filter($filters, static function (string $value): bool {
     return $value !== '';
 });
-$dashboardurl = new moodle_url('/local/delegateaccount/manage.php', ['tab' => $tab] + $filterparams);
+$dashboardurl = new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => $tab] + $filterparams);
 
 $PAGE->set_url($dashboardurl);
 $PAGE->set_title(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
-$PAGE->requires->js_call_amd('local_delegateaccount/filter_toggle', 'init');
+$PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
 $PAGE->requires->js_call_amd('local_delegateaccount/management_modals', 'init');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('manage_accounts', 'local_delegateaccount'));
@@ -89,19 +89,19 @@ echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
 $tabs = [
     new tabobject(
         'authorised',
-        new moodle_url('/local/delegateaccount/manage.php', ['tab' => 'authorised'] + $filterparams),
+        new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => 'authorised'] + $filterparams),
         get_string('manage_authorised_users', 'local_delegateaccount')
     ),
     new tabobject(
         'historical',
-        new moodle_url('/local/delegateaccount/manage.php', ['tab' => 'historical'] + $filterparams),
+        new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => 'historical'] + $filterparams),
         get_string('manage_historical_users', 'local_delegateaccount')
     ),
 ];
 echo $OUTPUT->tabtree($tabs, $tab);
 
 $filterform = new manage_filter_form(
-    new moodle_url('/local/delegateaccount/manage.php', ['tab' => $tab]),
+    new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => $tab]),
     ['tab' => $tab]
 );
 $filterform->set_data($filters);
@@ -112,14 +112,13 @@ $cancreate = $tab === 'authorised' && (has_capability('local/delegateaccount:cre
     has_capability('local/delegateaccount:manage', $context));
 echo $OUTPUT->render_from_template('local_delegateaccount/manage/actions', [
     'cancreate' => $cancreate,
-    'assignurl' => (new moodle_url('/local/delegateaccount/assign.php'))->out(false),
+    'assignurl' => (new moodle_url('/local/delegateaccount/pages/assign.php'))->out(false),
     'addlabel' => get_string('create_delegations', 'local_delegateaccount'),
     'filterlabel' => get_string('filters'),
     'filterid' => 'local-delegateaccount-manage-filters',
     'filterform' => $filterformhtml,
     'hasfilters' => !empty($filterparams),
-    'showfilters' => !empty($filterparams),
-    'reseturl' => (new moodle_url('/local/delegateaccount/manage.php', ['tab' => $tab]))->out(false),
+    'reseturl' => (new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => $tab]))->out(false),
     'resetlabel' => get_string('reset'),
 ]);
 

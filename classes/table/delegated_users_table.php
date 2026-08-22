@@ -144,7 +144,7 @@ class delegated_users_table extends \table_sql {
 
         $actions = [];
         $actions[] = $OUTPUT->action_icon(
-            new \moodle_url('/local/delegateaccount/delegations.php', ['realuserid' => $row->id]),
+            new \moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $row->id]),
             new \pix_icon('t/edit', get_string('manage_user_delegations', 'local_delegateaccount'), 'core')
         );
         if (
@@ -155,7 +155,7 @@ class delegated_users_table extends \table_sql {
             )
         ) {
             $actions[] = $OUTPUT->action_icon(
-                new \moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $row->id]),
+                new \moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $row->id]),
                 new \pix_icon('t/add', get_string('add_delegation', 'local_delegateaccount'), 'core'),
                 null,
                 [

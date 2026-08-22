@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -44,7 +44,7 @@ $realuser = $DB->get_record('user', ['id' => $realuserid, 'deleted' => 0], '*', 
 $delegateduser = $DB->get_record('user', ['id' => $delegation->delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
 
 $accessend = \local_delegateaccount\manager::get_delegation_access_end($delegation);
-$filterform = new activity_filter_form(new moodle_url('/local/delegateaccount/activity.php'), [
+$filterform = new activity_filter_form(new moodle_url('/local/delegateaccount/pages/activity.php'), [
     'realuserid' => $realuserid,
     'delegationid' => $delegationid,
     'periodstart' => (int)$delegation->timestart,
@@ -68,7 +68,7 @@ $title = get_string('delegated_activity_for', 'local_delegateaccount', (object)[
     'authoriseduser' => fullname($realuser),
     'delegateduser' => fullname($delegateduser),
 ]);
-$url = new moodle_url('/local/delegateaccount/activity.php', [
+$url = new moodle_url('/local/delegateaccount/pages/activity.php', [
     'realuserid' => $realuserid,
     'delegationid' => $delegationid,
 ]);
@@ -84,7 +84,7 @@ $periodend = $accessend > 0
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->requires->js_call_amd('local_delegateaccount/filter_toggle', 'init');
+$PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
@@ -104,7 +104,7 @@ $filterform->display();
 $filterformhtml = ob_get_clean();
 $hasfilters = array_filter($filters, static fn($value): bool => $value !== '' && $value !== 0) !== [];
 echo $OUTPUT->render_from_template('local_delegateaccount/report/activity_toolbar', [
-    'backurl' => (new moodle_url('/local/delegateaccount/delegations.php', [
+    'backurl' => (new moodle_url('/local/delegateaccount/pages/delegations.php', [
         'realuserid' => $realuserid,
     ]))->out(false),
     'backlabel' => get_string('back'),
@@ -112,8 +112,7 @@ echo $OUTPUT->render_from_template('local_delegateaccount/report/activity_toolba
     'filterlabel' => get_string('filters'),
     'filterform' => $filterformhtml,
     'hasfilters' => $hasfilters,
-    'showfilters' => $hasfilters,
-    'reseturl' => (new moodle_url('/local/delegateaccount/activity.php', [
+    'reseturl' => (new moodle_url('/local/delegateaccount/pages/activity.php', [
         'realuserid' => $realuserid,
         'delegationid' => $delegationid,
     ]))->out(false),

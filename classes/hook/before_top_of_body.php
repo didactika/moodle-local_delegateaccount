@@ -60,7 +60,7 @@ final class before_top_of_body {
         }
         $items = array_map(static function (\stdClass $account): array {
             return [
-                'url' => (new \moodle_url('/local/delegateaccount/loginas.php', [
+                'url' => (new \moodle_url('/local/delegateaccount/pages/loginas.php', [
                     'id' => (int)$account->delegateduserid,
                     'sesskey' => sesskey(),
                 ]))->out(false),
@@ -77,7 +77,7 @@ final class before_top_of_body {
             'title' => get_string('delegated_accounts_menu', 'local_delegateaccount'),
             'items' => $items,
             'hasmore' => $hasmore,
-            'viewallurl' => (new \moodle_url('/local/delegateaccount/accounts.php'))->out(false),
+            'viewallurl' => (new \moodle_url('/local/delegateaccount/pages/accounts.php'))->out(false),
             'viewalllabel' => get_string('view_all_delegated_accounts', 'local_delegateaccount'),
         ]);
         $hook->add_html('<template data-region="local-delegateaccount-usermenu-source">' . $html . '</template>');

@@ -29,20 +29,19 @@
         "filterlabel": "Filters",
         "filterform": "<form><label for=\"example-search\">Search</label><input id=\"example-search\" type=\"text\"></form>",
         "hasfilters": true,
-        "showfilters": false,
-        "reseturl": "https://moodle.example/local/delegateaccount/manage.php",
+        "reseturl": "https://moodle.example/local/delegateaccount/pages/manage.php",
         "resetlabel": "Reset"
     }
 }}
 <div class="dropdown local-delegateaccount-filters" data-region="local-delegateaccount-filters">
-    <button class="btn btn-secondary" type="button" id="{{filterid}}"
-        data-action="local-delegateaccount-toggle-filters" aria-haspopup="true"
-        aria-expanded="{{#showfilters}}true{{/showfilters}}{{^showfilters}}false{{/showfilters}}">
+    <button class="btn {{#hasfilters}}btn-primary{{/hasfilters}}{{^hasfilters}}btn-secondary{{/hasfilters}} dropdown-toggle"
+        type="button" id="{{filterid}}" data-toggle="dropdown" data-bs-toggle="dropdown"
+        data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
         {{#pix}}i/filter, core, {{filterlabel}}{{/pix}}
         {{filterlabel}}
     </button>
-    <div class="filters-dropdown dropdown-menu dropdown-menu-right dropdown-menu-end moodle-has-zindex
-            local-delegateaccount-filter-menu{{#showfilters}} show{{/showfilters}}"
+    <div class="dropdown-menu dropdown-menu-right dropdown-menu-end moodle-has-zindex
+            local-delegateaccount-filter-menu"
         data-region="local-delegateaccount-filter-menu" aria-labelledby="{{filterid}}">
         <div class="local-delegateaccount-filter-content p-3">
             {{{filterform}}}

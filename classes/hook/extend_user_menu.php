@@ -49,14 +49,14 @@ final class extend_user_menu {
             if (($navitem->itemtype ?? '') !== 'link' || !($navitem->url ?? null) instanceof \moodle_url) {
                 continue;
             }
-            if (str_contains($navitem->url->out(false), '/local/delegateaccount/accounts.php')) {
+            if (str_contains($navitem->url->out(false), '/local/delegateaccount/pages/accounts.php')) {
                 return;
             }
         }
 
         $hook->add_navitem((object) [
             'itemtype' => 'link',
-            'url' => new \moodle_url('/local/delegateaccount/accounts.php'),
+            'url' => new \moodle_url('/local/delegateaccount/pages/accounts.php'),
             'title' => get_string('delegated_accounts_menu', 'local_delegateaccount'),
             'pix' => 'i/switch',
         ]);

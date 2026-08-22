@@ -93,7 +93,7 @@ class notification_manager {
             ]);
             $message->smallmessage = shorten_text($messagebody, 255);
             $message->notification = 1;
-            $message->contexturl = (new \moodle_url('/local/delegateaccount/manage.php'))->out(false);
+            $message->contexturl = (new \moodle_url('/local/delegateaccount/pages/manage.php'))->out(false);
             $message->contexturlname = get_string('manage_accounts', 'local_delegateaccount');
 
             try {

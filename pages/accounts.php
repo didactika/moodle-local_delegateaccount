@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 use local_delegateaccount\table\my_delegated_accounts_table;
@@ -31,7 +31,7 @@ use local_delegateaccount\table\my_delegated_accounts_table;
 require_login();
 require_capability('local/delegateaccount:use', context_system::instance());
 
-$url = new moodle_url('/local/delegateaccount/accounts.php');
+$url = new moodle_url('/local/delegateaccount/pages/accounts.php');
 $title = get_string('my_delegated_accounts', 'local_delegateaccount');
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url($url);

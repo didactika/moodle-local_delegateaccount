@@ -59,6 +59,6 @@ final class delegation_updated extends \core\event\base {
      * @return \moodle_url Event URL.
      */
     public function get_url(): \moodle_url {
-        return new \moodle_url('/local/delegateaccount/manage.php');
+        return new \moodle_url('/local/delegateaccount/pages/manage.php');
     }
 }

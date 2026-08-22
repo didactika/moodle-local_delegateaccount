@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 use local_delegateaccount\manager;
@@ -48,10 +48,10 @@ $realuserid = optional_param('realuserid', 0, PARAM_INT);
 if ($realuserid > 0 && !manager::can_use_delegated_accounts($realuserid)) {
     throw new moodle_exception('error_unauthorised_realuser', 'local_delegateaccount');
 }
-$url = new moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $realuserid]);
-$dashboardurl = new moodle_url('/local/delegateaccount/manage.php');
+$url = new moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $realuserid]);
+$dashboardurl = new moodle_url('/local/delegateaccount/pages/manage.php');
 $returnurl = $realuserid > 0
-    ? new moodle_url('/local/delegateaccount/delegations.php', ['realuserid' => $realuserid])
+    ? new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid])
     : $dashboardurl;
 
 $PAGE->set_url($url);
