@@ -25,6 +25,8 @@
 
 namespace local_delegateaccount\table;
 
+use local_delegateaccount\manager;
+
 /**
  * Renders the delegated-account user overview using Moodle's table API.
  *
@@ -45,7 +47,7 @@ class delegated_users_table extends \table_sql {
      *
      * @param \moodle_url $baseurl URL retaining table and filter state.
      * @param int[] $userids Users included by the selected management tab.
-     * @param array<string, string> $filters User filters.
+     * @param array $filters User filters indexed by field name.
      * @param bool $allowsdelegationcreation Whether this tab contains authorised users.
      * @param \context_system $context System context for capabilities.
      */
@@ -163,9 +165,9 @@ class delegated_users_table extends \table_sql {
     /**
      * Builds portable SQL for the active delegated-account filters.
      *
-     * @param array<string, string> $filters User filters.
+     * @param array $filters User filters indexed by field name.
      * @param int $now Current Unix timestamp.
-     * @return array{0: string, 1: array<string, string>} SQL and named parameters.
+     * @return array SQL clause followed by its named parameters.
      */
     private static function get_filter_sql(array $filters, int $now): array {
         global $DB;
@@ -173,14 +175,14 @@ class delegated_users_table extends \table_sql {
         $where = 'u.deleted = 0';
         $params = [];
         if ($filters['search'] !== '') {
-            $like = '%' . $DB->sql_like_escape(core_text::strtolower($filters['search'])) . '%';
+            $like = '%' . $DB->sql_like_escape($filters['search']) . '%';
             $where .= ' AND (' . $DB->sql_like(
-                $DB->sql_lower($DB->sql_fullname('u.firstname', 'u.lastname')),
+                $DB->sql_fullname('u.firstname', 'u.lastname'),
                 ':filterfullname',
                 false
-            ) . ' OR ' . $DB->sql_like($DB->sql_lower('u.username'), ':filterusername', false)
-                . ' OR ' . $DB->sql_like($DB->sql_lower('u.email'), ':filteremail', false)
-                . ' OR ' . $DB->sql_like($DB->sql_lower('u.idnumber'), ':filteridnumber', false) . ')';
+            ) . ' OR ' . $DB->sql_like('u.username', ':filterusername', false)
+                . ' OR ' . $DB->sql_like('u.email', ':filteremail', false)
+                . ' OR ' . $DB->sql_like('u.idnumber', ':filteridnumber', false) . ')';
             $params['filterfullname'] = $like;
             $params['filterusername'] = $like;
             $params['filteremail'] = $like;

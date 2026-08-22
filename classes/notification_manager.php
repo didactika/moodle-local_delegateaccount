@@ -243,7 +243,7 @@ class notification_manager {
      * Replaces the supported variables in administrator-supplied notification content.
      *
      * @param string $content Trusted administrator-supplied HTML content.
-     * @param array<string, string> $values Escaped replacement values.
+     * @param array $values Escaped replacement values indexed by placeholder name.
      * @return string Content with placeholders replaced.
      */
     private static function replace_placeholders(string $content, array $values): string {

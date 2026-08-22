@@ -23,14 +23,15 @@
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
-<div class="dropdown" data-region="local-delegateaccount-filters">
+<div class="dropdown local-delegateaccount-filters" data-region="local-delegateaccount-filters">
     <button class="btn btn-secondary" type="button" id="{{filterid}}"
         data-action="local-delegateaccount-toggle-filters" aria-haspopup="true"
         aria-expanded="{{#showfilters}}true{{/showfilters}}{{^showfilters}}false{{/showfilters}}">
         {{#pix}}i/filter, core, {{filterlabel}}{{/pix}}
         {{filterlabel}}
     </button>
-    <div class="filters-dropdown dropdown-menu dropdown-menu-right moodle-has-zindex{{#showfilters}} show{{/showfilters}}"
+    <div class="filters-dropdown dropdown-menu dropdown-menu-right dropdown-menu-end moodle-has-zindex
+            local-delegateaccount-filter-menu{{#showfilters}} show{{/showfilters}}"
         data-region="local-delegateaccount-filter-menu" aria-labelledby="{{filterid}}">
         <div class="reportbuilder-filters-sidebar scroll-shadow">
             <div class="px-3 pt-3">
