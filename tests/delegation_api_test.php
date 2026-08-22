@@ -17,7 +17,13 @@
 namespace local_delegateaccount;
 
 use core_external\external_api;
-use local_delegateaccount\external\delegation_api;
+use local_delegateaccount\external\create_delegation;
+use local_delegateaccount\external\create_delegations;
+use local_delegateaccount\external\get_delegation_activity;
+use local_delegateaccount\external\get_delegations;
+use local_delegateaccount\external\get_user_delegations;
+use local_delegateaccount\external\revoke_delegations;
+use local_delegateaccount\external\update_delegations;
 
 /**
  * Tests the granular delegated-account external API.
@@ -27,9 +33,44 @@ use local_delegateaccount\external\delegation_api;
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \local_delegateaccount\external\delegation_api
+ * @covers     \local_delegateaccount\external\create_delegation
+ * @covers     \local_delegateaccount\external\create_delegations
+ * @covers     \local_delegateaccount\external\get_delegation_activity
+ * @covers     \local_delegateaccount\external\get_delegations
+ * @covers     \local_delegateaccount\external\get_user_delegations
+ * @covers     \local_delegateaccount\external\revoke_delegations
+ * @covers     \local_delegateaccount\external\update_delegations
  */
 final class delegation_api_test extends \advanced_testcase {
+    /**
+     * Verifies that every public function is backed by its own external class.
+     */
+    public function test_service_registry_uses_one_class_per_function(): void {
+        $definitions = (static function (): array {
+            require(__DIR__ . '/../db/services.php');
+
+            return $functions;
+        })();
+        $expectedclasses = [
+            'local_delegateaccount_get_delegations' => get_delegations::class,
+            'local_delegateaccount_get_user_delegations' => get_user_delegations::class,
+            'local_delegateaccount_create_delegation' => create_delegation::class,
+            'local_delegateaccount_create_delegations' => create_delegations::class,
+            'local_delegateaccount_update_delegations' => update_delegations::class,
+            'local_delegateaccount_revoke_delegations' => revoke_delegations::class,
+            'local_delegateaccount_get_delegation_activity' => get_delegation_activity::class,
+        ];
+
+        $this->assertSame(array_keys($expectedclasses), array_keys($definitions));
+        foreach ($expectedclasses as $functionname => $classname) {
+            $this->assertSame($classname, $definitions[$functionname]['classname']);
+            $this->assertSame('execute', $definitions[$functionname]['methodname']);
+            $this->assertTrue(method_exists($classname, 'execute_parameters'));
+            $this->assertTrue(method_exists($classname, 'execute'));
+            $this->assertTrue(method_exists($classname, 'execute_returns'));
+        }
+    }
+
     /**
      * Creates one delegation through the scalar external contract idempotently.
      */
@@ -45,22 +86,22 @@ final class delegation_api_test extends \advanced_testcase {
         $this->grant_capability($authoriseduser, 'local/delegateaccount:use');
         $start = time();
 
-        $first = delegation_api::create_delegation(
+        $first = create_delegation::execute(
             (int)$authoriseduser->id,
             (int)$targetuser->id,
             $start,
             0,
             manager::NOTIFICATION_NEVER
         );
-        $first = external_api::clean_returnvalue(delegation_api::create_delegation_returns(), $first);
-        $second = delegation_api::create_delegation(
+        $first = external_api::clean_returnvalue(create_delegation::execute_returns(), $first);
+        $second = create_delegation::execute(
             (int)$authoriseduser->id,
             (int)$targetuser->id,
             $start,
             0,
             manager::NOTIFICATION_NEVER
         );
-        $second = external_api::clean_returnvalue(delegation_api::create_delegation_returns(), $second);
+        $second = external_api::clean_returnvalue(create_delegation::execute_returns(), $second);
 
         $this->assertSame('created', $first['outcome']);
         $this->assertGreaterThan(0, $first['delegationid']);
@@ -84,7 +125,7 @@ final class delegation_api_test extends \advanced_testcase {
         $this->setUser($integrationuser);
 
         $this->expectException(\required_capability_exception::class);
-        delegation_api::create_delegation(
+        create_delegation::execute(
             (int)$authoriseduser->id,
             (int)$targetuser->id,
             time()
@@ -104,35 +145,35 @@ final class delegation_api_test extends \advanced_testcase {
         $this->grant_capability($authoriseduser, 'local/delegateaccount:use');
         $start = time();
 
-        $first = delegation_api::create_delegations(
+        $first = create_delegations::execute(
             [(int)$authoriseduser->id],
             [(int)$targetuser->id],
             $start,
             0,
             manager::NOTIFICATION_NEVER
         );
-        $first = external_api::clean_returnvalue(delegation_api::create_delegations_returns(), $first);
-        $second = delegation_api::create_delegations(
+        $first = external_api::clean_returnvalue(create_delegations::execute_returns(), $first);
+        $second = create_delegations::execute(
             [(int)$authoriseduser->id],
             [(int)$targetuser->id],
             $start,
             0,
             manager::NOTIFICATION_NEVER
         );
-        $second = external_api::clean_returnvalue(delegation_api::create_delegations_returns(), $second);
+        $second = external_api::clean_returnvalue(create_delegations::execute_returns(), $second);
 
         $this->assertSame(1, $first['createdcount']);
         $this->assertSame('created', $first['results'][0]['outcome']);
         $this->assertSame(0, $second['createdcount']);
         $this->assertSame('unchanged', $second['results'][0]['outcome']);
 
-        $page = delegation_api::get_user_delegations(
+        $page = get_user_delegations::execute(
             (int)$authoriseduser->id,
             0,
             25,
             manager::STATUS_ACTIVE
         );
-        $page = external_api::clean_returnvalue(delegation_api::get_user_delegations_returns(), $page);
+        $page = external_api::clean_returnvalue(get_user_delegations::execute_returns(), $page);
         $this->assertSame(1, $page['total']);
         $this->assertSame((int)$targetuser->id, $page['delegations'][0]['delegateduserid']);
         $this->assertSame(manager::STATUS_ACTIVE, $page['delegations'][0]['status']);
@@ -148,12 +189,12 @@ final class delegation_api_test extends \advanced_testcase {
         $this->grant_capability($integrationuser, 'local/delegateaccount:view');
         $this->setUser($integrationuser);
 
-        $page = delegation_api::get_delegations();
+        $page = get_delegations::execute();
         $this->assertArrayHasKey('total', $page);
         $this->assertArrayHasKey('delegations', $page);
 
         $this->expectException(\required_capability_exception::class);
-        delegation_api::revoke_delegations([1], true);
+        revoke_delegations::execute([1], true);
     }
 
     /**
@@ -164,7 +205,7 @@ final class delegation_api_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $this->expectException(\invalid_parameter_exception::class);
-        delegation_api::revoke_delegations([1], false);
+        revoke_delegations::execute([1], false);
     }
 
     /**
@@ -182,7 +223,7 @@ final class delegation_api_test extends \advanced_testcase {
         $this->grant_capability($authoriseduser, 'local/delegateaccount:use');
         $start = time() - HOURSECS;
 
-        $created = delegation_api::create_delegations(
+        $created = create_delegations::execute(
             [(int)$authoriseduser->id],
             [(int)$targetuser->id],
             $start,
@@ -190,22 +231,22 @@ final class delegation_api_test extends \advanced_testcase {
             manager::NOTIFICATION_NEVER
         );
         $delegationid = (int)$created['results'][0]['delegationid'];
-        $updated = delegation_api::update_delegations(
+        $updated = update_delegations::execute(
             [$delegationid],
             (int)$authoriseduser->id,
             $start,
             time() + DAYSECS,
             manager::NOTIFICATION_NEVER
         );
-        $updated = external_api::clean_returnvalue(delegation_api::update_delegations_returns(), $updated);
+        $updated = external_api::clean_returnvalue(update_delegations::execute_returns(), $updated);
 
         $this->assertSame(1, $updated['updatedcount']);
         $this->assertGreaterThan(0, (int)$DB->get_field('local_delegateaccount', 'timeend', [
             'id' => $delegationid,
         ]));
 
-        $revoked = delegation_api::revoke_delegations([$delegationid], true);
-        $revoked = external_api::clean_returnvalue(delegation_api::revoke_delegations_returns(), $revoked);
+        $revoked = revoke_delegations::execute([$delegationid], true);
+        $revoked = external_api::clean_returnvalue(revoke_delegations::execute_returns(), $revoked);
         $this->assertSame(1, $revoked['revokedcount']);
         $this->assertGreaterThan(0, (int)$DB->get_field('local_delegateaccount', 'timerevoked', [
             'id' => $delegationid,
@@ -220,7 +261,7 @@ final class delegation_api_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $this->expectException(\invalid_parameter_exception::class);
-        delegation_api::get_delegations(0, 101);
+        get_delegations::execute(0, 101);
     }
 
     /**
@@ -238,7 +279,7 @@ final class delegation_api_test extends \advanced_testcase {
         $this->grant_capability($authoriseduser, 'local/delegateaccount:use');
 
         $this->expectException(\moodle_exception::class);
-        delegation_api::create_delegations(
+        create_delegations::execute(
             [(int)$authoriseduser->id],
             [(int)$firsttarget->id, (int)$secondtarget->id],
             time(),

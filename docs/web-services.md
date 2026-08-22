@@ -23,6 +23,11 @@ these external functions. This prevents an integration intended only for
 inventory from gaining mutation access and keeps service permissions aligned
 with the granular management interface.
 
+Each registered function maps to one dedicated class under
+`classes/external/`. The shared `delegation_service` base is internal, is not
+registered as a callable function and contains only common validation,
+creation-result and serialisation helpers.
+
 ## Safety and limits
 
 - Pages are zero-based and accept between 1 and 100 records.

@@ -88,3 +88,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   columns while retaining delegation-period filtering and 25-row pagination.
 - Browser-facing controllers now live under `pages/`, matching the repository's
   established Moodle plugin structure without duplicate root entry points.
+- Every registered external function now has its own autoloadable class and
+  `execute` contract; only unregistered validation and serialisation helpers
+  remain in a shared internal base.
