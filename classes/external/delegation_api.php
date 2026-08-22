@@ -154,6 +154,71 @@ final class delegation_api extends external_api {
     }
 
     /**
+     * Describes single delegation creation parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function create_delegation_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'realuserid' => new external_value(PARAM_INT, 'Authorised user identifier.'),
+            'delegateduserid' => new external_value(PARAM_INT, 'Target account identifier.'),
+            'timestart' => new external_value(PARAM_INT, 'Access start timestamp.'),
+            'timeend' => new external_value(PARAM_INT, 'Access end timestamp, or zero.', VALUE_DEFAULT, 0),
+            'notificationmode' => new external_value(
+                PARAM_ALPHA,
+                'Site, always, or never.',
+                VALUE_DEFAULT,
+                manager::NOTIFICATION_SITE
+            ),
+        ]);
+    }
+
+    /**
+     * Creates one idempotent delegation.
+     *
+     * @param int $realuserid Authorised user identifier.
+     * @param int $delegateduserid Target account identifier.
+     * @param int $timestart Access start timestamp.
+     * @param int $timeend Access end timestamp, or zero.
+     * @param string $notificationmode Notification decision.
+     * @return array Per-pair creation outcome.
+     */
+    public static function create_delegation(
+        int $realuserid,
+        int $delegateduserid,
+        int $timestart,
+        int $timeend = 0,
+        string $notificationmode = manager::NOTIFICATION_SITE
+    ): array {
+        $params = self::validate_parameters(self::create_delegation_parameters(), [
+            'realuserid' => $realuserid,
+            'delegateduserid' => $delegateduserid,
+            'timestart' => $timestart,
+            'timeend' => $timeend,
+            'notificationmode' => $notificationmode,
+        ]);
+        self::require_granular_capability('local/delegateaccount:create');
+        $result = self::create_delegation_matrix(
+            [$params['realuserid']],
+            [$params['delegateduserid']],
+            $params['timestart'],
+            $params['timeend'],
+            $params['notificationmode']
+        );
+
+        return $result['results'][0];
+    }
+
+    /**
+     * Describes a single delegation creation result.
+     *
+     * @return external_single_structure
+     */
+    public static function create_delegation_returns(): external_single_structure {
+        return self::delegation_creation_result_structure();
+    }
+
+    /**
      * Describes bulk delegation creation parameters.
      *
      * @return external_function_parameters
@@ -202,39 +267,14 @@ final class delegation_api extends external_api {
             'notificationmode' => $notificationmode,
         ]);
         self::require_granular_capability('local/delegateaccount:create');
-        $realuserids = array_values(array_unique(array_map('intval', $params['realuserids'])));
-        $delegateduserids = array_values(array_unique(array_map('intval', $params['delegateduserids'])));
-        $existing = [];
-        foreach ($realuserids as $realuserid) {
-            foreach ($delegateduserids as $delegateduserid) {
-                $existing[$realuserid . ':' . $delegateduserid] = manager::get_current_delegation_id(
-                    $realuserid,
-                    $delegateduserid
-                );
-            }
-        }
-        $createdcount = manager::create_delegations($realuserids, $delegateduserids, [
-            'timestart' => $params['timestart'],
-            'timeend' => $params['timeend'],
-            'notificationmode' => $params['notificationmode'],
-        ]);
-        $results = [];
-        foreach ($realuserids as $realuserid) {
-            foreach ($delegateduserids as $delegateduserid) {
-                $key = $realuserid . ':' . $delegateduserid;
-                $delegationid = manager::get_current_delegation_id($realuserid, $delegateduserid);
-                $results[] = [
-                    'realuserid' => $realuserid,
-                    'delegateduserid' => $delegateduserid,
-                    'delegationid' => $delegationid,
-                    'outcome' => $existing[$key] > 0
-                        ? 'unchanged'
-                        : ($delegationid > 0 ? 'created' : 'skipped'),
-                ];
-            }
-        }
 
-        return ['createdcount' => $createdcount, 'results' => $results];
+        return self::create_delegation_matrix(
+            $params['realuserids'],
+            $params['delegateduserids'],
+            $params['timestart'],
+            $params['timeend'],
+            $params['notificationmode']
+        );
     }
 
     /**
@@ -245,12 +285,7 @@ final class delegation_api extends external_api {
     public static function create_delegations_returns(): external_single_structure {
         return new external_single_structure([
             'createdcount' => new external_value(PARAM_INT, 'Number of newly created delegations.'),
-            'results' => new external_multiple_structure(new external_single_structure([
-                'realuserid' => new external_value(PARAM_INT, 'Authorised user identifier.'),
-                'delegateduserid' => new external_value(PARAM_INT, 'Target account identifier.'),
-                'delegationid' => new external_value(PARAM_INT, 'Current delegation identifier, or zero.'),
-                'outcome' => new external_value(PARAM_ALPHA, 'Created, unchanged, or skipped.'),
-            ])),
+            'results' => new external_multiple_structure(self::delegation_creation_result_structure()),
         ]);
     }
 
@@ -462,6 +497,72 @@ final class delegation_api extends external_api {
                 'contextid' => new external_value(PARAM_INT, 'Event context identifier.'),
                 'contextlevel' => new external_value(PARAM_INT, 'Event context level.'),
             ])),
+        ]);
+    }
+
+    /**
+     * Creates a validated matrix and reports one stable result for every requested pair.
+     *
+     * @param array $realuserids Authorised user identifiers.
+     * @param array $delegateduserids Target account identifiers.
+     * @param int $timestart Access start timestamp.
+     * @param int $timeend Access end timestamp, or zero.
+     * @param string $notificationmode Notification decision.
+     * @return array Per-pair outcomes and created count.
+     */
+    private static function create_delegation_matrix(
+        array $realuserids,
+        array $delegateduserids,
+        int $timestart,
+        int $timeend,
+        string $notificationmode
+    ): array {
+        $realuserids = array_values(array_unique(array_map('intval', $realuserids)));
+        $delegateduserids = array_values(array_unique(array_map('intval', $delegateduserids)));
+        $existing = [];
+        foreach ($realuserids as $realuserid) {
+            foreach ($delegateduserids as $delegateduserid) {
+                $existing[$realuserid . ':' . $delegateduserid] = manager::get_current_delegation_id(
+                    $realuserid,
+                    $delegateduserid
+                );
+            }
+        }
+        $createdcount = manager::create_delegations($realuserids, $delegateduserids, [
+            'timestart' => $timestart,
+            'timeend' => $timeend,
+            'notificationmode' => $notificationmode,
+        ]);
+        $results = [];
+        foreach ($realuserids as $realuserid) {
+            foreach ($delegateduserids as $delegateduserid) {
+                $key = $realuserid . ':' . $delegateduserid;
+                $delegationid = manager::get_current_delegation_id($realuserid, $delegateduserid);
+                $results[] = [
+                    'realuserid' => $realuserid,
+                    'delegateduserid' => $delegateduserid,
+                    'delegationid' => $delegationid,
+                    'outcome' => $existing[$key] > 0
+                        ? 'unchanged'
+                        : ($delegationid > 0 ? 'created' : 'skipped'),
+                ];
+            }
+        }
+
+        return ['createdcount' => $createdcount, 'results' => $results];
+    }
+
+    /**
+     * Returns the shared external representation of one creation outcome.
+     *
+     * @return external_single_structure
+     */
+    private static function delegation_creation_result_structure(): external_single_structure {
+        return new external_single_structure([
+            'realuserid' => new external_value(PARAM_INT, 'Authorised user identifier.'),
+            'delegateduserid' => new external_value(PARAM_INT, 'Target account identifier.'),
+            'delegationid' => new external_value(PARAM_INT, 'Current delegation identifier, or zero.'),
+            'outcome' => new external_value(PARAM_ALPHA, 'Created, unchanged, or skipped.'),
         ]);
     }
 

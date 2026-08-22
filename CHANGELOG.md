@@ -41,8 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moodle core modal forms for multi-user/multi-account assignment and common
   lifecycle updates across selected active delegations, with the existing
   page preserved as a no-JavaScript fallback.
-- A disabled, restricted web service with six independently authorised
-  inventory, creation, update, revocation and activity functions.
+- A disabled, restricted web service with seven independently authorised
+  inventory, singular and bulk creation, update, revocation and activity
+  functions.
 
 ### Changed
 

@@ -40,6 +40,13 @@ $functions = [
         'type' => 'read',
         'capabilities' => 'local/delegateaccount:view',
     ],
+    'local_delegateaccount_create_delegation' => [
+        'classname' => 'local_delegateaccount\external\delegation_api',
+        'methodname' => 'create_delegation',
+        'description' => 'Creates one idempotent delegated-account relationship.',
+        'type' => 'write',
+        'capabilities' => 'local/delegateaccount:create',
+    ],
     'local_delegateaccount_create_delegations' => [
         'classname' => 'local_delegateaccount\external\delegation_api',
         'methodname' => 'create_delegations',

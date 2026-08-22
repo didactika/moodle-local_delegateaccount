@@ -12,6 +12,7 @@ for that integration.
 | --- | --- | --- |
 | `local_delegateaccount_get_delegations` | `local/delegateaccount:view` | Read a stable page of delegation records. |
 | `local_delegateaccount_get_user_delegations` | `local/delegateaccount:view` | Read one authorised user's delegation history. |
+| `local_delegateaccount_create_delegation` | `local/delegateaccount:create` | Create one delegation idempotently using scalar identifiers. |
 | `local_delegateaccount_create_delegations` | `local/delegateaccount:create` | Create a user-by-target matrix idempotently. |
 | `local_delegateaccount_update_delegations` | `local/delegateaccount:update` | Apply one validity period and notification decision to selected records. |
 | `local_delegateaccount_revoke_delegations` | `local/delegateaccount:revoke` | Logically revoke selected records after explicit confirmation. |
@@ -29,6 +30,9 @@ with the granular management interface.
   target accounts. The site's **Maximum records per bulk operation** and
   **Maximum delegated accounts per user** settings are enforced before any
   row is created.
+- Singular and batch creation share the same domain implementation. Use the
+  singular function for one exact user-target pair and the batch function when
+  every supplied user should receive every supplied target account.
 - An existing non-revoked user-target pair returns `unchanged`; the operation
   does not create a duplicate.
 - The same user cannot be both the authorised user and target account.
@@ -48,15 +52,34 @@ These examples show parameter shapes only. Replace `https://moodle.example`
 with the site URL and provide the token through a secret manager or protected
 environment variable; never commit a real token.
 
-Create a currently valid delegation without sending a notification:
+Create one currently valid delegation without sending a notification:
+
+```text
+POST https://moodle.example/webservice/rest/server.php
+wstoken=<SECRET>&moodlewsrestformat=json
+&wsfunction=local_delegateaccount_create_delegation
+&realuserid=120&delegateduserid=450
+&timestart=1787356800&timeend=1787961600&notificationmode=never
+```
+
+The singular response identifies the requested pair, its current delegation
+record and one of three outcomes: `created`, `unchanged` or `skipped`.
+
+Create the complete matrix between two authorised users and three target
+accounts using one common validity period:
 
 ```text
 POST https://moodle.example/webservice/rest/server.php
 wstoken=<SECRET>&moodlewsrestformat=json
 &wsfunction=local_delegateaccount_create_delegations
-&realuserids[0]=120&delegateduserids[0]=450
+&realuserids[0]=120&realuserids[1]=121
+&delegateduserids[0]=450&delegateduserids[1]=451&delegateduserids[2]=452
 &timestart=1787356800&timeend=1787961600&notificationmode=never
 ```
+
+That request evaluates six pairs and returns one outcome per pair plus the
+number of records created. Repeating either creation request is safe: a
+current relationship is returned as `unchanged` rather than duplicated.
 
 Read the first 25 active delegations belonging to one authorised user:
 

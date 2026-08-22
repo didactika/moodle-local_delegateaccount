@@ -31,6 +31,67 @@ use local_delegateaccount\external\delegation_api;
  */
 final class delegation_api_test extends \advanced_testcase {
     /**
+     * Creates one delegation through the scalar external contract idempotently.
+     */
+    public function test_create_delegation_supports_single_external_requests(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('notificationpolicy', manager::NOTIFICATION_NEVER, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $targetuser = $generator->create_user();
+        $this->grant_capability($authoriseduser, 'local/delegateaccount:use');
+        $start = time();
+
+        $first = delegation_api::create_delegation(
+            (int)$authoriseduser->id,
+            (int)$targetuser->id,
+            $start,
+            0,
+            manager::NOTIFICATION_NEVER
+        );
+        $first = external_api::clean_returnvalue(delegation_api::create_delegation_returns(), $first);
+        $second = delegation_api::create_delegation(
+            (int)$authoriseduser->id,
+            (int)$targetuser->id,
+            $start,
+            0,
+            manager::NOTIFICATION_NEVER
+        );
+        $second = external_api::clean_returnvalue(delegation_api::create_delegation_returns(), $second);
+
+        $this->assertSame('created', $first['outcome']);
+        $this->assertGreaterThan(0, $first['delegationid']);
+        $this->assertSame((int)$authoriseduser->id, $first['realuserid']);
+        $this->assertSame((int)$targetuser->id, $first['delegateduserid']);
+        $this->assertSame('unchanged', $second['outcome']);
+        $this->assertSame($first['delegationid'], $second['delegationid']);
+        $this->assertSame(1, $DB->count_records('local_delegateaccount'));
+    }
+
+    /**
+     * Requires the granular create capability for the singular external operation.
+     */
+    public function test_create_delegation_requires_create_capability(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $integrationuser = $generator->create_user();
+        $authoriseduser = $generator->create_user();
+        $targetuser = $generator->create_user();
+        $this->grant_capability($integrationuser, 'local/delegateaccount:view');
+        $this->setUser($integrationuser);
+
+        $this->expectException(\required_capability_exception::class);
+        delegation_api::create_delegation(
+            (int)$authoriseduser->id,
+            (int)$targetuser->id,
+            time()
+        );
+    }
+
+    /**
      * Creates an idempotent matrix and exposes it through stable pagination.
      */
     public function test_create_and_list_delegations_are_idempotent(): void {

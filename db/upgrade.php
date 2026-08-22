@@ -95,5 +95,9 @@ function xmldb_local_delegateaccount_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2026082200, 'local', 'delegateaccount');
     }
 
+    if ($oldversion < 2026082201) {
+        upgrade_plugin_savepoint(true, 2026082201, 'local', 'delegateaccount');
+    }
+
     return true;
 }
