@@ -24,6 +24,18 @@
 
 const DATE_CONTROLS = '.fdate_selector, .fdate_time_selector';
 const NARROW_VIEWPORT = '(max-width: 575.98px)';
+const INLINE_MARGIN_CLASSES = [
+    'mx-1',
+    'mx-2',
+    'ms-1',
+    'ms-2',
+    'me-1',
+    'me-2',
+    'ml-1',
+    'ml-2',
+    'mr-1',
+    'mr-2',
+];
 
 /**
  * Applies Bootstrap utility classes without CSS specificity overrides.
@@ -36,6 +48,7 @@ export const normalise = root => {
     root.querySelectorAll(DATE_CONTROLS).forEach(controls => {
         controls.classList.toggle('flex-wrap', shouldWrap);
         controls.classList.toggle('flex-nowrap', !shouldWrap);
+        Array.from(controls.children).forEach(control => control.classList.remove(...INLINE_MARGIN_CLASSES));
     });
 
     root.querySelectorAll('#fgroup_id_buttonar').forEach(buttonGroup => {
