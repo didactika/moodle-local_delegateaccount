@@ -8,11 +8,11 @@
 
 .local-delegateaccount-filters .local-delegateaccount-filter-menu {
     box-sizing: border-box;
-    left: auto !important;
-    right: 0 !important;
-    inset-inline-start: auto !important;
-    inset-inline-end: 0 !important;
-    width: 24rem;
+    left: auto;
+    right: 0;
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    width: 26rem;
     max-width: calc(100vw - 2rem);
     max-height: calc(100vh - 8rem);
     overflow-x: hidden;
@@ -20,8 +20,7 @@
     overscroll-behavior: contain;
 }
 
-.local-delegateaccount-filter-menu .reportbuilder-filters-sidebar,
-.local-delegateaccount-filter-menu .reportbuilder-filters-wrapper {
+.local-delegateaccount-filter-menu .local-delegateaccount-filter-content {
     width: 100%;
     min-width: 0;
 }
@@ -43,7 +42,6 @@
 
 .local-delegateaccount-filter-menu .fitem .col-form-label {
     box-sizing: border-box;
-    display: flex !important;
     float: none;
     margin-bottom: .25rem;
     padding-top: 0;
@@ -55,18 +53,10 @@
     word-break: normal;
 }
 
-.local-delegateaccount-filter-menu .fitem.femptylabel > .col-form-label {
-    display: none !important;
-}
-
 .local-delegateaccount-filter-menu .fitem.femptylabel {
-    border-top: 0 !important;
+    border-top: 0;
     margin-top: .75rem;
     padding-top: 0;
-}
-
-.local-delegateaccount-filter-menu #fgroup_id_buttonar {
-    margin-bottom: .25rem !important;
 }
 
 .local-delegateaccount-filter-menu .fitem.femptylabel::before {
@@ -88,6 +78,7 @@
 }
 
 .local-delegateaccount-filter-menu .fdate_selector .felement > div {
+    align-items: center;
     column-gap: .5rem;
     row-gap: .5rem;
 }
@@ -97,8 +88,21 @@
     max-width: 100%;
 }
 
+.local-delegateaccount-modal .fdate_time_selector .felement > div,
+.local-delegateaccount-modal .fdate_selector .felement > div {
+    align-items: center;
+    column-gap: .25rem;
+    row-gap: .5rem;
+}
+
+.local-delegateaccount-modal .fdate_time_selector select,
+.local-delegateaccount-modal .fdate_selector select {
+    min-width: 0;
+}
+
 @media (max-width: 575.98px) {
     .local-delegateaccount-filters .local-delegateaccount-filter-menu {
         width: calc(100vw - 2rem);
     }
+
 }

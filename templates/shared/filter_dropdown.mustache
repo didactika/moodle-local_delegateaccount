@@ -22,6 +22,17 @@
     @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "filterid": "local-delegateaccount-example-filters",
+        "filterlabel": "Filters",
+        "filterform": "<form><label for=\"example-search\">Search</label><input id=\"example-search\" type=\"text\"></form>",
+        "hasfilters": true,
+        "showfilters": false,
+        "reseturl": "https://moodle.example/local/delegateaccount/manage.php",
+        "resetlabel": "Reset"
+    }
 }}
 <div class="dropdown local-delegateaccount-filters" data-region="local-delegateaccount-filters">
     <button class="btn btn-secondary" type="button" id="{{filterid}}"
@@ -33,15 +44,11 @@
     <div class="filters-dropdown dropdown-menu dropdown-menu-right dropdown-menu-end moodle-has-zindex
             local-delegateaccount-filter-menu{{#showfilters}} show{{/showfilters}}"
         data-region="local-delegateaccount-filter-menu" aria-labelledby="{{filterid}}">
-        <div class="reportbuilder-filters-sidebar scroll-shadow">
-            <div class="px-3 pt-3">
-                <div class="reportbuilder-filters-wrapper">
-                    {{{filterform}}}
-                </div>
-                {{#hasfilters}}
-                    <div class="pb-3"><a href="{{reseturl}}">{{resetlabel}}</a></div>
-                {{/hasfilters}}
-            </div>
+        <div class="local-delegateaccount-filter-content p-3">
+            {{{filterform}}}
+            {{#hasfilters}}
+                <div class="pt-2"><a href="{{reseturl}}">{{resetlabel}}</a></div>
+            {{/hasfilters}}
         </div>
     </div>
 </div>

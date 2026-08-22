@@ -129,6 +129,7 @@ class delegated_users_table extends \table_sql {
         return $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
             'userpicture' => $OUTPUT->user_picture($row, ['size' => 35, 'link' => false]),
             'fullname' => fullname($row),
+            'profileurl' => (new \moodle_url('/user/profile.php', ['id' => (int)$row->id]))->out(false),
         ]);
     }
 

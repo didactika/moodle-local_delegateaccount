@@ -63,3 +63,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   effective access period, including repeated delegations of the same account.
 - Activity report dates are calendar-day filters, and repeated user-menu hook
   execution is explicitly deduplicated.
+- Individual lifecycle editing now uses the same core modal workflow as bulk
+  editing, filter and date controls share one responsive layout, and displayed
+  user identities link to their Moodle profiles.

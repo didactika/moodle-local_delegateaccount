@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import {normalise} from './form_layout';
+
 const ROOT = '[data-region="local-delegateaccount-filters"]';
 const TOGGLE = '[data-action="local-delegateaccount-toggle-filters"]';
 const MENU = '[data-region="local-delegateaccount-filter-menu"]';
@@ -44,6 +46,7 @@ export const init = () => {
     const roots = Array.from(document.querySelectorAll(ROOT));
 
     roots.forEach(root => {
+        normalise(root);
         root.querySelector(TOGGLE)?.addEventListener('click', event => {
             event.preventDefault();
             event.stopPropagation();
@@ -62,4 +65,5 @@ export const init = () => {
             roots.forEach(root => setOpen(root, false));
         }
     });
+    window.addEventListener('resize', () => roots.forEach(normalise), {passive: true});
 };

@@ -24,9 +24,11 @@
 
 import ModalForm from 'core_form/modalform';
 import {getString} from 'core/str';
+import {normalise} from './form_layout';
 
 const ASSIGN = '[data-action="local-delegateaccount-open-assign"]';
 const BULK_EDIT = '[data-action="local-delegateaccount-edit-selected"]';
+const SINGLE_EDIT = '[data-action="local-delegateaccount-edit-one"]';
 const SELECT_ONE = '[data-action="local-delegateaccount-select-delegation"]';
 
 /**
@@ -47,11 +49,16 @@ const getSelected = () => Array.from(document.querySelectorAll(`${SELECT_ONE}:ch
  */
 const showForm = (trigger, formClass, args, title) => {
     const modalForm = new ModalForm({
-        modalConfig: {title},
+        modalConfig: {title, isVerticallyCentered: false},
         formClass,
         args,
         saveButtonText: getString('savechanges'),
         returnFocus: trigger,
+    });
+    modalForm.addEventListener(modalForm.events.LOADED, () => {
+        const modal = modalForm.modal.getModal();
+        modal.addClass('local-delegateaccount-modal');
+        normalise(modal.get(0));
     });
     modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => window.location.reload());
     modalForm.show();
@@ -102,6 +109,21 @@ export const init = () => {
                     getString('edit_selected_delegations', 'local_delegateaccount')
                 );
             }
+            return;
+        }
+
+        const singleEditTrigger = event.target.closest(SINGLE_EDIT);
+        if (singleEditTrigger) {
+            event.preventDefault();
+            showForm(
+                singleEditTrigger,
+                'local_delegateaccount\\form\\bulk_edit_dynamic_form',
+                {
+                    realuserid: Number(singleEditTrigger.dataset.realUserId),
+                    delegationids: singleEditTrigger.dataset.delegationId,
+                },
+                getString('edit_delegation', 'local_delegateaccount')
+            );
         }
     });
     updateBulkState();

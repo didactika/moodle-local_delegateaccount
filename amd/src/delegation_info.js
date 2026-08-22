@@ -44,10 +44,11 @@ export const init = () => {
         Modal.create({
             title: trigger.attr('aria-label'),
             body: content.innerHTML,
-            isVerticallyCentered: true,
+            isVerticallyCentered: false,
             removeOnClose: true,
             returnElement: trigger.get(0),
         }).then(modal => {
+            modal.getModal().addClass('local-delegateaccount-modal');
             modal.show();
             return modal;
         }).catch(Notification.exception);

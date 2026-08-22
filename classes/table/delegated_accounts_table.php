@@ -166,7 +166,7 @@ class delegated_accounts_table extends \table_sql {
             return '';
         }
 
-        return $OUTPUT->render_from_template('local_delegateaccount/delegation_select_all', [
+        return $OUTPUT->render_from_template('local_delegateaccount/delegation/select_all', [
             'label' => get_string('select_all_delegations', 'local_delegateaccount'),
         ]);
     }
@@ -187,7 +187,7 @@ class delegated_accounts_table extends \table_sql {
             return '';
         }
 
-        return $OUTPUT->render_from_template('local_delegateaccount/delegation_select', [
+        return $OUTPUT->render_from_template('local_delegateaccount/delegation/select', [
             'id' => (int)$row->id,
             'label' => get_string('select_delegation', 'local_delegateaccount', fullname($row)),
         ]);
@@ -202,9 +202,12 @@ class delegated_accounts_table extends \table_sql {
     public function col_lastname($row): string {
         global $OUTPUT;
 
-        return $OUTPUT->render_from_template('local_delegateaccount/user_identity', [
+        return $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
             'userpicture' => $OUTPUT->user_picture($row, ['size' => 35, 'link' => false]),
             'fullname' => fullname($row),
+            'profileurl' => (new \moodle_url('/user/profile.php', [
+                'id' => (int)$row->delegateduserid,
+            ]))->out(false),
         ]);
     }
 
@@ -281,7 +284,7 @@ class delegated_accounts_table extends \table_sql {
     private function render_badge(string $label, string $class): string {
         global $OUTPUT;
 
-        return $OUTPUT->render_from_template('local_delegateaccount/delegation_badge', [
+        return $OUTPUT->render_from_template('local_delegateaccount/delegation/badge', [
             'class' => $class,
             'label' => $label,
         ]);
@@ -303,7 +306,7 @@ class delegated_accounts_table extends \table_sql {
             ? get_string($notificationkey, 'local_delegateaccount')
             : get_string('delegationnotificationmode_never', 'local_delegateaccount');
         $displayend = manager::get_delegation_display_end($row);
-        $content = $OUTPUT->render_from_template('local_delegateaccount/delegation_modal_body', [
+        $content = $OUTPUT->render_from_template('local_delegateaccount/delegation/modal_body', [
             'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
             'status' => get_string('delegation_status_' . manager::get_delegation_status($row), 'local_delegateaccount'),
             'startlabel' => get_string('delegation_start', 'local_delegateaccount'),
@@ -315,7 +318,7 @@ class delegated_accounts_table extends \table_sql {
             'notificationmodelabel' => get_string('delegationnotificationmode', 'local_delegateaccount'),
             'notificationmode' => $notificationmode,
         ]);
-        $actions[] = $OUTPUT->render_from_template('local_delegateaccount/delegation_info_action', [
+        $actions[] = $OUTPUT->render_from_template('local_delegateaccount/delegation/info_action', [
             'url' => (new \moodle_url('/local/delegateaccount/delegation.php', [
                 'realuserid' => $this->realuserid,
                 'delegationid' => $row->id,
@@ -333,7 +336,13 @@ class delegated_accounts_table extends \table_sql {
                     'realuserid' => $this->realuserid,
                     'delegationid' => $row->id,
                 ]),
-                new \pix_icon('t/edit', get_string('edit_delegation', 'local_delegateaccount'), 'core')
+                new \pix_icon('t/edit', get_string('edit_delegation', 'local_delegateaccount'), 'core'),
+                null,
+                [
+                    'data-action' => 'local-delegateaccount-edit-one',
+                    'data-real-user-id' => $this->realuserid,
+                    'data-delegation-id' => (int)$row->id,
+                ]
             );
         }
 
@@ -354,7 +363,7 @@ class delegated_accounts_table extends \table_sql {
             return implode('', $actions);
         }
 
-        $actions[] = $OUTPUT->render_from_template('local_delegateaccount/delegation_revoke_action', [
+        $actions[] = $OUTPUT->render_from_template('local_delegateaccount/delegation/revoke_action', [
             'delegationid' => (int)$row->id,
             'label' => get_string('revoke_delegation', 'local_delegateaccount'),
         ]);

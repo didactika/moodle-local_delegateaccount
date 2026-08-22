@@ -123,11 +123,10 @@ final class bulk_edit_dynamic_form extends dynamic_form {
             $notificationmode
         );
 
-        \core\notification::success(get_string(
-            'delegations_updated_success',
-            'local_delegateaccount',
-            $updatedcount
-        ));
+        $message = $updatedcount === 1
+            ? get_string('delegation_updated_success', 'local_delegateaccount')
+            : get_string('delegations_updated_success', 'local_delegateaccount', $updatedcount);
+        \core\notification::success($message);
 
         return ['updatedcount' => $updatedcount];
     }

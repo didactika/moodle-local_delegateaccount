@@ -71,12 +71,19 @@ $auditusers = empty($audituserids) ? [] : $DB->get_records_list(
     'id',
     $audituserids,
     '',
-    'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic'
+    'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic, picture, imagealt'
 );
-$getfullname = static function (int $userid) use ($auditusers): string {
-    return isset($auditusers[$userid])
-        ? fullname($auditusers[$userid])
-        : get_string('delegation_unknown_user', 'local_delegateaccount');
+$getuseridentity = static function (int $userid) use ($auditusers, $OUTPUT): string {
+    if (!isset($auditusers[$userid])) {
+        return s(get_string('delegation_unknown_user', 'local_delegateaccount'));
+    }
+
+    $user = $auditusers[$userid];
+    return $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
+        'userpicture' => $OUTPUT->user_picture($user, ['size' => 35, 'link' => false]),
+        'fullname' => fullname($user),
+        'profileurl' => (new moodle_url('/user/profile.php', ['id' => $userid]))->out(false),
+    ]);
 };
 $displayend = manager::get_delegation_display_end($delegation);
 
@@ -84,14 +91,16 @@ $templatecontext = [
     'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
     'status' => get_string('delegation_status_' . manager::get_delegation_status($delegation), 'local_delegateaccount'),
     'authoriseduserlabel' => get_string('realuser', 'local_delegateaccount'),
-    'authoriseduser' => $OUTPUT->render_from_template('local_delegateaccount/user_identity', [
+    'authoriseduser' => $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
         'userpicture' => $OUTPUT->user_picture($realuser, ['size' => 35, 'link' => false]),
         'fullname' => fullname($realuser),
+        'profileurl' => (new moodle_url('/user/profile.php', ['id' => (int)$realuser->id]))->out(false),
     ]),
     'delegateduserlabel' => get_string('delegateduser', 'local_delegateaccount'),
-    'delegateduser' => $OUTPUT->render_from_template('local_delegateaccount/user_identity', [
+    'delegateduser' => $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
         'userpicture' => $OUTPUT->user_picture($delegateduser, ['size' => 35, 'link' => false]),
         'fullname' => fullname($delegateduser),
+        'profileurl' => (new moodle_url('/user/profile.php', ['id' => (int)$delegateduser->id]))->out(false),
     ]),
     'startlabel' => get_string('delegation_start', 'local_delegateaccount'),
     'start' => userdate((int)$delegation->timestart),
@@ -104,16 +113,16 @@ $templatecontext = [
     'createdlabel' => get_string('delegation_created', 'local_delegateaccount'),
     'created' => userdate((int)$delegation->timecreated),
     'createdbylabel' => get_string('delegation_created_by', 'local_delegateaccount'),
-    'createdby' => $getfullname((int)$delegation->usercreated),
+    'createdby' => $getuseridentity((int)$delegation->usercreated),
     'modifiedlabel' => get_string('delegation_modified', 'local_delegateaccount'),
     'modified' => userdate((int)$delegation->timemodified),
     'modifiedbylabel' => get_string('delegation_modified_by', 'local_delegateaccount'),
-    'modifiedby' => $getfullname((int)$delegation->usermodified),
+    'modifiedby' => $getuseridentity((int)$delegation->usermodified),
     'isrevoked' => (int)$delegation->timerevoked > 0,
     'revokedlabel' => get_string('delegation_revoked', 'local_delegateaccount'),
     'revoked' => userdate((int)$delegation->timerevoked),
     'revokedbylabel' => get_string('delegation_revoked_by', 'local_delegateaccount'),
-    'revokedby' => $getfullname((int)$delegation->userrevoked),
+    'revokedby' => $getuseridentity((int)$delegation->userrevoked),
 ];
 
 $PAGE->set_url($url);
@@ -129,5 +138,5 @@ echo $OUTPUT->action_link(
     ['class' => 'btn btn-secondary mb-3'],
     new \pix_icon('t/left', '', 'core', ['class' => 'mr-1'])
 );
-echo $OUTPUT->render_from_template('local_delegateaccount/delegation_info', $templatecontext);
+echo $OUTPUT->render_from_template('local_delegateaccount/delegation/info', $templatecontext);
 echo $OUTPUT->footer();

@@ -17,7 +17,7 @@
 {{!
     @template local_delegateaccount/shared/user_identity
 
-    Moodle-style compact identity including the standard user picture.
+    Moodle-style compact identity linking the standard user picture and name to the profile.
 
     @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
     @copyright  2026 Didactika.org
@@ -26,10 +26,11 @@
     Example context (json):
     {
         "userpicture": "<img src=\"https://moodle.example/pix/u/f1.png\" alt=\"Jane Doe\">",
-        "fullname": "Jane Doe"
+        "fullname": "Jane Doe",
+        "profileurl": "https://moodle.example/user/profile.php?id=7"
     }
 }}
-<span class="d-flex align-items-center">
+<a class="d-inline-flex align-items-center" href="{{{profileurl}}}">
     <span class="mr-2">{{{userpicture}}}</span>
     <span>{{fullname}}</span>
-</span>
+</a>
