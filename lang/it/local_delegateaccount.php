@@ -102,6 +102,7 @@ $string['error_already_exists'] = 'Questa delega esiste già.';
 $string['error_alreadyloggedinas'] = 'È necessario tornare all\'account originale prima di usare un account delegato.';
 $string['error_ineligibleuser'] = 'Gli utenti eliminati o sospesi non possono partecipare a una delega.';
 $string['error_invaliddelegations'] = 'Le deleghe selezionate non sono più attive o non appartengono a questo utente autorizzato.';
+$string['error_invalidlockeduser'] = 'Non è stato possibile convalidare l’utente autorizzato vincolato da questo modulo.';
 $string['error_invalidperiod'] = 'La data di fine deve essere successiva alla data di inizio.';
 $string['error_invalidtemplateplaceholder'] = 'Il modello di notifica contiene un segnaposto non supportato: {$a}.';
 $string['error_invaliduser'] = 'Uno o più utenti selezionati non esistono più.';

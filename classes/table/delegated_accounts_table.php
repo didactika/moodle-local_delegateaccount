@@ -58,7 +58,7 @@ class delegated_accounts_table extends \table_sql {
         \moodle_url $baseurl,
         int $realuserid,
         \context_system $context,
-        string $status = 'all',
+        string $status = manager::STATUS_ACTIVE,
         string $search = ''
     ) {
         global $DB;

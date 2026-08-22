@@ -102,6 +102,7 @@ $string['error_already_exists'] = 'Esta delegação já existe.';
 $string['error_alreadyloggedinas'] = 'Tem de voltar à sua conta original antes de usar uma conta delegada.';
 $string['error_ineligibleuser'] = 'Utilizadores eliminados ou suspensos não podem participar numa delegação.';
 $string['error_invaliddelegations'] = 'As delegações selecionadas já não estão ativas ou não pertencem a este utilizador autorizado.';
+$string['error_invalidlockeduser'] = 'Não foi possível validar o utilizador autorizado fixado por este formulário.';
 $string['error_invalidperiod'] = 'A data de fim tem de ser posterior à data de início.';
 $string['error_invalidtemplateplaceholder'] = 'O modelo de notificação contém um marcador não suportado: {$a}.';
 $string['error_invaliduser'] = 'Um ou mais utilizadores selecionados já não existem.';

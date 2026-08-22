@@ -52,13 +52,16 @@ class assign_form extends \moodleform {
         $realuserid = (int)($this->_customdata['realuserid'] ?? 0);
         if ($realuserid > 0) {
             $mform->setDefault('realuserids', [$realuserid]);
+            $mform->hardFreeze('realuserids');
+            $mform->addElement('hidden', 'lockedrealuserid', $realuserid);
+            $mform->setType('lockedrealuserid', PARAM_INT);
         }
 
         $mform->addElement(
             'autocomplete',
             'delegateduserids',
             get_string('delegatedusers', 'local_delegateaccount'),
-            self::get_delegated_account_options(),
+            self::get_delegated_account_options($realuserid),
             [
                 'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
@@ -106,9 +109,10 @@ class assign_form extends \moodleform {
     /**
      * Returns active accounts that can safely be selected as delegation targets.
      *
+     * @param int $realuserid Optional authorised user whose existing targets must be excluded.
      * @return array<int, string> User IDs mapped to display names.
      */
-    public static function get_delegated_account_options(): array {
+    public static function get_delegated_account_options(int $realuserid = 0): array {
         global $DB;
 
         $users = $DB->get_records(
@@ -117,10 +121,23 @@ class assign_form extends \moodleform {
             'lastname ASC, firstname ASC',
             'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic'
         );
+        $excludeduserids = [];
+        if ($realuserid > 0) {
+            $excludeduserids = array_fill_keys($DB->get_fieldset_select(
+                'local_delegateaccount',
+                'delegateduserid',
+                'realuserid = :realuserid AND activekey = 0',
+                ['realuserid' => $realuserid]
+            ), true);
+            $excludeduserids[$realuserid] = true;
+        }
         $options = [];
         $protectprivilegedtargets = manager::protect_privileged_targets();
         foreach ($users as $user) {
-            if (!$protectprivilegedtargets || !is_siteadmin($user->id)) {
+            if (
+                !isset($excludeduserids[(int)$user->id]) &&
+                (!$protectprivilegedtargets || !is_siteadmin($user->id))
+            ) {
                 $options[(int)$user->id] = fullname($user);
             }
         }
@@ -136,10 +153,16 @@ class assign_form extends \moodleform {
      * @return array Validation errors indexed by field name.
      */
     public function validation($data, $files): array {
-        return parent::validation($data, $files) + self::validate_period_values(
+        $errors = parent::validation($data, $files) + self::validate_period_values(
             (int)$data['timestart'],
             (int)$data['timeend']
         );
+        $lockedrealuserid = (int)($this->_customdata['realuserid'] ?? 0);
+        if ($lockedrealuserid > 0 && (int)($data['lockedrealuserid'] ?? 0) !== $lockedrealuserid) {
+            $errors['realuserids'] = get_string('error_invalidlockeduser', 'local_delegateaccount');
+        }
+
+        return $errors;
     }
 
     /**

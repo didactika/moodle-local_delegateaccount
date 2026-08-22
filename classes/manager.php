@@ -276,12 +276,13 @@ class manager {
      * Revokes the selected active delegations while preserving their audit history.
      *
      * @param array $delegationids Array of primary key IDs from the local_delegateaccount table.
+     * @return int Number of delegations revoked.
      */
-    public static function revoke_delegations(array $delegationids): void {
+    public static function revoke_delegations(array $delegationids): int {
         global $DB, $USER;
 
         if (empty($delegationids)) {
-            return;
+            return 0;
         }
 
         $delegationids = array_values(array_unique(array_map('intval', $delegationids)));
@@ -294,7 +295,7 @@ class manager {
         );
 
         if (empty($records)) {
-            return;
+            return 0;
         }
 
         $now = time();
@@ -319,6 +320,8 @@ class manager {
                 (int) $USER->id
             );
         }
+
+        return count($revokeddelegations);
     }
 
     /**
@@ -580,6 +583,188 @@ class manager {
             'timestartnow' => $now,
             'timeendnow' => $now,
         ], 0, max(0, $limit));
+    }
+
+    /**
+     * Returns one stable page of delegation records for component and external consumers.
+     *
+     * @param int $page Zero-based page number.
+     * @param int $perpage Number of records per page.
+     * @param int $realuserid Optional authorised-user filter.
+     * @param string $status Optional lifecycle status filter.
+     * @param string $search Optional identity search.
+     * @return array{total: int, delegations: array} Page data and total count.
+     */
+    public static function get_delegations_page(
+        int $page,
+        int $perpage,
+        int $realuserid = 0,
+        string $status = '',
+        string $search = ''
+    ): array {
+        global $DB;
+
+        $where = ['u1.deleted = 0', 'u2.deleted = 0'];
+        $params = [];
+        if ($realuserid > 0) {
+            $where[] = 'da.realuserid = :realuserid';
+            $params['realuserid'] = $realuserid;
+        }
+        if ($search !== '') {
+            $searchvalue = '%' . $DB->sql_like_escape($search) . '%';
+            $searchparts = [];
+            foreach (
+                [
+                    'u1.firstname', 'u1.lastname', 'u1.username', 'u1.email',
+                    'u2.firstname', 'u2.lastname', 'u2.username', 'u2.email',
+                ] as $index => $field
+            ) {
+                $paramname = 'search' . $index;
+                $searchparts[] = $DB->sql_like($field, ':' . $paramname, false);
+                $params[$paramname] = $searchvalue;
+            }
+            $where[] = '(' . implode(' OR ', $searchparts) . ')';
+        }
+
+        $now = time();
+        if ($status === self::STATUS_ACTIVE) {
+            $where[] = 'da.activekey = 0 AND da.timestart <= :activestart
+                        AND (da.timeend = 0 OR da.timeend > :activeend)';
+            $params['activestart'] = $now;
+            $params['activeend'] = $now;
+        } else if ($status === self::STATUS_SCHEDULED) {
+            $where[] = 'da.activekey = 0 AND da.timestart > :scheduledstart';
+            $params['scheduledstart'] = $now;
+        } else if ($status === self::STATUS_EXPIRED) {
+            $where[] = 'da.activekey = 0 AND da.timeend > 0 AND da.timeend <= :expiredend';
+            $params['expiredend'] = $now;
+        } else if ($status === self::STATUS_REVOKED) {
+            $where[] = '(da.activekey <> 0 OR da.timerevoked > 0)';
+        } else if ($status !== '') {
+            throw new \invalid_parameter_exception('Unsupported delegation status.');
+        }
+
+        $from = '{local_delegateaccount} da
+                 JOIN {user} u1 ON u1.id = da.realuserid
+                 JOIN {user} u2 ON u2.id = da.delegateduserid';
+        $wheresql = implode(' AND ', $where);
+        $total = $DB->count_records_sql("SELECT COUNT(da.id) FROM $from WHERE $wheresql", $params);
+        $records = $DB->get_records_sql(
+            "SELECT da.*
+               FROM $from
+              WHERE $wheresql
+           ORDER BY da.id DESC",
+            $params,
+            $page * $perpage,
+            $perpage
+        );
+
+        $userids = [];
+        foreach ($records as $record) {
+            $userids[] = (int)$record->realuserid;
+            $userids[] = (int)$record->delegateduserid;
+        }
+        $users = empty($userids) ? [] : $DB->get_records_list(
+            'user',
+            'id',
+            array_values(array_unique($userids)),
+            '',
+            'id, firstname, lastname, firstnamephonetic, lastnamephonetic, middlename, alternatename'
+        );
+        foreach ($records as $record) {
+            $record->realuserfullname = fullname($users[(int)$record->realuserid]);
+            $record->delegateduserfullname = fullname($users[(int)$record->delegateduserid]);
+            $record->status = self::get_delegation_status($record);
+        }
+
+        return ['total' => $total, 'delegations' => array_values($records)];
+    }
+
+    /**
+     * Returns the current non-revoked delegation identifier for a user pair.
+     *
+     * @param int $realuserid Authorised user identifier.
+     * @param int $delegateduserid Target account identifier.
+     * @return int Delegation identifier, or zero when no current record exists.
+     */
+    public static function get_current_delegation_id(int $realuserid, int $delegateduserid): int {
+        global $DB;
+
+        return (int)$DB->get_field('local_delegateaccount', 'id', [
+            'realuserid' => $realuserid,
+            'delegateduserid' => $delegateduserid,
+            'activekey' => 0,
+        ]);
+    }
+
+    /**
+     * Returns one stable page of activity attributed to a delegation period.
+     *
+     * @param int $delegationid Delegation identifier.
+     * @param int $page Zero-based page number.
+     * @param int $perpage Number of records per page.
+     * @param int $timefrom Optional inclusive timestamp filter.
+     * @param int $timeuntil Optional exclusive timestamp filter.
+     * @param string $component Optional component fragment.
+     * @param string $action Optional action fragment.
+     * @return array{total: int, events: array} Activity page and total count.
+     */
+    public static function get_delegation_activity_page(
+        int $delegationid,
+        int $page,
+        int $perpage,
+        int $timefrom = 0,
+        int $timeuntil = 0,
+        string $component = '',
+        string $action = ''
+    ): array {
+        global $DB;
+
+        $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegationid], '*', MUST_EXIST);
+        $where = [
+            'log.userid = :delegateduserid',
+            'log.realuserid = :realuserid',
+            'log.timecreated >= :delegationstart',
+        ];
+        $params = [
+            'delegateduserid' => (int)$delegation->delegateduserid,
+            'realuserid' => (int)$delegation->realuserid,
+            'delegationstart' => max((int)$delegation->timestart, $timefrom),
+        ];
+        $accessend = self::get_delegation_access_end($delegation);
+        $requestedend = $timeuntil > 0 ? $timeuntil : $accessend;
+        if ($accessend > 0 && ($requestedend === 0 || $requestedend > $accessend)) {
+            $requestedend = $accessend;
+        }
+        if ($requestedend > 0) {
+            $where[] = 'log.timecreated < :activityend';
+            $params['activityend'] = $requestedend;
+        }
+        if ($component !== '') {
+            $where[] = $DB->sql_like('log.component', ':component', false);
+            $params['component'] = '%' . $DB->sql_like_escape($component) . '%';
+        }
+        if ($action !== '') {
+            $where[] = $DB->sql_like('log.action', ':action', false);
+            $params['action'] = '%' . $DB->sql_like_escape($action) . '%';
+        }
+        $wheresql = implode(' AND ', $where);
+        $total = $DB->count_records_sql(
+            'SELECT COUNT(log.id) FROM {logstore_standard_log} log WHERE ' . $wheresql,
+            $params
+        );
+        $events = $DB->get_records_sql(
+            'SELECT log.id, log.timecreated, log.eventname, log.component, log.action,
+                    log.target, log.contextid, log.contextlevel
+               FROM {logstore_standard_log} log
+              WHERE ' . $wheresql . '
+           ORDER BY log.timecreated DESC, log.id DESC',
+            $params,
+            $page * $perpage,
+            $perpage
+        );
+
+        return ['total' => $total, 'events' => array_values($events)];
     }
 
     /**

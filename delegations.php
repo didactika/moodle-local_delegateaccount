@@ -48,13 +48,12 @@ if (
 $realuserid = required_param('realuserid', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $delegationid = optional_param('delegationid', 0, PARAM_INT);
-$status = optional_param('status', 'all', PARAM_ALPHA);
+$status = optional_param('status', manager::STATUS_ACTIVE, PARAM_ALPHA);
 $search = optional_param('search', '', PARAM_TEXT);
 if (
     !in_array(
         $status,
         [
-            'all',
             manager::STATUS_ACTIVE,
             manager::STATUS_SCHEDULED,
             manager::STATUS_EXPIRED,
@@ -63,7 +62,7 @@ if (
         true
     )
 ) {
-    $status = 'all';
+    $status = manager::STATUS_ACTIVE;
 }
 $realuser = $DB->get_record('user', ['id' => $realuserid, 'deleted' => 0], '*', MUST_EXIST);
 $urlparams = ['realuserid' => $realuserid, 'status' => $status];
@@ -142,7 +141,6 @@ $cancreate = $isauthorised &&
         has_capability('local/delegateaccount:manage', $context)
     );
 $statuslabels = [
-    'all' => get_string('all'),
     manager::STATUS_ACTIVE => get_string('delegation_status_active', 'local_delegateaccount'),
     manager::STATUS_SCHEDULED => get_string('delegation_status_scheduled', 'local_delegateaccount'),
     manager::STATUS_EXPIRED => get_string('delegation_status_expired', 'local_delegateaccount'),

@@ -102,6 +102,7 @@ $string['error_already_exists'] = 'This delegation already exists.';
 $string['error_alreadyloggedinas'] = 'You must return to your original account before using a delegated account.';
 $string['error_ineligibleuser'] = 'Deleted or suspended users cannot participate in a delegation.';
 $string['error_invaliddelegations'] = 'The selected delegations are no longer active or do not belong to this authorised user.';
+$string['error_invalidlockeduser'] = 'The authorised user fixed by this form could not be validated.';
 $string['error_invalidperiod'] = 'The end date must be later than the start date.';
 $string['error_invalidtemplateplaceholder'] = 'The notification template contains an unsupported placeholder: {$a}.';
 $string['error_invaliduser'] = 'One or more selected users no longer exist.';

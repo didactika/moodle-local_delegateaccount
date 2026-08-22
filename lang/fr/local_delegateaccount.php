@@ -102,6 +102,7 @@ $string['error_already_exists'] = 'Cette délégation existe déjà.';
 $string['error_alreadyloggedinas'] = 'Vous devez revenir à votre compte d\'origine avant d\'utiliser un compte délégué.';
 $string['error_ineligibleuser'] = 'Les utilisateurs supprimés ou suspendus ne peuvent pas participer à une délégation.';
 $string['error_invaliddelegations'] = 'Les délégations sélectionnées ne sont plus actives ou n’appartiennent pas à cet utilisateur autorisé.';
+$string['error_invalidlockeduser'] = 'L’utilisateur autorisé imposé par ce formulaire n’a pas pu être validé.';
 $string['error_invalidperiod'] = 'La date de fin doit être postérieure à la date de début.';
 $string['error_invalidtemplateplaceholder'] = 'Le modèle de notification contient un espace réservé non pris en charge : {$a}.';
 $string['error_invaliduser'] = 'Un ou plusieurs utilisateurs sélectionnés n’existent plus.';

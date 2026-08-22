@@ -36,6 +36,7 @@ final class assign_dynamic_form extends dynamic_form {
      */
     protected function definition() {
         $mform = $this->_form;
+        $realuserid = $this->optional_param('realuserid', 0, PARAM_INT);
         $mform->addElement(
             'autocomplete',
             'realuserids',
@@ -45,12 +46,18 @@ final class assign_dynamic_form extends dynamic_form {
         );
         $mform->addRule('realuserids', null, 'required', null, 'client');
         $mform->addHelpButton('realuserids', 'realusers', 'local_delegateaccount');
+        if ($realuserid > 0) {
+            $mform->setDefault('realuserids', [$realuserid]);
+            $mform->hardFreeze('realuserids');
+            $mform->addElement('hidden', 'lockedrealuserid', $realuserid);
+            $mform->setType('lockedrealuserid', PARAM_INT);
+        }
 
         $mform->addElement(
             'autocomplete',
             'delegateduserids',
             get_string('delegatedusers', 'local_delegateaccount'),
-            assign_form::get_delegated_account_options(),
+            assign_form::get_delegated_account_options($realuserid),
             ['multiple' => true, 'placeholder' => get_string('search', 'core')]
         );
         $mform->addRule('delegateduserids', null, 'required', null, 'client');
@@ -100,10 +107,16 @@ final class assign_dynamic_form extends dynamic_form {
      * @return array Validation errors.
      */
     public function validation($data, $files): array {
-        return parent::validation($data, $files) + assign_form::validate_period_values(
+        $errors = parent::validation($data, $files) + assign_form::validate_period_values(
             (int)$data['timestart'],
             (int)$data['timeend']
         );
+        $lockedrealuserid = $this->optional_param('realuserid', 0, PARAM_INT);
+        if ($lockedrealuserid > 0 && (int)($data['lockedrealuserid'] ?? 0) !== $lockedrealuserid) {
+            $errors['realuserids'] = get_string('error_invalidlockeduser', 'local_delegateaccount');
+        }
+
+        return $errors;
     }
 
     /**
@@ -132,12 +145,14 @@ final class assign_dynamic_form extends dynamic_form {
      */
     public function process_dynamic_submission(): array {
         $data = $this->get_data();
+        $lockedrealuserid = $this->optional_param('realuserid', 0, PARAM_INT);
+        $realuserids = $lockedrealuserid > 0 ? [$lockedrealuserid] : $data->realuserids;
         $policy = get_config('local_delegateaccount', 'notificationpolicy') ?: manager::NOTIFICATION_OPTIONAL;
         $notificationmode = $policy === manager::NOTIFICATION_OPTIONAL
             ? $data->notificationmode
             : $policy;
         $createdcount = manager::create_delegations(
-            $data->realuserids,
+            $realuserids,
             $data->delegateduserids,
             [
                 'timestart' => (int)$data->timestart,

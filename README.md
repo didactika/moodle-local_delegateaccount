@@ -109,6 +109,20 @@ report uses Moodle's standard 25-row pagination. Day-only date, component and
 action filters can narrow that immutable period but can never expose activity before
 access began or after it ended.
 
+## Web services
+
+The plugin registers a disabled, restricted service named **Delegated account
+management**. Enabling that service does not grant access by itself: an
+administrator must explicitly authorise each service user and assign only the
+capabilities needed for that integration. Read, create, update, revoke and
+activity operations are separate functions with separate capability checks;
+the transitional `local/delegateaccount:manage` capability is deliberately not
+accepted as a web-service wildcard.
+
+See [Web-service integration](docs/web-services.md) for the function and
+capability matrix, lifecycle rules, limits and examples that contain no tokens
+or personal data.
+
 
 ## Privacy and security
 
