@@ -192,6 +192,29 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Limits the active delegated accounts returned for the user menu.
+     */
+    public function test_user_menu_query_honours_configured_limit(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('notificationpolicy', manager::NOTIFICATION_NEVER, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $firsttarget = $generator->create_user();
+        $secondtarget = $generator->create_user();
+        $thirdtarget = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
+
+        manager::create_delegations(
+            [(int) $authoriseduser->id],
+            [(int) $firsttarget->id, (int) $secondtarget->id, (int) $thirdtarget->id]
+        );
+
+        $this->assertCount(2, manager::get_delegated_accounts_for_user((int) $authoriseduser->id, 2));
+        $this->assertCount(3, manager::get_delegated_accounts_for_user((int) $authoriseduser->id));
+    }
+
+    /**
      * Applies the site notification policy to a requested delegation choice.
      */
     public function test_notification_policy_overrides_requested_choice(): void {

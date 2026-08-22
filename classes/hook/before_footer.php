@@ -26,6 +26,7 @@ use local_delegateaccount\manager;
  *
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,7 +48,9 @@ class before_footer {
             return;
         }
 
-        $accounts = manager::get_delegated_accounts_for_user($USER->id);
+        $configuredlimit = get_config('local_delegateaccount', 'usermenulimit');
+        $usermenulimit = $configuredlimit === false ? 10 : max(0, (int) $configuredlimit);
+        $accounts = manager::get_delegated_accounts_for_user($USER->id, $usermenulimit);
 
         if (empty($accounts)) {
             return;
@@ -73,6 +76,10 @@ class before_footer {
             'delegations' => $delegations,
         ];
 
-        $PAGE->requires->js_call_amd('local_delegateaccount/usermenu', 'init', [$templatedata]);
+        $hook->add_html($hook->renderer->render_from_template(
+            'local_delegateaccount/usermenu_source',
+            $templatedata
+        ));
+        $PAGE->requires->js_call_amd('local_delegateaccount/usermenu', 'init');
     }
 }

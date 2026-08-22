@@ -18,54 +18,57 @@
  *
  * @module     local_delegateaccount/usermenu
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import $ from 'jquery';
-import Templates from 'core/templates';
+
+const SOURCE = '[data-region="local-delegateaccount-usermenu-source"]';
+const TRIGGER = '[data-region="local-delegateaccount-usermenu-trigger"]';
+const PANEL = '[data-region="local-delegateaccount-usermenu-panel"]';
 
 /**
  * Initialize the user menu injection.
- *
- * @param {Object} data Data to render the templates.
  */
-export const init = (data) => {
+export const init = () => {
     $(document).ready(() => {
         const carouselInner = $('#usermenu-carousel .carousel-inner');
         const mainItem = $('#carousel-item-main');
+        const source = $(SOURCE);
 
-        if (carouselInner.length === 0 || mainItem.length === 0 || $('#carousel-item-delegatedaccounts').length > 0) {
+        if (
+            carouselInner.length === 0 ||
+            mainItem.length === 0 ||
+            source.length === 0 ||
+            $('#carousel-item-delegatedaccounts').length > 0
+        ) {
+            source.remove();
             return;
         }
 
-        Templates.render('local_delegateaccount/usermenu_trigger', data)
-            .then((html, js) => {
-                const trigger = $(html);
-                const logout = mainItem.find('a[href*="logout.php"]');
+        const trigger = source.find(TRIGGER).children().first().detach();
+        const panel = source.find(PANEL).children().first().detach();
+        const logout = mainItem.find('a[href*="logout.php"]');
 
-                if (logout.length > 0) {
-                    const divider = logout.prev('.dropdown-divider');
-                    if (divider.length > 0) {
-                        trigger.insertBefore(divider);
-                    } else {
-                        trigger.insertBefore(logout);
-                    }
-                } else {
-                    mainItem.append(trigger);
-                }
+        if (trigger.length === 0 || panel.length === 0) {
+            source.remove();
+            return;
+        }
 
-                Templates.runTemplateJS(js);
-                return;
-            })
-            .catch(Templates.errorHandler);
+        if (logout.length > 0) {
+            const divider = logout.prev('.dropdown-divider');
+            if (divider.length > 0) {
+                trigger.insertBefore(divider);
+            } else {
+                trigger.insertBefore(logout);
+            }
+        } else {
+            mainItem.append(trigger);
+        }
 
-        Templates.render('local_delegateaccount/usermenu_panel', data)
-            .then((html, js) => {
-                carouselInner.append(html);
-                Templates.runTemplateJS(js);
-                return;
-            })
-            .catch(Templates.errorHandler);
+        carouselInner.append(panel);
+        source.remove();
     });
 };

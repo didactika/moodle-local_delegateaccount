@@ -467,9 +467,10 @@ class manager {
      * Retrieves the target accounts a specific real user has been delegated to.
      *
      * @param int $realuserid The real user ID.
+     * @param int $limit Maximum number of accounts to return, or zero for all accounts.
      * @return array List of target user accounts they can log into.
      */
-    public static function get_delegated_accounts_for_user(int $realuserid): array {
+    public static function get_delegated_accounts_for_user(int $realuserid, int $limit = 0): array {
         global $DB;
 
         $userfields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
@@ -482,14 +483,15 @@ class manager {
                    AND da.timestart <= :timestartnow
                    AND (da.timeend = 0 OR da.timeend > :timeendnow)
                    AND u.deleted = 0
-                   AND u.suspended = 0";
+                   AND u.suspended = 0
+              ORDER BY u.lastname, u.firstname, u.id";
 
         $now = time();
         return $DB->get_records_sql($sql, [
             'realuserid' => $realuserid,
             'timestartnow' => $now,
             'timeendnow' => $now,
-        ]);
+        ], 0, max(0, $limit));
     }
 
     /**
