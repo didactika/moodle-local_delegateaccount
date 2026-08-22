@@ -46,7 +46,7 @@ if (
 }
 
 $realuserid = required_param('realuserid', PARAM_INT);
-$action = optional_param('action', '', PARAM_ALPHA);
+$action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $delegationid = optional_param('delegationid', 0, PARAM_INT);
 $status = optional_param('status', 'all', PARAM_ALPHA);
 $search = optional_param('search', '', PARAM_TEXT);
