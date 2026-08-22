@@ -112,13 +112,16 @@ final class manager_test extends \advanced_testcase {
             ]
         );
         $events = $eventsink->get_events();
+        $creationevents = array_values(array_filter(
+            $events,
+            static fn($event): bool => $event instanceof \local_delegateaccount\event\delegation_created
+        ));
 
         $this->assertSame(1, $created);
-        $this->assertCount(1, $events);
-        $this->assertInstanceOf(\local_delegateaccount\event\delegation_created::class, $events[0]);
-        $this->assertSame((int) $USER->id, (int) $events[0]->userid);
-        $this->assertSame((int) $authoriseduser->id, (int) $events[0]->relateduserid);
-        $this->assertSame((int) $targetuser->id, (int) $events[0]->other['delegateduserid']);
+        $this->assertCount(1, $creationevents);
+        $this->assertSame((int) $USER->id, (int) $creationevents[0]->userid);
+        $this->assertSame((int) $authoriseduser->id, (int) $creationevents[0]->relateduserid);
+        $this->assertSame((int) $targetuser->id, (int) $creationevents[0]->other['delegateduserid']);
 
         $delegation = $DB->get_record('local_delegateaccount', [
             'realuserid' => $authoriseduser->id,
@@ -134,18 +137,25 @@ final class manager_test extends \advanced_testcase {
             manager::NOTIFICATION_ALWAYS
         ));
         $events = $eventsink->get_events();
+        $updateevents = array_values(array_filter(
+            $events,
+            static fn($event): bool => $event instanceof \local_delegateaccount\event\delegation_updated
+        ));
 
-        $this->assertCount(1, $events);
-        $this->assertInstanceOf(\local_delegateaccount\event\delegation_updated::class, $events[0]);
+        $this->assertCount(1, $updateevents);
         $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegation->id], '*', MUST_EXIST);
         $this->assertSame(manager::STATUS_ACTIVE, manager::get_delegation_status($delegation, $now));
 
         $eventsink->clear();
         manager::revoke_delegations([(int) $delegation->id]);
         $events = $eventsink->get_events();
+        $revocationevents = array_values(array_filter(
+            $events,
+            static fn($event): bool => $event instanceof \local_delegateaccount\event\delegation_revoked
+        ));
 
-        $this->assertCount(1, $events);
-        $this->assertInstanceOf(\local_delegateaccount\event\delegation_revoked::class, $events[0]);
+        $this->assertCount(1, $revocationevents);
+        $this->assertSame((int) $delegation->id, (int) $revocationevents[0]->objectid);
         $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegation->id], '*', MUST_EXIST);
         $this->assertSame((int) $delegation->id, (int) $delegation->activekey);
         $this->assertGreaterThan(0, (int) $delegation->timerevoked);
@@ -183,9 +193,23 @@ final class manager_test extends \advanced_testcase {
             (int) $delegationsbyuser[$secondtarget->id]->id,
         ]);
         $events = $eventsink->get_events();
+        $revocationevents = array_values(array_filter(
+            $events,
+            static fn($event): bool => $event instanceof \local_delegateaccount\event\delegation_revoked
+        ));
+        $revokedids = array_map(
+            static fn($event): int => (int) $event->objectid,
+            $revocationevents
+        );
+        $expectedids = [
+            (int) $delegationsbyuser[$firsttarget->id]->id,
+            (int) $delegationsbyuser[$secondtarget->id]->id,
+        ];
+        sort($revokedids);
+        sort($expectedids);
 
-        $this->assertCount(2, $events);
-        $this->assertContainsOnlyInstancesOf(\local_delegateaccount\event\delegation_revoked::class, $events);
+        $this->assertCount(2, $revocationevents);
+        $this->assertSame($expectedids, $revokedids);
         $this->assertFalse(manager::delegation_exists((int) $authoriseduser->id, (int) $firsttarget->id));
         $this->assertFalse(manager::delegation_exists((int) $authoriseduser->id, (int) $secondtarget->id));
         $this->assertTrue(manager::delegation_exists((int) $authoriseduser->id, (int) $thirdtarget->id));
