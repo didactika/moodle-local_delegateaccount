@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_delegateaccount/shared/filter_dropdown
+
+    Moodle report-style dropdown containing a GET filter form.
+
+    @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+    @copyright  2026 Didactika.org
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "filterid": "local-delegateaccount-example-filters",
+        "filterlabel": "Filters",
+        "filterform": "<form><label for=\"example-search\">Search</label><input id=\"example-search\" type=\"text\"></form>",
+        "hasfilters": true,
+        "reseturl": "https://moodle.example/local/delegateaccount/pages/manage.php",
+        "resetlabel": "Reset"
+    }
+}}
+<div class="dropdown local-delegateaccount-filters" data-region="local-delegateaccount-filters">
+    <button class="btn {{#hasfilters}}btn-primary{{/hasfilters}}{{^hasfilters}}btn-secondary{{/hasfilters}} dropdown-toggle"
+        type="button" id="{{filterid}}" data-toggle="dropdown" data-bs-toggle="dropdown"
+        data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+        {{#pix}}i/filter, core, {{filterlabel}}{{/pix}}
+        {{filterlabel}}
+    </button>
+    <div class="dropdown-menu dropdown-menu-right dropdown-menu-end moodle-has-zindex
+            local-delegateaccount-filter-menu"
+        data-region="local-delegateaccount-filter-menu" aria-labelledby="{{filterid}}">
+        <div class="local-delegateaccount-filter-content p-3">
+            {{{filterform}}}
+            {{#hasfilters}}
+                <div class="pt-2"><a href="{{reseturl}}">{{resetlabel}}</a></div>
+            {{/hasfilters}}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,133 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace local_delegateaccount;
+
+use local_delegateaccount\table\delegated_activity_table;
+
+/**
+ * Tests period scoping in the delegated activity report.
+ *
+ * @package    local_delegateaccount
+ * @category   test
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @copyright  2026 Didactika.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \local_delegateaccount\table\delegated_activity_table
+ */
+final class delegated_activity_table_test extends \advanced_testcase {
+    /**
+     * Constrains every log query to the selected delegation's effective period.
+     */
+    public function test_query_is_scoped_to_one_delegation_period(): void {
+        $delegation = (object) [
+            'realuserid' => 11,
+            'delegateduserid' => 22,
+            'timestart' => 1_000,
+            'timeend' => 3_000,
+            'timerevoked' => 2_000,
+        ];
+        $table = new delegated_activity_table(new \moodle_url('/'), $delegation);
+
+        $this->assertStringContainsString('log.timecreated >= :timestart', $table->sql->where);
+        $this->assertStringContainsString('log.timecreated < :timeend', $table->sql->where);
+        $this->assertSame(1_000, $table->sql->params['timestart']);
+        $this->assertSame(2_000, $table->sql->params['timeend']);
+    }
+
+    /**
+     * Applies report filters without allowing dates outside the delegation period.
+     */
+    public function test_filters_are_clamped_to_the_delegation_period(): void {
+        $delegation = (object) [
+            'realuserid' => 11,
+            'delegateduserid' => 22,
+            'timestart' => 1_000,
+            'timeend' => 3_000,
+            'timerevoked' => 2_000,
+        ];
+        $table = new delegated_activity_table(new \moodle_url('/'), $delegation, [
+            'datefrom' => 500,
+            'dateto' => 4_000,
+            'component' => 'forum',
+            'action' => 'viewed',
+        ]);
+
+        $this->assertSame(1_000, $table->sql->params['filterdatefrom']);
+        $this->assertSame(2_000, $table->sql->params['filterdateto']);
+        $this->assertStringContainsString('log.component', $table->sql->where);
+        $this->assertStringContainsString('log.action', $table->sql->where);
+    }
+
+    /**
+     * Treats the upper date filter as an inclusive calendar day.
+     */
+    public function test_upper_date_filter_includes_the_selected_day(): void {
+        $this->resetAfterTest();
+        set_config('timezone', 'UTC');
+        $selectedday = gmmktime(0, 0, 0, 8, 22, 2026);
+        $delegation = (object) [
+            'realuserid' => 11,
+            'delegateduserid' => 22,
+            'timestart' => $selectedday - DAYSECS,
+            'timeend' => $selectedday + (2 * DAYSECS),
+            'timerevoked' => 0,
+        ];
+        $table = new delegated_activity_table(new \moodle_url('/'), $delegation, [
+            'dateto' => $selectedday,
+        ]);
+
+        $this->assertSame($selectedday + DAYSECS, $table->sql->params['filterdateto']);
+    }
+
+    /**
+     * Renders the standard report identity, context and network columns from a Moodle event.
+     */
+    public function test_standard_log_columns_render_from_event_data(): void {
+        $this->resetAfterTest();
+        $actor = $this->getDataGenerator()->create_user();
+        $account = $this->getDataGenerator()->create_user();
+        $event = \core\event\user_loggedin::create([
+            'objectid' => $account->id,
+            'relateduserid' => $account->id,
+            'other' => ['username' => $account->username],
+        ]);
+        $row = (object)$event->get_data();
+        $row->id = 42;
+        $row->realuserid = $actor->id;
+        $row->origin = 'web';
+        $row->ip = '127.0.0.1';
+        $row->other = serialize($row->other);
+
+        $delegation = (object) [
+            'realuserid' => $actor->id,
+            'delegateduserid' => $account->id,
+            'timestart' => 1,
+            'timeend' => 0,
+            'timerevoked' => 0,
+        ];
+        $table = new delegated_activity_table(new \moodle_url('/'), $delegation);
+
+        $this->assertStringContainsString(fullname($actor), $table->col_fullnameuser($row));
+        $this->assertStringContainsString(fullname($account), $table->col_relatedfullnameuser($row));
+        $this->assertStringContainsString(get_string('coresystem'), $table->col_context($row));
+        $this->assertSame(get_string('coresystem'), $table->col_component($row));
+        $this->assertSame('web', $table->col_origin($row));
+        $this->assertStringContainsString('127.0.0.1', $table->col_ip($row));
+        $this->assertNotSame('-', $table->col_eventname($row));
+        $this->assertNotSame('-', $table->col_description($row));
+    }
+}

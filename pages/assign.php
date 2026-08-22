@@ -19,44 +19,75 @@
  *
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 use local_delegateaccount\manager;
 use local_delegateaccount\form\assign_form;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-require_capability('local/delegateaccount:manage', context_system::instance());
+$context = context_system::instance();
+if (
+    !has_any_capability(
+        [
+            'local/delegateaccount:create',
+            'local/delegateaccount:manage',
+        ],
+        $context
+    )
+) {
+    require_capability('local/delegateaccount:create', $context);
+}
 
-$url = new moodle_url('/local/delegateaccount/assign.php');
-$dashboardurl = new moodle_url('/local/delegateaccount/manage.php');
+$realuserid = optional_param('realuserid', 0, PARAM_INT);
+if ($realuserid > 0 && !manager::can_use_delegated_accounts($realuserid)) {
+    throw new moodle_exception('error_unauthorised_realuser', 'local_delegateaccount');
+}
+$url = new moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $realuserid]);
+$dashboardurl = new moodle_url('/local/delegateaccount/pages/manage.php');
+$returnurl = $realuserid > 0
+    ? new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid])
+    : $dashboardurl;
 
 $PAGE->set_url($url);
 $PAGE->set_title(get_string('create_delegations', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('create_delegations', 'local_delegateaccount'));
 
-$mform = new assign_form();
+$mform = new assign_form($url, ['realuserid' => $realuserid]);
 
 if ($mform->is_cancelled()) {
-    redirect($dashboardurl);
+    redirect($returnurl);
 } else if ($data = $mform->get_data()) {
-    $createdcount = manager::create_delegations($data->realuserids, $data->delegateduserids);
+    $policy = get_config('local_delegateaccount', 'notificationpolicy') ?: manager::NOTIFICATION_OPTIONAL;
+    $notificationmode = $policy === manager::NOTIFICATION_OPTIONAL
+        ? $data->notificationmode
+        : $policy;
+    $createdcount = manager::create_delegations(
+        $realuserid > 0 ? [$realuserid] : $data->realuserids,
+        $data->delegateduserids,
+        [
+            'timestart' => (int)$data->timestart,
+            'timeend' => (int)$data->timeend,
+            'notificationmode' => $notificationmode,
+        ]
+    );
 
     if ($createdcount > 0) {
         \core\notification::success(get_string('delegations_created_success', 'local_delegateaccount'));
     } else {
         \core\notification::warning(get_string('no_delegations_created', 'local_delegateaccount'));
     }
-    redirect($dashboardurl);
+    redirect($returnurl);
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->action_link(
-    $dashboardurl,
+    $returnurl,
     get_string('back'),
     null,
     ['class' => 'btn btn-secondary mb-3'],

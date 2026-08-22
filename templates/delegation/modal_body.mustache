@@ -1,0 +1,47 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_delegateaccount/delegation/modal_body
+
+    Essential, read-only lifecycle information shown in a core modal.
+
+    @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+    @copyright  2026 Didactika.org
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "statuslabel": "Status",
+        "status": "Active",
+        "startlabel": "Access starts",
+        "start": "Friday, 21 August 2026, 10:00 AM",
+        "endlabel": "Access ends",
+        "end": "No end date",
+        "notificationmodelabel": "Notify affected users",
+        "notificationmode": "Send a notification"
+    }
+}}
+<dl class="row mb-0">
+    <dt class="col-sm-5">{{statuslabel}}</dt>
+    <dd class="col-sm-7"><span class="badge badge-secondary">{{status}}</span></dd>
+    <dt class="col-sm-5">{{startlabel}}</dt>
+    <dd class="col-sm-7"><span class="badge badge-info font-weight-normal">{{start}}</span></dd>
+    <dt class="col-sm-5">{{endlabel}}</dt>
+    <dd class="col-sm-7"><span class="badge badge-info font-weight-normal">{{end}}</span></dd>
+    <dt class="col-sm-5">{{notificationmodelabel}}</dt>
+    <dd class="col-sm-7"><span class="badge badge-light border font-weight-normal">{{notificationmode}}</span></dd>
+</dl>

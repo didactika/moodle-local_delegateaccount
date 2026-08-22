@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/delegateaccount/db" VERSION="2026073000" COMMENT="XMLDB file for local_delegateaccount"
+<XMLDB PATH="local/delegateaccount/db" VERSION="2026082200" COMMENT="XMLDB file for local_delegateaccount"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -11,6 +11,15 @@
                 <FIELD NAME="delegateduserid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The ID of the delegated account they can access"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the delegation was created"/>
                 <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the admin who created this delegation"/>
+                <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the delegation becomes active"/>
+                <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the delegation expires, or zero for no expiry"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the delegation was last changed"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the user who last changed the delegation"/>
+                <FIELD NAME="timerevoked" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the delegation was revoked"/>
+                <FIELD NAME="userrevoked" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the user who revoked the delegation"/>
+                <FIELD NAME="activekey" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Zero for the active relationship, otherwise the revoked record ID"/>
+                <FIELD NAME="notificationmode" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="site" SEQUENCE="false" COMMENT="Site, always, or never notification decision"/>
+                <FIELD NAME="timenotified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when notification processing completed"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for local_delegateaccount"/>
@@ -19,7 +28,10 @@
                 <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key referencing the admin who created the record"/>
             </KEYS>
             <INDEXES>
-                <INDEX NAME="real_delegated_unique" UNIQUE="true" FIELDS="realuserid, delegateduserid" COMMENT="Prevents duplicate delegations between a real user and a delegated account"/>
+                <INDEX NAME="real_delegated_active_unique" UNIQUE="true" FIELDS="realuserid, delegateduserid, activekey" COMMENT="Allows one active delegation and retains revoked history"/>
+                <INDEX NAME="realuser_active" UNIQUE="false" FIELDS="realuserid, activekey" COMMENT="Supports authorised-user delegation lists"/>
+                <INDEX NAME="delegated_active" UNIQUE="false" FIELDS="delegateduserid, activekey" COMMENT="Supports target-account delegation lists"/>
+                <INDEX NAME="lifecycle" UNIQUE="false" FIELDS="activekey, timestart, timeend" COMMENT="Supports lifecycle filtering"/>
             </INDEXES>
         </TABLE>
     </TABLES>

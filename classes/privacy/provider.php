@@ -49,6 +49,13 @@ class provider implements
             'delegateduserid' => 'privacy:metadata:local_delegateaccount:delegateduserid',
             'usercreated' => 'privacy:metadata:local_delegateaccount:usercreated',
             'timecreated' => 'privacy:metadata:local_delegateaccount:timecreated',
+            'timestart' => 'privacy:metadata:local_delegateaccount:timestart',
+            'timeend' => 'privacy:metadata:local_delegateaccount:timeend',
+            'timemodified' => 'privacy:metadata:local_delegateaccount:timemodified',
+            'usermodified' => 'privacy:metadata:local_delegateaccount:usermodified',
+            'timerevoked' => 'privacy:metadata:local_delegateaccount:timerevoked',
+            'userrevoked' => 'privacy:metadata:local_delegateaccount:userrevoked',
+            'notificationmode' => 'privacy:metadata:local_delegateaccount:notificationmode',
         ], 'privacy:metadata:local_delegateaccount');
 
         return $collection;
@@ -73,6 +80,8 @@ class provider implements
                      WHERE da.realuserid = :realuserid
                         OR da.delegateduserid = :delegateduserid
                         OR da.usercreated = :usercreated
+                        OR da.usermodified = :usermodified
+                        OR da.userrevoked = :userrevoked
                 )",
             [
                 'contextlevel' => CONTEXT_USER,
@@ -80,6 +89,8 @@ class provider implements
                 'realuserid' => $userid,
                 'delegateduserid' => $userid,
                 'usercreated' => $userid,
+                'usermodified' => $userid,
+                'userrevoked' => $userid,
             ]
         );
 
@@ -110,10 +121,20 @@ class provider implements
             SELECT usercreated AS userid
               FROM {local_delegateaccount}
              WHERE usercreated = :usercreated
+            UNION
+            SELECT usermodified AS userid
+              FROM {local_delegateaccount}
+             WHERE usermodified = :usermodified
+            UNION
+            SELECT userrevoked AS userid
+              FROM {local_delegateaccount}
+             WHERE userrevoked = :userrevoked
         ", [
             'realuserid' => $userid,
             'delegateduserid' => $userid,
             'usercreated' => $userid,
+            'usermodified' => $userid,
+            'userrevoked' => $userid,
         ]);
     }
 
@@ -128,11 +149,17 @@ class provider implements
         $userid = (int) $contextlist->get_user()->id;
         $records = $DB->get_records_select(
             'local_delegateaccount',
-            'realuserid = :realuserid OR delegateduserid = :delegateduserid OR usercreated = :usercreated',
+            'realuserid = :realuserid
+                OR delegateduserid = :delegateduserid
+                OR usercreated = :usercreated
+                OR usermodified = :usermodified
+                OR userrevoked = :userrevoked',
             [
                 'realuserid' => $userid,
                 'delegateduserid' => $userid,
                 'usercreated' => $userid,
+                'usermodified' => $userid,
+                'userrevoked' => $userid,
             ],
             'timecreated ASC'
         );
@@ -158,10 +185,22 @@ class provider implements
                 if ((int) $record->usercreated === $userid) {
                     $roles[] = get_string('privacy:role:creator', 'local_delegateaccount');
                 }
+                if ((int) $record->usermodified === $userid) {
+                    $roles[] = get_string('privacy:role:modifier', 'local_delegateaccount');
+                }
+                if ((int) $record->userrevoked === $userid) {
+                    $roles[] = get_string('privacy:role:revoker', 'local_delegateaccount');
+                }
 
                 $delegations[] = (object) [
                     'roles' => implode(', ', $roles),
                     'timecreated' => transform::datetime((int) $record->timecreated),
+                    'timestart' => transform::datetime((int) $record->timestart),
+                    'timeend' => (int) $record->timeend > 0 ? transform::datetime((int) $record->timeend) : null,
+                    'timemodified' => transform::datetime((int) $record->timemodified),
+                    'timerevoked' => (int) $record->timerevoked > 0 ?
+                        transform::datetime((int) $record->timerevoked) : null,
+                    'notificationmode' => $record->notificationmode,
                 ];
             }
 
@@ -233,5 +272,7 @@ class provider implements
             ['realuserid' => $userid, 'delegateduserid' => $userid]
         );
         $DB->set_field('local_delegateaccount', 'usercreated', 0, ['usercreated' => $userid]);
+        $DB->set_field('local_delegateaccount', 'usermodified', 0, ['usermodified' => $userid]);
+        $DB->set_field('local_delegateaccount', 'userrevoked', 0, ['userrevoked' => $userid]);
     }
 }

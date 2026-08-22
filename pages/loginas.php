@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Bulk action handler for delegated accounts management.
+ * Executes the login-as functionality for delegated accounts.
  *
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
@@ -23,34 +23,27 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 
-$systemcontext = context_system::instance();
+use local_delegateaccount\manager;
+
+$targetuserid = required_param('id', PARAM_INT);
+
 require_login();
-require_capability('local/delegateaccount:manage', $systemcontext);
 require_sesskey();
 
-$PAGE->set_url(new moodle_url('/local/delegateaccount/bulk_actions.php'));
-$PAGE->set_context($systemcontext);
-
-$dashboardurl = new moodle_url('/local/delegateaccount/manage.php');
-
-$action = required_param('action', PARAM_ALPHA);
-$ids = optional_param_array('ids', [], PARAM_INT);
-
-if (empty($ids)) {
-    redirect(
-        $dashboardurl,
-        get_string('noselected', 'core'),
-        null,
-        \core\output\notification::NOTIFY_WARNING
-    );
+if (\core\session\manager::is_loggedinas()) {
+    throw new \moodle_exception('error_alreadyloggedinas', 'local_delegateaccount');
 }
 
-if ($action === 'delete') {
-    \local_delegateaccount\manager::delete_delegations($ids);
-    $message = get_string('deleted', 'core') . ': ' . count($ids);
-    redirect($dashboardurl, $message, null, \core\output\notification::NOTIFY_SUCCESS);
+$syscontext = context_system::instance();
+require_capability('local/delegateaccount:use', $syscontext);
+
+$realuserid = $USER->id;
+
+if (!manager::delegation_exists($realuserid, $targetuserid)) {
+    throw new \moodle_exception('error_unauthorized', 'local_delegateaccount');
 }
 
-redirect($dashboardurl);
+\core\session\manager::loginas($targetuserid, $syscontext);
+redirect(new moodle_url('/my/'));
