@@ -106,7 +106,10 @@ class delegated_accounts_table extends \table_sql {
         $from = '{local_delegateaccount} da
                  JOIN {user} u ON u.id = da.delegateduserid
                  LEFT JOIN {logstore_standard_log} log ON log.userid = da.delegateduserid
-                    AND log.realuserid = da.realuserid';
+                    AND log.realuserid = da.realuserid
+                    AND log.timecreated >= da.timestart
+                    AND (da.timeend = 0 OR log.timecreated < da.timeend)
+                    AND (da.timerevoked = 0 OR log.timecreated < da.timerevoked)';
         $where = 'da.realuserid = :realuserid';
         $params = ['realuserid' => $realuserid];
         if ($search !== '') {
@@ -243,14 +246,15 @@ class delegated_accounts_table extends \table_sql {
      * @return string Formatted end date or the open-ended label.
      */
     public function col_timeend($row): string {
-        if ((int)$row->timeend === 0) {
+        $displayend = manager::get_delegation_display_end($row);
+        if ($displayend === 0) {
             return $this->render_badge(
                 get_string('delegation_no_end', 'local_delegateaccount'),
                 'badge badge-info font-weight-normal'
             );
         }
 
-        return $this->render_badge(userdate((int)$row->timeend), 'badge badge-info font-weight-normal');
+        return $this->render_badge(userdate($displayend), 'badge badge-info font-weight-normal');
     }
 
     /**
@@ -298,15 +302,16 @@ class delegated_accounts_table extends \table_sql {
         $notificationmode = get_string_manager()->string_exists($notificationkey, 'local_delegateaccount')
             ? get_string($notificationkey, 'local_delegateaccount')
             : get_string('delegationnotificationmode_never', 'local_delegateaccount');
+        $displayend = manager::get_delegation_display_end($row);
         $content = $OUTPUT->render_from_template('local_delegateaccount/delegation_modal_body', [
             'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
             'status' => get_string('delegation_status_' . manager::get_delegation_status($row), 'local_delegateaccount'),
             'startlabel' => get_string('delegation_start', 'local_delegateaccount'),
             'start' => userdate((int)$row->timestart),
             'endlabel' => get_string('delegation_end', 'local_delegateaccount'),
-            'end' => (int)$row->timeend === 0
+            'end' => $displayend === 0
                 ? get_string('delegation_no_end', 'local_delegateaccount')
-                : userdate((int)$row->timeend),
+                : userdate($displayend),
             'notificationmodelabel' => get_string('delegationnotificationmode', 'local_delegateaccount'),
             'notificationmode' => $notificationmode,
         ]);
@@ -336,7 +341,7 @@ class delegated_accounts_table extends \table_sql {
             $actions[] = $OUTPUT->action_icon(
                 new \moodle_url('/local/delegateaccount/activity.php', [
                     'realuserid' => $this->realuserid,
-                    'delegateduserid' => $row->delegateduserid,
+                    'delegationid' => $row->id,
                 ]),
                 new \pix_icon('i/report', get_string('view_delegated_activity', 'local_delegateaccount'), 'core')
             );

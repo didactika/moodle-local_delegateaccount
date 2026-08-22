@@ -78,6 +78,7 @@ $getfullname = static function (int $userid) use ($auditusers): string {
         ? fullname($auditusers[$userid])
         : get_string('delegation_unknown_user', 'local_delegateaccount');
 };
+$displayend = manager::get_delegation_display_end($delegation);
 
 $templatecontext = [
     'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
@@ -95,9 +96,9 @@ $templatecontext = [
     'startlabel' => get_string('delegation_start', 'local_delegateaccount'),
     'start' => userdate((int)$delegation->timestart),
     'endlabel' => get_string('delegation_end', 'local_delegateaccount'),
-    'end' => (int)$delegation->timeend === 0
+    'end' => $displayend === 0
         ? get_string('delegation_no_end', 'local_delegateaccount')
-        : userdate((int)$delegation->timeend),
+        : userdate($displayend),
     'notificationmodelabel' => get_string('delegationnotificationmode', 'local_delegateaccount'),
     'notificationmode' => $notificationmode,
     'createdlabel' => get_string('delegation_created', 'local_delegateaccount'),

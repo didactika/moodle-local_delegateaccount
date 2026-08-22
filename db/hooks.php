@@ -19,6 +19,7 @@
  *
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $callbacks = [
     [
-        'hook' => \core\hook\output\before_footer_html_generation::class,
-        'callback' => [\local_delegateaccount\hook\before_footer::class, 'execute'],
+        'hook' => \core_user\hook\extend_user_menu::class,
+        'callback' => [\local_delegateaccount\hook\extend_user_menu::class, 'execute'],
     ],
 ];

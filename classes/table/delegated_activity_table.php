@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Paginated Moodle standard-log report for one delegated account relationship.
+ * Paginated Moodle standard-log report for one delegation period.
  *
  * @package    local_delegateaccount
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
@@ -35,13 +35,12 @@ namespace local_delegateaccount\table;
  */
 class delegated_activity_table extends \table_sql {
     /**
-     * Creates a report table constrained to one delegation relationship.
+     * Creates a report table constrained to one immutable delegation period.
      *
      * @param \moodle_url $baseurl URL retaining table state.
-     * @param int $realuserid Authorised user ID.
-     * @param int $delegateduserid Target account user ID.
+     * @param \stdClass $delegation Delegation database record.
      */
-    public function __construct(\moodle_url $baseurl, int $realuserid, int $delegateduserid) {
+    public function __construct(\moodle_url $baseurl, \stdClass $delegation) {
         parent::__construct('local_delegateaccount_delegated_activity');
 
         $this->define_columns([
@@ -65,11 +64,19 @@ class delegated_activity_table extends \table_sql {
         $this->define_baseurl($baseurl);
         $this->set_attribute('id', 'local-delegateaccount-activity');
 
-        $where = 'log.userid = :delegateduserid AND log.realuserid = :realuserid';
+        $where = 'log.userid = :delegateduserid
+                  AND log.realuserid = :realuserid
+                  AND log.timecreated >= :timestart';
         $params = [
-            'realuserid' => $realuserid,
-            'delegateduserid' => $delegateduserid,
+            'realuserid' => (int)$delegation->realuserid,
+            'delegateduserid' => (int)$delegation->delegateduserid,
+            'timestart' => (int)$delegation->timestart,
         ];
+        $accessend = \local_delegateaccount\manager::get_delegation_access_end($delegation);
+        if ($accessend > 0) {
+            $where .= ' AND log.timecreated < :timeend';
+            $params['timeend'] = $accessend;
+        }
         $countsql = 'SELECT COUNT(log.id) FROM {logstore_standard_log} log WHERE ' . $where;
 
         $this->set_count_sql($countsql, $params);

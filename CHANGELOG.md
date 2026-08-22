@@ -45,3 +45,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The authorised-user overview now includes every active current holder of
   `local/delegateaccount:use`, including users without a delegation. New
   assignments are blocked for users who no longer hold that capability.
+- Delegated accounts now use Moodle 4.5 and 5.2's native
+  `core_user\hook\extend_user_menu` extension instead of injecting a custom
+  carousel panel with JavaScript.
+- Revoked delegations display their revocation as the end date. Last-access
+  values and paginated activity reports are isolated to each delegation's
+  effective access period, including repeated delegations of the same account.

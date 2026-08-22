@@ -34,20 +34,13 @@ $context = context_system::instance();
 require_capability('local/delegateaccount:viewactivity', $context);
 
 $realuserid = required_param('realuserid', PARAM_INT);
-$delegateduserid = required_param('delegateduserid', PARAM_INT);
+$delegationid = required_param('delegationid', PARAM_INT);
+$delegation = $DB->get_record('local_delegateaccount', [
+    'id' => $delegationid,
+    'realuserid' => $realuserid,
+], '*', MUST_EXIST);
 $realuser = $DB->get_record('user', ['id' => $realuserid, 'deleted' => 0], '*', MUST_EXIST);
-$delegateduser = $DB->get_record('user', ['id' => $delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
-if (
-    !$DB->record_exists(
-        'local_delegateaccount',
-        [
-            'realuserid' => $realuserid,
-            'delegateduserid' => $delegateduserid,
-        ]
-    )
-) {
-    throw new moodle_exception('error_unauthorized', 'local_delegateaccount');
-}
+$delegateduser = $DB->get_record('user', ['id' => $delegation->delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
 
 $title = get_string('delegated_activity_for', 'local_delegateaccount', (object)[
     'authoriseduser' => fullname($realuser),
@@ -55,8 +48,12 @@ $title = get_string('delegated_activity_for', 'local_delegateaccount', (object)[
 ]);
 $url = new moodle_url('/local/delegateaccount/activity.php', [
     'realuserid' => $realuserid,
-    'delegateduserid' => $delegateduserid,
+    'delegationid' => $delegationid,
 ]);
+$accessend = \local_delegateaccount\manager::get_delegation_access_end($delegation);
+$periodend = $accessend > 0
+    ? userdate($accessend)
+    : get_string('delegation_no_end', 'local_delegateaccount');
 
 $PAGE->set_url($url);
 $PAGE->set_title($title);
@@ -68,6 +65,8 @@ echo $OUTPUT->render_from_template('local_delegateaccount/report_description', [
     'description' => get_string('delegated_activity_description', 'local_delegateaccount', (object)[
         'authoriseduser' => fullname($realuser),
         'delegateduser' => fullname($delegateduser),
+        'timestart' => userdate((int)$delegation->timestart),
+        'timeend' => $periodend,
     ]),
 ]);
 echo $OUTPUT->action_link(
@@ -78,6 +77,6 @@ echo $OUTPUT->action_link(
     new \pix_icon('t/left', '', 'core', ['class' => 'mr-1'])
 );
 
-$table = new delegated_activity_table($url, $realuserid, $delegateduserid);
-$table->out(50, true);
+$table = new delegated_activity_table($url, $delegation);
+$table->out(25, true);
 echo $OUTPUT->footer();

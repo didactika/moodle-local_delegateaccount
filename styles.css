@@ -65,6 +65,10 @@
     padding-top: 0;
 }
 
+.local-delegateaccount-filter-menu #fgroup_id_buttonar {
+    margin-bottom: .25rem !important;
+}
+
 .local-delegateaccount-filter-menu .fitem.femptylabel::before {
     content: "";
     display: block;

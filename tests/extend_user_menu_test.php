@@ -1,0 +1,68 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace local_delegateaccount;
+
+/**
+ * Tests the supported Moodle user-menu extension.
+ *
+ * @package    local_delegateaccount
+ * @category   test
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @copyright  2026 Didactika.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \local_delegateaccount\hook\extend_user_menu
+ */
+final class extend_user_menu_test extends \advanced_testcase {
+    /**
+     * Adds active accounts as native links without JavaScript injection.
+     */
+    public function test_active_delegations_are_added_as_native_menu_links(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('notificationpolicy', manager::NOTIFICATION_NEVER, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $activetarget = $generator->create_user();
+        $futuretarget = $generator->create_user();
+
+        $context = \context_system::instance();
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'manager'], MUST_EXIST);
+        assign_capability('local/delegateaccount:use', CAP_ALLOW, $roleid, $context->id, true);
+        role_assign($roleid, $authoriseduser->id, $context->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        manager::create_delegations([(int)$authoriseduser->id], [(int)$activetarget->id]);
+        manager::create_delegations(
+            [(int)$authoriseduser->id],
+            [(int)$futuretarget->id],
+            ['timestart' => time() + HOURSECS]
+        );
+
+        $this->setUser($authoriseduser);
+        $hook = new \core_user\hook\extend_user_menu();
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
+        $items = $hook->get_navitems();
+
+        $this->assertCount(1, $items);
+        $this->assertSame('link', $items[0]->itemtype);
+        $this->assertSame('i/switch', $items[0]->pix);
+        $this->assertStringContainsString('loginas.php', $items[0]->url->out(false));
+        $this->assertStringContainsString('id=' . $activetarget->id, $items[0]->url->out(false));
+    }
+}

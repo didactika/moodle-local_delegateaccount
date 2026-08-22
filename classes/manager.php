@@ -381,6 +381,40 @@ class manager {
     }
 
     /**
+     * Returns the instant when access through a delegation actually stopped.
+     *
+     * A configured end date and a later logical revocation can both exist on a
+     * historical record. The earlier positive timestamp is the true access
+     * boundary used by activity reports.
+     *
+     * @param \stdClass $delegation Delegation database record.
+     * @return int Effective end timestamp, or zero for continuing access.
+     */
+    public static function get_delegation_access_end(\stdClass $delegation): int {
+        $ends = array_filter([
+            (int)$delegation->timeend,
+            (int)$delegation->timerevoked,
+        ]);
+
+        return empty($ends) ? 0 : min($ends);
+    }
+
+    /**
+     * Returns the end timestamp that administrators expect in lifecycle views.
+     *
+     * Revocation is an explicit administrative end and therefore takes
+     * precedence over the originally configured end date when displayed.
+     *
+     * @param \stdClass $delegation Delegation database record.
+     * @return int Display end timestamp, or zero for an open-ended delegation.
+     */
+    public static function get_delegation_display_end(\stdClass $delegation): int {
+        return (int)$delegation->timerevoked > 0
+            ? (int)$delegation->timerevoked
+            : (int)$delegation->timeend;
+    }
+
+    /**
      * Builds the SQL for filtering delegations based on user details.
      *
      * @param string $search The search query string.

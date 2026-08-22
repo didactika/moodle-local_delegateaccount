@@ -215,6 +215,28 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Uses the earliest lifecycle boundary for activity and revocation for display.
+     */
+    public function test_delegation_end_boundaries_are_unambiguous(): void {
+        $delegation = (object) [
+            'timeend' => 2_000,
+            'timerevoked' => 1_500,
+        ];
+
+        $this->assertSame(1_500, manager::get_delegation_access_end($delegation));
+        $this->assertSame(1_500, manager::get_delegation_display_end($delegation));
+
+        $delegation->timeend = 1_000;
+        $this->assertSame(1_000, manager::get_delegation_access_end($delegation));
+        $this->assertSame(1_500, manager::get_delegation_display_end($delegation));
+
+        $delegation->timeend = 0;
+        $delegation->timerevoked = 0;
+        $this->assertSame(0, manager::get_delegation_access_end($delegation));
+        $this->assertSame(0, manager::get_delegation_display_end($delegation));
+    }
+
+    /**
      * Applies the site notification policy to a requested delegation choice.
      */
     public function test_notification_policy_overrides_requested_choice(): void {
