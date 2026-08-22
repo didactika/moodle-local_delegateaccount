@@ -31,4 +31,4 @@ $plugin->requires = 2024100700;
 $plugin->component = 'local_delegateaccount';
 $plugin->release   = '1.0.0';
 $plugin->supported = [405, 502];
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_STABLE;
