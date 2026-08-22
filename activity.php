@@ -28,6 +28,7 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 use local_delegateaccount\table\delegated_activity_table;
+use local_delegateaccount\form\activity_filter_form;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 $context = context_system::instance();
@@ -42,6 +43,24 @@ $delegation = $DB->get_record('local_delegateaccount', [
 $realuser = $DB->get_record('user', ['id' => $realuserid, 'deleted' => 0], '*', MUST_EXIST);
 $delegateduser = $DB->get_record('user', ['id' => $delegation->delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
 
+$filterform = new activity_filter_form(
+    new moodle_url('/local/delegateaccount/activity.php'),
+    ['realuserid' => $realuserid, 'delegationid' => $delegationid]
+);
+$submittedfilters = $filterform->get_data();
+$datefromparam = isset($_GET['datefrom']) && !is_array($_GET['datefrom'])
+    ? optional_param('datefrom', 0, PARAM_INT)
+    : 0;
+$datetoparam = isset($_GET['dateto']) && !is_array($_GET['dateto'])
+    ? optional_param('dateto', 0, PARAM_INT)
+    : 0;
+$filters = [
+    'datefrom' => $submittedfilters ? (int)$submittedfilters->datefrom : $datefromparam,
+    'dateto' => $submittedfilters ? (int)$submittedfilters->dateto : $datetoparam,
+    'component' => $submittedfilters ? trim($submittedfilters->component) : optional_param('component', '', PARAM_TEXT),
+    'action' => $submittedfilters ? trim($submittedfilters->action) : optional_param('action', '', PARAM_TEXT),
+];
+
 $title = get_string('delegated_activity_for', 'local_delegateaccount', (object)[
     'authoriseduser' => fullname($realuser),
     'delegateduser' => fullname($delegateduser),
@@ -50,6 +69,11 @@ $url = new moodle_url('/local/delegateaccount/activity.php', [
     'realuserid' => $realuserid,
     'delegationid' => $delegationid,
 ]);
+foreach ($filters as $name => $value) {
+    if ($value !== '' && $value !== 0) {
+        $url->param($name, $value);
+    }
+}
 $accessend = \local_delegateaccount\manager::get_delegation_access_end($delegation);
 $periodend = $accessend > 0
     ? userdate($accessend)
@@ -58,10 +82,11 @@ $periodend = $accessend > 0
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
+$PAGE->requires->js_call_amd('local_delegateaccount/filter_toggle', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
-echo $OUTPUT->render_from_template('local_delegateaccount/report_description', [
+echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
     'description' => get_string('delegated_activity_description', 'local_delegateaccount', (object)[
         'authoriseduser' => fullname($realuser),
         'delegateduser' => fullname($delegateduser),
@@ -69,14 +94,30 @@ echo $OUTPUT->render_from_template('local_delegateaccount/report_description', [
         'timeend' => $periodend,
     ]),
 ]);
-echo $OUTPUT->action_link(
-    new moodle_url('/local/delegateaccount/delegations.php', ['realuserid' => $realuserid]),
-    get_string('back'),
-    null,
-    ['class' => 'btn btn-secondary mb-3'],
-    new \pix_icon('t/left', '', 'core', ['class' => 'mr-1'])
-);
+if (!$filterform->is_submitted() || $submittedfilters) {
+    $filterform->set_data($filters);
+}
+ob_start();
+$filterform->display();
+$filterformhtml = ob_get_clean();
+$hasfilters = array_filter($filters, static fn($value): bool => $value !== '' && $value !== 0) !== [];
+echo $OUTPUT->render_from_template('local_delegateaccount/report/activity_toolbar', [
+    'backurl' => (new moodle_url('/local/delegateaccount/delegations.php', [
+        'realuserid' => $realuserid,
+    ]))->out(false),
+    'backlabel' => get_string('back'),
+    'filterid' => 'local-delegateaccount-activity-filters',
+    'filterlabel' => get_string('filters'),
+    'filterform' => $filterformhtml,
+    'hasfilters' => $hasfilters,
+    'showfilters' => $hasfilters,
+    'reseturl' => (new moodle_url('/local/delegateaccount/activity.php', [
+        'realuserid' => $realuserid,
+        'delegationid' => $delegationid,
+    ]))->out(false),
+    'resetlabel' => get_string('reset'),
+]);
 
-$table = new delegated_activity_table($url, $delegation);
+$table = new delegated_activity_table($url, $delegation, $filters);
 $table->out(25, true);
 echo $OUTPUT->footer();

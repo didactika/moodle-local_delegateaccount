@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_delegateaccount/manage_actions
+    @template local_delegateaccount/manage/actions
 
     Moodle-native actions and collapsible filters for delegation management.
 
@@ -28,6 +28,6 @@
         {{#cancreate}}
             <a class="btn btn-primary mr-2" href="{{assignurl}}">{{addlabel}}</a>
         {{/cancreate}}
-        {{> local_delegateaccount/filter_dropdown}}
+        {{> local_delegateaccount/shared/filter_dropdown}}
     </div>
 </div>

@@ -53,9 +53,10 @@ php admin/cli/upgrade.php --non-interactive
    access from that list when it is no longer required.
 4. Add one or more target accounts for the selected user, then save the
    delegation.
-5. The authorised person can open any **Use delegated account: _name_** entry
-   added through Moodle's native user-menu extension and choose an available
-   target account without a theme-specific menu injection.
+5. The authorised person can open **Delegated accounts** in Moodle's user
+   menu, then choose a target from the carousel submenu. The single native
+   menu entry links to a complete 25-row paginated list when JavaScript is
+   unavailable or the visual menu limit is reached.
 6. Moodle displays its normal session-switching state. Return to the original
    account before selecting another delegated account.
 
@@ -100,7 +101,9 @@ Users with `local/delegateaccount:viewactivity` can open the related report
 from an individual delegation. It contains only standard-log events where the
 target account was used through that authorised user's selected delegation
 period. Repeated delegations between the same users remain separate, and the
-report uses Moodle's standard 25-row pagination.
+report uses Moodle's standard 25-row pagination. Date, component and action
+filters can narrow that immutable period but can never expose activity before
+access began or after it ended.
 
 
 ## Privacy and security

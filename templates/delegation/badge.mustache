@@ -15,15 +15,18 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_delegateaccount/delegation_revoke_action
+    @template local_delegateaccount/delegation/badge
 
-    Destructive action for one delegation, confirmed by the companion AMD module.
+    A compact lifecycle value displayed in a delegated-account table.
 
     @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "class": "badge badge-success",
+        "label": "Active"
+    }
 }}
-<button type="button" class="btn btn-link p-0 action-icon" data-action="local-delegateaccount-revoke-one"
-    data-delegation-id="{{delegationid}}" aria-label="{{label}}" title="{{label}}">
-    {{#pix}}t/delete, core, {{label}}{{/pix}}
-</button>
+<span class="{{class}}">{{label}}</span>

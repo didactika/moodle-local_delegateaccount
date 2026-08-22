@@ -47,4 +47,28 @@ final class delegated_activity_table_test extends \advanced_testcase {
         $this->assertSame(1_000, $table->sql->params['timestart']);
         $this->assertSame(2_000, $table->sql->params['timeend']);
     }
+
+    /**
+     * Applies report filters without allowing dates outside the delegation period.
+     */
+    public function test_filters_are_clamped_to_the_delegation_period(): void {
+        $delegation = (object) [
+            'realuserid' => 11,
+            'delegateduserid' => 22,
+            'timestart' => 1_000,
+            'timeend' => 3_000,
+            'timerevoked' => 2_000,
+        ];
+        $table = new delegated_activity_table(new \moodle_url('/'), $delegation, [
+            'datefrom' => 500,
+            'dateto' => 4_000,
+            'component' => 'forum',
+            'action' => 'viewed',
+        ]);
+
+        $this->assertSame(1_000, $table->sql->params['filterdatefrom']);
+        $this->assertSame(2_000, $table->sql->params['filterdateto']);
+        $this->assertStringContainsString('log.component', $table->sql->where);
+        $this->assertStringContainsString('log.action', $table->sql->where);
+    }
 }

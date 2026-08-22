@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_delegateaccount/delegations_toolbar
+    @template local_delegateaccount/delegation/toolbar
 
     Navigation, bulk action, creation, and filter controls for delegated accounts.
 
@@ -40,7 +40,7 @@
             {{#cancreate}}
                 <a class="btn btn-primary mr-2" href="{{assignurl}}">{{addlabel}}</a>
             {{/cancreate}}
-            {{> local_delegateaccount/filter_dropdown}}
+            {{> local_delegateaccount/shared/filter_dropdown}}
         </div>
     </div>
 </div>

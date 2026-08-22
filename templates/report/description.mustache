@@ -15,20 +15,12 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_delegateaccount/delegations_actions
+    @template local_delegateaccount/report/description
 
-    Navigation and creation actions for an authorised user's delegations.
+    Standard descriptive text shown below a Moodle report heading.
 
     @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <a class="btn btn-secondary" href="{{backurl}}">
-        {{#pix}}t/left, core{{/pix}}
-        {{backlabel}}
-    </a>
-    {{#cancreate}}
-        <a class="btn btn-primary" href="{{assignurl}}">{{addlabel}}</a>
-    {{/cancreate}}
-</div>
+<div class="description mb-3">{{description}}</div>

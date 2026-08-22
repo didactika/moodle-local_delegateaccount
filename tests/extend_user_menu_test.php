@@ -28,9 +28,9 @@ namespace local_delegateaccount;
  */
 final class extend_user_menu_test extends \advanced_testcase {
     /**
-     * Adds active accounts as native links without JavaScript injection.
+     * Adds one native fallback entry when an active delegated account exists.
      */
-    public function test_active_delegations_are_added_as_native_menu_links(): void {
+    public function test_active_delegations_add_one_native_fallback_link(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -62,7 +62,7 @@ final class extend_user_menu_test extends \advanced_testcase {
         $this->assertCount(1, $items);
         $this->assertSame('link', $items[0]->itemtype);
         $this->assertSame('i/switch', $items[0]->pix);
-        $this->assertStringContainsString('loginas.php', $items[0]->url->out(false));
-        $this->assertStringContainsString('id=' . $activetarget->id, $items[0]->url->out(false));
+        $this->assertStringContainsString('/local/delegateaccount/accounts.php', $items[0]->url->out(false));
+        $this->assertStringNotContainsString('id=' . $futuretarget->id, $items[0]->url->out(false));
     }
 }

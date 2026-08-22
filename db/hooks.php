@@ -31,4 +31,8 @@ $callbacks = [
         'hook' => \core_user\hook\extend_user_menu::class,
         'callback' => [\local_delegateaccount\hook\extend_user_menu::class, 'execute'],
     ],
+    [
+        'hook' => \core\hook\output\before_standard_top_of_body_html_generation::class,
+        'callback' => [\local_delegateaccount\hook\before_top_of_body::class, 'execute'],
+    ],
 ];

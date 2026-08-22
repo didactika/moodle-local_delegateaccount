@@ -15,21 +15,13 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_delegateaccount/user_identity
+    @template local_delegateaccount/delegation/select
 
-    Moodle-style compact identity including the standard user picture.
+    Selection control for one revocable delegation.
 
     @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-
-    Example context (json):
-    {
-        "userpicture": "<img src=\"https://moodle.example/pix/u/f1.png\" alt=\"Jane Doe\">",
-        "fullname": "Jane Doe"
-    }
 }}
-<span class="d-flex align-items-center">
-    <span class="mr-2">{{{userpicture}}}</span>
-    <span>{{fullname}}</span>
-</span>
+<input type="checkbox" value="{{id}}" data-action="local-delegateaccount-select-delegation"
+    aria-label="{{label}}" title="{{label}}">

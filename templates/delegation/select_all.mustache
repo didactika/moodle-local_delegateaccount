@@ -15,13 +15,12 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_delegateaccount/delegation_select
+    @template local_delegateaccount/delegation/select_all
 
-    Selection control for one revocable delegation.
+    Select-all control for revocable delegations on the current page.
 
     @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
-<input type="checkbox" value="{{id}}" data-action="local-delegateaccount-select-delegation"
-    aria-label="{{label}}" title="{{label}}">
+<input type="checkbox" data-action="local-delegateaccount-select-all" aria-label="{{label}}" title="{{label}}">

@@ -39,8 +39,11 @@ class delegated_activity_table extends \table_sql {
      *
      * @param \moodle_url $baseurl URL retaining table state.
      * @param \stdClass $delegation Delegation database record.
+     * @param array $filters Optional date and event metadata filters.
      */
-    public function __construct(\moodle_url $baseurl, \stdClass $delegation) {
+    public function __construct(\moodle_url $baseurl, \stdClass $delegation, array $filters = []) {
+        global $DB;
+
         parent::__construct('local_delegateaccount_delegated_activity');
 
         $this->define_columns([
@@ -76,6 +79,23 @@ class delegated_activity_table extends \table_sql {
         if ($accessend > 0) {
             $where .= ' AND log.timecreated < :timeend';
             $params['timeend'] = $accessend;
+        }
+        if (!empty($filters['datefrom'])) {
+            $where .= ' AND log.timecreated >= :filterdatefrom';
+            $params['filterdatefrom'] = max((int)$delegation->timestart, (int)$filters['datefrom']);
+        }
+        if (!empty($filters['dateto'])) {
+            $requestedend = (int)$filters['dateto'];
+            $params['filterdateto'] = $accessend > 0 ? min($accessend, $requestedend) : $requestedend;
+            $where .= ' AND log.timecreated < :filterdateto';
+        }
+        if (!empty($filters['component'])) {
+            $where .= ' AND ' . $DB->sql_like('log.component', ':filtercomponent', false);
+            $params['filtercomponent'] = '%' . $DB->sql_like_escape($filters['component']) . '%';
+        }
+        if (!empty($filters['action'])) {
+            $where .= ' AND ' . $DB->sql_like('log.action', ':filteraction', false);
+            $params['filteraction'] = '%' . $DB->sql_like_escape($filters['action']) . '%';
         }
         $countsql = 'SELECT COUNT(log.id) FROM {logstore_standard_log} log WHERE ' . $where;
 

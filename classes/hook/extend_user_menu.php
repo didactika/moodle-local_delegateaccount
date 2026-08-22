@@ -16,8 +16,6 @@
 
 namespace local_delegateaccount\hook;
 
-use local_delegateaccount\manager;
-
 /**
  * Adds active delegated accounts through Moodle's supported user-menu hook.
  *
@@ -28,7 +26,7 @@ use local_delegateaccount\manager;
  */
 final class extend_user_menu {
     /**
-     * Adds one native user-menu link for every visible active delegation.
+     * Adds one native entry that remains useful when JavaScript is unavailable.
      *
      * @param \core_user\hook\extend_user_menu $hook User-menu extension hook.
      */
@@ -43,25 +41,15 @@ final class extend_user_menu {
             return;
         }
 
-        $configuredlimit = get_config('local_delegateaccount', 'usermenulimit');
-        $limit = $configuredlimit === false ? 10 : max(0, (int)$configuredlimit);
-        $accounts = manager::get_delegated_accounts_for_user((int)$USER->id, $limit);
-
-        foreach ($accounts as $account) {
-            $item = (object) [
-                'itemtype' => 'link',
-                'url' => new \moodle_url('/local/delegateaccount/loginas.php', [
-                    'id' => (int)$account->delegateduserid,
-                    'sesskey' => sesskey(),
-                ]),
-                'title' => get_string(
-                    'use_delegated_account',
-                    'local_delegateaccount',
-                    fullname($account)
-                ),
-                'pix' => 'i/switch',
-            ];
-            $hook->add_navitem($item);
+        if (!\local_delegateaccount\manager::get_delegated_accounts_for_user((int)$USER->id, 1)) {
+            return;
         }
+
+        $hook->add_navitem((object) [
+            'itemtype' => 'link',
+            'url' => new \moodle_url('/local/delegateaccount/accounts.php'),
+            'title' => get_string('delegated_accounts_menu', 'local_delegateaccount'),
+            'pix' => 'i/switch',
+        ]);
     }
 }
