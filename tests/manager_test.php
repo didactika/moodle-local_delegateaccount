@@ -192,6 +192,95 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Applies one period to selected active delegations and emits one event per record.
+     */
+    public function test_bulk_update_is_scoped_to_one_authorised_user(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('notificationpolicy', manager::NOTIFICATION_NEVER, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $otherauthoriseduser = $generator->create_user();
+        $firsttarget = $generator->create_user();
+        $secondtarget = $generator->create_user();
+        $othertarget = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
+        $this->grant_delegated_account_use($otherauthoriseduser);
+        manager::create_delegations(
+            [(int)$authoriseduser->id],
+            [(int)$firsttarget->id, (int)$secondtarget->id]
+        );
+        manager::create_delegations([(int)$otherauthoriseduser->id], [(int)$othertarget->id]);
+        $selected = $DB->get_records('local_delegateaccount', ['realuserid' => $authoriseduser->id]);
+        $start = time() + HOURSECS;
+        $end = $start + DAYSECS;
+
+        $eventsink = $this->redirectEvents();
+        $updated = manager::update_delegations(
+            array_keys($selected),
+            (int)$authoriseduser->id,
+            $start,
+            $end,
+            manager::NOTIFICATION_NEVER
+        );
+        $events = $eventsink->get_events();
+
+        $this->assertSame(2, $updated);
+        $this->assertCount(2, $events);
+        $this->assertContainsOnlyInstancesOf(\local_delegateaccount\event\delegation_updated::class, $events);
+        foreach (array_keys($selected) as $delegationid) {
+            $record = $DB->get_record('local_delegateaccount', ['id' => $delegationid], '*', MUST_EXIST);
+            $this->assertSame($start, (int)$record->timestart);
+            $this->assertSame($end, (int)$record->timeend);
+            $this->assertSame((int)$USER->id, (int)$record->usermodified);
+        }
+        $otherrecord = $DB->get_record('local_delegateaccount', [
+            'realuserid' => $otherauthoriseduser->id,
+        ], '*', MUST_EXIST);
+        $this->assertNotSame($start, (int)$otherrecord->timestart);
+    }
+
+    /**
+     * Rejects a mixed-owner bulk update without changing any selected record.
+     */
+    public function test_bulk_update_rejects_mixed_owner_selection_atomically(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('notificationpolicy', manager::NOTIFICATION_NEVER, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $firstauthoriseduser = $generator->create_user();
+        $secondauthoriseduser = $generator->create_user();
+        $firsttarget = $generator->create_user();
+        $secondtarget = $generator->create_user();
+        $this->grant_delegated_account_use($firstauthoriseduser);
+        $this->grant_delegated_account_use($secondauthoriseduser);
+        manager::create_delegations([(int)$firstauthoriseduser->id], [(int)$firsttarget->id]);
+        manager::create_delegations([(int)$secondauthoriseduser->id], [(int)$secondtarget->id]);
+        $records = array_values($DB->get_records('local_delegateaccount', [], 'id ASC'));
+        $originalstart = (int)$records[0]->timestart;
+
+        try {
+            manager::update_delegations(
+                [(int)$records[0]->id, (int)$records[1]->id],
+                (int)$firstauthoriseduser->id,
+                time() + HOURSECS,
+                time() + DAYSECS,
+                manager::NOTIFICATION_NEVER
+            );
+            $this->fail('A mixed-owner selection must be rejected.');
+        } catch (\moodle_exception $exception) {
+            $this->assertSame('error_invaliddelegations', $exception->errorcode);
+        }
+
+        $unchanged = $DB->get_record('local_delegateaccount', ['id' => $records[0]->id], '*', MUST_EXIST);
+        $this->assertSame($originalstart, (int)$unchanged->timestart);
+    }
+
+    /**
      * Limits the active delegated accounts returned for the user menu.
      */
     public function test_user_menu_query_honours_configured_limit(): void {

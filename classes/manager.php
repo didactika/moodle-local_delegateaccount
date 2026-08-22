@@ -358,6 +358,60 @@ class manager {
     }
 
     /**
+     * Applies one lifecycle configuration to several active delegations atomically.
+     *
+     * @param int[] $delegationids Delegation identifiers selected by an administrator.
+     * @param int $realuserid Authorised user that must own every selected delegation.
+     * @param int $timestart Unix timestamp when access starts.
+     * @param int $timeend Unix timestamp when access ends, or zero for no end date.
+     * @param string $notificationmode Site, always, or never.
+     * @return int Number of updated delegations.
+     */
+    public static function update_delegations(
+        array $delegationids,
+        int $realuserid,
+        int $timestart,
+        int $timeend,
+        string $notificationmode
+    ): int {
+        global $DB, $USER;
+
+        $delegationids = array_values(array_unique(array_map('intval', $delegationids)));
+        if (!$delegationids) {
+            return 0;
+        }
+
+        self::validate_bulk_operation_count(count($delegationids));
+        self::validate_period($timestart, $timeend);
+        $notificationmode = self::resolve_notification_mode($notificationmode);
+        [$insql, $params] = $DB->get_in_or_equal($delegationids, SQL_PARAMS_NAMED, 'bulkupdate');
+        $params['realuserid'] = $realuserid;
+        $records = $DB->get_records_select(
+            'local_delegateaccount',
+            "id $insql AND realuserid = :realuserid AND activekey = 0",
+            $params
+        );
+        if (count($records) !== count($delegationids)) {
+            throw new \moodle_exception('error_invaliddelegations', 'local_delegateaccount');
+        }
+
+        $now = time();
+        $transaction = $DB->start_delegated_transaction();
+        foreach ($records as $record) {
+            $record->timestart = $timestart;
+            $record->timeend = $timeend;
+            $record->notificationmode = $notificationmode;
+            $record->timemodified = $now;
+            $record->usermodified = (int)$USER->id;
+            $DB->update_record('local_delegateaccount', $record);
+            self::trigger_event('delegation_updated', $record, (int)$USER->id);
+        }
+        $transaction->allow_commit();
+
+        return count($records);
+    }
+
+    /**
      * Returns the derived lifecycle status of a delegation.
      *
      * @param \stdClass $delegation Delegation database record.

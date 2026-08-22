@@ -71,4 +71,25 @@ final class delegated_activity_table_test extends \advanced_testcase {
         $this->assertStringContainsString('log.component', $table->sql->where);
         $this->assertStringContainsString('log.action', $table->sql->where);
     }
+
+    /**
+     * Treats the upper date filter as an inclusive calendar day.
+     */
+    public function test_upper_date_filter_includes_the_selected_day(): void {
+        $this->resetAfterTest();
+        set_config('timezone', 'UTC');
+        $selectedday = gmmktime(0, 0, 0, 8, 22, 2026);
+        $delegation = (object) [
+            'realuserid' => 11,
+            'delegateduserid' => 22,
+            'timestart' => $selectedday - DAYSECS,
+            'timeend' => $selectedday + (2 * DAYSECS),
+            'timerevoked' => 0,
+        ];
+        $table = new delegated_activity_table(new \moodle_url('/'), $delegation, [
+            'dateto' => $selectedday,
+        ]);
+
+        $this->assertSame($selectedday + DAYSECS, $table->sql->params['filterdateto']);
+    }
 }

@@ -85,7 +85,9 @@ class delegated_activity_table extends \table_sql {
             $params['filterdatefrom'] = max((int)$delegation->timestart, (int)$filters['datefrom']);
         }
         if (!empty($filters['dateto'])) {
-            $requestedend = (int)$filters['dateto'];
+            $selecteddate = (new \DateTimeImmutable('@' . (int)$filters['dateto']))
+                ->setTimezone(\core_date::get_user_timezone_object());
+            $requestedend = $selecteddate->setTime(0, 0)->modify('+1 day')->getTimestamp();
             $params['filterdateto'] = $accessend > 0 ? min($accessend, $requestedend) : $requestedend;
             $where .= ' AND log.timecreated < :filterdateto';
         }

@@ -124,6 +124,7 @@ $PAGE->set_heading(get_string('delegated_accounts_for', 'local_delegateaccount',
 $PAGE->requires->js_call_amd('local_delegateaccount/delegation_info', 'init');
 $PAGE->requires->js_call_amd('local_delegateaccount/delegation_revoke', 'init');
 $PAGE->requires->js_call_amd('local_delegateaccount/filter_toggle', 'init');
+$PAGE->requires->js_call_amd('local_delegateaccount/management_modals', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('delegated_accounts_for', 'local_delegateaccount', fullname($realuser)));
@@ -171,10 +172,18 @@ $filterform->display();
 $filterformhtml = ob_get_clean();
 $canrevoke = $status !== manager::STATUS_REVOKED &&
     has_capability('local/delegateaccount:revoke', $context);
-echo $OUTPUT->render_from_template('local_delegateaccount/delegations_toolbar', [
+$canupdate = $status !== manager::STATUS_REVOKED &&
+    (
+        has_capability('local/delegateaccount:update', $context) ||
+        has_capability('local/delegateaccount:manage', $context)
+    );
+echo $OUTPUT->render_from_template('local_delegateaccount/delegation/toolbar', [
     'backurl' => (new moodle_url('/local/delegateaccount/manage.php'))->out(false),
     'backlabel' => get_string('back'),
     'canrevoke' => $canrevoke,
+    'canupdate' => $canupdate,
+    'realuserid' => $realuserid,
+    'editselectedlabel' => get_string('edit_selected_delegations', 'local_delegateaccount'),
     'revokeselectedlabel' => get_string('revoke_selected', 'local_delegateaccount'),
     'cancreate' => $cancreate,
     'assignurl' => (new moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $realuserid]))->out(false),

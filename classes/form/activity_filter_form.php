@@ -39,17 +39,17 @@ final class activity_filter_form extends \moodleform {
         $mform->updateAttributes(['class' => 'full-width-labels']);
 
         $mform->addElement(
-            'date_time_selector',
+            'date_selector',
             'datefrom',
-            get_string('activity_filter_datefrom', 'local_delegateaccount'),
-            ['optional' => true]
+            get_string('activity_filter_datefrom', 'local_delegateaccount')
         );
+        $mform->setDefault('datefrom', (int)$this->_customdata['periodstart']);
         $mform->addElement(
-            'date_time_selector',
+            'date_selector',
             'dateto',
-            get_string('activity_filter_dateto', 'local_delegateaccount'),
-            ['optional' => true]
+            get_string('activity_filter_dateto', 'local_delegateaccount')
         );
+        $mform->setDefault('dateto', (int)$this->_customdata['periodend']);
         $mform->addElement(
             'text',
             'component',
@@ -83,7 +83,7 @@ final class activity_filter_form extends \moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if (!empty($data['datefrom']) && !empty($data['dateto']) && $data['dateto'] <= $data['datefrom']) {
+        if (!empty($data['datefrom']) && !empty($data['dateto']) && $data['dateto'] < $data['datefrom']) {
             $errors['dateto'] = get_string('activity_filter_invalidperiod', 'local_delegateaccount');
         }
 

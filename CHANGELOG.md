@@ -38,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   paginated self-service page as its accessible fallback.
 - Date, component and action filters for each delegation-period activity
   report.
+- Moodle core modal forms for multi-user/multi-account assignment and common
+  lifecycle updates across selected active delegations, with the existing
+  page preserved as a no-JavaScript fallback.
 
 ### Changed
 
@@ -58,3 +61,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Revoked delegations display their revocation as the end date. Last-access
   values and paginated activity reports are isolated to each delegation's
   effective access period, including repeated delegations of the same account.
+- Activity report dates are calendar-day filters, and repeated user-menu hook
+  execution is explicitly deduplicated.

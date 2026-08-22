@@ -81,9 +81,19 @@
     margin-left: 0;
 }
 
-.local-delegateaccount-filter-menu .fitem .form-control,
-.local-delegateaccount-filter-menu .fitem select {
+.local-delegateaccount-filter-menu .fitem input.form-control,
+.local-delegateaccount-filter-menu .fitem textarea.form-control {
     width: 100%;
+    max-width: 100%;
+}
+
+.local-delegateaccount-filter-menu .fdate_selector .felement > div {
+    column-gap: .5rem;
+    row-gap: .5rem;
+}
+
+.local-delegateaccount-filter-menu .fdate_selector select {
+    width: auto;
     max-width: 100%;
 }
 

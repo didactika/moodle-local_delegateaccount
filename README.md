@@ -51,8 +51,12 @@ php admin/cli/upgrade.php --non-interactive
    full-page fallback when JavaScript is unavailable. With the update
    capability, adjust the validity dates and notification decision; revoke
    access from that list when it is no longer required.
-4. Add one or more target accounts for the selected user, then save the
-   delegation.
+4. Use **Add delegated account** to open the Moodle modal. Select one or more
+   authorised users and one or more target accounts; the plugin creates the
+   requested user-account matrix while enforcing site limits. In an individual
+   delegation list, checkbox selections can also receive one common validity
+   period or be revoked together after explicit confirmation. The linked page
+   remains a functional fallback when JavaScript is unavailable.
 5. The authorised person can open **Delegated accounts** in Moodle's user
    menu, then choose a target from the carousel submenu. The single native
    menu entry links to a complete 25-row paginated list when JavaScript is
@@ -101,8 +105,8 @@ Users with `local/delegateaccount:viewactivity` can open the related report
 from an individual delegation. It contains only standard-log events where the
 target account was used through that authorised user's selected delegation
 period. Repeated delegations between the same users remain separate, and the
-report uses Moodle's standard 25-row pagination. Date, component and action
-filters can narrow that immutable period but can never expose activity before
+report uses Moodle's standard 25-row pagination. Day-only date, component and
+action filters can narrow that immutable period but can never expose activity before
 access began or after it ended.
 
 

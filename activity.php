@@ -43,10 +43,13 @@ $delegation = $DB->get_record('local_delegateaccount', [
 $realuser = $DB->get_record('user', ['id' => $realuserid, 'deleted' => 0], '*', MUST_EXIST);
 $delegateduser = $DB->get_record('user', ['id' => $delegation->delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
 
-$filterform = new activity_filter_form(
-    new moodle_url('/local/delegateaccount/activity.php'),
-    ['realuserid' => $realuserid, 'delegationid' => $delegationid]
-);
+$accessend = \local_delegateaccount\manager::get_delegation_access_end($delegation);
+$filterform = new activity_filter_form(new moodle_url('/local/delegateaccount/activity.php'), [
+    'realuserid' => $realuserid,
+    'delegationid' => $delegationid,
+    'periodstart' => (int)$delegation->timestart,
+    'periodend' => $accessend > 0 ? $accessend : time(),
+]);
 $submittedfilters = $filterform->get_data();
 $datefromparam = isset($_GET['datefrom']) && !is_array($_GET['datefrom'])
     ? optional_param('datefrom', 0, PARAM_INT)
@@ -74,7 +77,6 @@ foreach ($filters as $name => $value) {
         $url->param($name, $value);
     }
 }
-$accessend = \local_delegateaccount\manager::get_delegation_access_end($delegation);
 $periodend = $accessend > 0
     ? userdate($accessend)
     : get_string('delegation_no_end', 'local_delegateaccount');
@@ -94,7 +96,7 @@ echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
         'timeend' => $periodend,
     ]),
 ]);
-if (!$filterform->is_submitted() || $submittedfilters) {
+if ($submittedfilters || array_filter($filters, static fn($value): bool => $value !== '' && $value !== 0)) {
     $filterform->set_data($filters);
 }
 ob_start();

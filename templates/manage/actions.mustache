@@ -26,7 +26,8 @@
 <div class="reportbuilder-wrapper">
     <div class="d-flex flex-wrap justify-content-end mb-3">
         {{#cancreate}}
-            <a class="btn btn-primary mr-2" href="{{assignurl}}">{{addlabel}}</a>
+            <a class="btn btn-primary mr-2" href="{{assignurl}}"
+                data-action="local-delegateaccount-open-assign">{{addlabel}}</a>
         {{/cancreate}}
         {{> local_delegateaccount/shared/filter_dropdown}}
     </div>

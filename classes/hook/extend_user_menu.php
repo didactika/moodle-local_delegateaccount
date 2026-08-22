@@ -45,6 +45,15 @@ final class extend_user_menu {
             return;
         }
 
+        foreach ($hook->get_navitems() as $navitem) {
+            if (($navitem->itemtype ?? '') !== 'link' || !($navitem->url ?? null) instanceof \moodle_url) {
+                continue;
+            }
+            if (str_contains($navitem->url->out(false), '/local/delegateaccount/accounts.php')) {
+                return;
+            }
+        }
+
         $hook->add_navitem((object) [
             'itemtype' => 'link',
             'url' => new \moodle_url('/local/delegateaccount/accounts.php'),

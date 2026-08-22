@@ -58,7 +58,7 @@ class assign_form extends \moodleform {
             'autocomplete',
             'delegateduserids',
             get_string('delegatedusers', 'local_delegateaccount'),
-            $this->get_delegated_account_options(),
+            self::get_delegated_account_options(),
             [
                 'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
@@ -108,7 +108,7 @@ class assign_form extends \moodleform {
      *
      * @return array<int, string> User IDs mapped to display names.
      */
-    private function get_delegated_account_options(): array {
+    public static function get_delegated_account_options(): array {
         global $DB;
 
         $users = $DB->get_records(
@@ -136,9 +136,21 @@ class assign_form extends \moodleform {
      * @return array Validation errors indexed by field name.
      */
     public function validation($data, $files): array {
-        $errors = parent::validation($data, $files);
-        $timestart = (int)$data['timestart'];
-        $timeend = (int)$data['timeend'];
+        return parent::validation($data, $files) + self::validate_period_values(
+            (int)$data['timestart'],
+            (int)$data['timeend']
+        );
+    }
+
+    /**
+     * Validates a delegation period for regular and dynamic forms.
+     *
+     * @param int $timestart Requested start timestamp.
+     * @param int $timeend Requested end timestamp, or zero.
+     * @return array Validation errors indexed by field name.
+     */
+    public static function validate_period_values(int $timestart, int $timeend): array {
+        $errors = [];
 
         $allowopenendedsetting = get_config('local_delegateaccount', 'allowopenended');
         $allowopenended = $allowopenendedsetting === false ? true : (bool)$allowopenendedsetting;

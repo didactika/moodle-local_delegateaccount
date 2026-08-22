@@ -79,9 +79,10 @@ $PAGE->set_url($dashboardurl);
 $PAGE->set_title(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->requires->js_call_amd('local_delegateaccount/filter_toggle', 'init');
+$PAGE->requires->js_call_amd('local_delegateaccount/management_modals', 'init');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('manage_accounts', 'local_delegateaccount'));
-echo $OUTPUT->render_from_template('local_delegateaccount/report_description', [
+echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
     'description' => get_string('manage_' . $tab . '_users_description', 'local_delegateaccount'),
 ]);
 
@@ -109,7 +110,7 @@ $filterform->display();
 $filterformhtml = ob_get_clean();
 $cancreate = $tab === 'authorised' && (has_capability('local/delegateaccount:create', $context) ||
     has_capability('local/delegateaccount:manage', $context));
-echo $OUTPUT->render_from_template('local_delegateaccount/manage_actions', [
+echo $OUTPUT->render_from_template('local_delegateaccount/manage/actions', [
     'cancreate' => $cancreate,
     'assignurl' => (new moodle_url('/local/delegateaccount/assign.php'))->out(false),
     'addlabel' => get_string('create_delegations', 'local_delegateaccount'),

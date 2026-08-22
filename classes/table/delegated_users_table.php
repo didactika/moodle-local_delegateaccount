@@ -126,7 +126,7 @@ class delegated_users_table extends \table_sql {
     public function col_lastname($row): string {
         global $OUTPUT;
 
-        return $OUTPUT->render_from_template('local_delegateaccount/user_identity', [
+        return $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
             'userpicture' => $OUTPUT->user_picture($row, ['size' => 35, 'link' => false]),
             'fullname' => fullname($row),
         ]);
@@ -155,7 +155,12 @@ class delegated_users_table extends \table_sql {
         ) {
             $actions[] = $OUTPUT->action_icon(
                 new \moodle_url('/local/delegateaccount/assign.php', ['realuserid' => $row->id]),
-                new \pix_icon('t/add', get_string('add_delegation', 'local_delegateaccount'), 'core')
+                new \pix_icon('t/add', get_string('add_delegation', 'local_delegateaccount'), 'core'),
+                null,
+                [
+                    'data-action' => 'local-delegateaccount-open-assign',
+                    'data-real-user-id' => (int)$row->id,
+                ]
             );
         }
 

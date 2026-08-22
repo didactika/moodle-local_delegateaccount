@@ -30,6 +30,14 @@
             {{backlabel}}
         </a>
         <div class="d-flex flex-wrap justify-content-end align-items-center">
+            {{#canupdate}}
+                <button type="button" class="btn btn-secondary mr-2"
+                    data-action="local-delegateaccount-edit-selected"
+                    data-real-user-id="{{realuserid}}" disabled>
+                    {{#pix}}t/edit, core, {{editselectedlabel}}{{/pix}}
+                    {{editselectedlabel}}
+                </button>
+            {{/canupdate}}
             {{#canrevoke}}
                 <button type="button" class="btn btn-danger mr-2"
                     data-action="local-delegateaccount-revoke-selected" disabled>
@@ -38,7 +46,9 @@
                 </button>
             {{/canrevoke}}
             {{#cancreate}}
-                <a class="btn btn-primary mr-2" href="{{assignurl}}">{{addlabel}}</a>
+                <a class="btn btn-primary mr-2" href="{{assignurl}}"
+                    data-action="local-delegateaccount-open-assign"
+                    data-real-user-id="{{realuserid}}">{{addlabel}}</a>
             {{/cancreate}}
             {{> local_delegateaccount/shared/filter_dropdown}}
         </div>
