@@ -36,12 +36,31 @@
 .local-delegateaccount-filter-menu .fitem .felement {
     flex: 0 0 100%;
     max-width: 100%;
+    width: 100%;
     padding-left: 0;
     padding-right: 0;
 }
 
 .local-delegateaccount-filter-menu .fitem .col-form-label {
+    box-sizing: border-box;
+    display: flex !important;
+    float: none;
+    margin-bottom: .25rem;
     padding-top: 0;
+}
+
+.local-delegateaccount-filter-menu .fitem .col-form-label label {
+    max-width: 100%;
+    white-space: normal;
+    word-break: normal;
+}
+
+.local-delegateaccount-filter-menu .fitem.femptylabel > .col-form-label {
+    display: none !important;
+}
+
+.local-delegateaccount-filter-menu .fitem.femptylabel > .felement {
+    margin-left: 0;
 }
 
 .local-delegateaccount-filter-menu .fitem .form-control,
