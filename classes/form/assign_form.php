@@ -54,11 +54,16 @@ class assign_form extends \moodleform {
             $mform->setDefault('realuserids', [$realuserid]);
         }
 
-        $mform->addElement('autocomplete', 'delegateduserids', get_string('delegatedusers', 'local_delegateaccount'),
-            $this->get_delegated_account_options(), [
-            'multiple' => true,
-            'placeholder' => get_string('search', 'core'),
-        ]);
+        $mform->addElement(
+            'autocomplete',
+            'delegateduserids',
+            get_string('delegatedusers', 'local_delegateaccount'),
+            $this->get_delegated_account_options(),
+            [
+                'multiple' => true,
+                'placeholder' => get_string('search', 'core'),
+            ]
+        );
         $mform->addRule('delegateduserids', null, 'required', null, 'client');
         $mform->addHelpButton('delegateduserids', 'delegatedusers', 'local_delegateaccount');
 
@@ -106,8 +111,12 @@ class assign_form extends \moodleform {
     private function get_delegated_account_options(): array {
         global $DB;
 
-        $users = $DB->get_records('user', ['deleted' => 0, 'suspended' => 0], 'lastname ASC, firstname ASC',
-            'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic');
+        $users = $DB->get_records(
+            'user',
+            ['deleted' => 0, 'suspended' => 0],
+            'lastname ASC, firstname ASC',
+            'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic'
+        );
         $options = [];
         $protectprivilegedtargets = manager::protect_privileged_targets();
         foreach ($users as $user) {

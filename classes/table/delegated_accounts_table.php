@@ -42,19 +42,34 @@ class delegated_accounts_table extends \table_sql {
     /** @var int ID of the authorised user represented by this table. */
     private int $realuserid;
 
+    /** @var string Lifecycle status represented by the current tab. */
+    private string $status;
+
     /**
      * Creates the delegated-account table for one authorised user.
      *
      * @param \moodle_url $baseurl URL retaining table state.
      * @param int $realuserid Authorised user ID.
      * @param \context_system $context System context for capabilities.
+     * @param string $status Lifecycle status represented by the current tab.
+     * @param string $search Optional delegated-user search query.
      */
-    public function __construct(\moodle_url $baseurl, int $realuserid, \context_system $context) {
+    public function __construct(
+        \moodle_url $baseurl,
+        int $realuserid,
+        \context_system $context,
+        string $status = 'all',
+        string $search = ''
+    ) {
+        global $DB;
+
         parent::__construct('local_delegateaccount_delegated_accounts');
         $this->context = $context;
         $this->realuserid = $realuserid;
+        $this->status = $status;
 
         $this->define_columns([
+            'select',
             'lastname',
             'email',
             'status',
@@ -64,6 +79,7 @@ class delegated_accounts_table extends \table_sql {
             'actions',
         ]);
         $this->define_headers([
+            $this->render_select_all(),
             get_string('delegateduser', 'local_delegateaccount'),
             get_string('email'),
             get_string('delegation_status', 'local_delegateaccount'),
@@ -73,6 +89,7 @@ class delegated_accounts_table extends \table_sql {
             get_string('actions'),
         ]);
         $this->sortable(true, 'lastname', SORT_ASC);
+        $this->no_sorting('select');
         $this->no_sorting('status');
         $this->no_sorting('actions');
         $this->collapsible(false);
@@ -91,15 +108,86 @@ class delegated_accounts_table extends \table_sql {
                  LEFT JOIN {logstore_standard_log} log ON log.userid = da.delegateduserid
                     AND log.realuserid = da.realuserid';
         $where = 'da.realuserid = :realuserid';
+        $params = ['realuserid' => $realuserid];
+        if ($search !== '') {
+            $fullname = $DB->sql_concat('u.firstname', "' '", 'u.lastname');
+            $searchvalue = '%' . $DB->sql_like_escape($search) . '%';
+            $where .= ' AND (' . $DB->sql_like($fullname, ':searchfullname', false)
+                . ' OR ' . $DB->sql_like('u.username', ':searchusername', false)
+                . ' OR ' . $DB->sql_like('u.email', ':searchemail', false) . ')';
+            $params['searchfullname'] = $searchvalue;
+            $params['searchusername'] = $searchvalue;
+            $params['searchemail'] = $searchvalue;
+        }
+
+        $now = time();
+        if ($status === manager::STATUS_ACTIVE) {
+            $where .= ' AND da.activekey = 0 AND da.timestart <= :statusstart
+                        AND (da.timeend = 0 OR da.timeend > :statusend)';
+            $params['statusstart'] = $now;
+            $params['statusend'] = $now;
+        } else if ($status === manager::STATUS_SCHEDULED) {
+            $where .= ' AND da.activekey = 0 AND da.timestart > :statusscheduled';
+            $params['statusscheduled'] = $now;
+        } else if ($status === manager::STATUS_EXPIRED) {
+            $where .= ' AND da.activekey = 0 AND da.timeend > 0 AND da.timeend <= :statusexpired';
+            $params['statusexpired'] = $now;
+        } else if ($status === manager::STATUS_REVOKED) {
+            $where .= ' AND (da.activekey <> 0 OR da.timerevoked > 0)';
+        }
         $groupby = 'da.id, da.realuserid, da.delegateduserid, da.timestart, da.timeend,
                     da.timerevoked, da.activekey, da.notificationmode, u.firstname, u.lastname, u.middlename,
                     u.alternatename, u.firstnamephonetic, u.lastnamephonetic, u.email,
                     u.picture, u.imagealt';
-        $countsql = 'SELECT COUNT(da.id) FROM {local_delegateaccount} da
-                      WHERE da.realuserid = :realuserid';
+        $countsql = 'SELECT COUNT(da.id)
+                       FROM {local_delegateaccount} da
+                       JOIN {user} u ON u.id = da.delegateduserid
+                      WHERE ' . $where;
 
-        $this->set_count_sql($countsql, ['realuserid' => $realuserid]);
-        $this->set_sql($fields, $from, $where . ' GROUP BY ' . $groupby, ['realuserid' => $realuserid]);
+        $this->set_count_sql($countsql, $params);
+        $this->set_sql($fields, $from, $where . ' GROUP BY ' . $groupby, $params);
+    }
+
+    /**
+     * Renders the select-all control when the current user can revoke delegations.
+     *
+     * @return string Select-all checkbox or an empty header.
+     */
+    private function render_select_all(): string {
+        global $OUTPUT;
+
+        if (
+            $this->status === manager::STATUS_REVOKED ||
+            !has_capability('local/delegateaccount:revoke', $this->context)
+        ) {
+            return '';
+        }
+
+        return $OUTPUT->render_from_template('local_delegateaccount/delegation_select_all', [
+            'label' => get_string('select_all_delegations', 'local_delegateaccount'),
+        ]);
+    }
+
+    /**
+     * Renders a selection checkbox for delegations that can still be revoked.
+     *
+     * @param \stdClass $row Delegated-account row.
+     * @return string Selection control or an empty value.
+     */
+    public function col_select($row): string {
+        global $OUTPUT;
+
+        if (
+            !has_capability('local/delegateaccount:revoke', $this->context) ||
+            manager::get_delegation_status($row) === manager::STATUS_REVOKED
+        ) {
+            return '';
+        }
+
+        return $OUTPUT->render_from_template('local_delegateaccount/delegation_select', [
+            'id' => (int)$row->id,
+            'label' => get_string('select_delegation', 'local_delegateaccount', fullname($row)),
+        ]);
     }
 
     /**
@@ -261,18 +349,10 @@ class delegated_accounts_table extends \table_sql {
             return implode('', $actions);
         }
 
-        $url = new \moodle_url('/local/delegateaccount/delegations.php', [
-            'realuserid' => $this->realuserid,
-            'action' => 'revoke',
-            'delegationid' => $row->id,
-            'sesskey' => sesskey(),
+        $actions[] = $OUTPUT->render_from_template('local_delegateaccount/delegation_revoke_action', [
+            'delegationid' => (int)$row->id,
+            'label' => get_string('revoke_delegation', 'local_delegateaccount'),
         ]);
-        $actions[] = $OUTPUT->single_button(
-            $url,
-            get_string('revoke_delegation', 'local_delegateaccount'),
-            'post',
-            ['class' => 'btn btn-link btn-sm']
-        );
 
         return implode('', $actions);
     }

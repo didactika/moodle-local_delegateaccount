@@ -20,19 +20,17 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-use local_delegateaccount\manager;
-
 /**
- * Native Moodle report-style filter form for the delegated-account management table.
+ * Search form for one authorised user's delegated accounts.
  *
  * @package    local_delegateaccount
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manage_filter_form extends \moodleform {
+class delegations_filter_form extends \moodleform {
     /**
-     * Defines the filters that are relevant to delegated-account administration.
+     * Defines the filters available on every delegation-status tab.
      */
     public function definition() {
         $mform = $this->_form;
@@ -40,22 +38,18 @@ class manage_filter_form extends \moodleform {
         $mform->updateAttributes(['method' => 'get']);
         $mform->updateAttributes(['class' => 'full-width-labels']);
 
-        $mform->addElement('text', 'search', get_string('delegation_filter_user', 'local_delegateaccount'), ['size' => 40]);
+        $mform->addElement(
+            'text',
+            'search',
+            get_string('delegation_search', 'local_delegateaccount'),
+            ['size' => 40]
+        );
         $mform->setType('search', PARAM_TEXT);
 
-        $statusoptions = [
-            '' => get_string('isanyvalue', 'filters'),
-            manager::STATUS_ACTIVE => get_string('delegation_status_active', 'local_delegateaccount'),
-            manager::STATUS_SCHEDULED => get_string('delegation_status_scheduled', 'local_delegateaccount'),
-            manager::STATUS_EXPIRED => get_string('delegation_status_expired', 'local_delegateaccount'),
-            manager::STATUS_REVOKED => get_string('delegation_status_revoked', 'local_delegateaccount'),
-            'none' => get_string('delegation_filter_none', 'local_delegateaccount'),
-        ];
-        $mform->addElement('select', 'delegationstatus', get_string('delegation_status', 'local_delegateaccount'), $statusoptions);
-        $mform->setType('delegationstatus', PARAM_ALPHA);
-
-        $mform->addElement('hidden', 'tab', $this->_customdata['tab']);
-        $mform->setType('tab', PARAM_ALPHA);
+        $mform->addElement('hidden', 'realuserid', $this->_customdata['realuserid']);
+        $mform->setType('realuserid', PARAM_INT);
+        $mform->addElement('hidden', 'status', $this->_customdata['status']);
+        $mform->setType('status', PARAM_ALPHA);
 
         $applybutton = $mform->createElement('submit', 'submitbutton', get_string('apply'));
         $mform->addGroup([$applybutton], 'buttonar', '', ' ', false);

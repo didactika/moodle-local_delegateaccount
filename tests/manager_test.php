@@ -101,7 +101,7 @@ final class manager_test extends \advanced_testcase {
         $this->grant_delegated_account_use($authoriseduser);
         $now = time();
 
-        $this->redirectEvents();
+        $eventsink = $this->redirectEvents();
         $created = manager::create_delegations(
             [(int) $authoriseduser->id],
             [(int) $targetuser->id],
@@ -111,7 +111,7 @@ final class manager_test extends \advanced_testcase {
                 'notificationmode' => manager::NOTIFICATION_NEVER,
             ]
         );
-        $events = $this->redirectEvents();
+        $events = $eventsink->get_events();
 
         $this->assertSame(1, $created);
         $this->assertCount(1, $events);
@@ -126,23 +126,23 @@ final class manager_test extends \advanced_testcase {
         ], '*', MUST_EXIST);
         $this->assertSame(manager::STATUS_SCHEDULED, manager::get_delegation_status($delegation, $now));
 
-        $this->redirectEvents();
+        $eventsink->clear();
         $this->assertTrue(manager::update_delegation(
             (int) $delegation->id,
             $now - 60,
             0,
             manager::NOTIFICATION_ALWAYS
         ));
-        $events = $this->redirectEvents();
+        $events = $eventsink->get_events();
 
         $this->assertCount(1, $events);
         $this->assertInstanceOf(\local_delegateaccount\event\delegation_updated::class, $events[0]);
         $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegation->id], '*', MUST_EXIST);
         $this->assertSame(manager::STATUS_ACTIVE, manager::get_delegation_status($delegation, $now));
 
-        $this->redirectEvents();
+        $eventsink->clear();
         manager::revoke_delegations([(int) $delegation->id]);
-        $events = $this->redirectEvents();
+        $events = $eventsink->get_events();
 
         $this->assertCount(1, $events);
         $this->assertInstanceOf(\local_delegateaccount\event\delegation_revoked::class, $events[0]);
@@ -150,6 +150,45 @@ final class manager_test extends \advanced_testcase {
         $this->assertSame((int) $delegation->id, (int) $delegation->activekey);
         $this->assertGreaterThan(0, (int) $delegation->timerevoked);
         $this->assertFalse(manager::delegation_exists((int) $authoriseduser->id, (int) $targetuser->id));
+    }
+
+    /**
+     * Revokes every selected delegation while preserving unselected records.
+     */
+    public function test_bulk_revoke_only_updates_selected_delegations(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $firsttarget = $generator->create_user();
+        $secondtarget = $generator->create_user();
+        $thirdtarget = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
+
+        manager::create_delegations(
+            [(int) $authoriseduser->id],
+            [(int) $firsttarget->id, (int) $secondtarget->id, (int) $thirdtarget->id]
+        );
+        $delegations = $DB->get_records('local_delegateaccount', [], 'delegateduserid ASC');
+        $delegationsbyuser = [];
+        foreach ($delegations as $delegation) {
+            $delegationsbyuser[(int) $delegation->delegateduserid] = $delegation;
+        }
+
+        $eventsink = $this->redirectEvents();
+        manager::revoke_delegations([
+            (int) $delegationsbyuser[$firsttarget->id]->id,
+            (int) $delegationsbyuser[$secondtarget->id]->id,
+        ]);
+        $events = $eventsink->get_events();
+
+        $this->assertCount(2, $events);
+        $this->assertContainsOnlyInstancesOf(\local_delegateaccount\event\delegation_revoked::class, $events);
+        $this->assertFalse(manager::delegation_exists((int) $authoriseduser->id, (int) $firsttarget->id));
+        $this->assertFalse(manager::delegation_exists((int) $authoriseduser->id, (int) $secondtarget->id));
+        $this->assertTrue(manager::delegation_exists((int) $authoriseduser->id, (int) $thirdtarget->id));
     }
 
     /**

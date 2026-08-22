@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_delegateaccount/delegations_toolbar
+
+    Navigation, bulk action, creation, and filter controls for delegated accounts.
+
+    @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+    @copyright  2026 Didactika.org
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div class="reportbuilder-wrapper">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a class="btn btn-secondary" href="{{backurl}}">
+            {{#pix}}t/left, core{{/pix}}
+            {{backlabel}}
+        </a>
+        <div class="d-flex align-items-center">
+            {{#canrevoke}}
+                <button type="button" class="btn btn-danger mr-2"
+                    data-action="local-delegateaccount-revoke-selected" disabled>
+                    {{#pix}}t/delete, core, {{revokeselectedlabel}}{{/pix}}
+                    {{revokeselectedlabel}}
+                </button>
+            {{/canrevoke}}
+            {{#cancreate}}
+                <a class="btn btn-primary mr-2" href="{{assignurl}}">{{addlabel}}</a>
+            {{/cancreate}}
+            {{> local_delegateaccount/filter_dropdown}}
+        </div>
+    </div>
+</div>
+<div data-region="local-delegateaccount-revoke-config"
+    data-post-url="{{posturl}}"
+    data-sesskey="{{sesskey}}"
+    data-confirm-title="{{confirmtitle}}"
+    data-confirm-single="{{confirmsingle}}"
+    data-confirm-bulk="{{confirmbulk}}"
+    data-confirm-button="{{confirmbutton}}"></div>

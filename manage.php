@@ -78,6 +78,7 @@ $dashboardurl = new moodle_url('/local/delegateaccount/manage.php', ['tab' => $t
 $PAGE->set_url($dashboardurl);
 $PAGE->set_title(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
+$PAGE->requires->js_call_amd('local_delegateaccount/filter_toggle', 'init');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('manage_accounts', 'local_delegateaccount'));
 echo $OUTPUT->render_from_template('local_delegateaccount/report_description', [
@@ -113,6 +114,7 @@ echo $OUTPUT->render_from_template('local_delegateaccount/manage_actions', [
     'assignurl' => (new moodle_url('/local/delegateaccount/assign.php'))->out(false),
     'addlabel' => get_string('create_delegations', 'local_delegateaccount'),
     'filterlabel' => get_string('filters'),
+    'filterid' => 'local-delegateaccount-manage-filters',
     'filterform' => $filterformhtml,
     'hasfilters' => !empty($filterparams),
     'showfilters' => !empty($filterparams),

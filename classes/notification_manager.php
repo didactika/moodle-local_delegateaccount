@@ -55,9 +55,7 @@ class notification_manager {
         $users = $DB->get_records_list(
             'user',
             'id',
-            array_unique($userids),
-            '',
-            'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic, lang, timezone'
+            array_unique($userids)
         );
         if (!isset($users[$delegation->realuserid], $users[$delegation->delegateduserid], $users[$actorid])) {
             return false;

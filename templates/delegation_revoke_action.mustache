@@ -15,19 +15,15 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template local_delegateaccount/manage_actions
+    @template local_delegateaccount/delegation_revoke_action
 
-    Moodle-native actions and collapsible filters for delegation management.
+    Destructive action for one delegation, confirmed by the companion AMD module.
 
     @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
-<div class="reportbuilder-wrapper">
-    <div class="d-flex justify-content-end mb-3">
-        {{#cancreate}}
-            <a class="btn btn-primary mr-2" href="{{assignurl}}">{{addlabel}}</a>
-        {{/cancreate}}
-        {{> local_delegateaccount/filter_dropdown}}
-    </div>
-</div>
+<button type="button" class="btn btn-link p-0 action-icon" data-action="local-delegateaccount-revoke-one"
+    data-delegation-id="{{delegationid}}" aria-label="{{label}}" title="{{label}}">
+    {{#pix}}t/delete, core, {{label}}{{/pix}}
+</button>
