@@ -1,17 +1,58 @@
-# Delegated accounts for Moodle
+# Delegate Account for Moodle
 
-[![Moodle 4.5 to 5.2](https://img.shields.io/badge/Moodle-4.5%20to%205.2-orange)](https://moodledev.io/general/releases)
-[![License: GPL v3 or later](https://img.shields.io/badge/license-GPLv3%2B-blue)](LICENSE)
+[![Moodle Plugin CI](https://github.com/didactika/moodle-local_delegateaccount/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/didactika/moodle-local_delegateaccount/actions/workflows/ci.yml)
+[![Moodle 4.5 to 5.2](https://img.shields.io/badge/Moodle-4.5%20to%205.2-f98012.svg)](https://moodledev.io/general/releases)
+[![Maturity: Stable](https://img.shields.io/badge/maturity-stable-2e7d32.svg)](version.php)
+[![License: GPL v3 or later](https://img.shields.io/badge/license-GPLv3%2B-blue.svg)](LICENSE)
 
-`local_delegateaccount` lets authorised site administrators define a clear,
-auditable list of accounts that a user may access with Moodle's built-in
-**Log in as** capability. It is intended for support, service and delegated
-administration workflows where access must be granted deliberately instead of
-being available to every administrator.
+**Delegate Account** provides controlled, time-bound and auditable access to another
+Moodle account through Moodle's native **Log in as** mechanism. It is designed for support,
+service and delegated-administration workflows where broad impersonation privileges would
+be inappropriate.
 
-The plugin does not create accounts, impersonate users on its own, or bypass
-Moodle permissions. It adds a managed delegation list and only invokes the
-same core session-switching feature Moodle already provides.
+Administrators explicitly choose who may use delegated access, which accounts they may
+open, when each delegation is valid and whether affected users should be notified. Every
+lifecycle change records its actor, while delegated activity remains traceable through
+Moodle's standard log store.
+
+The plugin never creates accounts, stores credentials, starts an impersonated session on
+its own or bypasses Moodle capabilities.
+
+## At a glance
+
+| | |
+|---|---|
+| **Component** | `local_delegateaccount` |
+| **Plugin type** | Local plugin |
+| **Supported Moodle releases** | 4.5 LTS through 5.2 |
+| **Current maturity** | Stable |
+| **Languages** | English, Spanish, Portuguese, Italian and French |
+| **License** | GNU GPL v3 or later |
+
+### Key capabilities
+
+- Granular permissions for viewing, creating, updating, revoking and auditing
+  delegations.
+- Scheduled start and end dates, explicit revocation and preserved lifecycle evidence.
+- Paginated Moodle-native management screens, filters, bulk operations and modal forms.
+- Per-delegation activity reports bounded to the period in which access was valid.
+- Configurable limits, administrator-account protection and localised notifications.
+- A restricted external service with independently authorised read and write functions.
+- Moodle privacy, event, logging, backup-friendly and accessibility conventions throughout.
+
+## Contents
+
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Using delegated accounts](#using-delegated-accounts)
+- [Web services](#web-services)
+- [Privacy and security](#privacy-and-security)
+- [Languages](#languages)
+- [Development](#development)
+- [Support](#support)
+- [Contributing](#contributing)
+- [Contributors](#contributors)
+- [License](#license)
 
 ## Requirements
 
@@ -155,6 +196,29 @@ Mustache, PHPUnit and Behat checks for pull requests to `main` and maintained
 For a local check, use [moodle-plugin-ci](https://github.com/moodlehq/moodle-plugin-ci)
 against a checkout of this plugin. Generated AMD files must be rebuilt through
 Moodle's Grunt task whenever an AMD source module changes.
+
+## Support
+
+Use [GitHub Issues](https://github.com/didactika/moodle-local_delegateaccount/issues)
+for reproducible bugs and feature proposals. Include the Moodle, PHP and database versions,
+the delegation status and validity period, and the smallest sequence that demonstrates the
+problem. Do not include access tokens, private account data or sensitive log content.
+
+Report security vulnerabilities privately through the repository's
+[security advisory form](https://github.com/didactika/moodle-local_delegateaccount/security/advisories/new).
+
+## Contributing
+
+Contributions are welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md) for the supported
+branch model, Moodle coding requirements, required checks and pull-request expectations.
+
+## Contributors
+
+Thanks to everyone who has contributed to this project:
+
+[![Contributors](https://contrib.rocks/image?repo=didactika/moodle-local_delegateaccount)](https://github.com/didactika/moodle-local_delegateaccount/graphs/contributors)
+
+Want to help? Read [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## License
 
