@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-const DATE_CONTROLS = '.fdate_selector .felement > div, .fdate_time_selector .felement > div';
+const DATE_CONTROLS = '.fdate_selector, .fdate_time_selector';
 const NARROW_VIEWPORT = '(max-width: 575.98px)';
 
 /**
@@ -41,6 +41,9 @@ export const normalise = root => {
     root.querySelectorAll('#fgroup_id_buttonar').forEach(buttonGroup => {
         buttonGroup.classList.remove('mb-3');
         buttonGroup.classList.add('mb-1', 'mt-2');
+        buttonGroup.querySelectorAll('.fitem.mb-3').forEach(button => {
+            button.classList.remove('mb-3');
+        });
         Array.from(buttonGroup.children)
             .find(child => child.classList.contains('col-form-label'))
             ?.remove();

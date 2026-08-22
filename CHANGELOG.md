@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moodle core modal forms for multi-user/multi-account assignment and common
   lifecycle updates across selected active delegations, with the existing
   page preserved as a no-JavaScript fallback.
+- A disabled, restricted web service with six independently authorised
+  inventory, creation, update, revocation and activity functions.
 
 ### Changed
 
@@ -66,3 +68,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Individual lifecycle editing now uses the same core modal workflow as bulk
   editing, filter and date controls share one responsive layout, and displayed
   user identities link to their Moodle profiles.
+- Contextual assignment fixes the authorised user, omits every target that
+  already has a non-revoked delegation for that user, and returns to the same
+  detail page after save or cancel.
+- Delegation detail now opens on **Active** and no longer includes the
+  redundant **All** tab.
+- Compact form normalisation now targets Moodle's actual date-selector
+  container, keeping optional end-date calendars on the control row at desktop
+  widths; filter dropdowns also remove nested action margins and unused space.

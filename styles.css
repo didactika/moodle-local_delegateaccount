@@ -12,7 +12,7 @@
     right: 0;
     inset-inline-start: auto;
     inset-inline-end: 0;
-    width: 26rem;
+    width: 24rem;
     max-width: calc(100vw - 2rem);
     max-height: calc(100vh - 8rem);
     overflow-x: hidden;
@@ -27,6 +27,7 @@
 
 .local-delegateaccount-filter-menu .fitem {
     display: block;
+    margin-bottom: .75rem;
     margin-left: 0;
     margin-right: 0;
 }
@@ -55,6 +56,7 @@
 
 .local-delegateaccount-filter-menu .fitem.femptylabel {
     border-top: 0;
+    margin-bottom: 0;
     margin-top: .75rem;
     padding-top: 0;
 }
@@ -71,13 +73,17 @@
     margin-left: 0;
 }
 
+.local-delegateaccount-filter-menu .fitem.femptylabel .fitem {
+    margin-bottom: 0;
+}
+
 .local-delegateaccount-filter-menu .fitem input.form-control,
 .local-delegateaccount-filter-menu .fitem textarea.form-control {
     width: 100%;
     max-width: 100%;
 }
 
-.local-delegateaccount-filter-menu .fdate_selector .felement > div {
+.local-delegateaccount-filter-menu .fdate_selector {
     align-items: center;
     column-gap: .5rem;
     row-gap: .5rem;
@@ -88,11 +94,20 @@
     max-width: 100%;
 }
 
-.local-delegateaccount-modal .fdate_time_selector .felement > div,
-.local-delegateaccount-modal .fdate_selector .felement > div {
+.local-delegateaccount-modal .modal-dialog {
+    max-width: 56rem;
+}
+
+.local-delegateaccount-modal .fdate_time_selector,
+.local-delegateaccount-modal .fdate_selector {
     align-items: center;
-    column-gap: .25rem;
+    column-gap: 0;
     row-gap: .5rem;
+}
+
+.local-delegateaccount-modal .fdate_time_selector > .fitem,
+.local-delegateaccount-modal .fdate_selector > .fitem {
+    margin-bottom: 0;
 }
 
 .local-delegateaccount-modal .fdate_time_selector select,
@@ -104,5 +119,4 @@
     .local-delegateaccount-filters .local-delegateaccount-filter-menu {
         width: calc(100vw - 2rem);
     }
-
 }
