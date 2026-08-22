@@ -192,7 +192,7 @@ class notification_manager {
             ]);
         }
 
-        return $OUTPUT->render_from_template('local_delegateaccount/notification_message', [
+        return $OUTPUT->render_from_template('local_delegateaccount/notification/message', [
             'hascustomcontent' => $content !== false && $content !== '',
             'customcontent' => $content,
             'greeting' => $stringmanager->get_string(
