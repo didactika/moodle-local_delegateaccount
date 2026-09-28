@@ -57,8 +57,13 @@ final class assign_dynamic_form extends dynamic_form {
             'autocomplete',
             'delegateduserids',
             get_string('delegatedusers', 'local_delegateaccount'),
-            assign_form::get_delegated_account_options($realuserid),
-            ['multiple' => true, 'placeholder' => get_string('search', 'core')]
+            assign_form::get_delegated_account_options($realuserid, '', 30),
+            [
+                'multiple' => true, 
+                'placeholder' => get_string('search', 'core'),
+                'ajax' => 'local_delegateaccount/form_user_selector',
+                'data-realuserid' => $realuserid,
+            ]
         );
         $mform->addRule('delegateduserids', null, 'required', null, 'client');
         $mform->addHelpButton('delegateduserids', 'delegatedusers', 'local_delegateaccount');

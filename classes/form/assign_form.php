@@ -61,10 +61,12 @@ class assign_form extends \moodleform {
             'autocomplete',
             'delegateduserids',
             get_string('delegatedusers', 'local_delegateaccount'),
-            self::get_delegated_account_options($realuserid),
+            self::get_delegated_account_options($realuserid, '', 30),
             [
                 'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
+                'ajax' => 'local_delegateaccount/form_user_selector',
+                'data-realuserid' => $realuserid,
             ]
         );
         $mform->addRule('delegateduserids', null, 'required', null, 'client');
@@ -110,17 +112,38 @@ class assign_form extends \moodleform {
      * Returns active accounts that can safely be selected as delegation targets.
      *
      * @param int $realuserid Optional authorised user whose existing targets must be excluded.
+     * @param string $search Optional search query.
+     * @param int $limit Max limit of returned accounts (default 0 means no limit, fallback to old behavior but usually 5 for new logic).
      * @return array<int, string> User IDs mapped to display names.
      */
-    public static function get_delegated_account_options(int $realuserid = 0): array {
+    public static function get_delegated_account_options(int $realuserid = 0, string $search = '', int $limit = 0): array {
         global $DB;
 
-        $users = $DB->get_records(
+        $wheresql = 'deleted = 0 AND suspended = 0';
+        $params = [];
+
+        if ($search !== '') {
+            $searchparam = '%' . $DB->sql_like_escape(\core_text::strtolower($search)) . '%';
+            $wheresql .= ' AND (' . implode(' OR ', [
+                $DB->sql_like('firstname', ':search1', false, false),
+                $DB->sql_like('lastname', ':search2', false, false),
+                $DB->sql_like('email', ':search3', false, false),
+            ]) . ')';
+            $params['search1'] = $searchparam;
+            $params['search2'] = $searchparam;
+            $params['search3'] = $searchparam;
+        }
+
+        $users = $DB->get_records_select(
             'user',
-            ['deleted' => 0, 'suspended' => 0],
+            $wheresql,
+            $params,
             'lastname ASC, firstname ASC',
-            'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic'
+            'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic',
+            0,
+            $limit
         );
+
         $excludeduserids = [];
         if ($realuserid > 0) {
             $excludeduserids = array_fill_keys($DB->get_fieldset_select(
@@ -131,6 +154,7 @@ class assign_form extends \moodleform {
             ), true);
             $excludeduserids[$realuserid] = true;
         }
+        
         $options = [];
         $protectprivilegedtargets = manager::protect_privileged_targets();
         foreach ($users as $user) {
