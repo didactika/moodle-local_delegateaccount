@@ -37,12 +37,26 @@ final class assign_dynamic_form extends dynamic_form {
     protected function definition() {
         $mform = $this->_form;
         $realuserid = $this->optional_param('realuserid', 0, PARAM_INT);
+        
+        $authorisedusers = manager::get_authorised_users('', 30);
+        if ($realuserid > 0 && !isset($authorisedusers[$realuserid])) {
+            $user = \core_user::get_user($realuserid);
+            if ($user && !$user->deleted && !$user->suspended) {
+                $authorisedusers[$realuserid] = fullname($user);
+            }
+        }
+        
         $mform->addElement(
             'autocomplete',
             'realuserids',
             get_string('realusers', 'local_delegateaccount'),
-            manager::get_authorised_users(),
-            ['multiple' => true, 'placeholder' => get_string('search', 'core')]
+            $authorisedusers,
+            [
+                'multiple' => true, 
+                'placeholder' => get_string('search', 'core'),
+                'ajax' => 'local_delegateaccount/form_user_selector',
+                'data-ws' => 'local_delegateaccount_get_authorised_user_options',
+            ]
         );
         $mform->addRule('realuserids', null, 'required', null, 'client');
         $mform->addHelpButton('realuserids', 'realusers', 'local_delegateaccount');

@@ -40,11 +40,21 @@ class assign_form extends \moodleform {
 
         $mform->addElement('header', 'general', get_string('create_delegations', 'local_delegateaccount'));
 
-        $authorisedusers = manager::get_authorised_users();
+        $realuserid = (int)($this->_customdata['realuserid'] ?? 0);
+        
+        $authorisedusers = manager::get_authorised_users('', 30);
+        if ($realuserid > 0 && !isset($authorisedusers[$realuserid])) {
+            $user = \core_user::get_user($realuserid);
+            if ($user && !$user->deleted && !$user->suspended) {
+                $authorisedusers[$realuserid] = fullname($user);
+            }
+        }
 
         $mform->addElement('autocomplete', 'realuserids', get_string('realusers', 'local_delegateaccount'), $authorisedusers, [
             'multiple' => true,
             'placeholder' => get_string('search', 'core'),
+            'ajax' => 'local_delegateaccount/form_user_selector',
+            'data-ws' => 'local_delegateaccount_get_authorised_user_options',
         ]);
         $mform->addRule('realuserids', null, 'required', null, 'client');
         $mform->addHelpButton('realuserids', 'realusers', 'local_delegateaccount');

@@ -55,13 +55,18 @@ class manager {
      *
      * @return array<int, string> User IDs mapped to display names.
      */
-    public static function get_authorised_users(): array {
+    public static function get_authorised_users(string $search = '', int $limit = 0): array {
         $context = \context_system::instance();
+        
+        $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
+                . 'u.lastnamephonetic, u.deleted, u.suspended';
+                
+        // In Moodle get_users_by_capability doesnt easily support limit with like queries through the API natively for just a list.
+        // It's safer to fetch the base list (since it's cached/optimised by Moodle) and filter array output
         $users = \get_users_by_capability(
             $context,
             'local/delegateaccount:use',
-            'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
-                . 'u.lastnamephonetic, u.deleted, u.suspended',
+            $fields,
             'u.lastname ASC, u.firstname ASC'
         );
 
@@ -81,6 +86,17 @@ class manager {
         }
 
         asort($authorisedusers, SORT_NATURAL | SORT_FLAG_CASE);
+        
+        if ($search !== '') {
+            $search = \core_text::strtolower($search);
+            $authorisedusers = array_filter($authorisedusers, function($name) use ($search) {
+                return strpos(\core_text::strtolower($name), $search) !== false;
+            });
+        }
+        
+        if ($limit > 0) {
+            $authorisedusers = array_slice($authorisedusers, 0, $limit, true);
+        }
 
         return $authorisedusers;
     }

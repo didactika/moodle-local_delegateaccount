@@ -83,6 +83,14 @@ $functions = [
         'capabilities' => 'local/delegateaccount:create',
         'ajax' => true,
     ],
+    'local_delegateaccount_get_authorised_user_options' => [
+        'classname' => 'local_delegateaccount\external\get_authorised_user_options',
+        'methodname' => 'execute',
+        'description' => 'Returns a list of accounts that can safely be selected as authorised users.',
+        'type' => 'read',
+        'capabilities' => 'local/delegateaccount:create',
+        'ajax' => true,
+    ],
 ];
 
 $services = [

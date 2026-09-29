@@ -27,8 +27,13 @@ export async function transport(selector, query, callback, failure) {
         realUserId = parseInt(select.dataset.realuserid, 10);
     }
 
+    let wsMethod = 'local_delegateaccount_get_delegated_account_options';
+    if (select && select.dataset.ws) {
+        wsMethod = select.dataset.ws;
+    }
+
     const request = {
-        methodname: 'local_delegateaccount_get_delegated_account_options',
+        methodname: wsMethod,
         args: {
             query: query,
             realuserid: realUserId
