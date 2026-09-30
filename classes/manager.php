@@ -56,27 +56,62 @@ class manager {
      * @return array<int, string> User IDs mapped to display names.
      */
     public static function get_authorised_users(string $search = '', int $limit = 0): array {
+        global $DB;
         $context = \context_system::instance();
         
         $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
                 . 'u.lastnamephonetic, u.deleted, u.suspended';
-                
+
+        $authorisedusers = [];
+
+        if ($search !== '') {
+            $searchvalue = '%' . $DB->sql_like_escape($search) . '%';
+            $sql = "SELECT $fields
+                      FROM {user} u
+                     WHERE u.deleted = 0 AND u.suspended = 0
+                       AND (" . $DB->sql_like('u.firstname', ':search1', false) . " OR " .
+                                $DB->sql_like('u.lastname', ':search2', false) . " OR " .
+                                $DB->sql_like('u.username', ':search3', false) . ")
+                  ORDER BY u.lastname ASC, u.firstname ASC";
+            
+            $users = $DB->get_records_sql($sql, ['search1' => $searchvalue, 'search2' => $searchvalue, 'search3' => $searchvalue], 0, 500);
+
+            $admins = get_admins();
+            $adminids = [];
+            foreach ($admins as $admin) {
+                if ((int)$admin->suspended === 0) {
+                    $adminids[(int)$admin->id] = true;
+                }
+            }
+
+            foreach ($users as $user) {
+                if (isset($adminids[(int)$user->id]) || has_capability('local/delegateaccount:use', $context, $user->id)) {
+                    $authorisedusers[(int)$user->id] = fullname($user);
+                }
+                if ($limit > 0 && count($authorisedusers) >= $limit) {
+                    break;
+                }
+            }
+
+            return $authorisedusers;
+        }
+
+        $limitnum = $limit > 0 ? $limit : '';
         $users = \get_users_by_capability(
             $context,
             'local/delegateaccount:use',
             $fields,
-            'u.lastname ASC, u.firstname ASC'
+            'u.lastname ASC, u.firstname ASC',
+            '',
+            $limitnum
         );
 
-        $authorisedusers = [];
         foreach ($users as $user) {
             if ((int)$user->deleted === 0 && (int)$user->suspended === 0) {
                 $authorisedusers[(int)$user->id] = fullname($user);
             }
         }
 
-        // Site administrators have every capability, including use, even when
-        // it is not represented by a role assignment in the capability query.
         foreach (get_admins() as $administrator) {
             if ((int)$administrator->suspended === 0) {
                 $authorisedusers[(int)$administrator->id] = fullname($administrator);
@@ -85,20 +120,12 @@ class manager {
 
         asort($authorisedusers, SORT_NATURAL | SORT_FLAG_CASE);
         
-        if ($search !== '') {
-            $search = \core_text::strtolower($search);
-            $authorisedusers = array_filter($authorisedusers, function($name) use ($search) {
-                return strpos(\core_text::strtolower($name), $search) !== false;
-            });
-        }
-        
         if ($limit > 0) {
             $authorisedusers = array_slice($authorisedusers, 0, $limit, true);
         }
 
         return $authorisedusers;
     }
-
     /**
      * Returns user IDs that retain delegation records but can no longer use them.
      *

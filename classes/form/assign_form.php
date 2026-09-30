@@ -144,6 +144,10 @@ class assign_form extends \moodleform {
             $params['search3'] = $searchparam;
         }
 
+        // We fetch a larger internal buffer from the DB (e.g., 300) to ensure that after filtering out 
+        // already assigned targets or site admins, we can still fulfill the requested $limit (e.g., 30) for the UI.
+        $dbfetchlimit = $limit > 0 ? max($limit, 300) : 0;
+        
         $users = $DB->get_records_select(
             'user',
             $wheresql,
@@ -151,7 +155,7 @@ class assign_form extends \moodleform {
             'lastname ASC, firstname ASC',
             'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic',
             0,
-            $limit
+            $dbfetchlimit
         );
 
         $excludeduserids = [];
@@ -168,11 +172,17 @@ class assign_form extends \moodleform {
         $options = [];
         $protectprivilegedtargets = manager::protect_privileged_targets();
         foreach ($users as $user) {
-            if (
-                !isset($excludeduserids[(int)$user->id]) &&
-                (!$protectprivilegedtargets || !is_siteadmin($user->id))
-            ) {
-                $options[(int)$user->id] = fullname($user);
+            $userid = (int)$user->id;
+            if (isset($excludeduserids[$userid])) {
+                continue;
+            }
+            if ($protectprivilegedtargets && is_siteadmin($user->id)) {
+                continue;
+            }
+            $options[$userid] = fullname($user);
+            
+            if ($limit > 0 && count($options) >= $limit) {
+                break;
             }
         }
 
