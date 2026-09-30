@@ -61,8 +61,6 @@ class manager {
         $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
                 . 'u.lastnamephonetic, u.deleted, u.suspended';
                 
-        // In Moodle get_users_by_capability doesnt easily support limit with like queries through the API natively for just a list.
-        // It's safer to fetch the base list (since it's cached/optimised by Moodle) and filter array output
         $users = \get_users_by_capability(
             $context,
             'local/delegateaccount:use',
@@ -891,16 +889,17 @@ class manager {
     }
 
     /**
-     * Enforces the configured limit of current or scheduled accounts per user.
+     * Checks if the proposed delegation operations exceed the user limits.
      *
-     * @param array $newcounts Number of candidate delegations indexed by authorised user ID.
+     * @param array $newcounts Number of requested assignments keyed by real user ID.
+     * @return string|null Localized error message if any limit is exceeded, null otherwise.
      */
-    private static function validate_delegation_limit(array $newcounts): void {
+    public static function get_delegation_limit_error(array $newcounts): ?string {
         global $DB;
 
         $maximum = self::get_config_int('maxdelegationsperuser', 10);
         if ($maximum === 0 || empty($newcounts)) {
-            return;
+            return null;
         }
 
         [$inorsql, $params] = $DB->get_in_or_equal(array_keys($newcounts), SQL_PARAMS_NAMED, 'realuser');
@@ -918,19 +917,42 @@ class manager {
         foreach ($newcounts as $realuserid => $newcount) {
             $existingcount = (int) ($existingcounts[$realuserid] ?? 0);
             if ($existingcount + $newcount > $maximum) {
-                throw new \moodle_exception('error_maxdelegations', 'local_delegateaccount', '', $maximum);
+                return get_string('error_maxdelegations', 'local_delegateaccount', $maximum);
             }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Enforces the configured limit of current or scheduled accounts per user.
+     *
+     * @param array $newcounts Number of candidate delegations indexed by authorised user ID.
+     */
+    private static function validate_delegation_limit(array $newcounts): void {
+        if ($error = self::get_delegation_limit_error($newcounts)) {
+            $maximum = self::get_config_int('maxdelegationsperuser', 10);
+            throw new \moodle_exception('error_maxdelegations', 'local_delegateaccount', '', $maximum);
         }
     }
 
     /**
-     * Enforces the configured maximum number of records in one action.
+     * Checks if a bulk operation exceeds the configured limit.
      *
      * @param int $count Number of delegation records affected by the action.
+     * @return string|null Localized error message if exceeded, null otherwise.
      */
-    private static function validate_bulk_operation_count(int $count): void {
+    public static function get_bulk_operation_error(int $count): ?string {
         $maximum = self::get_config_int('maxbulkoperations', 100);
         if ($maximum > 0 && $count > $maximum) {
+            return get_string('error_maxbulkoperations', 'local_delegateaccount', $maximum);
+        }
+        return null;
+    }
+
+    private static function validate_bulk_operation_count(int $count): void {
+        if ($error = self::get_bulk_operation_error($count)) {
+            $maximum = self::get_config_int('maxbulkoperations', 100);
             throw new \moodle_exception('error_maxbulkoperations', 'local_delegateaccount', '', $maximum);
         }
     }

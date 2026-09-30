@@ -80,6 +80,11 @@ final class bulk_edit_dynamic_form extends dynamic_form {
         );
         if (empty($data['delegationids'])) {
             $errors['delegationids'] = get_string('noselected', 'core');
+        } else {
+            $ids = explode(',', $data['delegationids']);
+            if ($bulkerror = manager::get_bulk_operation_error(count($ids))) {
+                $errors['timeend'] = $bulkerror;
+            }
         }
         return $errors;
     }
@@ -115,20 +120,25 @@ final class bulk_edit_dynamic_form extends dynamic_form {
             ? $data->notificationmode
             : $policy;
         $ids = array_map('intval', explode(',', $data->delegationids));
-        $updatedcount = manager::update_delegations(
-            $ids,
-            (int)$data->realuserid,
-            (int)$data->timestart,
-            (int)$data->timeend,
-            $notificationmode
-        );
+        try {
+            $updatedcount = manager::update_delegations(
+                $ids,
+                (int)$data->realuserid,
+                (int)$data->timestart,
+                (int)$data->timeend,
+                $notificationmode
+            );
 
-        $message = $updatedcount === 1
-            ? get_string('delegation_updated_success', 'local_delegateaccount')
-            : get_string('delegations_updated_success', 'local_delegateaccount', $updatedcount);
-        \core\notification::success($message);
+            $message = $updatedcount === 1
+                ? get_string('delegation_updated_success', 'local_delegateaccount')
+                : get_string('delegations_updated_success', 'local_delegateaccount', $updatedcount);
+            \core\notification::success($message);
 
-        return ['updatedcount' => $updatedcount];
+            return ['updatedcount' => $updatedcount];
+        } catch (\moodle_exception $e) {
+            \core\notification::error($e->getMessage());
+            return ['updatedcount' => 0];
+        }
     }
 
     /**

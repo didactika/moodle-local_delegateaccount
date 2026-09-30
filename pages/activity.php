@@ -87,7 +87,6 @@ $PAGE->set_heading($title);
 $PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($title);
 echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
     'description' => get_string('delegated_activity_description', 'local_delegateaccount', (object)[
         'authoriseduser' => fullname($realuser),

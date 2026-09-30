@@ -81,7 +81,6 @@ $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
 $PAGE->requires->js_call_amd('local_delegateaccount/management_modals', 'init');
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('manage_accounts', 'local_delegateaccount'));
 echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
     'description' => get_string('manage_' . $tab . '_users_description', 'local_delegateaccount'),
 ]);

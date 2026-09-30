@@ -37,6 +37,9 @@ final class assign_dynamic_form extends dynamic_form {
     protected function definition() {
         $mform = $this->_form;
         $realuserid = $this->optional_param('realuserid', 0, PARAM_INT);
+        if ($realuserid === 0) {
+            $realuserid = $this->optional_param('lockedrealuserid', 0, PARAM_INT);
+        }
         
         $authorisedusers = manager::get_authorised_users('', 30);
         if ($realuserid > 0 && !isset($authorisedusers[$realuserid])) {
@@ -131,8 +134,41 @@ final class assign_dynamic_form extends dynamic_form {
             (int)$data['timeend']
         );
         $lockedrealuserid = $this->optional_param('realuserid', 0, PARAM_INT);
+        if ($lockedrealuserid === 0) {
+            $lockedrealuserid = $this->optional_param('lockedrealuserid', 0, PARAM_INT);
+        }
         if ($lockedrealuserid > 0 && (int)($data['lockedrealuserid'] ?? 0) !== $lockedrealuserid) {
             $errors['realuserids'] = get_string('error_invalidlockeduser', 'local_delegateaccount');
+        }
+
+        if (empty($errors['realuserids']) && empty($errors['delegateduserids'])) {
+            $realuserids = $lockedrealuserid > 0 
+                ? [$lockedrealuserid] 
+                : (!empty($data['realuserids']) && is_array($data['realuserids']) ? $data['realuserids'] : []);
+            
+            $delegateduserids = (!empty($data['delegateduserids']) && is_array($data['delegateduserids'])) 
+                ? $data['delegateduserids'] 
+                : [];
+                
+            if (!empty($realuserids) && !empty($delegateduserids)) {
+                $bulkcount = count($realuserids) * count($delegateduserids);
+                if ($bulkerror = manager::get_bulk_operation_error($bulkcount)) {
+                    if (count($realuserids) === 1) {
+                        $errors['delegateduserids'] = $bulkerror;
+                    } else {
+                        $errors['realuserids'] = $bulkerror;
+                    }
+                } else {
+                    $newcounts = array_fill_keys($realuserids, count($delegateduserids));
+                    if ($limiterror = manager::get_delegation_limit_error($newcounts)) {
+                        if (count($realuserids) === 1) {
+                            $errors['delegateduserids'] = $limiterror;
+                        } else {
+                            $errors['realuserids'] = $limiterror;
+                        }
+                    }
+                }
+            }
         }
 
         return $errors;
@@ -165,28 +201,36 @@ final class assign_dynamic_form extends dynamic_form {
     public function process_dynamic_submission(): array {
         $data = $this->get_data();
         $lockedrealuserid = $this->optional_param('realuserid', 0, PARAM_INT);
+        if ($lockedrealuserid === 0) {
+            $lockedrealuserid = $this->optional_param('lockedrealuserid', 0, PARAM_INT);
+        }
         $realuserids = $lockedrealuserid > 0 ? [$lockedrealuserid] : $data->realuserids;
         $policy = get_config('local_delegateaccount', 'notificationpolicy') ?: manager::NOTIFICATION_OPTIONAL;
         $notificationmode = $policy === manager::NOTIFICATION_OPTIONAL
             ? $data->notificationmode
             : $policy;
-        $createdcount = manager::create_delegations(
-            $realuserids,
-            $data->delegateduserids,
-            [
-                'timestart' => (int)$data->timestart,
-                'timeend' => (int)$data->timeend,
-                'notificationmode' => $notificationmode,
-            ]
-        );
+        try {
+            $createdcount = manager::create_delegations(
+                $realuserids,
+                $data->delegateduserids,
+                [
+                    'timestart' => (int)$data->timestart,
+                    'timeend' => (int)$data->timeend,
+                    'notificationmode' => $notificationmode,
+                ]
+            );
 
-        if ($createdcount > 0) {
-            \core\notification::success(get_string('delegations_created_success', 'local_delegateaccount'));
-        } else {
-            \core\notification::warning(get_string('no_delegations_created', 'local_delegateaccount'));
+            if ($createdcount > 0) {
+                \core\notification::success(get_string('delegations_created_success', 'local_delegateaccount'));
+            } else {
+                \core\notification::warning(get_string('no_delegations_created', 'local_delegateaccount'));
+            }
+
+            return ['createdcount' => $createdcount];
+        } catch (\moodle_exception $e) {
+            \core\notification::error($e->getMessage());
+            return ['createdcount' => 0];
         }
-
-        return ['createdcount' => $createdcount];
     }
 
     /**
@@ -207,8 +251,12 @@ final class assign_dynamic_form extends dynamic_form {
      * @return moodle_url Assignment page URL.
      */
     protected function get_page_url_for_dynamic_submission(): moodle_url {
+        $realuserid = $this->optional_param('realuserid', 0, PARAM_INT);
+        if ($realuserid === 0) {
+            $realuserid = $this->optional_param('lockedrealuserid', 0, PARAM_INT);
+        }
         return new moodle_url('/local/delegateaccount/pages/assign.php', [
-            'realuserid' => $this->optional_param('realuserid', 0, PARAM_INT),
+            'realuserid' => $realuserid,
         ]);
     }
 }

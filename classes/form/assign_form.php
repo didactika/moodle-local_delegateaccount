@@ -196,6 +196,36 @@ class assign_form extends \moodleform {
             $errors['realuserids'] = get_string('error_invalidlockeduser', 'local_delegateaccount');
         }
 
+        if (empty($errors['realuserids']) && empty($errors['delegateduserids'])) {
+            $realuserids = $lockedrealuserid > 0 
+                ? [$lockedrealuserid] 
+                : (!empty($data['realuserids']) && is_array($data['realuserids']) ? $data['realuserids'] : []);
+            
+            $delegateduserids = (!empty($data['delegateduserids']) && is_array($data['delegateduserids'])) 
+                ? $data['delegateduserids'] 
+                : [];
+                
+            if (!empty($realuserids) && !empty($delegateduserids)) {
+                $bulkcount = count($realuserids) * count($delegateduserids);
+                if ($bulkerror = manager::get_bulk_operation_error($bulkcount)) {
+                    if (count($realuserids) === 1) {
+                        $errors['delegateduserids'] = $bulkerror;
+                    } else {
+                        $errors['realuserids'] = $bulkerror;
+                    }
+                } else {
+                    $newcounts = array_fill_keys($realuserids, count($delegateduserids));
+                    if ($limiterror = manager::get_delegation_limit_error($newcounts)) {
+                        if (count($realuserids) === 1) {
+                            $errors['delegateduserids'] = $limiterror;
+                        } else {
+                            $errors['realuserids'] = $limiterror;
+                        }
+                    }
+                }
+            }
+        }
+
         return $errors;
     }
 
