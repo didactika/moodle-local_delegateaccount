@@ -53,27 +53,68 @@ class manager {
     /**
      * Returns active users who currently have permission to use delegated accounts.
      *
+     * @param string $search Optional search query.
+     * @param int $limit Maximum number of users to return (0 means no limit).
      * @return array<int, string> User IDs mapped to display names.
      */
-    public static function get_authorised_users(): array {
+    public static function get_authorised_users(string $search = '', int $limit = 0): array {
+        global $DB;
         $context = \context_system::instance();
+
+        $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
+                . 'u.lastnamephonetic, u.deleted, u.suspended';
+
+        $authorisedusers = [];
+
+        if ($search !== '') {
+            $searchvalue = '%' . $DB->sql_like_escape($search) . '%';
+            $sql = "SELECT $fields
+                      FROM {user} u
+                     WHERE u.deleted = 0 AND u.suspended = 0
+                       AND (" . $DB->sql_like('u.firstname', ':search1', false) . " OR " .
+                                $DB->sql_like('u.lastname', ':search2', false) . " OR " .
+                                $DB->sql_like('u.username', ':search3', false) . ")
+                  ORDER BY u.lastname ASC, u.firstname ASC";
+
+            $params = ['search1' => $searchvalue, 'search2' => $searchvalue, 'search3' => $searchvalue];
+            $users = $DB->get_records_sql($sql, $params, 0, 500);
+
+            $admins = get_admins();
+            $adminids = [];
+            foreach ($admins as $admin) {
+                if ((int)$admin->suspended === 0) {
+                    $adminids[(int)$admin->id] = true;
+                }
+            }
+
+            foreach ($users as $user) {
+                if (isset($adminids[(int)$user->id]) || has_capability('local/delegateaccount:use', $context, $user->id)) {
+                    $authorisedusers[(int)$user->id] = fullname($user);
+                }
+                if ($limit > 0 && count($authorisedusers) >= $limit) {
+                    break;
+                }
+            }
+
+            return $authorisedusers;
+        }
+
+        $limitnum = $limit > 0 ? $limit : '';
         $users = \get_users_by_capability(
             $context,
             'local/delegateaccount:use',
-            'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
-                . 'u.lastnamephonetic, u.deleted, u.suspended',
-            'u.lastname ASC, u.firstname ASC'
+            $fields,
+            'u.lastname ASC, u.firstname ASC',
+            '',
+            $limitnum
         );
 
-        $authorisedusers = [];
         foreach ($users as $user) {
             if ((int)$user->deleted === 0 && (int)$user->suspended === 0) {
                 $authorisedusers[(int)$user->id] = fullname($user);
             }
         }
 
-        // Site administrators have every capability, including use, even when
-        // it is not represented by a role assignment in the capability query.
         foreach (get_admins() as $administrator) {
             if ((int)$administrator->suspended === 0) {
                 $authorisedusers[(int)$administrator->id] = fullname($administrator);
@@ -82,9 +123,12 @@ class manager {
 
         asort($authorisedusers, SORT_NATURAL | SORT_FLAG_CASE);
 
+        if ($limit > 0) {
+            $authorisedusers = array_slice($authorisedusers, 0, $limit, true);
+        }
+
         return $authorisedusers;
     }
-
     /**
      * Returns user IDs that retain delegation records but can no longer use them.
      *
@@ -101,9 +145,20 @@ class manager {
         );
 
         $historicaluserids = [];
+        // Bulk capability pre-fetch to prevent N+1 queries.
+        $capableusers = \get_users_by_capability(\context_system::instance(), 'local/delegateaccount:use', 'u.id');
+        $capablemap = [];
+        foreach ($capableusers as $cu) {
+            $capablemap[(int)$cu->id] = true;
+        }
+        foreach (get_admins() as $admin) {
+            $capablemap[(int)$admin->id] = true;
+        }
+
         foreach ($users as $user) {
-            if (!self::can_use_delegated_accounts((int)$user->id)) {
-                $historicaluserids[] = (int)$user->id;
+            $userid = (int)$user->id;
+            if (!isset($capablemap[$userid])) {
+                $historicaluserids[] = $userid;
             }
         }
 
@@ -648,12 +703,9 @@ class manager {
                  JOIN {user} u1 ON u1.id = da.realuserid
                  JOIN {user} u2 ON u2.id = da.delegateduserid';
         $wheresql = implode(' AND ', $where);
-        $total = $DB->count_records_sql("SELECT COUNT(da.id) FROM $from WHERE $wheresql", $params);
+        $total = $DB->count_records_sql(sprintf('SELECT COUNT(da.id) FROM %s WHERE %s', $from, $wheresql), $params);
         $records = $DB->get_records_sql(
-            "SELECT da.*
-               FROM $from
-              WHERE $wheresql
-           ORDER BY da.id DESC",
+            sprintf('SELECT da.* FROM %s WHERE %s ORDER BY da.id DESC', $from, $wheresql),
             $params,
             $page * $perpage,
             $perpage
@@ -722,9 +774,9 @@ class manager {
 
         $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegationid], '*', MUST_EXIST);
         $where = [
-            'log.userid = :delegateduserid',
-            'log.realuserid = :realuserid',
-            'log.timecreated >= :delegationstart',
+            'userid = :delegateduserid',
+            'realuserid = :realuserid',
+            'timecreated >= :delegationstart',
         ];
         $params = [
             'delegateduserid' => (int)$delegation->delegateduserid,
@@ -737,34 +789,110 @@ class manager {
             $requestedend = $accessend;
         }
         if ($requestedend > 0) {
-            $where[] = 'log.timecreated < :activityend';
+            $where[] = 'timecreated < :activityend';
             $params['activityend'] = $requestedend;
         }
         if ($component !== '') {
-            $where[] = $DB->sql_like('log.component', ':component', false);
+            $where[] = $DB->sql_like('component', ':component', false);
             $params['component'] = '%' . $DB->sql_like_escape($component) . '%';
         }
         if ($action !== '') {
-            $where[] = $DB->sql_like('log.action', ':action', false);
+            $where[] = $DB->sql_like('action', ':action', false);
             $params['action'] = '%' . $DB->sql_like_escape($action) . '%';
         }
         $wheresql = implode(' AND ', $where);
-        $total = $DB->count_records_sql(
-            'SELECT COUNT(log.id) FROM {logstore_standard_log} log WHERE ' . $wheresql,
-            $params
-        );
-        $events = $DB->get_records_sql(
-            'SELECT log.id, log.timecreated, log.eventname, log.component, log.action,
-                    log.target, log.contextid, log.contextlevel
-               FROM {logstore_standard_log} log
-              WHERE ' . $wheresql . '
-           ORDER BY log.timecreated DESC, log.id DESC',
+        $logmanager = get_log_manager();
+        $readers = $logmanager->get_readers(\core\log\sql_reader::class);
+        $reader = reset($readers);
+        if (!$reader) {
+            return ['total' => 0, 'events' => []];
+        }
+
+        // Adjust where clause to use prefixes supported by sql_reader.
+        $sqls = implode(' AND ', $where);
+
+        $total = $reader->get_events_select_count($sqls, $params);
+        $events = $reader->get_events_select(
+            $sqls,
             $params,
+            'timecreated DESC, id DESC',
             $page * $perpage,
             $perpage
         );
 
-        return ['total' => $total, 'events' => array_values($events)];
+        // Map \core\event\base objects back to stdClass objects maintaining full native structure.
+        $mappedevents = [];
+        foreach ($events as $event) {
+            $data = $event->get_data();
+            $logrecord = new \stdClass();
+            if (isset($data['id'])) {
+                $logrecord->id = $data['id'];
+            }
+            if (isset($data['eventname'])) {
+                $logrecord->eventname = $data['eventname'];
+            }
+            if (isset($data['component'])) {
+                $logrecord->component = $data['component'];
+            }
+            if (isset($data['action'])) {
+                $logrecord->action = $data['action'];
+            }
+            if (isset($data['target'])) {
+                $logrecord->target = $data['target'];
+            }
+            if (isset($data['objecttable'])) {
+                $logrecord->objecttable = $data['objecttable'];
+            }
+            if (isset($data['objectid'])) {
+                $logrecord->objectid = $data['objectid'];
+            }
+            if (isset($data['crud'])) {
+                $logrecord->crud = $data['crud'];
+            }
+            if (isset($data['edulevel'])) {
+                $logrecord->edulevel = $data['edulevel'];
+            }
+            if (isset($data['contextid'])) {
+                $logrecord->contextid = $data['contextid'];
+            }
+            if (isset($data['contextlevel'])) {
+                $logrecord->contextlevel = $data['contextlevel'];
+            }
+            if (isset($data['contextinstanceid'])) {
+                $logrecord->contextinstanceid = $data['contextinstanceid'];
+            }
+            if (isset($data['userid'])) {
+                $logrecord->userid = $data['userid'];
+            }
+            if (isset($data['courseid'])) {
+                $logrecord->courseid = $data['courseid'];
+            }
+            if (isset($data['relateduserid'])) {
+                $logrecord->relateduserid = $data['relateduserid'];
+            }
+            if (isset($data['anonymous'])) {
+                $logrecord->anonymous = $data['anonymous'];
+            }
+            if (isset($data['other'])) {
+                $logrecord->other = $data['other'];
+            }
+            if (isset($data['timecreated'])) {
+                $logrecord->timecreated = $data['timecreated'];
+            }
+            if (isset($data['origin'])) {
+                $logrecord->origin = $data['origin'];
+            }
+            if (isset($data['ip'])) {
+                $logrecord->ip = $data['ip'];
+            }
+            if (isset($data['realuserid'])) {
+                $logrecord->realuserid = $data['realuserid'];
+            }
+
+            $mappedevents[] = $logrecord;
+        }
+
+        return ['total' => $total, 'events' => $mappedevents];
     }
 
     /**
@@ -859,15 +987,22 @@ class manager {
             }
         }
 
+        // Bulk capability preloading to avoid N+1 queries inside loops.
+        $syscontext = \context_system::instance();
+        $adminmap = [];
+        foreach (get_admins() as $admin) {
+            $adminmap[(int)$admin->id] = true;
+        }
+
         foreach ($realuserids as $realuserid) {
-            if (!self::can_use_delegated_accounts($realuserid)) {
+            if (!isset($adminmap[$realuserid]) && !has_capability('local/delegateaccount:use', $syscontext, $realuserid)) {
                 throw new \moodle_exception('error_unauthorised_realuser', 'local_delegateaccount');
             }
         }
 
         if (self::protect_privileged_targets()) {
             foreach ($delegateduserids as $delegateduserid) {
-                if (is_siteadmin($delegateduserid)) {
+                if (isset($adminmap[$delegateduserid])) {
                     throw new \moodle_exception('error_privilegedtarget', 'local_delegateaccount');
                 }
             }
@@ -875,16 +1010,17 @@ class manager {
     }
 
     /**
-     * Enforces the configured limit of current or scheduled accounts per user.
+     * Checks if the proposed delegation operations exceed the user limits.
      *
-     * @param array $newcounts Number of candidate delegations indexed by authorised user ID.
+     * @param array $newcounts Number of requested assignments keyed by real user ID.
+     * @return string|null Localized error message if any limit is exceeded, null otherwise.
      */
-    private static function validate_delegation_limit(array $newcounts): void {
+    public static function get_delegation_limit_error(array $newcounts): ?string {
         global $DB;
 
         $maximum = self::get_config_int('maxdelegationsperuser', 10);
         if ($maximum === 0 || empty($newcounts)) {
-            return;
+            return null;
         }
 
         [$inorsql, $params] = $DB->get_in_or_equal(array_keys($newcounts), SQL_PARAMS_NAMED, 'realuser');
@@ -902,19 +1038,48 @@ class manager {
         foreach ($newcounts as $realuserid => $newcount) {
             $existingcount = (int) ($existingcounts[$realuserid] ?? 0);
             if ($existingcount + $newcount > $maximum) {
-                throw new \moodle_exception('error_maxdelegations', 'local_delegateaccount', '', $maximum);
+                return get_string('error_maxdelegations', 'local_delegateaccount', $maximum);
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * Enforces the configured limit of current or scheduled accounts per user.
+     *
+     * @param array $newcounts Number of candidate delegations indexed by authorised user ID.
+     */
+    private static function validate_delegation_limit(array $newcounts): void {
+        if ($error = self::get_delegation_limit_error($newcounts)) {
+            $maximum = self::get_config_int('maxdelegationsperuser', 10);
+            throw new \moodle_exception('error_maxdelegations', 'local_delegateaccount', '', $maximum);
         }
     }
 
     /**
-     * Enforces the configured maximum number of records in one action.
+     * Checks if a bulk operation exceeds the configured limit.
      *
      * @param int $count Number of delegation records affected by the action.
+     * @return string|null Localized error message if exceeded, null otherwise.
      */
-    private static function validate_bulk_operation_count(int $count): void {
+    public static function get_bulk_operation_error(int $count): ?string {
         $maximum = self::get_config_int('maxbulkoperations', 100);
         if ($maximum > 0 && $count > $maximum) {
+            return get_string('error_maxbulkoperations', 'local_delegateaccount', $maximum);
+        }
+        return null;
+    }
+
+    /**
+     * Throw an exception when a bulk operation exceeds the configured maximum.
+     *
+     * @param int $count Number of delegation records affected by the action.
+     * @throws \moodle_exception If the configured maximum is exceeded.
+     */
+    private static function validate_bulk_operation_count(int $count): void {
+        if ($error = self::get_bulk_operation_error($count)) {
+            $maximum = self::get_config_int('maxbulkoperations', 100);
             throw new \moodle_exception('error_maxbulkoperations', 'local_delegateaccount', '', $maximum);
         }
     }

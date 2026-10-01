@@ -142,10 +142,10 @@ class delegated_accounts_table extends \table_sql {
                     da.timerevoked, da.activekey, da.notificationmode, u.firstname, u.lastname, u.middlename,
                     u.alternatename, u.firstnamephonetic, u.lastnamephonetic, u.email,
                     u.picture, u.imagealt';
-        $countsql = 'SELECT COUNT(da.id)
-                       FROM {local_delegateaccount} da
-                       JOIN {user} u ON u.id = da.delegateduserid
-                      WHERE ' . $where;
+        $countsql = sprintf(
+            'SELECT COUNT(da.id) FROM {local_delegateaccount} da JOIN {user} u ON u.id = da.delegateduserid WHERE %s',
+            $where
+        );
 
         $this->set_count_sql($countsql, $params);
         $this->set_sql($fields, $from, $where . ' GROUP BY ' . $groupby, $params);

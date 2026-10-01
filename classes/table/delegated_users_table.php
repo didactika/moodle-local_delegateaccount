@@ -109,9 +109,10 @@ class delegated_users_table extends \table_sql {
             'activeto' => $now,
             'scheduledfrom' => $now,
         ]);
-        $countsql = 'SELECT COUNT(DISTINCT u.id) FROM {user} u
-                       LEFT JOIN {local_delegateaccount} da ON da.realuserid = u.id
-                      WHERE ' . $where;
+        $countsql = sprintf(
+            'SELECT COUNT(DISTINCT u.id) FROM {user} u LEFT JOIN {local_delegateaccount} da ON da.realuserid = u.id WHERE %s',
+            $where
+        );
 
         $this->set_count_sql($countsql, $filterparams);
         $this->set_sql($fields, $from, $where . ' GROUP BY ' . $groupby, $dataparams);

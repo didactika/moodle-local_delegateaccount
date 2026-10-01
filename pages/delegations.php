@@ -101,19 +101,19 @@ if (in_array($action, ['revoke', 'bulk_revoke'], true) && data_submitted()) {
         }
     }
 
+
     if (!empty($delegationids)) {
-        manager::revoke_delegations($delegationids);
+        try {
+            manager::revoke_delegations($delegationids);
+
+            \core\notification::success(get_string('delegations_revoked_success', 'local_delegateaccount', count($delegationids)));
+        } catch (\moodle_exception $e) {
+            \core\notification::error($e->getMessage());
+        }
+    } else {
+        \core\notification::warning(get_string('delegations_revoked_success', 'local_delegateaccount', 0));
     }
 
-    // The page may already be in its body state after the external-page setup.
-    // Queue the notification explicitly so redirect() can still send its HTTP header.
-    if (!isset($SESSION->notifications) || !is_array($SESSION->notifications)) {
-        $SESSION->notifications = [];
-    }
-    $SESSION->notifications[] = (object) [
-        'message' => get_string('delegations_revoked_success', 'local_delegateaccount', count($delegationids)),
-        'type' => empty($delegationids) ? \core\notification::WARNING : \core\notification::SUCCESS,
-    ];
     redirect($url);
 }
 
@@ -126,7 +126,6 @@ $PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
 $PAGE->requires->js_call_amd('local_delegateaccount/management_modals', 'init');
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('delegated_accounts_for', 'local_delegateaccount', fullname($realuser)));
 $isauthorised = manager::can_use_delegated_accounts($realuserid);
 if (!$isauthorised) {
     echo $OUTPUT->notification(

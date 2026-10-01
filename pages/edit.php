@@ -71,23 +71,20 @@ if ($mform->is_cancelled()) {
     $notificationmode = $policy === manager::NOTIFICATION_OPTIONAL
         ? $data->notificationmode
         : $policy;
-    manager::update_delegation(
-        $delegationid,
-        (int)$data->timestart,
-        (int)$data->timeend,
-        $notificationmode
-    );
 
-    // The external-page setup can place the page in its body state. Store a
-    // session notification instead of emitting output before the redirect.
-    if (!isset($SESSION->notifications) || !is_array($SESSION->notifications)) {
-        $SESSION->notifications = [];
+    try {
+        manager::update_delegation(
+            $delegationid,
+            (int)$data->timestart,
+            (int)$data->timeend,
+            $notificationmode
+        );
+
+        \core\notification::success(get_string('delegation_updated_success', 'local_delegateaccount'));
+        redirect($backurl);
+    } catch (\moodle_exception $e) {
+        \core\notification::error($e->getMessage());
     }
-    $SESSION->notifications[] = (object) [
-        'message' => get_string('delegation_updated_success', 'local_delegateaccount'),
-        'type' => \core\notification::SUCCESS,
-    ];
-    redirect($backurl);
 }
 
 $mform->set_data([
@@ -101,7 +98,6 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($title);
 echo $OUTPUT->action_link(
     $backurl,
     get_string('back'),

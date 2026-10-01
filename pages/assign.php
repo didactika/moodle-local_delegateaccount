@@ -46,7 +46,13 @@ if (
 
 $realuserid = optional_param('realuserid', 0, PARAM_INT);
 if ($realuserid > 0 && !manager::can_use_delegated_accounts($realuserid)) {
-    throw new moodle_exception('error_unauthorised_realuser', 'local_delegateaccount');
+    $errurl = new moodle_url('/local/delegateaccount/pages/manage.php');
+    redirect(
+        $errurl,
+        get_string('error_unauthorised_realuser', 'local_delegateaccount'),
+        null,
+        \core\output\notification::NOTIFY_ERROR
+    );
 }
 $url = new moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $realuserid]);
 $dashboardurl = new moodle_url('/local/delegateaccount/pages/manage.php');
@@ -67,22 +73,26 @@ if ($mform->is_cancelled()) {
     $notificationmode = $policy === manager::NOTIFICATION_OPTIONAL
         ? $data->notificationmode
         : $policy;
-    $createdcount = manager::create_delegations(
-        $realuserid > 0 ? [$realuserid] : $data->realuserids,
-        $data->delegateduserids,
-        [
-            'timestart' => (int)$data->timestart,
-            'timeend' => (int)$data->timeend,
-            'notificationmode' => $notificationmode,
-        ]
-    );
+    try {
+        $createdcount = manager::create_delegations(
+            $realuserid > 0 ? [$realuserid] : $data->realuserids,
+            $data->delegateduserids,
+            [
+                'timestart' => (int)$data->timestart,
+                'timeend' => (int)$data->timeend,
+                'notificationmode' => $notificationmode,
+            ]
+        );
 
-    if ($createdcount > 0) {
-        \core\notification::success(get_string('delegations_created_success', 'local_delegateaccount'));
-    } else {
-        \core\notification::warning(get_string('no_delegations_created', 'local_delegateaccount'));
+        if ($createdcount > 0) {
+            \core\notification::success(get_string('delegations_created_success', 'local_delegateaccount'));
+        } else {
+            \core\notification::warning(get_string('no_delegations_created', 'local_delegateaccount'));
+        }
+        redirect($returnurl);
+    } catch (\moodle_exception $e) {
+        \core\notification::error($e->getMessage());
     }
-    redirect($returnurl);
 }
 
 echo $OUTPUT->header();

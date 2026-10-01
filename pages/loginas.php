@@ -33,7 +33,13 @@ require_login();
 require_sesskey();
 
 if (\core\session\manager::is_loggedinas()) {
-    throw new \moodle_exception('error_alreadyloggedinas', 'local_delegateaccount');
+    $errurl = new moodle_url('/local/delegateaccount/pages/accounts.php');
+    redirect(
+        $errurl,
+        get_string('error_alreadyloggedinas', 'local_delegateaccount'),
+        null,
+        \core\output\notification::NOTIFY_ERROR
+    );
 }
 
 $syscontext = context_system::instance();
@@ -42,7 +48,8 @@ require_capability('local/delegateaccount:use', $syscontext);
 $realuserid = $USER->id;
 
 if (!manager::delegation_exists($realuserid, $targetuserid)) {
-    throw new \moodle_exception('error_unauthorized', 'local_delegateaccount');
+    $errurl = new moodle_url('/local/delegateaccount/pages/accounts.php');
+    redirect($errurl, get_string('error_unauthorized', 'local_delegateaccount'), null, \core\output\notification::NOTIFY_ERROR);
 }
 
 \core\session\manager::loginas($targetuserid, $syscontext);

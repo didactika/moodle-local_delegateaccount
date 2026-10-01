@@ -40,11 +40,21 @@ class assign_form extends \moodleform {
 
         $mform->addElement('header', 'general', get_string('create_delegations', 'local_delegateaccount'));
 
-        $authorisedusers = manager::get_authorised_users();
+        $realuserid = (int)($this->_customdata['realuserid'] ?? 0);
+
+        $authorisedusers = manager::get_authorised_users('', 30);
+        if ($realuserid > 0 && !isset($authorisedusers[$realuserid])) {
+            $user = \core_user::get_user($realuserid);
+            if ($user && !$user->deleted && !$user->suspended) {
+                $authorisedusers[$realuserid] = fullname($user);
+            }
+        }
 
         $mform->addElement('autocomplete', 'realuserids', get_string('realusers', 'local_delegateaccount'), $authorisedusers, [
             'multiple' => true,
             'placeholder' => get_string('search', 'core'),
+            'ajax' => 'local_delegateaccount/form_user_selector',
+            'data-ws' => 'local_delegateaccount_get_authorised_user_options',
         ]);
         $mform->addRule('realuserids', null, 'required', null, 'client');
         $mform->addHelpButton('realuserids', 'realusers', 'local_delegateaccount');
@@ -61,10 +71,12 @@ class assign_form extends \moodleform {
             'autocomplete',
             'delegateduserids',
             get_string('delegatedusers', 'local_delegateaccount'),
-            self::get_delegated_account_options($realuserid),
+            self::get_delegated_account_options($realuserid, '', 30),
             [
                 'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
+                'ajax' => 'local_delegateaccount/form_user_selector',
+                'data-realuserid' => $realuserid,
             ]
         );
         $mform->addRule('delegateduserids', null, 'required', null, 'client');
@@ -110,17 +122,42 @@ class assign_form extends \moodleform {
      * Returns active accounts that can safely be selected as delegation targets.
      *
      * @param int $realuserid Optional authorised user whose existing targets must be excluded.
+     * @param string $search Optional search query.
+     * @param int $limit Max limit of returned accounts (0 means no limit).
      * @return array<int, string> User IDs mapped to display names.
      */
-    public static function get_delegated_account_options(int $realuserid = 0): array {
+    public static function get_delegated_account_options(int $realuserid = 0, string $search = '', int $limit = 0): array {
         global $DB;
 
-        $users = $DB->get_records(
+        $wheresql = 'deleted = 0 AND suspended = 0';
+        $params = [];
+
+        if ($search !== '') {
+            $searchparam = '%' . $DB->sql_like_escape(\core_text::strtolower($search)) . '%';
+            $wheresql .= ' AND (' . implode(' OR ', [
+                $DB->sql_like('firstname', ':search1', false, false),
+                $DB->sql_like('lastname', ':search2', false, false),
+                $DB->sql_like('email', ':search3', false, false),
+            ]) . ')';
+            $params['search1'] = $searchparam;
+            $params['search2'] = $searchparam;
+            $params['search3'] = $searchparam;
+        }
+
+        // We fetch a larger internal buffer from the DB (e.g., 300) to ensure that after filtering out
+        // already assigned targets or site admins, we can still fulfill the requested $limit (e.g., 30) for the UI.
+        $dbfetchlimit = $limit > 0 ? max($limit, 300) : 0;
+
+        $users = $DB->get_records_select(
             'user',
-            ['deleted' => 0, 'suspended' => 0],
+            $wheresql,
+            $params,
             'lastname ASC, firstname ASC',
-            'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic'
+            'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic',
+            0,
+            $dbfetchlimit
         );
+
         $excludeduserids = [];
         if ($realuserid > 0) {
             $excludeduserids = array_fill_keys($DB->get_fieldset_select(
@@ -131,14 +168,21 @@ class assign_form extends \moodleform {
             ), true);
             $excludeduserids[$realuserid] = true;
         }
+
         $options = [];
         $protectprivilegedtargets = manager::protect_privileged_targets();
         foreach ($users as $user) {
-            if (
-                !isset($excludeduserids[(int)$user->id]) &&
-                (!$protectprivilegedtargets || !is_siteadmin($user->id))
-            ) {
-                $options[(int)$user->id] = fullname($user);
+            $userid = (int)$user->id;
+            if (isset($excludeduserids[$userid])) {
+                continue;
+            }
+            if ($protectprivilegedtargets && is_siteadmin($user->id)) {
+                continue;
+            }
+            $options[$userid] = fullname($user);
+
+            if ($limit > 0 && count($options) >= $limit) {
+                break;
             }
         }
 
@@ -160,6 +204,36 @@ class assign_form extends \moodleform {
         $lockedrealuserid = (int)($this->_customdata['realuserid'] ?? 0);
         if ($lockedrealuserid > 0 && (int)($data['lockedrealuserid'] ?? 0) !== $lockedrealuserid) {
             $errors['realuserids'] = get_string('error_invalidlockeduser', 'local_delegateaccount');
+        }
+
+        if (empty($errors['realuserids']) && empty($errors['delegateduserids'])) {
+            $realuserids = $lockedrealuserid > 0
+                ? [$lockedrealuserid]
+                : (!empty($data['realuserids']) && is_array($data['realuserids']) ? $data['realuserids'] : []);
+
+            $delegateduserids = (!empty($data['delegateduserids']) && is_array($data['delegateduserids']))
+                ? $data['delegateduserids']
+                : [];
+
+            if (!empty($realuserids) && !empty($delegateduserids)) {
+                $bulkcount = count($realuserids) * count($delegateduserids);
+                if ($bulkerror = manager::get_bulk_operation_error($bulkcount)) {
+                    if (count($realuserids) === 1) {
+                        $errors['delegateduserids'] = $bulkerror;
+                    } else {
+                        $errors['realuserids'] = $bulkerror;
+                    }
+                } else {
+                    $newcounts = array_fill_keys($realuserids, count($delegateduserids));
+                    if ($limiterror = manager::get_delegation_limit_error($newcounts)) {
+                        if (count($realuserids) === 1) {
+                            $errors['delegateduserids'] = $limiterror;
+                        } else {
+                            $errors['realuserids'] = $limiterror;
+                        }
+                    }
+                }
+            }
         }
 
         return $errors;
