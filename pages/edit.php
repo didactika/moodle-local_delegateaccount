@@ -71,9 +71,6 @@ if ($mform->is_cancelled()) {
     $notificationmode = $policy === manager::NOTIFICATION_OPTIONAL
         ? $data->notificationmode
         : $policy;
-    if (!isset($SESSION->notifications) || !is_array($SESSION->notifications)) {
-        $SESSION->notifications = [];
-    }
 
     try {
         manager::update_delegation(
@@ -83,16 +80,10 @@ if ($mform->is_cancelled()) {
             $notificationmode
         );
 
-        $SESSION->notifications[] = (object) [
-            'message' => get_string('delegation_updated_success', 'local_delegateaccount'),
-            'type' => \core\notification::SUCCESS,
-        ];
+        \core\notification::success(get_string('delegation_updated_success', 'local_delegateaccount'));
         redirect($backurl);
     } catch (\moodle_exception $e) {
-        $SESSION->notifications[] = (object) [
-            'message' => $e->getMessage(),
-            'type' => \core\notification::ERROR,
-        ];
+        \core\notification::error($e->getMessage());
     }
 }
 

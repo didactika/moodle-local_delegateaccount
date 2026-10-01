@@ -101,29 +101,17 @@ if (in_array($action, ['revoke', 'bulk_revoke'], true) && data_submitted()) {
         }
     }
 
-    if (!isset($SESSION->notifications) || !is_array($SESSION->notifications)) {
-        $SESSION->notifications = [];
-    }
 
     if (!empty($delegationids)) {
         try {
             manager::revoke_delegations($delegationids);
             
-            $SESSION->notifications[] = (object) [
-                'message' => get_string('delegations_revoked_success', 'local_delegateaccount', count($delegationids)),
-                'type' => \core\notification::SUCCESS,
-            ];
+            \core\notification::success(get_string('delegations_revoked_success', 'local_delegateaccount', count($delegationids)));
         } catch (\moodle_exception $e) {
-            $SESSION->notifications[] = (object) [
-                'message' => $e->getMessage(),
-                'type' => \core\notification::ERROR,
-            ];
+            \core\notification::error($e->getMessage());
         }
     } else {
-        $SESSION->notifications[] = (object) [
-            'message' => get_string('delegations_revoked_success', 'local_delegateaccount', 0),
-            'type' => \core\notification::WARNING,
-        ];
+        \core\notification::warning(get_string('delegations_revoked_success', 'local_delegateaccount', 0));
     }
 
     redirect($url);
