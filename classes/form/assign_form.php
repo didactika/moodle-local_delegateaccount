@@ -41,7 +41,7 @@ class assign_form extends \moodleform {
         $mform->addElement('header', 'general', get_string('create_delegations', 'local_delegateaccount'));
 
         $realuserid = (int)($this->_customdata['realuserid'] ?? 0);
-        
+
         $authorisedusers = manager::get_authorised_users('', 30);
         if ($realuserid > 0 && !isset($authorisedusers[$realuserid])) {
             $user = \core_user::get_user($realuserid);
@@ -123,7 +123,7 @@ class assign_form extends \moodleform {
      *
      * @param int $realuserid Optional authorised user whose existing targets must be excluded.
      * @param string $search Optional search query.
-     * @param int $limit Max limit of returned accounts (default 0 means no limit, fallback to old behavior but usually 5 for new logic).
+     * @param int $limit Max limit of returned accounts (0 means no limit).
      * @return array<int, string> User IDs mapped to display names.
      */
     public static function get_delegated_account_options(int $realuserid = 0, string $search = '', int $limit = 0): array {
@@ -144,10 +144,10 @@ class assign_form extends \moodleform {
             $params['search3'] = $searchparam;
         }
 
-        // We fetch a larger internal buffer from the DB (e.g., 300) to ensure that after filtering out 
+        // We fetch a larger internal buffer from the DB (e.g., 300) to ensure that after filtering out
         // already assigned targets or site admins, we can still fulfill the requested $limit (e.g., 30) for the UI.
         $dbfetchlimit = $limit > 0 ? max($limit, 300) : 0;
-        
+
         $users = $DB->get_records_select(
             'user',
             $wheresql,
@@ -168,7 +168,7 @@ class assign_form extends \moodleform {
             ), true);
             $excludeduserids[$realuserid] = true;
         }
-        
+
         $options = [];
         $protectprivilegedtargets = manager::protect_privileged_targets();
         foreach ($users as $user) {
@@ -180,7 +180,7 @@ class assign_form extends \moodleform {
                 continue;
             }
             $options[$userid] = fullname($user);
-            
+
             if ($limit > 0 && count($options) >= $limit) {
                 break;
             }
@@ -207,14 +207,14 @@ class assign_form extends \moodleform {
         }
 
         if (empty($errors['realuserids']) && empty($errors['delegateduserids'])) {
-            $realuserids = $lockedrealuserid > 0 
-                ? [$lockedrealuserid] 
+            $realuserids = $lockedrealuserid > 0
+                ? [$lockedrealuserid]
                 : (!empty($data['realuserids']) && is_array($data['realuserids']) ? $data['realuserids'] : []);
-            
-            $delegateduserids = (!empty($data['delegateduserids']) && is_array($data['delegateduserids'])) 
-                ? $data['delegateduserids'] 
+
+            $delegateduserids = (!empty($data['delegateduserids']) && is_array($data['delegateduserids']))
+                ? $data['delegateduserids']
                 : [];
-                
+
             if (!empty($realuserids) && !empty($delegateduserids)) {
                 $bulkcount = count($realuserids) * count($delegateduserids);
                 if ($bulkerror = manager::get_bulk_operation_error($bulkcount)) {

@@ -47,7 +47,12 @@ if (
 $realuserid = optional_param('realuserid', 0, PARAM_INT);
 if ($realuserid > 0 && !manager::can_use_delegated_accounts($realuserid)) {
     $errurl = new moodle_url('/local/delegateaccount/pages/manage.php');
-    redirect($errurl, get_string('error_unauthorised_realuser', 'local_delegateaccount'), null, \core\output\notification::NOTIFY_ERROR);
+    redirect(
+        $errurl,
+        get_string('error_unauthorised_realuser', 'local_delegateaccount'),
+        null,
+        \core\output\notification::NOTIFY_ERROR
+    );
 }
 $url = new moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $realuserid]);
 $dashboardurl = new moodle_url('/local/delegateaccount/pages/manage.php');

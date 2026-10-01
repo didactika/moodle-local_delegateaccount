@@ -34,7 +34,12 @@ require_sesskey();
 
 if (\core\session\manager::is_loggedinas()) {
     $errurl = new moodle_url('/local/delegateaccount/pages/accounts.php');
-    redirect($errurl, get_string('error_alreadyloggedinas', 'local_delegateaccount'), null, \core\output\notification::NOTIFY_ERROR);
+    redirect(
+        $errurl,
+        get_string('error_alreadyloggedinas', 'local_delegateaccount'),
+        null,
+        \core\output\notification::NOTIFY_ERROR
+    );
 }
 
 $syscontext = context_system::instance();

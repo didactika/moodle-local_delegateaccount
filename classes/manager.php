@@ -58,7 +58,7 @@ class manager {
     public static function get_authorised_users(string $search = '', int $limit = 0): array {
         global $DB;
         $context = \context_system::instance();
-        
+
         $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
                 . 'u.lastnamephonetic, u.deleted, u.suspended';
 
@@ -73,8 +73,9 @@ class manager {
                                 $DB->sql_like('u.lastname', ':search2', false) . " OR " .
                                 $DB->sql_like('u.username', ':search3', false) . ")
                   ORDER BY u.lastname ASC, u.firstname ASC";
-            
-            $users = $DB->get_records_sql($sql, ['search1' => $searchvalue, 'search2' => $searchvalue, 'search3' => $searchvalue], 0, 500);
+
+            $params = ['search1' => $searchvalue, 'search2' => $searchvalue, 'search3' => $searchvalue];
+            $users = $DB->get_records_sql($sql, $params, 0, 500);
 
             $admins = get_admins();
             $adminids = [];
@@ -119,7 +120,7 @@ class manager {
         }
 
         asort($authorisedusers, SORT_NATURAL | SORT_FLAG_CASE);
-        
+
         if ($limit > 0) {
             $authorisedusers = array_slice($authorisedusers, 0, $limit, true);
         }
@@ -805,9 +806,8 @@ class manager {
             return ['total' => 0, 'events' => []];
         }
 
-        // Adjust where clause to use prefixes supported by sql_reader
+        // Adjust where clause to use prefixes supported by sql_reader.
         $sqls = implode(' AND ', $where);
-
 
         $total = $reader->get_events_select_count($sqls, $params);
         $events = $reader->get_events_select(
@@ -823,28 +823,70 @@ class manager {
         foreach ($events as $event) {
             $data = $event->get_data();
             $logrecord = new \stdClass();
-            if (isset($data['id'])) { $logrecord->id = $data['id']; }
-            if (isset($data['eventname'])) { $logrecord->eventname = $data['eventname']; }
-            if (isset($data['component'])) { $logrecord->component = $data['component']; }
-            if (isset($data['action'])) { $logrecord->action = $data['action']; }
-            if (isset($data['target'])) { $logrecord->target = $data['target']; }
-            if (isset($data['objecttable'])) { $logrecord->objecttable = $data['objecttable']; }
-            if (isset($data['objectid'])) { $logrecord->objectid = $data['objectid']; }
-            if (isset($data['crud'])) { $logrecord->crud = $data['crud']; }
-            if (isset($data['edulevel'])) { $logrecord->edulevel = $data['edulevel']; }
-            if (isset($data['contextid'])) { $logrecord->contextid = $data['contextid']; }
-            if (isset($data['contextlevel'])) { $logrecord->contextlevel = $data['contextlevel']; }
-            if (isset($data['contextinstanceid'])) { $logrecord->contextinstanceid = $data['contextinstanceid']; }
-            if (isset($data['userid'])) { $logrecord->userid = $data['userid']; }
-            if (isset($data['courseid'])) { $logrecord->courseid = $data['courseid']; }
-            if (isset($data['relateduserid'])) { $logrecord->relateduserid = $data['relateduserid']; }
-            if (isset($data['anonymous'])) { $logrecord->anonymous = $data['anonymous']; }
-            if (isset($data['other'])) { $logrecord->other = $data['other']; }
-            if (isset($data['timecreated'])) { $logrecord->timecreated = $data['timecreated']; }
-            if (isset($data['origin'])) { $logrecord->origin = $data['origin']; }
-            if (isset($data['ip'])) { $logrecord->ip = $data['ip']; }
-            if (isset($data['realuserid'])) { $logrecord->realuserid = $data['realuserid']; }
-            
+            if (isset($data['id'])) {
+                $logrecord->id = $data['id'];
+            }
+            if (isset($data['eventname'])) {
+                $logrecord->eventname = $data['eventname'];
+            }
+            if (isset($data['component'])) {
+                $logrecord->component = $data['component'];
+            }
+            if (isset($data['action'])) {
+                $logrecord->action = $data['action'];
+            }
+            if (isset($data['target'])) {
+                $logrecord->target = $data['target'];
+            }
+            if (isset($data['objecttable'])) {
+                $logrecord->objecttable = $data['objecttable'];
+            }
+            if (isset($data['objectid'])) {
+                $logrecord->objectid = $data['objectid'];
+            }
+            if (isset($data['crud'])) {
+                $logrecord->crud = $data['crud'];
+            }
+            if (isset($data['edulevel'])) {
+                $logrecord->edulevel = $data['edulevel'];
+            }
+            if (isset($data['contextid'])) {
+                $logrecord->contextid = $data['contextid'];
+            }
+            if (isset($data['contextlevel'])) {
+                $logrecord->contextlevel = $data['contextlevel'];
+            }
+            if (isset($data['contextinstanceid'])) {
+                $logrecord->contextinstanceid = $data['contextinstanceid'];
+            }
+            if (isset($data['userid'])) {
+                $logrecord->userid = $data['userid'];
+            }
+            if (isset($data['courseid'])) {
+                $logrecord->courseid = $data['courseid'];
+            }
+            if (isset($data['relateduserid'])) {
+                $logrecord->relateduserid = $data['relateduserid'];
+            }
+            if (isset($data['anonymous'])) {
+                $logrecord->anonymous = $data['anonymous'];
+            }
+            if (isset($data['other'])) {
+                $logrecord->other = $data['other'];
+            }
+            if (isset($data['timecreated'])) {
+                $logrecord->timecreated = $data['timecreated'];
+            }
+            if (isset($data['origin'])) {
+                $logrecord->origin = $data['origin'];
+            }
+            if (isset($data['ip'])) {
+                $logrecord->ip = $data['ip'];
+            }
+            if (isset($data['realuserid'])) {
+                $logrecord->realuserid = $data['realuserid'];
+            }
+
             $mappedevents[] = $logrecord;
         }
 
@@ -997,7 +1039,7 @@ class manager {
                 return get_string('error_maxdelegations', 'local_delegateaccount', $maximum);
             }
         }
-        
+
         return null;
     }
 
@@ -1027,6 +1069,12 @@ class manager {
         return null;
     }
 
+    /**
+     * Throw an exception when a bulk operation exceeds the configured maximum.
+     *
+     * @param int $count Number of delegation records affected by the action.
+     * @throws \moodle_exception If the configured maximum is exceeded.
+     */
     private static function validate_bulk_operation_count(int $count): void {
         if ($error = self::get_bulk_operation_error($count)) {
             $maximum = self::get_config_int('maxbulkoperations', 100);

@@ -33,7 +33,6 @@ use local_delegateaccount\manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class get_authorised_user_options extends external_api {
-
     /**
      * Describes the parameters for execute.
      *
@@ -69,7 +68,7 @@ class get_authorised_user_options extends external_api {
         }
 
         $options = manager::get_authorised_users($query, 30);
-        
+
         $results = [];
         foreach ($options as $id => $fullname) {
             $results[] = [

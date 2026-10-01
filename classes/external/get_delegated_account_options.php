@@ -33,7 +33,6 @@ use local_delegateaccount\form\assign_form;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class get_delegated_account_options extends external_api {
-
     /**
      * Describes the parameters for execute.
      *
@@ -70,7 +69,7 @@ class get_delegated_account_options extends external_api {
         }
 
         $options = assign_form::get_delegated_account_options($realuserid, $query, 30);
-        
+
         $results = [];
         foreach ($options as $id => $fullname) {
             $results[] = [

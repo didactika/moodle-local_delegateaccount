@@ -40,7 +40,7 @@ final class assign_dynamic_form extends dynamic_form {
         if ($realuserid === 0) {
             $realuserid = $this->optional_param('lockedrealuserid', 0, PARAM_INT);
         }
-        
+
         $authorisedusers = manager::get_authorised_users('', 30);
         if ($realuserid > 0 && !isset($authorisedusers[$realuserid])) {
             $user = \core_user::get_user($realuserid);
@@ -48,14 +48,14 @@ final class assign_dynamic_form extends dynamic_form {
                 $authorisedusers[$realuserid] = fullname($user);
             }
         }
-        
+
         $mform->addElement(
             'autocomplete',
             'realuserids',
             get_string('realusers', 'local_delegateaccount'),
             $authorisedusers,
             [
-                'multiple' => true, 
+                'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
                 'ajax' => 'local_delegateaccount/form_user_selector',
                 'data-ws' => 'local_delegateaccount_get_authorised_user_options',
@@ -76,7 +76,7 @@ final class assign_dynamic_form extends dynamic_form {
             get_string('delegatedusers', 'local_delegateaccount'),
             assign_form::get_delegated_account_options($realuserid, '', 30),
             [
-                'multiple' => true, 
+                'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
                 'ajax' => 'local_delegateaccount/form_user_selector',
                 'data-realuserid' => $realuserid,
@@ -142,14 +142,14 @@ final class assign_dynamic_form extends dynamic_form {
         }
 
         if (empty($errors['realuserids']) && empty($errors['delegateduserids'])) {
-            $realuserids = $lockedrealuserid > 0 
-                ? [$lockedrealuserid] 
+            $realuserids = $lockedrealuserid > 0
+                ? [$lockedrealuserid]
                 : (!empty($data['realuserids']) && is_array($data['realuserids']) ? $data['realuserids'] : []);
-            
-            $delegateduserids = (!empty($data['delegateduserids']) && is_array($data['delegateduserids'])) 
-                ? $data['delegateduserids'] 
+
+            $delegateduserids = (!empty($data['delegateduserids']) && is_array($data['delegateduserids']))
+                ? $data['delegateduserids']
                 : [];
-                
+
             if (!empty($realuserids) && !empty($delegateduserids)) {
                 $bulkcount = count($realuserids) * count($delegateduserids);
                 if ($bulkerror = manager::get_bulk_operation_error($bulkcount)) {

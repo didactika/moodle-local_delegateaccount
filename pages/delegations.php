@@ -105,7 +105,7 @@ if (in_array($action, ['revoke', 'bulk_revoke'], true) && data_submitted()) {
     if (!empty($delegationids)) {
         try {
             manager::revoke_delegations($delegationids);
-            
+
             \core\notification::success(get_string('delegations_revoked_success', 'local_delegateaccount', count($delegationids)));
         } catch (\moodle_exception $e) {
             \core\notification::error($e->getMessage());
