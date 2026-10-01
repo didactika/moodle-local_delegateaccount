@@ -771,9 +771,9 @@ class manager {
 
         $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegationid], '*', MUST_EXIST);
         $where = [
-            'log.userid = :delegateduserid',
-            'log.realuserid = :realuserid',
-            'log.timecreated >= :delegationstart',
+            'userid = :delegateduserid',
+            'realuserid = :realuserid',
+            'timecreated >= :delegationstart',
         ];
         $params = [
             'delegateduserid' => (int)$delegation->delegateduserid,
@@ -786,35 +786,69 @@ class manager {
             $requestedend = $accessend;
         }
         if ($requestedend > 0) {
-            $where[] = 'log.timecreated < :activityend';
+            $where[] = 'timecreated < :activityend';
             $params['activityend'] = $requestedend;
         }
         if ($component !== '') {
-            $where[] = $DB->sql_like('log.component', ':component', false);
+            $where[] = $DB->sql_like('component', ':component', false);
             $params['component'] = '%' . $DB->sql_like_escape($component) . '%';
         }
         if ($action !== '') {
-            $where[] = $DB->sql_like('log.action', ':action', false);
+            $where[] = $DB->sql_like('action', ':action', false);
             $params['action'] = '%' . $DB->sql_like_escape($action) . '%';
         }
         $wheresql = implode(' AND ', $where);
-        // phpcs:ignore
-        $total = $DB->count_records_sql(
-            sprintf('SELECT COUNT(log.id) FROM {logstore_standard_log} log WHERE %s', $wheresql),
-            $params
-        );
-        // phpcs:ignore
-        $events = $DB->get_records_sql(
-            sprintf(
-                'SELECT log.id, log.timecreated, log.eventname, log.component, log.action, log.target, log.contextid, log.contextlevel FROM {logstore_standard_log} log WHERE %s ORDER BY log.timecreated DESC, log.id DESC',
-                $wheresql
-            ),
+        $logmanager = get_log_manager();
+        $readers = $logmanager->get_readers(\core\log\sql_reader::class);
+        $reader = reset($readers);
+        if (!$reader) {
+            return ['total' => 0, 'events' => []];
+        }
+
+        // Adjust where clause to use prefixes supported by sql_reader
+        $sqls = implode(' AND ', $where);
+
+
+        $total = $reader->get_events_select_count($sqls, $params);
+        $events = $reader->get_events_select(
+            $sqls,
             $params,
+            'timecreated DESC, id DESC',
             $page * $perpage,
             $perpage
         );
 
-        return ['total' => $total, 'events' => array_values($events)];
+        // Map \core\event\base objects back to stdClass objects maintaining full native structure.
+        $mappedevents = [];
+        foreach ($events as $event) {
+            $data = $event->get_data();
+            $logrecord = new \stdClass();
+            if (isset($data['id'])) { $logrecord->id = $data['id']; }
+            if (isset($data['eventname'])) { $logrecord->eventname = $data['eventname']; }
+            if (isset($data['component'])) { $logrecord->component = $data['component']; }
+            if (isset($data['action'])) { $logrecord->action = $data['action']; }
+            if (isset($data['target'])) { $logrecord->target = $data['target']; }
+            if (isset($data['objecttable'])) { $logrecord->objecttable = $data['objecttable']; }
+            if (isset($data['objectid'])) { $logrecord->objectid = $data['objectid']; }
+            if (isset($data['crud'])) { $logrecord->crud = $data['crud']; }
+            if (isset($data['edulevel'])) { $logrecord->edulevel = $data['edulevel']; }
+            if (isset($data['contextid'])) { $logrecord->contextid = $data['contextid']; }
+            if (isset($data['contextlevel'])) { $logrecord->contextlevel = $data['contextlevel']; }
+            if (isset($data['contextinstanceid'])) { $logrecord->contextinstanceid = $data['contextinstanceid']; }
+            if (isset($data['userid'])) { $logrecord->userid = $data['userid']; }
+            if (isset($data['courseid'])) { $logrecord->courseid = $data['courseid']; }
+            if (isset($data['relateduserid'])) { $logrecord->relateduserid = $data['relateduserid']; }
+            if (isset($data['anonymous'])) { $logrecord->anonymous = $data['anonymous']; }
+            if (isset($data['other'])) { $logrecord->other = $data['other']; }
+            if (isset($data['timecreated'])) { $logrecord->timecreated = $data['timecreated']; }
+            if (isset($data['origin'])) { $logrecord->origin = $data['origin']; }
+            if (isset($data['ip'])) { $logrecord->ip = $data['ip']; }
+            if (isset($data['realuserid'])) { $logrecord->realuserid = $data['realuserid']; }
+            
+            $mappedevents[] = $logrecord;
+        }
+
+        return ['total' => $total, 'events' => $mappedevents];
     }
 
     /**
