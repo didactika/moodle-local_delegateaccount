@@ -21,7 +21,7 @@ repository's [GNU GPL v3 or later license](LICENSE).
 3. Follow the [Moodle coding style](https://moodledev.io/general/development/policies/codingstyle)
    and document every public API.
 4. Add or update PHPUnit and Behat coverage whenever behaviour changes.
-5. Keep all English, Spanish, Portuguese, Italian and French language packs aligned when
+5. Keep the English language pack (`lang/en/`) up to date and in alphabetical order when
    adding or changing user-facing strings.
 6. Rebuild and commit `amd/build/` whenever a module under `amd/src/` changes.
 7. Update the README, changelog and integration guide when the public behaviour changes.

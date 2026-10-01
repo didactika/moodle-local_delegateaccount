@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial delegated-account management functionality.
 - Moodle 4.5 through 5.2 support declaration.
-- English, Spanish, Portuguese, Italian and French language packs.
+- English language pack.
 - Delegation validity periods, logical revocation, lifecycle audit events and
   granular management capabilities.
 - Site-wide limits for delegation quantity, duration, bulk actions and

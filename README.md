@@ -26,7 +26,7 @@ its own or bypasses Moodle capabilities.
 | **Plugin type** | Local plugin |
 | **Supported Moodle releases** | 4.5 LTS through 5.2 |
 | **Current maturity** | Stable |
-| **Languages** | English, Spanish, Portuguese, Italian and French |
+| **Languages** | English |
 | **License** | GNU GPL v3 or later |
 
 ### Key capabilities
@@ -183,9 +183,8 @@ credentials or for avoiding normal role and permission design.
 
 ## Languages
 
-The release package includes English, Spanish, Portuguese, Italian and French
-strings. A Moodle language pack can supersede the bundled translation where
-available.
+The release package currently includes English strings only. A Moodle language pack
+can provide translations where available.
 
 ## Development
 
