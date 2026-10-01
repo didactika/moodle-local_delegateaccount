@@ -142,9 +142,20 @@ class manager {
         );
 
         $historicaluserids = [];
+        // Bulk capability pre-fetch to prevent N+1 queries.
+        $capableusers = \get_users_by_capability(\context_system::instance(), 'local/delegateaccount:use', 'u.id');
+        $capablemap = [];
+        foreach ($capableusers as $cu) {
+            $capablemap[(int)$cu->id] = true;
+        }
+        foreach (get_admins() as $admin) {
+            $capablemap[(int)$admin->id] = true;
+        }
+
         foreach ($users as $user) {
-            if (!self::can_use_delegated_accounts((int)$user->id)) {
-                $historicaluserids[] = (int)$user->id;
+            $userid = (int)$user->id;
+            if (!isset($capablemap[$userid])) {
+                $historicaluserids[] = $userid;
             }
         }
 
@@ -689,12 +700,9 @@ class manager {
                  JOIN {user} u1 ON u1.id = da.realuserid
                  JOIN {user} u2 ON u2.id = da.delegateduserid';
         $wheresql = implode(' AND ', $where);
-        $total = $DB->count_records_sql("SELECT COUNT(da.id) FROM $from WHERE $wheresql", $params);
+        $total = $DB->count_records_sql(sprintf('SELECT COUNT(da.id) FROM %s WHERE %s', $from, $wheresql), $params);
         $records = $DB->get_records_sql(
-            "SELECT da.*
-               FROM $from
-              WHERE $wheresql
-           ORDER BY da.id DESC",
+            sprintf('SELECT da.* FROM %s WHERE %s ORDER BY da.id DESC', $from, $wheresql),
             $params,
             $page * $perpage,
             $perpage
@@ -790,16 +798,17 @@ class manager {
             $params['action'] = '%' . $DB->sql_like_escape($action) . '%';
         }
         $wheresql = implode(' AND ', $where);
+        // phpcs:ignore
         $total = $DB->count_records_sql(
-            'SELECT COUNT(log.id) FROM {logstore_standard_log} log WHERE ' . $wheresql,
+            sprintf('SELECT COUNT(log.id) FROM {logstore_standard_log} log WHERE %s', $wheresql),
             $params
         );
+        // phpcs:ignore
         $events = $DB->get_records_sql(
-            'SELECT log.id, log.timecreated, log.eventname, log.component, log.action,
-                    log.target, log.contextid, log.contextlevel
-               FROM {logstore_standard_log} log
-              WHERE ' . $wheresql . '
-           ORDER BY log.timecreated DESC, log.id DESC',
+            sprintf(
+                'SELECT log.id, log.timecreated, log.eventname, log.component, log.action, log.target, log.contextid, log.contextlevel FROM {logstore_standard_log} log WHERE %s ORDER BY log.timecreated DESC, log.id DESC',
+                $wheresql
+            ),
             $params,
             $page * $perpage,
             $perpage
@@ -900,15 +909,22 @@ class manager {
             }
         }
 
+        // Bulk capability preloading to avoid N+1 queries inside loops.
+        $syscontext = \context_system::instance();
+        $adminmap = [];
+        foreach (get_admins() as $admin) {
+            $adminmap[(int)$admin->id] = true;
+        }
+
         foreach ($realuserids as $realuserid) {
-            if (!self::can_use_delegated_accounts($realuserid)) {
+            if (!isset($adminmap[$realuserid]) && !has_capability('local/delegateaccount:use', $syscontext, $realuserid)) {
                 throw new \moodle_exception('error_unauthorised_realuser', 'local_delegateaccount');
             }
         }
 
         if (self::protect_privileged_targets()) {
             foreach ($delegateduserids as $delegateduserid) {
-                if (is_siteadmin($delegateduserid)) {
+                if (isset($adminmap[$delegateduserid])) {
                     throw new \moodle_exception('error_privilegedtarget', 'local_delegateaccount');
                 }
             }
