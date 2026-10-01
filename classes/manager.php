@@ -53,6 +53,8 @@ class manager {
     /**
      * Returns active users who currently have permission to use delegated accounts.
      *
+     * @param string $search Optional search query.
+     * @param int $limit Maximum number of users to return (0 means no limit).
      * @return array<int, string> User IDs mapped to display names.
      */
     public static function get_authorised_users(string $search = '', int $limit = 0): array {
