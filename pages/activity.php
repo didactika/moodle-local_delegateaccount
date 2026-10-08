@@ -51,12 +51,10 @@ $filterform = new activity_filter_form(new moodle_url('/local/delegateaccount/pa
     'periodend' => $accessend > 0 ? $accessend : time(),
 ]);
 $submittedfilters = $filterform->get_data();
-$datefromparam = isset($_GET['datefrom']) && !is_array($_GET['datefrom'])
-    ? optional_param('datefrom', 0, PARAM_INT)
-    : 0;
-$datetoparam = isset($_GET['dateto']) && !is_array($_GET['dateto'])
-    ? optional_param('dateto', 0, PARAM_INT)
-    : 0;
+// A submitted form sends each date as day, month and year fields; pagination links send a timestamp.
+$formsubmitted = $filterform->is_submitted();
+$datefromparam = $formsubmitted ? 0 : optional_param('datefrom', 0, PARAM_INT);
+$datetoparam = $formsubmitted ? 0 : optional_param('dateto', 0, PARAM_INT);
 $filters = [
     'datefrom' => $submittedfilters ? (int)$submittedfilters->datefrom : $datefromparam,
     'dateto' => $submittedfilters ? (int)$submittedfilters->dateto : $datetoparam,

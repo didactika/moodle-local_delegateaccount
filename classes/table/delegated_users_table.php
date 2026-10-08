@@ -43,21 +43,20 @@ class delegated_users_table extends \table_sql {
     /**
      * Creates the user overview table.
      *
+     * The authorised tab lists active users who may use delegated accounts. The other tab
+     * lists users who keep delegation records but may no longer use them.
+     *
      * @param \moodle_url $baseurl URL retaining table and filter state.
-     * @param int[] $userids Users included by the selected management tab.
+     * @param bool $authorised Whether to list authorised users rather than users without permission.
      * @param array $filters User filters indexed by field name.
-     * @param bool $allowsdelegationcreation Whether this tab contains authorised users.
      */
     public function __construct(
         \moodle_url $baseurl,
-        array $userids,
-        array $filters,
-        bool $allowsdelegationcreation
+        bool $authorised,
+        array $filters
     ) {
-        global $DB;
-
         parent::__construct('local_delegateaccount_delegated_users');
-        $this->allowsdelegationcreation = $allowsdelegationcreation && permission::has(permission::CREATE);
+        $this->allowsdelegationcreation = $authorised && permission::has(permission::CREATE);
 
         $this->define_columns([
             'lastname',
@@ -83,13 +82,17 @@ class delegated_users_table extends \table_sql {
 
         $now = time();
         [$where, $filterparams] = self::get_filter_sql($filters, $now);
-        if (empty($userids)) {
-            $where .= ' AND u.id = 0';
+        [$authorisedsql, $authorisedparams] = manager::get_authorised_users_condition('u.id');
+        if ($authorised) {
+            $where .= " AND u.suspended = 0 AND $authorisedsql";
         } else {
-            [$useridsql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'manageduser');
-            $where .= ' AND u.id ' . $useridsql;
-            $filterparams = array_merge($filterparams, $userparams);
+            $where .= " AND EXISTS (
+                          SELECT 1
+                            FROM {local_delegateaccount} historyda
+                           WHERE historyda.realuserid = u.id
+                       ) AND NOT (u.suspended = 0 AND $authorisedsql)";
         }
+        $filterparams = array_merge($filterparams, $authorisedparams);
         $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename,
                    u.firstnamephonetic, u.lastnamephonetic, u.email, u.picture, u.imagealt,
                    SUM(CASE WHEN da.activekey = 0 AND da.timestart <= :activefrom

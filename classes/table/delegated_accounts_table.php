@@ -98,6 +98,7 @@ class delegated_accounts_table extends \table_sql {
         $this->sortable(true, 'lastname', SORT_ASC);
         $this->no_sorting('select');
         $this->no_sorting('status');
+        $this->no_sorting('lastaccess');
         $this->no_sorting('actions');
         $this->collapsible(false);
         $this->is_downloadable(false);
@@ -108,15 +109,9 @@ class delegated_accounts_table extends \table_sql {
         $fields = 'da.id, da.realuserid, da.delegateduserid, da.timestart, da.timeend,
                    da.timerevoked, da.activekey, da.notificationmode, u.firstname, u.lastname, u.middlename,
                    u.alternatename, u.firstnamephonetic, u.lastnamephonetic, u.email,
-                   u.picture, u.imagealt,
-                   COALESCE(MAX(log.timecreated), 0) AS lastaccess';
+                   u.picture, u.imagealt';
         $from = '{local_delegateaccount} da
-                 JOIN {user} u ON u.id = da.delegateduserid
-                 LEFT JOIN {logstore_standard_log} log ON log.userid = da.delegateduserid
-                    AND log.realuserid = da.realuserid
-                    AND log.timecreated >= da.timestart
-                    AND (da.timeend = 0 OR log.timecreated < da.timeend)
-                    AND (da.timerevoked = 0 OR log.timecreated < da.timerevoked)';
+                 JOIN {user} u ON u.id = da.delegateduserid';
         $where = 'da.realuserid = :realuserid';
         $params = ['realuserid' => $realuserid];
         if ($search !== '') {
@@ -145,17 +140,8 @@ class delegated_accounts_table extends \table_sql {
         } else if ($status === manager::STATUS_REVOKED) {
             $where .= ' AND (da.activekey <> 0 OR da.timerevoked > 0)';
         }
-        $groupby = 'da.id, da.realuserid, da.delegateduserid, da.timestart, da.timeend,
-                    da.timerevoked, da.activekey, da.notificationmode, u.firstname, u.lastname, u.middlename,
-                    u.alternatename, u.firstnamephonetic, u.lastnamephonetic, u.email,
-                    u.picture, u.imagealt';
-        $countsql = sprintf(
-            'SELECT COUNT(da.id) FROM {local_delegateaccount} da JOIN {user} u ON u.id = da.delegateduserid WHERE %s',
-            $where
-        );
-
-        $this->set_count_sql($countsql, $params);
-        $this->set_sql($fields, $from, $where . ' GROUP BY ' . $groupby, $params);
+        $this->set_count_sql('SELECT COUNT(da.id) FROM ' . $from . ' WHERE ' . $where, $params);
+        $this->set_sql($fields, $from, $where, $params);
     }
 
     /**
@@ -274,11 +260,12 @@ class delegated_accounts_table extends \table_sql {
      * @return string Formatted timestamp or the no-access label.
      */
     public function col_lastaccess($row): string {
-        if ((int)$row->lastaccess === 0) {
+        $lastaccess = manager::get_last_delegated_access($row);
+        if ($lastaccess === 0) {
             return $this->render_badge(get_string('no_delegated_access', 'local_delegateaccount'), 'badge badge-secondary');
         }
 
-        return $this->render_badge(userdate((int)$row->lastaccess), 'badge badge-info font-weight-normal');
+        return $this->render_badge(userdate($lastaccess), 'badge badge-info font-weight-normal');
     }
 
     /**

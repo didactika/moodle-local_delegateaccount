@@ -41,7 +41,7 @@ class get_authorised_user_options extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
-            'query' => new external_value(PARAM_RAW, 'The search query string'),
+            'query' => new external_value(PARAM_TEXT, 'The search query string'),
             'realuserid' => new external_value(PARAM_INT, 'The configured real user ID', VALUE_DEFAULT, 0),
         ]);
     }
@@ -88,7 +88,7 @@ class get_authorised_user_options extends external_api {
         return new external_multiple_structure(
             new external_single_structure([
                 'id' => new external_value(PARAM_INT, 'User ID'),
-                'name' => new external_value(PARAM_RAW, 'User full name'),
+                'name' => new external_value(PARAM_TEXT, 'User full name'),
             ])
         );
     }

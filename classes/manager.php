@@ -153,39 +153,28 @@ class manager {
     }
 
     /**
-     * Returns user IDs that retain delegation records but can no longer use them.
+     * Returns an SQL condition matching users who hold the use capability or are site administrators.
      *
-     * @return int[] User IDs.
+     * The capability part is Moodle's own get_with_capability_sql() subquery, so the condition
+     * stays a single bounded query however many users hold the capability.
+     *
+     * @param string $useridcolumn Column holding the user identifier, for example 'u.id'.
+     * @return array The SQL condition and its named parameters.
      */
-    public static function get_historical_user_ids(): array {
-        global $DB;
+    public static function get_authorised_users_condition(string $useridcolumn): array {
+        global $CFG, $DB;
 
-        $users = $DB->get_records_sql(
-            'SELECT DISTINCT u.id
-               FROM {user} u
-               JOIN {local_delegateaccount} da ON da.realuserid = u.id
-              WHERE u.deleted = 0'
-        );
+        [$capabilitysql, $params] = get_with_capability_sql(\context_system::instance(), 'local/delegateaccount:use');
+        $condition = "$useridcolumn IN ($capabilitysql)";
 
-        $historicaluserids = [];
-        // Bulk capability pre-fetch to prevent N+1 queries.
-        $capableusers = \get_users_by_capability(\context_system::instance(), 'local/delegateaccount:use', 'u.id');
-        $capablemap = [];
-        foreach ($capableusers as $cu) {
-            $capablemap[(int)$cu->id] = true;
-        }
-        foreach (get_admins() as $admin) {
-            $capablemap[(int)$admin->id] = true;
+        $adminids = array_filter(array_map('intval', explode(',', (string)$CFG->siteadmins)));
+        if ($adminids) {
+            [$adminsql, $adminparams] = $DB->get_in_or_equal($adminids, SQL_PARAMS_NAMED, 'siteadmin');
+            $condition = "($condition OR $useridcolumn $adminsql)";
+            $params += $adminparams;
         }
 
-        foreach ($users as $user) {
-            $userid = (int)$user->id;
-            if (!isset($capablemap[$userid])) {
-                $historicaluserids[] = $userid;
-            }
-        }
-
-        return $historicaluserids;
+        return [$condition, $params];
     }
 
     /**
@@ -843,6 +832,68 @@ class manager {
     }
 
     /**
+     * Returns the log store reader used for delegated activity, or null when no SQL reader is enabled.
+     *
+     * @return \core\log\sql_reader|null Log reader.
+     */
+    public static function get_log_reader(): ?\core\log\sql_reader {
+        $readers = get_log_manager()->get_readers(\core\log\sql_reader::class);
+        $reader = reset($readers);
+
+        return $reader ?: null;
+    }
+
+    /**
+     * Builds the log selector for everything done through one delegation period.
+     *
+     * Anonymous events are left out unless the current user may view them, as in Moodle's log report.
+     *
+     * @param \stdClass $delegation Delegation database record.
+     * @return array The selector and its named parameters.
+     */
+    public static function get_delegation_log_selector(\stdClass $delegation): array {
+        $where = [
+            'userid = :delegateduserid',
+            'realuserid = :realuserid',
+            'timecreated >= :delegationstart',
+        ];
+        $params = [
+            'delegateduserid' => (int)$delegation->delegateduserid,
+            'realuserid' => (int)$delegation->realuserid,
+            'delegationstart' => (int)$delegation->timestart,
+        ];
+        $accessend = self::get_delegation_access_end($delegation);
+        if ($accessend > 0) {
+            $where[] = 'timecreated < :delegationend';
+            $params['delegationend'] = $accessend;
+        }
+        if (!has_capability('moodle/site:viewanonymousevents', \context_system::instance())) {
+            $where[] = 'anonymous = 0';
+        }
+
+        return [implode(' AND ', $where), $params];
+    }
+
+    /**
+     * Returns when an authorised user last acted through a delegation period.
+     *
+     * @param \stdClass $delegation Delegation database record.
+     * @return int Timestamp of the latest logged event, or zero when there is none.
+     */
+    public static function get_last_delegated_access(\stdClass $delegation): int {
+        $reader = self::get_log_reader();
+        if (!$reader) {
+            return 0;
+        }
+
+        [$where, $params] = self::get_delegation_log_selector($delegation);
+        $events = $reader->get_events_select($where, $params, 'timecreated DESC, id DESC', 0, 1);
+        $event = reset($events);
+
+        return $event ? (int)$event->timecreated : 0;
+    }
+
+    /**
      * Returns one stable page of activity attributed to a delegation period.
      *
      * @param int $delegationid Delegation identifier.
@@ -866,126 +917,40 @@ class manager {
         global $DB;
 
         $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegationid], '*', MUST_EXIST);
-        $where = [
-            'userid = :delegateduserid',
-            'realuserid = :realuserid',
-            'timecreated >= :delegationstart',
-        ];
-        $params = [
-            'delegateduserid' => (int)$delegation->delegateduserid,
-            'realuserid' => (int)$delegation->realuserid,
-            'delegationstart' => max((int)$delegation->timestart, $timefrom),
-        ];
-        $accessend = self::get_delegation_access_end($delegation);
-        $requestedend = $timeuntil > 0 ? $timeuntil : $accessend;
-        if ($accessend > 0 && ($requestedend === 0 || $requestedend > $accessend)) {
-            $requestedend = $accessend;
-        }
-        if ($requestedend > 0) {
-            $where[] = 'timecreated < :activityend';
-            $params['activityend'] = $requestedend;
-        }
-        if ($component !== '') {
-            $where[] = $DB->sql_like('component', ':component', false);
-            $params['component'] = '%' . $DB->sql_like_escape($component) . '%';
-        }
-        if ($action !== '') {
-            $where[] = $DB->sql_like('action', ':action', false);
-            $params['action'] = '%' . $DB->sql_like_escape($action) . '%';
-        }
-        $wheresql = implode(' AND ', $where);
-        $logmanager = get_log_manager();
-        $readers = $logmanager->get_readers(\core\log\sql_reader::class);
-        $reader = reset($readers);
+        $reader = self::get_log_reader();
         if (!$reader) {
             return ['total' => 0, 'events' => []];
         }
 
-        // Adjust where clause to use prefixes supported by sql_reader.
-        $sqls = implode(' AND ', $where);
-
-        $total = $reader->get_events_select_count($sqls, $params);
-        $events = $reader->get_events_select(
-            $sqls,
-            $params,
-            'timecreated DESC, id DESC',
-            $page * $perpage,
-            $perpage
-        );
-
-        // Map \core\event\base objects back to stdClass objects maintaining full native structure.
-        $mappedevents = [];
-        foreach ($events as $event) {
-            $data = $event->get_data();
-            $logrecord = new \stdClass();
-            if (isset($data['id'])) {
-                $logrecord->id = $data['id'];
-            }
-            if (isset($data['eventname'])) {
-                $logrecord->eventname = $data['eventname'];
-            }
-            if (isset($data['component'])) {
-                $logrecord->component = $data['component'];
-            }
-            if (isset($data['action'])) {
-                $logrecord->action = $data['action'];
-            }
-            if (isset($data['target'])) {
-                $logrecord->target = $data['target'];
-            }
-            if (isset($data['objecttable'])) {
-                $logrecord->objecttable = $data['objecttable'];
-            }
-            if (isset($data['objectid'])) {
-                $logrecord->objectid = $data['objectid'];
-            }
-            if (isset($data['crud'])) {
-                $logrecord->crud = $data['crud'];
-            }
-            if (isset($data['edulevel'])) {
-                $logrecord->edulevel = $data['edulevel'];
-            }
-            if (isset($data['contextid'])) {
-                $logrecord->contextid = $data['contextid'];
-            }
-            if (isset($data['contextlevel'])) {
-                $logrecord->contextlevel = $data['contextlevel'];
-            }
-            if (isset($data['contextinstanceid'])) {
-                $logrecord->contextinstanceid = $data['contextinstanceid'];
-            }
-            if (isset($data['userid'])) {
-                $logrecord->userid = $data['userid'];
-            }
-            if (isset($data['courseid'])) {
-                $logrecord->courseid = $data['courseid'];
-            }
-            if (isset($data['relateduserid'])) {
-                $logrecord->relateduserid = $data['relateduserid'];
-            }
-            if (isset($data['anonymous'])) {
-                $logrecord->anonymous = $data['anonymous'];
-            }
-            if (isset($data['other'])) {
-                $logrecord->other = $data['other'];
-            }
-            if (isset($data['timecreated'])) {
-                $logrecord->timecreated = $data['timecreated'];
-            }
-            if (isset($data['origin'])) {
-                $logrecord->origin = $data['origin'];
-            }
-            if (isset($data['ip'])) {
-                $logrecord->ip = $data['ip'];
-            }
-            if (isset($data['realuserid'])) {
-                $logrecord->realuserid = $data['realuserid'];
-            }
-
-            $mappedevents[] = $logrecord;
+        [$where, $params] = self::get_delegation_log_selector($delegation);
+        if ($timefrom > 0) {
+            $where .= ' AND timecreated >= :timefrom';
+            $params['timefrom'] = $timefrom;
+        }
+        if ($timeuntil > 0) {
+            $where .= ' AND timecreated < :timeuntil';
+            $params['timeuntil'] = $timeuntil;
+        }
+        if ($component !== '') {
+            $where .= ' AND ' . $DB->sql_like('component', ':component', false);
+            $params['component'] = '%' . $DB->sql_like_escape($component) . '%';
+        }
+        if ($action !== '') {
+            $where .= ' AND ' . $DB->sql_like('action', ':action', false);
+            $params['action'] = '%' . $DB->sql_like_escape($action) . '%';
         }
 
-        return ['total' => $total, 'events' => $mappedevents];
+        $total = $reader->get_events_select_count($where, $params);
+        $events = $reader->get_events_select($where, $params, 'timecreated DESC, id DESC', $page * $perpage, $perpage);
+
+        $records = [];
+        foreach ($events as $logid => $event) {
+            $record = (object)($event->get_data() + $event->get_logextra());
+            $record->id = (int)$logid;
+            $records[] = $record;
+        }
+
+        return ['total' => $total, 'events' => $records];
     }
 
     /**

@@ -121,7 +121,7 @@ final class get_delegation_activity extends delegation_service {
             'events' => new external_multiple_structure(new external_single_structure([
                 'id' => new external_value(PARAM_INT, 'Standard-log record identifier.'),
                 'timecreated' => new external_value(PARAM_INT, 'Event timestamp.'),
-                'eventname' => new external_value(PARAM_RAW, 'Event class name.'),
+                'eventname' => new external_value(PARAM_TEXT, 'Event class name.'),
                 'component' => new external_value(PARAM_COMPONENT, 'Event component.'),
                 'action' => new external_value(PARAM_ALPHANUMEXT, 'Event action.'),
                 'target' => new external_value(PARAM_ALPHANUMEXT, 'Event target.'),

@@ -113,9 +113,6 @@ echo $OUTPUT->render_from_template('local_delegateaccount/manage/actions', [
     'resetlabel' => get_string('reset'),
 ]);
 
-$userids = $tab === 'authorised'
-    ? array_keys(manager::get_authorised_users())
-    : manager::get_historical_user_ids();
-$table = new delegated_users_table($dashboardurl, $userids, $filters, $tab === 'authorised');
+$table = new delegated_users_table($dashboardurl, $tab === 'authorised', $filters);
 $table->out(25, true);
 echo $OUTPUT->footer();
