@@ -89,17 +89,17 @@ function xmldb_local_delegateaccount_upgrade(int $oldversion): bool {
         $field = new xmldb_field('notificationmode', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'always', 'activekey');
         $dbman->change_field_default($table, $field);
 
-        // One notification subject and template replace the per-language settings. The English values are kept.
-        foreach (['notificationsubject', 'notificationtemplate'] as $name) {
-            $english = (string)get_config('local_delegateaccount', $name . '_en');
-            if (trim($english) !== '') {
-                set_config($name, $english, 'local_delegateaccount');
+        // Notifications now have their own subject and message for granted and revoked access in each
+        // language. The former per-language values were used when access was granted, so they move there.
+        $config = (array)get_config('local_delegateaccount');
+        foreach ($config as $name => $value) {
+            if (!preg_match('/^notification(subject|template)_(?!granted_|revoked_)([a-z0-9_]+)$/', $name, $matches)) {
+                continue;
             }
-        }
-        foreach (array_keys((array)get_config('local_delegateaccount')) as $name) {
-            if (preg_match('/^notification(subject|template)_[a-z0-9_]+$/', $name)) {
-                unset_config($name, 'local_delegateaccount');
+            if (trim((string)$value) !== '') {
+                set_config('notification' . $matches[1] . '_granted_' . $matches[2], $value, 'local_delegateaccount');
             }
+            unset_config($name, 'local_delegateaccount');
         }
 
         upgrade_plugin_savepoint(true, 2026100800, 'local', 'delegateaccount');

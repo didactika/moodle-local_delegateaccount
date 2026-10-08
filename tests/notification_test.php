@@ -107,14 +107,15 @@ final class notification_test extends \advanced_testcase {
     }
 
     /**
-     * The single custom subject and template replace the built-in message for granted access only.
+     * The subject and message configured for granted access in the recipient's language replace the built-in ones.
      */
-    public function test_custom_subject_and_template_apply_to_granted_access_only(): void {
-        set_config('notificationsubject', 'Custom subject', 'local_delegateaccount');
-        set_config('notificationtemplate', '<p>Custom message for {$a->delegateduser}</p>', 'local_delegateaccount');
+    public function test_custom_granted_subject_and_message_for_the_recipient_language(): void {
+        set_config('notificationsubject_granted_en', 'Custom subject', 'local_delegateaccount');
+        set_config('notificationtemplate_granted_en', '<p>Custom message for {$a->delegateduser}</p>', 'local_delegateaccount');
 
         $sink = $this->redirectMessages();
         $id = $this->create_delegation();
+        $this->assertCount(2, $sink->get_messages());
         foreach ($sink->get_messages() as $message) {
             $this->assertSame('Custom subject', $message->subject);
             $this->assertStringContainsString('Custom message for Tom Target', $message->fullmessagehtml);
@@ -126,6 +127,30 @@ final class notification_test extends \advanced_testcase {
             $this->assertSame('Delegated account access revoked', $message->subject);
             $this->assertStringNotContainsString('Custom message', $message->fullmessagehtml);
         }
+    }
+
+    /**
+     * Revocation has its own configurable subject and message, used only for recipients in that language.
+     */
+    public function test_custom_revoked_subject_and_message_for_the_recipient_language(): void {
+        global $DB;
+
+        set_config('notificationsubject_revoked_es', 'Acceso revocado', 'local_delegateaccount');
+        set_config('notificationtemplate_revoked_es', '<p>{$a->authoriseduser} ya no accede</p>', 'local_delegateaccount');
+        $DB->set_field('user', 'lang', 'es', ['id' => $this->target->id]);
+
+        $id = $this->create_delegation();
+        $sink = $this->redirectMessages();
+        manager::revoke_delegations([$id]);
+        $messages = $this->index_by_recipient($sink->get_messages());
+
+        $this->assertSame('Acceso revocado', $messages[(int)$this->target->id]->subject);
+        $this->assertStringContainsString('Ada Authorised ya no accede', $messages[(int)$this->target->id]->fullmessagehtml);
+        $this->assertSame('Delegated account access revoked', $messages[(int)$this->realuser->id]->subject);
+        $this->assertStringContainsString(
+            'You can no longer access the account of Tom Target',
+            $messages[(int)$this->realuser->id]->fullmessagehtml
+        );
     }
 
     /**

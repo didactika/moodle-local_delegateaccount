@@ -963,7 +963,10 @@ class manager {
         if ($timeend === 0 && !self::get_config_bool('allowopenended', true)) {
             return ['error_openendednotallowed', null];
         }
-        $maximumdurationdays = self::get_config_int('maximumdurationdays', 0);
+        // The maximum duration only applies when every delegation must have an end date.
+        $maximumdurationdays = self::get_config_bool('allowopenended', true)
+            ? 0
+            : self::get_config_int('maximumdurationdays', 0);
         if ($maximumdurationdays > 0 && $timeend > $timestart + ($maximumdurationdays * DAYSECS)) {
             return ['error_maximumduration', $maximumdurationdays];
         }

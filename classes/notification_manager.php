@@ -160,8 +160,8 @@ class notification_manager {
      * Renders one recipient's notification through its Mustache template.
      *
      * The built-in message is worded for the recipient: the authorised user is told which
-     * account they can use, and the target account is told who can use it. The configured
-     * custom template, when present, replaces the built-in message for granted access only.
+     * account they can use, and the target account is told who can use it. A message configured
+     * for the action in the recipient's language replaces the built-in message.
      *
      * @param string $action Lifecycle action.
      * @param string $language Recipient language.
@@ -194,10 +194,10 @@ class notification_manager {
             ? $stringmanager->get_string('never', 'moodle', null, $language)
             : userdate((int)$delegation->timeend, '', $recipient->timezone);
 
-        $customcontent = '';
-        if ($action === self::ACTION_CREATED) {
-            $customcontent = (string)get_config('local_delegateaccount', 'notificationtemplate');
-        }
+        $customcontent = (string)get_config(
+            'local_delegateaccount',
+            'notificationtemplate_' . self::get_setting_action($action) . '_' . $language
+        );
         if (trim($customcontent) !== '') {
             return $OUTPUT->render_from_template('local_delegateaccount/notification/message', [
                 'hascustomcontent' => true,
@@ -251,25 +251,29 @@ class notification_manager {
     /**
      * Returns the notification subject in the recipient language.
      *
-     * The configured subject, when present, applies to granted access only.
+     * A subject configured for the action in the recipient's language replaces the built-in subject.
      *
      * @param string $action Lifecycle action.
      * @param string $language Recipient language.
      * @return string Notification subject.
      */
     private static function get_subject(string $action, string $language): string {
-        if ($action === self::ACTION_CREATED) {
-            $subject = trim((string)get_config('local_delegateaccount', 'notificationsubject'));
-            if ($subject !== '') {
-                return format_string($subject, true);
-            }
+        $settingaction = self::get_setting_action($action);
+        $subject = trim((string)get_config('local_delegateaccount', 'notificationsubject_' . $settingaction . '_' . $language));
+        if ($subject !== '') {
+            return format_string($subject, true);
         }
 
-        return get_string_manager()->get_string(
-            $action === self::ACTION_CREATED ? 'notification_subject_granted' : 'notification_subject_revoked',
-            'local_delegateaccount',
-            null,
-            $language
-        );
+        return get_string_manager()->get_string('notification_subject_' . $settingaction, 'local_delegateaccount', null, $language);
+    }
+
+    /**
+     * Returns the word used for an action in setting and string names.
+     *
+     * @param string $action Lifecycle action.
+     * @return string Either 'granted' or 'revoked'.
+     */
+    private static function get_setting_action(string $action): string {
+        return $action === self::ACTION_CREATED ? 'granted' : 'revoked';
     }
 }

@@ -477,6 +477,31 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * The maximum duration only applies while every delegation must have an end date.
+     */
+    public function test_maximum_duration_applies_only_when_end_date_is_required(): void {
+        $this->resetAfterTest();
+        set_config('maximumdurationdays', 30, 'local_delegateaccount');
+        $start = time();
+        $longend = $start + (90 * DAYSECS);
+
+        set_config('allowopenended', 1, 'local_delegateaccount');
+        $this->assertNull(manager::get_period_error($start, $longend));
+        $this->assertNull(manager::get_period_error($start, 0));
+
+        set_config('allowopenended', 0, 'local_delegateaccount');
+        $this->assertSame(
+            get_string('error_maximumduration', 'local_delegateaccount', 30),
+            manager::get_period_error($start, $longend)
+        );
+        $this->assertNull(manager::get_period_error($start, $start + (30 * DAYSECS)));
+        $this->assertSame(
+            get_string('error_openendednotallowed', 'local_delegateaccount'),
+            manager::get_period_error($start, 0)
+        );
+    }
+
+    /**
      * Every management tab has the description that its page displays.
      */
     public function test_management_tab_descriptions_exist(): void {
