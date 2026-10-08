@@ -135,6 +135,7 @@ final class notification_test extends \advanced_testcase {
     public function test_custom_revoked_subject_and_message_for_the_recipient_language(): void {
         global $DB;
 
+        $this->install_language('es');
         set_config('notificationsubject_revoked_es', 'Acceso revocado', 'local_delegateaccount');
         set_config('notificationtemplate_revoked_es', '<p>{$a->authoriseduser} ya no accede</p>', 'local_delegateaccount');
         $DB->set_field('user', 'lang', 'es', ['id' => $this->target->id]);
@@ -151,6 +152,26 @@ final class notification_test extends \advanced_testcase {
             'You can no longer access the account of Tom Target',
             $messages[(int)$this->realuser->id]->fullmessagehtml
         );
+    }
+
+    /**
+     * Recipients whose language is not installed, or who have none, get the site language texts.
+     */
+    public function test_site_language_is_used_when_profile_language_is_unavailable(): void {
+        global $DB;
+
+        set_config('notificationsubject_granted_en', 'Site language subject', 'local_delegateaccount');
+        set_config('notificationsubject_granted_fr', 'Sujet en français', 'local_delegateaccount');
+        $DB->set_field('user', 'lang', 'fr', ['id' => $this->realuser->id]);
+        $DB->set_field('user', 'lang', '', ['id' => $this->target->id]);
+
+        $sink = $this->redirectMessages();
+        $this->create_delegation();
+
+        $this->assertCount(2, $sink->get_messages());
+        foreach ($sink->get_messages() as $message) {
+            $this->assertSame('Site language subject', $message->subject);
+        }
     }
 
     /**
@@ -179,6 +200,23 @@ final class notification_test extends \advanced_testcase {
         ]);
 
         return manager::get_current_delegation_id((int)$this->realuser->id, (int)$this->target->id);
+    }
+
+    /**
+     * Makes a minimal language pack available to the string manager.
+     *
+     * @param string $language Language code.
+     */
+    private function install_language(string $language): void {
+        global $CFG;
+
+        $directory = $CFG->langotherroot . '/' . $language;
+        make_writable_directory($directory);
+        file_put_contents(
+            $directory . '/langconfig.php',
+            "<?php\n\$string['thislanguage'] = 'Test language {$language}';\n"
+        );
+        get_string_manager()->reset_caches();
     }
 
     /**

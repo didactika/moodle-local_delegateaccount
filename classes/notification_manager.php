@@ -69,7 +69,7 @@ class notification_manager {
             }
 
             $recipient = $users[$recipientid];
-            $language = empty($recipient->lang) ? current_language() : $recipient->lang;
+            $language = self::get_recipient_language($recipient);
             $messagehtml = self::render_message(
                 $action,
                 $language,
@@ -265,6 +265,25 @@ class notification_manager {
         }
 
         return get_string_manager()->get_string('notification_subject_' . $settingaction, 'local_delegateaccount', null, $language);
+    }
+
+    /**
+     * Returns the language a recipient's notification is written in.
+     *
+     * Matches the language Moodle shows the recipient: their profile language when it is
+     * installed, otherwise the site language, for example after a language pack is removed.
+     *
+     * @param \stdClass $recipient Notification recipient.
+     * @return string Language code.
+     */
+    private static function get_recipient_language(\stdClass $recipient): string {
+        global $CFG;
+
+        if (!empty($recipient->lang) && get_string_manager()->translation_exists($recipient->lang, false)) {
+            return $recipient->lang;
+        }
+
+        return $CFG->lang;
     }
 
     /**
