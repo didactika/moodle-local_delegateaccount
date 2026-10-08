@@ -282,7 +282,7 @@ class manager {
         global $DB;
 
         if (!self::can_use_delegated_accounts($realuserid) || !self::delegation_exists($realuserid, $targetuserid)) {
-            return 'error_unauthorized';
+            return 'error_unauthorised';
         }
 
         $target = $DB->get_record('user', ['id' => $targetuserid], 'id, deleted, suspended');

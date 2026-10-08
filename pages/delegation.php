@@ -80,7 +80,7 @@ $displayend = manager::get_delegation_display_end($delegation);
 $templatecontext = [
     'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
     'status' => get_string('delegation_status_' . manager::get_delegation_status($delegation), 'local_delegateaccount'),
-    'authoriseduserlabel' => get_string('realuser', 'local_delegateaccount'),
+    'authoriseduserlabel' => get_string('authoriseduser', 'local_delegateaccount'),
     'authoriseduser' => $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
         'userpicture' => $OUTPUT->user_picture($realuser, ['size' => 35, 'link' => false]),
         'fullname' => fullname($realuser),
