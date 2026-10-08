@@ -21,6 +21,7 @@ use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Returns standard-log activity for one immutable delegation period.
@@ -79,7 +80,7 @@ final class get_delegation_activity extends delegation_service {
             'component' => $component,
             'action' => $action,
         ]);
-        self::require_granular_capability('local/delegateaccount:viewactivity');
+        self::require_permission(permission::VIEWACTIVITY);
         self::validate_page($params['page'], $params['perpage']);
         if ($params['timeuntil'] > 0 && $params['timeuntil'] <= $params['timefrom']) {
             throw new \invalid_parameter_exception('The activity end timestamp must follow its start timestamp.');

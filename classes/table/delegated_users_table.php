@@ -26,6 +26,7 @@
 namespace local_delegateaccount\table;
 
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Renders the delegated-account user overview using Moodle's table API.
@@ -36,10 +37,7 @@ use local_delegateaccount\manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class delegated_users_table extends \table_sql {
-    /** @var \context_system Context used to evaluate action capabilities. */
-    private \context_system $context;
-
-    /** @var bool Whether rows in this table can receive new delegations. */
+    /** @var bool Whether the current user may add delegations to rows in this table. */
     private bool $allowsdelegationcreation;
 
     /**
@@ -49,20 +47,17 @@ class delegated_users_table extends \table_sql {
      * @param int[] $userids Users included by the selected management tab.
      * @param array $filters User filters indexed by field name.
      * @param bool $allowsdelegationcreation Whether this tab contains authorised users.
-     * @param \context_system $context System context for capabilities.
      */
     public function __construct(
         \moodle_url $baseurl,
         array $userids,
         array $filters,
-        bool $allowsdelegationcreation,
-        \context_system $context
+        bool $allowsdelegationcreation
     ) {
         global $DB;
 
         parent::__construct('local_delegateaccount_delegated_users');
-        $this->context = $context;
-        $this->allowsdelegationcreation = $allowsdelegationcreation;
+        $this->allowsdelegationcreation = $allowsdelegationcreation && permission::has(permission::CREATE);
 
         $this->define_columns([
             'lastname',
@@ -148,13 +143,7 @@ class delegated_users_table extends \table_sql {
             new \moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $row->id]),
             new \pix_icon('t/edit', get_string('manage_user_delegations', 'local_delegateaccount'), 'core')
         );
-        if (
-            $this->allowsdelegationcreation &&
-            (
-                has_capability('local/delegateaccount:create', $this->context) ||
-                has_capability('local/delegateaccount:manage', $this->context)
-            )
-        ) {
+        if ($this->allowsdelegationcreation) {
             $actions[] = $OUTPUT->action_icon(
                 new \moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $row->id]),
                 new \pix_icon('t/add', get_string('add_delegation', 'local_delegateaccount'), 'core'),

@@ -30,21 +30,11 @@ require_once($CFG->libdir . '/tablelib.php');
 
 use local_delegateaccount\form\manage_filter_form;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 use local_delegateaccount\table\delegated_users_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-$context = context_system::instance();
-if (
-    !has_any_capability(
-        [
-            'local/delegateaccount:view',
-            'local/delegateaccount:manage',
-        ],
-        $context
-    )
-) {
-    require_capability('local/delegateaccount:view', $context);
-}
+permission::require_action(permission::VIEW);
 
 $tab = optional_param('tab', 'authorised', PARAM_ALPHA);
 if (!in_array($tab, ['authorised', 'historical'], true)) {
@@ -107,8 +97,7 @@ $filterform->set_data($filters);
 ob_start();
 $filterform->display();
 $filterformhtml = ob_get_clean();
-$cancreate = $tab === 'authorised' && (has_capability('local/delegateaccount:create', $context) ||
-    has_capability('local/delegateaccount:manage', $context));
+$cancreate = $tab === 'authorised' && permission::has(permission::CREATE);
 echo $OUTPUT->render_from_template('local_delegateaccount/manage/actions', [
     'cancreate' => $cancreate,
     'assignurl' => (new moodle_url('/local/delegateaccount/pages/assign.php'))->out(false),
@@ -124,6 +113,6 @@ echo $OUTPUT->render_from_template('local_delegateaccount/manage/actions', [
 $userids = $tab === 'authorised'
     ? array_keys(manager::get_authorised_users())
     : manager::get_historical_user_ids();
-$table = new delegated_users_table($dashboardurl, $userids, $filters, $tab === 'authorised', $context);
+$table = new delegated_users_table($dashboardurl, $userids, $filters, $tab === 'authorised');
 $table->out(25, true);
 echo $OUTPUT->footer();

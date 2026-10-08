@@ -21,6 +21,7 @@ use core_external\external_function_parameters;
 use core_external\external_value;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
+use local_delegateaccount\permission;
 use local_delegateaccount\manager;
 
 /**
@@ -63,9 +64,7 @@ class get_authorised_user_options extends external_api {
         $syscontext = \context_system::instance();
         self::validate_context($syscontext);
 
-        if (!has_any_capability(['local/delegateaccount:create', 'local/delegateaccount:manage'], $syscontext)) {
-            require_capability('local/delegateaccount:create', $syscontext);
-        }
+        permission::require_action(permission::CREATE);
 
         $options = manager::get_authorised_users($query, 30);
 

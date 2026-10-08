@@ -22,6 +22,7 @@ use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Shared implementation for delegated-account external functions.
@@ -39,17 +40,13 @@ abstract class delegation_service extends external_api {
     protected const MAX_PAGE_SIZE = 100;
 
     /**
-     * Requires one exact capability for an external operation.
+     * Validates the system context and requires permission for an external operation.
      *
-     * The transitional manage capability is intentionally not accepted here;
-     * integration users receive only the operations explicitly assigned to them.
-     *
-     * @param string $capability Required system capability.
+     * @param string $action One of the \local_delegateaccount\permission action constants.
      */
-    protected static function require_granular_capability(string $capability): void {
-        $context = context_system::instance();
-        self::validate_context($context);
-        require_capability($capability, $context);
+    protected static function require_permission(string $action): void {
+        self::validate_context(context_system::instance());
+        permission::require_action($action);
     }
 
     /**

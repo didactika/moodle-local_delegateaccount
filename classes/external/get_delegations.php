@@ -20,6 +20,7 @@ use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Returns a paginated inventory of delegated-account relationships.
@@ -66,7 +67,7 @@ final class get_delegations extends delegation_service {
             'status' => $status,
             'search' => $search,
         ]);
-        self::require_granular_capability('local/delegateaccount:view');
+        self::require_permission(permission::VIEW);
         self::validate_page($params['page'], $params['perpage']);
 
         return self::serialise_delegation_page(manager::get_delegations_page(

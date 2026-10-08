@@ -20,6 +20,7 @@ use context;
 use context_system;
 use core_form\dynamic_form;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 use moodle_url;
 
 /**
@@ -102,10 +103,7 @@ final class bulk_edit_dynamic_form extends dynamic_form {
      * Requires granular update access or the transitional capability.
      */
     protected function check_access_for_dynamic_submission(): void {
-        $context = $this->get_context_for_dynamic_submission();
-        if (!has_any_capability(['local/delegateaccount:update', 'local/delegateaccount:manage'], $context)) {
-            require_capability('local/delegateaccount:update', $context);
-        }
+        permission::require_action(permission::UPDATE);
     }
 
     /**

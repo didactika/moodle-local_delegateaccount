@@ -18,10 +18,12 @@ for that integration.
 | `local_delegateaccount_revoke_delegations` | `local/delegateaccount:revoke` | Logically revoke selected records after explicit confirmation. |
 | `local_delegateaccount_get_delegation_activity` | `local/delegateaccount:viewactivity` | Read standard-log activity within one immutable delegation period. |
 
-The compatibility capability `local/delegateaccount:manage` is not accepted by
-these external functions. This prevents an integration intended only for
-inventory from gaining mutation access and keeps service permissions aligned
-with the granular management interface.
+`local/delegateaccount:manage` grants every function above, exactly as it does
+in the management pages. Setting a specific capability to **Prevent** or
+**Prohibit** in one of the integration user's system roles still refuses that
+function, even when the role allows `local/delegateaccount:manage`. For an
+inventory-only integration, grant `local/delegateaccount:view` instead of
+`local/delegateaccount:manage`.
 
 Each registered function maps to one dedicated class under
 `classes/external/`. The shared `delegation_service` base is internal, is not

@@ -171,7 +171,7 @@ if (
         'local_delegateaccount_manage',
         get_string('manage_accounts', 'local_delegateaccount'),
         new moodle_url('/local/delegateaccount/pages/manage.php'),
-        'local/delegateaccount:view'
+        ['local/delegateaccount:view', 'local/delegateaccount:manage']
     );
     $ADMIN->add('accounts', $managepage);
 }

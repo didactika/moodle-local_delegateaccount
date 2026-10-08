@@ -26,6 +26,7 @@
 namespace local_delegateaccount\table;
 
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Renders the lifecycle and use history of one user's delegated accounts.
@@ -36,8 +37,14 @@ use local_delegateaccount\manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class delegated_accounts_table extends \table_sql {
-    /** @var \context_system Context used to evaluate action capabilities. */
-    private \context_system $context;
+    /** @var bool Whether the current user may revoke delegations. */
+    private bool $canrevoke;
+
+    /** @var bool Whether the current user may change delegation lifecycles. */
+    private bool $canupdate;
+
+    /** @var bool Whether the current user may view delegated activity. */
+    private bool $canviewactivity;
 
     /** @var int ID of the authorised user represented by this table. */
     private int $realuserid;
@@ -50,21 +57,21 @@ class delegated_accounts_table extends \table_sql {
      *
      * @param \moodle_url $baseurl URL retaining table state.
      * @param int $realuserid Authorised user ID.
-     * @param \context_system $context System context for capabilities.
      * @param string $status Lifecycle status represented by the current tab.
      * @param string $search Optional delegated-user search query.
      */
     public function __construct(
         \moodle_url $baseurl,
         int $realuserid,
-        \context_system $context,
         string $status = manager::STATUS_ACTIVE,
         string $search = ''
     ) {
         global $DB;
 
         parent::__construct('local_delegateaccount_delegated_accounts');
-        $this->context = $context;
+        $this->canrevoke = permission::has(permission::REVOKE);
+        $this->canupdate = permission::has(permission::UPDATE);
+        $this->canviewactivity = permission::has(permission::VIEWACTIVITY);
         $this->realuserid = $realuserid;
         $this->status = $status;
 
@@ -161,7 +168,7 @@ class delegated_accounts_table extends \table_sql {
 
         if (
             $this->status === manager::STATUS_REVOKED ||
-            !has_capability('local/delegateaccount:revoke', $this->context)
+            !$this->canrevoke
         ) {
             return '';
         }
@@ -181,7 +188,7 @@ class delegated_accounts_table extends \table_sql {
         global $OUTPUT;
 
         if (
-            !has_capability('local/delegateaccount:revoke', $this->context) ||
+            !$this->canrevoke ||
             manager::get_delegation_status($row) === manager::STATUS_REVOKED
         ) {
             return '';
@@ -328,9 +335,7 @@ class delegated_accounts_table extends \table_sql {
             'content' => $content,
         ]);
 
-        $canupdate = has_capability('local/delegateaccount:update', $this->context) ||
-            has_capability('local/delegateaccount:manage', $this->context);
-        if (manager::get_delegation_status($row) !== manager::STATUS_REVOKED && $canupdate) {
+        if (manager::get_delegation_status($row) !== manager::STATUS_REVOKED && $this->canupdate) {
             $actions[] = $OUTPUT->action_icon(
                 new \moodle_url('/local/delegateaccount/pages/edit.php', [
                     'realuserid' => $this->realuserid,
@@ -346,7 +351,7 @@ class delegated_accounts_table extends \table_sql {
             );
         }
 
-        if (has_capability('local/delegateaccount:viewactivity', $this->context)) {
+        if ($this->canviewactivity) {
             $actions[] = $OUTPUT->action_icon(
                 new \moodle_url('/local/delegateaccount/pages/activity.php', [
                     'realuserid' => $this->realuserid,
@@ -357,7 +362,7 @@ class delegated_accounts_table extends \table_sql {
         }
 
         if (
-            !has_capability('local/delegateaccount:revoke', $this->context) ||
+            !$this->canrevoke ||
             manager::get_delegation_status($row) === manager::STATUS_REVOKED
         ) {
             return implode('', $actions);

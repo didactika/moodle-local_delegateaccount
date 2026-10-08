@@ -27,22 +27,12 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-use local_delegateaccount\manager;
 use local_delegateaccount\form\assign_form;
+use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-$context = context_system::instance();
-if (
-    !has_any_capability(
-        [
-            'local/delegateaccount:create',
-            'local/delegateaccount:manage',
-        ],
-        $context
-    )
-) {
-    require_capability('local/delegateaccount:create', $context);
-}
+permission::require_action(permission::CREATE);
 
 $realuserid = optional_param('realuserid', 0, PARAM_INT);
 if ($realuserid > 0 && !manager::can_use_delegated_accounts($realuserid)) {

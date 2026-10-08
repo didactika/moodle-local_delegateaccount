@@ -27,23 +27,13 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
-use local_delegateaccount\manager;
 use local_delegateaccount\form\delegations_filter_form;
+use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 use local_delegateaccount\table\delegated_accounts_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-$context = context_system::instance();
-if (
-    !has_any_capability(
-        [
-            'local/delegateaccount:view',
-            'local/delegateaccount:manage',
-        ],
-        $context
-    )
-) {
-    require_capability('local/delegateaccount:view', $context);
-}
+permission::require_action(permission::VIEW);
 
 $realuserid = required_param('realuserid', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
@@ -72,7 +62,7 @@ if ($search !== '') {
 $url = new moodle_url('/local/delegateaccount/pages/delegations.php', $urlparams);
 
 if (in_array($action, ['revoke', 'bulk_revoke'], true) && data_submitted()) {
-    require_capability('local/delegateaccount:revoke', $context);
+    permission::require_action(permission::REVOKE);
     require_sesskey();
 
     if ($action === 'revoke') {
@@ -134,11 +124,7 @@ if (!$isauthorised) {
     );
 }
 
-$cancreate = $isauthorised &&
-    (
-        has_capability('local/delegateaccount:create', $context) ||
-        has_capability('local/delegateaccount:manage', $context)
-    );
+$cancreate = $isauthorised && permission::has(permission::CREATE);
 $statuslabels = [
     manager::STATUS_ACTIVE => get_string('delegation_status_active', 'local_delegateaccount'),
     manager::STATUS_SCHEDULED => get_string('delegation_status_scheduled', 'local_delegateaccount'),
@@ -167,13 +153,8 @@ $filterform->set_data(['search' => $search]);
 ob_start();
 $filterform->display();
 $filterformhtml = ob_get_clean();
-$canrevoke = $status !== manager::STATUS_REVOKED &&
-    has_capability('local/delegateaccount:revoke', $context);
-$canupdate = $status !== manager::STATUS_REVOKED &&
-    (
-        has_capability('local/delegateaccount:update', $context) ||
-        has_capability('local/delegateaccount:manage', $context)
-    );
+$canrevoke = $status !== manager::STATUS_REVOKED && permission::has(permission::REVOKE);
+$canupdate = $status !== manager::STATUS_REVOKED && permission::has(permission::UPDATE);
 echo $OUTPUT->render_from_template('local_delegateaccount/delegation/toolbar', [
     'backurl' => (new moodle_url('/local/delegateaccount/pages/manage.php'))->out(false),
     'backlabel' => get_string('back'),
@@ -202,6 +183,6 @@ echo $OUTPUT->render_from_template('local_delegateaccount/delegation/toolbar', [
     'confirmbutton' => get_string('revoke_delegation', 'local_delegateaccount'),
 ]);
 
-$table = new delegated_accounts_table($url, $realuserid, $context, $status, $search);
+$table = new delegated_accounts_table($url, $realuserid, $status, $search);
 $table->out(25, true);
 echo $OUTPUT->footer();

@@ -27,20 +27,10 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-$context = context_system::instance();
-if (
-    !has_any_capability(
-        [
-            'local/delegateaccount:view',
-            'local/delegateaccount:manage',
-        ],
-        $context
-    )
-) {
-    require_capability('local/delegateaccount:view', $context);
-}
+permission::require_action(permission::VIEW);
 
 $realuserid = required_param('realuserid', PARAM_INT);
 $delegationid = required_param('delegationid', PARAM_INT);

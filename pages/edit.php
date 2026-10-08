@@ -28,20 +28,10 @@ require_once($CFG->libdir . '/adminlib.php');
 
 use local_delegateaccount\form\edit_form;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-$context = context_system::instance();
-if (
-    !has_any_capability(
-        [
-            'local/delegateaccount:update',
-            'local/delegateaccount:manage',
-        ],
-        $context
-    )
-) {
-    require_capability('local/delegateaccount:update', $context);
-}
+permission::require_action(permission::UPDATE);
 
 $realuserid = required_param('realuserid', PARAM_INT);
 $delegationid = required_param('delegationid', PARAM_INT);

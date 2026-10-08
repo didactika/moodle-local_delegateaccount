@@ -27,12 +27,12 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
-use local_delegateaccount\table\delegated_activity_table;
 use local_delegateaccount\form\activity_filter_form;
+use local_delegateaccount\permission;
+use local_delegateaccount\table\delegated_activity_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-$context = context_system::instance();
-require_capability('local/delegateaccount:viewactivity', $context);
+permission::require_action(permission::VIEWACTIVITY);
 
 $realuserid = required_param('realuserid', PARAM_INT);
 $delegationid = required_param('delegationid', PARAM_INT);
