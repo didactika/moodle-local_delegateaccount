@@ -187,6 +187,74 @@ class manager {
     }
 
     /**
+     * Returns why an authorised user cannot currently open a delegated account.
+     *
+     * Every condition is evaluated when access is requested, so a target that
+     * became a site administrator, or was suspended, after the delegation was
+     * created cannot be opened.
+     *
+     * @param int $realuserid Authorised user identifier.
+     * @param int $targetuserid Target account identifier.
+     * @return string|null Language string identifier describing the problem, or null when access is allowed.
+     */
+    public static function get_delegated_access_error(int $realuserid, int $targetuserid): ?string {
+        global $DB;
+
+        if (!self::can_use_delegated_accounts($realuserid) || !self::delegation_exists($realuserid, $targetuserid)) {
+            return 'error_unauthorized';
+        }
+
+        $target = $DB->get_record('user', ['id' => $targetuserid], 'id, deleted, suspended');
+        if (!$target || (int)$target->deleted !== 0 || (int)$target->suspended !== 0 || isguestuser($target)) {
+            return 'error_targetunavailable';
+        }
+
+        if (self::protect_privileged_targets() && is_siteadmin($targetuserid)) {
+            return 'error_privilegedtarget';
+        }
+
+        return null;
+    }
+
+    /**
+     * Starts a delegated session for the current user and marks it for later verification.
+     *
+     * @param int $targetuserid Target account identifier, already checked with get_delegated_access_error().
+     */
+    public static function start_delegated_session(int $targetuserid): void {
+        global $SESSION;
+
+        \core\session\manager::loginas($targetuserid, \context_system::instance());
+        // The login-as session has a fresh $SESSION, so the marker only exists inside the delegated session.
+        $SESSION->local_delegateaccount_delegated = true;
+    }
+
+    /**
+     * Logs out a delegated session whose delegation is no longer usable.
+     *
+     * @return bool Whether the current session was ended.
+     */
+    public static function end_invalid_delegated_session(): bool {
+        global $SESSION, $USER;
+
+        if (empty($SESSION->local_delegateaccount_delegated)) {
+            return false;
+        }
+        if (!\core\session\manager::is_loggedinas()) {
+            unset($SESSION->local_delegateaccount_delegated);
+            return false;
+        }
+
+        $realuserid = (int)\core\session\manager::get_realuser()->id;
+        if (self::get_delegated_access_error($realuserid, (int)$USER->id) === null) {
+            return false;
+        }
+
+        require_logout();
+        return true;
+    }
+
+    /**
      * Determines whether site administrator accounts are protected as delegation targets.
      *
      * @return bool Whether privileged target protection is enabled.
@@ -403,6 +471,7 @@ class manager {
         if ($record === false) {
             return false;
         }
+        self::validate_update([$record], $timeend);
 
         $record->timestart = $timestart;
         $record->timeend = $timeend;
@@ -452,6 +521,7 @@ class manager {
         if (count($records) !== count($delegationids)) {
             throw new \moodle_exception('error_invaliddelegations', 'local_delegateaccount');
         }
+        self::validate_update($records, $timeend);
 
         $now = time();
         $transaction = $DB->start_delegated_transaction();
@@ -982,7 +1052,7 @@ class manager {
         }
 
         foreach ($users as $user) {
-            if ((int) $user->deleted !== 0 || (int) $user->suspended !== 0) {
+            if ((int) $user->deleted !== 0 || (int) $user->suspended !== 0 || isguestuser($user)) {
                 throw new \moodle_exception('error_ineligibleuser', 'local_delegateaccount');
             }
         }
@@ -1007,6 +1077,36 @@ class manager {
                 }
             }
         }
+    }
+
+    /**
+     * Applies the creation rules to delegations whose lifecycle is being changed.
+     *
+     * The users must still be eligible, and a delegation that becomes current or
+     * scheduled again counts towards the authorised user's limit.
+     *
+     * @param \stdClass[] $records Delegation records before the change.
+     * @param int $timeend Requested end timestamp, or zero for no end date.
+     */
+    private static function validate_update(array $records, int $timeend): void {
+        $now = time();
+        $realuserids = [];
+        $delegateduserids = [];
+        $newcounts = [];
+        foreach ($records as $record) {
+            $realuserid = (int)$record->realuserid;
+            $realuserids[$realuserid] = $realuserid;
+            $delegateduserids[(int)$record->delegateduserid] = (int)$record->delegateduserid;
+
+            $wascounted = (int)$record->timeend === 0 || (int)$record->timeend > $now;
+            $willcount = $timeend === 0 || $timeend > $now;
+            if ($willcount && !$wascounted) {
+                $newcounts[$realuserid] = ($newcounts[$realuserid] ?? 0) + 1;
+            }
+        }
+
+        self::validate_users(array_values($realuserids), array_values($delegateduserids));
+        self::validate_delegation_limit($newcounts);
     }
 
     /**

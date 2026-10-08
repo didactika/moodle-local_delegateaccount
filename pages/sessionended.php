@@ -15,28 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Hooks definition for the local_delegateaccount plugin.
+ * Explains why a delegated session was closed.
+ *
+ * Shown without login because the session has just been ended.
  *
  * @package    local_delegateaccount
- * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
- * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+// phpcs:ignore moodle.Files.RequireLogin.Missing -- The session was just ended, so there is nobody to log in.
+require_once(__DIR__ . '/../../../config.php');
 
-$callbacks = [
-    [
-        'hook' => \core\hook\after_config::class,
-        'callback' => [\local_delegateaccount\hook\after_config::class, 'execute'],
-    ],
-    [
-        'hook' => \core_user\hook\extend_user_menu::class,
-        'callback' => [\local_delegateaccount\hook\extend_user_menu::class, 'execute'],
-    ],
-    [
-        'hook' => \core\hook\output\before_standard_top_of_body_html_generation::class,
-        'callback' => [\local_delegateaccount\hook\before_top_of_body::class, 'execute'],
-    ],
-];
+$title = get_string('delegated_session_ended', 'local_delegateaccount');
+$PAGE->set_context(context_system::instance());
+$PAGE->set_url(new moodle_url('/local/delegateaccount/pages/sessionended.php'));
+$PAGE->set_pagelayout('login');
+$PAGE->set_title($title);
+
+echo $OUTPUT->header();
+echo $OUTPUT->notification(
+    get_string('delegated_session_ended_desc', 'local_delegateaccount'),
+    \core\output\notification::NOTIFY_WARNING,
+    false
+);
+echo $OUTPUT->single_button(new moodle_url('/login/index.php'), get_string('login'), 'get');
+echo $OUTPUT->footer();

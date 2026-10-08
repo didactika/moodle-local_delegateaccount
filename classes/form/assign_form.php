@@ -173,7 +173,7 @@ class assign_form extends \moodleform {
         $protectprivilegedtargets = manager::protect_privileged_targets();
         foreach ($users as $user) {
             $userid = (int)$user->id;
-            if (isset($excludeduserids[$userid])) {
+            if (isset($excludeduserids[$userid]) || isguestuser($user)) {
                 continue;
             }
             if ($protectprivilegedtargets && is_siteadmin($user->id)) {
