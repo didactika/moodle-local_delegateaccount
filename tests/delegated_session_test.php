@@ -16,8 +16,6 @@
 
 namespace local_delegateaccount;
 
-use local_delegateaccount\form\assign_form;
-
 /**
  * Tests for opening, verifying and changing delegated access.
  *
@@ -132,7 +130,7 @@ final class delegated_session_test extends \advanced_testcase {
 
         $this->assertArrayNotHasKey(
             (int)$guest->id,
-            assign_form::get_delegated_account_options((int)$this->realuser->id, 'guest', 30)
+            manager::get_delegated_account_options((int)$this->realuser->id, 'guest', 30)
         );
 
         try {

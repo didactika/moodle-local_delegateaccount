@@ -147,10 +147,9 @@ class delegated_users_table extends \table_sql {
             new \pix_icon('t/edit', get_string('manage_user_delegations', 'local_delegateaccount'), 'core')
         );
         if ($this->allowsdelegationcreation) {
-            $actions[] = $OUTPUT->action_icon(
-                new \moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $row->id]),
-                new \pix_icon('t/add', get_string('add_delegation', 'local_delegateaccount'), 'core'),
-                null,
+            $actions[] = delegated_accounts_table::render_modal_button(
+                't/add',
+                get_string('add_delegation', 'local_delegateaccount'),
                 [
                     'data-action' => 'local-delegateaccount-open-assign',
                     'data-real-user-id' => (int)$row->id,

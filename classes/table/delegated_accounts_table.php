@@ -269,6 +269,24 @@ class delegated_accounts_table extends \table_sql {
     }
 
     /**
+     * Renders an icon button that opens one of the management modals.
+     *
+     * @param string $icon Core icon identifier.
+     * @param string $label Accessible action label.
+     * @param array $attributes Data attributes read by the management_modals module.
+     * @return string Button HTML.
+     */
+    public static function render_modal_button(string $icon, string $label, array $attributes): string {
+        global $OUTPUT;
+
+        return \html_writer::tag('button', $OUTPUT->pix_icon($icon, $label), $attributes + [
+            'type' => 'button',
+            'class' => 'btn btn-link p-0 border-0 align-baseline action-icon',
+            'title' => $label,
+        ]);
+    }
+
+    /**
      * Renders a compact, accessible table value through the plugin template.
      *
      * @param string $label Human-readable lifecycle value.
@@ -323,19 +341,11 @@ class delegated_accounts_table extends \table_sql {
         ]);
 
         if (manager::get_delegation_status($row) !== manager::STATUS_REVOKED && $this->canupdate) {
-            $actions[] = $OUTPUT->action_icon(
-                new \moodle_url('/local/delegateaccount/pages/edit.php', [
-                    'realuserid' => $this->realuserid,
-                    'delegationid' => $row->id,
-                ]),
-                new \pix_icon('t/edit', get_string('edit_delegation', 'local_delegateaccount'), 'core'),
-                null,
-                [
-                    'data-action' => 'local-delegateaccount-edit-one',
-                    'data-real-user-id' => $this->realuserid,
-                    'data-delegation-id' => (int)$row->id,
-                ]
-            );
+            $actions[] = self::render_modal_button('t/edit', get_string('edit_delegation', 'local_delegateaccount'), [
+                'data-action' => 'local-delegateaccount-edit-one',
+                'data-real-user-id' => $this->realuserid,
+                'data-delegation-id' => (int)$row->id,
+            ]);
         }
 
         if ($this->canviewactivity) {

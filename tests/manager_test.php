@@ -58,9 +58,9 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Deletes the selected delegations without affecting other records.
+     * Revokes the selected delegations without affecting other records.
      */
-    public function test_delete_delegations_only_removes_selected_records(): void {
+    public function test_revoke_delegations_only_affects_selected_records(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -81,7 +81,7 @@ final class manager_test extends \advanced_testcase {
             'delegateduserid' => $firsttarget->id,
         ], '*', MUST_EXIST);
 
-        manager::delete_delegations([(int) $first->id]);
+        manager::revoke_delegations([(int) $first->id]);
 
         $this->assertFalse(manager::delegation_exists((int) $sourceuser->id, (int) $firsttarget->id));
         $this->assertTrue(manager::delegation_exists((int) $sourceuser->id, (int) $secondtarget->id));
@@ -453,6 +453,27 @@ final class manager_test extends \advanced_testcase {
         } catch (\moodle_exception $exception) {
             $this->assertSame('error_unauthorised_realuser', $exception->errorcode);
         }
+    }
+
+    /**
+     * Target options exclude the authorised user and every current non-revoked target.
+     */
+    public function test_target_options_exclude_self_and_existing_delegations(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('notificationpolicy', manager::NOTIFICATION_NEVER, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $existingtarget = $generator->create_user();
+        $availabletarget = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
+        manager::create_delegations([(int)$authoriseduser->id], [(int)$existingtarget->id]);
+
+        $options = manager::get_delegated_account_options((int)$authoriseduser->id);
+
+        $this->assertArrayNotHasKey((int)$authoriseduser->id, $options);
+        $this->assertArrayNotHasKey((int)$existingtarget->id, $options);
+        $this->assertArrayHasKey((int)$availabletarget->id, $options);
     }
 
     /**

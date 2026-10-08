@@ -32,6 +32,8 @@ use moodle_url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class assign_dynamic_form extends dynamic_form {
+    use lifecycle_fields;
+
     /**
      * Defines the assignment controls shown inside the core modal.
      */
@@ -81,7 +83,7 @@ final class assign_dynamic_form extends dynamic_form {
             'autocomplete',
             'delegateduserids',
             get_string('delegatedusers', 'local_delegateaccount'),
-            assign_form::get_delegated_account_options($realuserid, '', 30),
+            manager::get_delegated_account_options($realuserid, '', 30),
             [
                 'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
@@ -92,40 +94,7 @@ final class assign_dynamic_form extends dynamic_form {
         $mform->addRule('delegateduserids', null, 'required', null, 'client');
         $mform->addHelpButton('delegateduserids', 'delegatedusers', 'local_delegateaccount');
 
-        $mform->addElement('date_time_selector', 'timestart', get_string('delegation_start', 'local_delegateaccount'));
-        $allowopenended = get_config('local_delegateaccount', 'allowopenended');
-        $mform->addElement(
-            'date_time_selector',
-            'timeend',
-            get_string('delegation_end', 'local_delegateaccount'),
-            ['optional' => $allowopenended === false || (bool)$allowopenended]
-        );
-        self::add_notification_mode($mform);
-    }
-
-    /**
-     * Adds the per-operation notification choice when site policy permits it.
-     *
-     * @param \MoodleQuickForm $mform Form being defined.
-     */
-    private static function add_notification_mode(\MoodleQuickForm $mform): void {
-        $policy = get_config('local_delegateaccount', 'notificationpolicy') ?: manager::NOTIFICATION_OPTIONAL;
-        if ($policy !== manager::NOTIFICATION_OPTIONAL) {
-            return;
-        }
-        $mform->addElement(
-            'select',
-            'notificationmode',
-            get_string('delegationnotificationmode', 'local_delegateaccount'),
-            [
-                manager::NOTIFICATION_ALWAYS =>
-                    get_string('delegationnotificationmode_always', 'local_delegateaccount'),
-                manager::NOTIFICATION_NEVER =>
-                    get_string('delegationnotificationmode_never', 'local_delegateaccount'),
-            ]
-        );
-        $mform->setDefault('notificationmode', manager::NOTIFICATION_ALWAYS);
-        $mform->addHelpButton('notificationmode', 'delegationnotificationmode', 'local_delegateaccount');
+        $this->add_lifecycle_fields($mform);
     }
 
     /**
@@ -136,10 +105,7 @@ final class assign_dynamic_form extends dynamic_form {
      * @return array Validation errors.
      */
     public function validation($data, $files): array {
-        $errors = parent::validation($data, $files) + assign_form::validate_period_values(
-            (int)$data['timestart'],
-            (int)$data['timeend']
-        );
+        $errors = parent::validation($data, $files) + $this->get_lifecycle_errors($data);
         $lockedrealuserid = $this->optional_param('realuserid', 0, PARAM_INT);
         if ($lockedrealuserid === 0) {
             $lockedrealuserid = $this->optional_param('lockedrealuserid', 0, PARAM_INT);
@@ -209,10 +175,7 @@ final class assign_dynamic_form extends dynamic_form {
             $lockedrealuserid = $this->optional_param('lockedrealuserid', 0, PARAM_INT);
         }
         $realuserids = $lockedrealuserid > 0 ? [$lockedrealuserid] : $data->realuserids;
-        $policy = get_config('local_delegateaccount', 'notificationpolicy') ?: manager::NOTIFICATION_OPTIONAL;
-        $notificationmode = $policy === manager::NOTIFICATION_OPTIONAL
-            ? $data->notificationmode
-            : $policy;
+        $notificationmode = $this->get_notification_mode($data);
         try {
             $createdcount = manager::create_delegations(
                 $realuserids,
@@ -250,17 +213,19 @@ final class assign_dynamic_form extends dynamic_form {
     }
 
     /**
-     * Returns the stable fallback page for the dynamic form.
+     * Returns the page the form is opened from.
      *
-     * @return moodle_url Assignment page URL.
+     * @return moodle_url The authorised user's delegations, or the management overview.
      */
     protected function get_page_url_for_dynamic_submission(): moodle_url {
         $realuserid = $this->optional_param('realuserid', 0, PARAM_INT);
         if ($realuserid === 0) {
             $realuserid = $this->optional_param('lockedrealuserid', 0, PARAM_INT);
         }
-        return new moodle_url('/local/delegateaccount/pages/assign.php', [
-            'realuserid' => $realuserid,
-        ]);
+        if ($realuserid > 0) {
+            return new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid]);
+        }
+
+        return new moodle_url('/local/delegateaccount/pages/manage.php');
     }
 }

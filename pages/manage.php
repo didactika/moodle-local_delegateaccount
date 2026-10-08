@@ -103,7 +103,6 @@ $filterformhtml = ob_get_clean();
 $cancreate = $tab === 'authorised' && permission::has(permission::CREATE);
 echo $OUTPUT->render_from_template('local_delegateaccount/manage/actions', [
     'cancreate' => $cancreate,
-    'assignurl' => (new moodle_url('/local/delegateaccount/pages/assign.php'))->out(false),
     'addlabel' => get_string('create_delegations', 'local_delegateaccount'),
     'filterlabel' => get_string('filters'),
     'filterid' => 'local-delegateaccount-manage-filters',

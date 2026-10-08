@@ -164,7 +164,6 @@ echo $OUTPUT->render_from_template('local_delegateaccount/delegation/toolbar', [
     'editselectedlabel' => get_string('edit_selected_delegations', 'local_delegateaccount'),
     'revokeselectedlabel' => get_string('revoke_selected', 'local_delegateaccount'),
     'cancreate' => $cancreate,
-    'assignurl' => (new moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $realuserid]))->out(false),
     'addlabel' => get_string('add_delegation', 'local_delegateaccount'),
     'filterid' => 'local-delegateaccount-delegations-filters',
     'filterlabel' => get_string('filters'),

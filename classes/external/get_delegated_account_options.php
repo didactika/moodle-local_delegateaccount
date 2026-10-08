@@ -21,8 +21,8 @@ use core_external\external_function_parameters;
 use core_external\external_value;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
+use local_delegateaccount\manager;
 use local_delegateaccount\permission;
-use local_delegateaccount\form\assign_form;
 
 /**
  * Returns accounts that can safely be selected as delegation targets via AJAX.
@@ -47,7 +47,7 @@ class get_delegated_account_options extends external_api {
     }
 
     /**
-     * Executes the search mapping exactly to assign_form behaviour.
+     * Returns the target accounts matching a search, as offered by the creation form.
      *
      * @param string $query Active search query.
      * @param int $realuserid Authed user ID to consider.
@@ -67,7 +67,7 @@ class get_delegated_account_options extends external_api {
 
         permission::require_action(permission::CREATE);
 
-        $options = assign_form::get_delegated_account_options($realuserid, $query, 30);
+        $options = manager::get_delegated_account_options($realuserid, $query, 30);
 
         $results = [];
         foreach ($options as $id => $fullname) {

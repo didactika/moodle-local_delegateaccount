@@ -33,7 +33,6 @@
         "canrevoke": true,
         "revokeselectedlabel": "Revoke selected",
         "cancreate": true,
-        "assignurl": "https://moodle.example/local/delegateaccount/pages/assign.php?realuserid=7",
         "addlabel": "Add delegated account",
         "filterid": "local-delegateaccount-delegations-filters",
         "filterlabel": "Filters",
@@ -72,9 +71,9 @@
                 </button>
             {{/canrevoke}}
             {{#cancreate}}
-                <a class="btn btn-primary mr-2" href="{{assignurl}}"
+                <button type="button" class="btn btn-primary mr-2"
                     data-action="local-delegateaccount-open-assign"
-                    data-real-user-id="{{realuserid}}">{{addlabel}}</a>
+                    data-real-user-id="{{realuserid}}">{{addlabel}}</button>
             {{/cancreate}}
             {{> local_delegateaccount/shared/filter_dropdown}}
         </div>
