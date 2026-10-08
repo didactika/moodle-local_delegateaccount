@@ -34,6 +34,7 @@ $PAGE->set_pagelayout('login');
 $PAGE->set_title($title);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading($title);
 echo $OUTPUT->notification(
     get_string('delegated_session_ended_desc', 'local_delegateaccount'),
     \core\output\notification::NOTIFY_WARNING,

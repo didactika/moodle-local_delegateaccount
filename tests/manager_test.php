@@ -502,6 +502,25 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * The test data generator creates and revokes delegations.
+     */
+    public function test_data_generator_creates_and_revokes_delegations(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $target = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
+        $plugingenerator = $generator->get_plugin_generator('local_delegateaccount');
+        $record = ['realuserid' => (int)$authoriseduser->id, 'delegateduserid' => (int)$target->id];
+
+        $delegation = $plugingenerator->create_delegation($record);
+        $this->assertSame(manager::STATUS_ACTIVE, manager::get_delegation_status($delegation));
+
+        $plugingenerator->create_revocation($record);
+        $this->assertFalse(manager::delegation_exists((int)$authoriseduser->id, (int)$target->id));
+    }
+
+    /**
      * Every management tab has the description that its page displays.
      */
     public function test_management_tab_descriptions_exist(): void {
