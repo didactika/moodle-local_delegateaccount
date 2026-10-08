@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/delegateaccount/db" VERSION="2026082200" COMMENT="XMLDB file for local_delegateaccount"
+<XMLDB PATH="local/delegateaccount/db" VERSION="2026100800" COMMENT="XMLDB file for local_delegateaccount"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -18,7 +18,7 @@
                 <FIELD NAME="timerevoked" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the delegation was revoked"/>
                 <FIELD NAME="userrevoked" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the user who revoked the delegation"/>
                 <FIELD NAME="activekey" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Zero for the active relationship, otherwise the revoked record ID"/>
-                <FIELD NAME="notificationmode" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="site" SEQUENCE="false" COMMENT="Site, always, or never notification decision"/>
+                <FIELD NAME="notificationmode" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="always" SEQUENCE="false" COMMENT="Always or never: whether affected users are notified"/>
                 <FIELD NAME="timenotified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when notification processing completed"/>
             </FIELDS>
             <KEYS>

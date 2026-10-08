@@ -456,6 +456,41 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Every management tab has the description that its page displays.
+     */
+    public function test_management_tab_descriptions_exist(): void {
+        foreach (['authorised', 'historical'] as $tab) {
+            $this->assertTrue(
+                get_string_manager()->string_exists('manage_' . $tab . '_users_description', 'local_delegateaccount'),
+                $tab
+            );
+        }
+    }
+
+    /**
+     * Role setup guidance is shown until a role grants the use capability.
+     */
+    public function test_role_setup_hint_until_a_role_grants_use(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->assertStringContainsString('/admin/roles/manage.php', manager::get_role_setup_hint());
+
+        $this->grant_delegated_account_use($this->getDataGenerator()->create_user());
+        $this->assertNull(manager::get_role_setup_hint());
+    }
+
+    /**
+     * Role setup guidance is not shown to users who cannot define roles.
+     */
+    public function test_role_setup_hint_requires_role_management(): void {
+        $this->resetAfterTest();
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        $this->assertNull(manager::get_role_setup_hint());
+    }
+
+    /**
      * Grants the test user the system capability required to use delegations.
      *
      * @param \stdClass $user Test user.

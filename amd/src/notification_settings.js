@@ -35,8 +35,8 @@ export const init = () => {
         const selectors = [
             '#id_s_local_delegateaccount_notificationrecipients',
             '#id_s_local_delegateaccount_notifyonrevocation',
-            '[id^="id_s_local_delegateaccount_notificationsubject_"]',
-            '[id^="id_s_local_delegateaccount_notificationtemplate_"]',
+            '#id_s_local_delegateaccount_notificationsubject',
+            '#id_s_local_delegateaccount_notificationtemplate',
         ];
         const inputs = selectors.reduce((elements, selector) => {
             return elements.concat(Array.from(document.querySelectorAll(selector)));

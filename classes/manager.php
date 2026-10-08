@@ -130,6 +130,29 @@ class manager {
         return $authorisedusers;
     }
     /**
+     * Returns setup guidance when no role grants the use capability yet.
+     *
+     * Without such a role only site administrators can be chosen as authorised users.
+     * The guidance is only returned to users who can define roles.
+     *
+     * @return string|null Guidance text with links to the role pages, or null when none is needed.
+     */
+    public static function get_role_setup_hint(): ?string {
+        $context = \context_system::instance();
+        if (!has_capability('moodle/role:manage', $context)) {
+            return null;
+        }
+        if (\get_users_by_capability($context, 'local/delegateaccount:use', 'u.id', '', 0, 1)) {
+            return null;
+        }
+
+        return get_string('setup_role_hint', 'local_delegateaccount', (object)[
+            'defineroles' => (new \moodle_url('/admin/roles/manage.php'))->out(),
+            'assignroles' => (new \moodle_url('/admin/roles/assign.php', ['contextid' => $context->id]))->out(),
+        ]);
+    }
+
+    /**
      * Returns user IDs that retain delegation records but can no longer use them.
      *
      * @return int[] User IDs.
@@ -1015,21 +1038,22 @@ class manager {
     /**
      * Resolves a requested notification decision against the site policy.
      *
-     * @param string $notificationmode Requested notification mode.
-     * @return string Effective notification mode.
+     * The stored decision is always 'always' or 'never'. A request for the site
+     * decision ('site') under the policy that lets the creator choose sends the
+     * notification, matching the default of the creation form.
+     *
+     * @param string $notificationmode Requested notification mode: site, always or never.
+     * @return string Effective notification mode: always or never.
      */
     private static function resolve_notification_mode(string $notificationmode): string {
         self::validate_notification_mode($notificationmode);
 
         $policy = get_config('local_delegateaccount', 'notificationpolicy');
-        if ($policy === self::NOTIFICATION_ALWAYS) {
-            return self::NOTIFICATION_ALWAYS;
-        }
-        if ($policy === self::NOTIFICATION_NEVER) {
-            return self::NOTIFICATION_NEVER;
+        if ($policy === self::NOTIFICATION_ALWAYS || $policy === self::NOTIFICATION_NEVER) {
+            return $policy;
         }
 
-        return $notificationmode;
+        return $notificationmode === self::NOTIFICATION_SITE ? self::NOTIFICATION_ALWAYS : $notificationmode;
     }
 
     /**

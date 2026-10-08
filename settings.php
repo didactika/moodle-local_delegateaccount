@@ -121,37 +121,20 @@ if ($hassiteconfig) {
             1
         ));
 
-        $stringmanager = get_string_manager();
-        $languages = $stringmanager->get_list_of_translations();
-        $languages['en'] = $languages['en'] ?? 'English';
-        ksort($languages);
-        foreach ($languages as $languagecode => $languagename) {
-            if (!preg_match('/^[a-z0-9_]+$/', $languagecode)) {
-                continue;
-            }
-
-            $settings->add(new admin_setting_configtext(
-                'local_delegateaccount/notificationsubject_' . $languagecode,
-                get_string('notificationsubject', 'local_delegateaccount', $languagename),
-                get_string('notificationsubject_desc', 'local_delegateaccount'),
-                $stringmanager->get_string(
-                    'delegationnotificationsubject',
-                    'local_delegateaccount',
-                    null,
-                    $languagecode
-                ),
-                PARAM_TEXT,
-                80
-            ));
-
-            $settings->add(new \local_delegateaccount\admin_setting_notificationtemplate(
-                'local_delegateaccount/notificationtemplate_' . $languagecode,
-                get_string('notificationtemplate', 'local_delegateaccount', $languagename),
-                get_string('notificationtemplate_desc', 'local_delegateaccount'),
-                '',
-                PARAM_RAW
-            ));
-        }
+        $settings->add(new admin_setting_configtext(
+            'local_delegateaccount/notificationsubject',
+            get_string('notificationsubject', 'local_delegateaccount'),
+            get_string('notificationsubject_desc', 'local_delegateaccount'),
+            '',
+            PARAM_TEXT,
+            80
+        ));
+        $settings->add(new \local_delegateaccount\admin_setting_notificationtemplate(
+            'local_delegateaccount/notificationtemplate',
+            get_string('notificationtemplate', 'local_delegateaccount'),
+            get_string('notificationtemplate_desc', 'local_delegateaccount'),
+            ''
+        ));
     }
 
     $ADMIN->add('localplugins', $settings);

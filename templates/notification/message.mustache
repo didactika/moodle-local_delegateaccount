@@ -23,17 +23,28 @@
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
+    Context variables required for this template:
+    * hascustomcontent - Whether an administrator-supplied template replaces the built-in message.
+    * customcontent - Administrator-supplied HTML with its placeholders already escaped.
+    * greeting - Greeting addressed to the recipient.
+    * heading - What happened to the delegated access.
+    * summary - The change worded for this recipient.
+    * isgranted - Whether access was granted, which adds the validity period.
+    * accessstarts, timestart, accessends, timeend - Validity period labels and dates.
+    * supportmessage - Advice for recipients who did not expect the change.
+
     Example context (json):
     {
         "hascustomcontent": false,
-        "greeting": "Hello Jane Doe,",
-        "accessgranted": "Delegated account access has been granted.",
-        "accountaccess": "You can now access John Doe at Example Moodle.",
+        "greeting": "Hello John Doe,",
+        "heading": "Delegated account access has been granted.",
+        "summary": "Jane Doe can now access your account on Example Moodle.",
+        "isgranted": true,
         "accessstarts": "Access starts:",
         "timestart": "Friday, 21 August 2026, 10:00 AM",
         "accessends": "Access ends:",
         "timeend": "Never",
-        "supportmessage": "If you do not expect this access, contact your site administrator."
+        "supportmessage": "If you did not expect this change, contact your site administrator."
     }
 }}
 {{#hascustomcontent}}
@@ -41,8 +52,10 @@
 {{/hascustomcontent}}
 {{^hascustomcontent}}
     <p>{{greeting}}</p>
-    <p><strong>{{accessgranted}}</strong></p>
-    <p>{{accountaccess}}</p>
+    <p><strong>{{heading}}</strong></p>
+    <p>{{summary}}</p>
+    {{#isgranted}}
     <p><strong>{{accessstarts}}</strong> {{timestart}}<br><strong>{{accessends}}</strong> {{timeend}}</p>
+    {{/isgranted}}
     <p>{{supportmessage}}</p>
 {{/hascustomcontent}}

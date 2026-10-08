@@ -36,10 +36,16 @@ final class assign_dynamic_form extends dynamic_form {
      * Defines the assignment controls shown inside the core modal.
      */
     protected function definition() {
+        global $OUTPUT;
+
         $mform = $this->_form;
         $realuserid = $this->optional_param('realuserid', 0, PARAM_INT);
         if ($realuserid === 0) {
             $realuserid = $this->optional_param('lockedrealuserid', 0, PARAM_INT);
+        }
+
+        if (($hint = manager::get_role_setup_hint()) !== null) {
+            $mform->addElement('html', $OUTPUT->notification($hint, \core\output\notification::NOTIFY_INFO, false));
         }
 
         $authorisedusers = manager::get_authorised_users('', 30);

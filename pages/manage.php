@@ -74,6 +74,9 @@ echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
     'description' => get_string('manage_' . $tab . '_users_description', 'local_delegateaccount'),
 ]);
+if ($tab === 'authorised' && ($hint = manager::get_role_setup_hint()) !== null) {
+    echo $OUTPUT->notification($hint, \core\output\notification::NOTIFY_INFO, false);
+}
 
 $tabs = [
     new tabobject(

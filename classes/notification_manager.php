@@ -40,7 +40,7 @@ class notification_manager {
      * @return bool Whether at least one message was accepted by Moodle.
      */
     public static function notify(\stdClass $delegation, string $action, int $actorid): bool {
-        global $DB, $SITE;
+        global $DB;
 
         if (!self::should_notify($delegation, $action)) {
             return false;
@@ -70,14 +70,14 @@ class notification_manager {
 
             $recipient = $users[$recipientid];
             $language = empty($recipient->lang) ? current_language() : $recipient->lang;
-            $messagehtml = self::render_template(
+            $messagehtml = self::render_message(
+                $action,
                 $language,
                 $delegation,
                 $users[$delegation->realuserid],
                 $users[$delegation->delegateduserid],
                 $users[$actorid],
-                $recipient,
-                $SITE
+                $recipient
             );
             $messagebody = html_to_text($messagehtml);
             $message = new \core\message\message();
@@ -85,7 +85,7 @@ class notification_manager {
             $message->name = 'delegationnotification';
             $message->userfrom = $sender;
             $message->userto = $recipient;
-            $message->subject = self::get_subject($language);
+            $message->subject = self::get_subject($action, $language);
             $message->fullmessage = $messagebody;
             $message->fullmessageformat = FORMAT_PLAIN;
             $message->fullmessagehtml = format_text($messagehtml, FORMAT_HTML, [
@@ -93,8 +93,15 @@ class notification_manager {
             ]);
             $message->smallmessage = shorten_text($messagebody, 255);
             $message->notification = 1;
-            $message->contexturl = (new \moodle_url('/local/delegateaccount/pages/manage.php'))->out(false);
-            $message->contexturlname = get_string('manage_accounts', 'local_delegateaccount');
+            if ($action === self::ACTION_CREATED && (int)$recipientid === (int)$delegation->realuserid) {
+                $message->contexturl = (new \moodle_url('/local/delegateaccount/pages/accounts.php'))->out(false);
+                $message->contexturlname = get_string_manager()->get_string(
+                    'my_delegated_accounts',
+                    'local_delegateaccount',
+                    null,
+                    $language
+                );
+            }
 
             try {
                 $sent = message_send($message) !== false || $sent;
@@ -150,92 +157,77 @@ class notification_manager {
     }
 
     /**
-     * Renders the language-specific notification through its Mustache template.
+     * Renders one recipient's notification through its Mustache template.
      *
+     * The built-in message is worded for the recipient: the authorised user is told which
+     * account they can use, and the target account is told who can use it. The configured
+     * custom template, when present, replaces the built-in message for granted access only.
+     *
+     * @param string $action Lifecycle action.
      * @param string $language Recipient language.
      * @param \stdClass $delegation Delegation database record.
      * @param \stdClass $authoriseduser Authorised user record.
      * @param \stdClass $delegateduser Target account record.
-     * @param \stdClass $actor User who configured the action.
+     * @param \stdClass $actor User who performed the action.
      * @param \stdClass $recipient Notification recipient.
-     * @param \stdClass $site Site record.
      * @return string Rendered HTML notification.
      */
-    private static function render_template(
+    private static function render_message(
+        string $action,
         string $language,
         \stdClass $delegation,
         \stdClass $authoriseduser,
         \stdClass $delegateduser,
         \stdClass $actor,
-        \stdClass $recipient,
-        \stdClass $site
+        \stdClass $recipient
     ): string {
-        global $OUTPUT;
+        global $OUTPUT, $SITE;
 
         $stringmanager = get_string_manager();
-        $authorisedname = fullname($authoriseduser);
-        $delegatedname = fullname($delegateduser);
-        $sitename = format_string($site->fullname, true);
-        $timestart = userdate((int) $delegation->timestart, '', $recipient->timezone);
-        $timeend = (int) $delegation->timeend === 0
+        $names = (object)[
+            'authoriseduser' => fullname($authoriseduser),
+            'delegateduser' => fullname($delegateduser),
+            'sitefullname' => format_string($SITE->fullname, true),
+        ];
+        $timestart = userdate((int)$delegation->timestart, '', $recipient->timezone);
+        $timeend = (int)$delegation->timeend === 0
             ? $stringmanager->get_string('never', 'moodle', null, $language)
-            : userdate((int) $delegation->timeend, '', $recipient->timezone);
-        $content = get_config('local_delegateaccount', 'notificationtemplate_' . $language);
-        if ($content !== false && $content !== '') {
-            $content = self::replace_placeholders($content, [
-                'authoriseduser' => s($authorisedname),
-                'delegateduser' => s($delegatedname),
-                'actor' => s(fullname($actor)),
-                'timestart' => s($timestart),
-                'timeend' => s($timeend),
-                'sitefullname' => s($sitename),
+            : userdate((int)$delegation->timeend, '', $recipient->timezone);
+
+        $customcontent = '';
+        if ($action === self::ACTION_CREATED) {
+            $customcontent = (string)get_config('local_delegateaccount', 'notificationtemplate');
+        }
+        if (trim($customcontent) !== '') {
+            return $OUTPUT->render_from_template('local_delegateaccount/notification/message', [
+                'hascustomcontent' => true,
+                'customcontent' => self::replace_placeholders($customcontent, [
+                    'authoriseduser' => s($names->authoriseduser),
+                    'delegateduser' => s($names->delegateduser),
+                    'actor' => s(fullname($actor)),
+                    'timestart' => s($timestart),
+                    'timeend' => s($timeend),
+                    'sitefullname' => s($names->sitefullname),
+                ]),
             ]);
         }
 
+        $isgranted = $action === self::ACTION_CREATED;
+        $audience = (int)$recipient->id === (int)$delegation->delegateduserid ? 'target' : 'authorised';
+        $string = static fn(string $identifier, $a = null): string =>
+            $stringmanager->get_string($identifier, 'local_delegateaccount', $a, $language);
+
         return $OUTPUT->render_from_template('local_delegateaccount/notification/message', [
-            'hascustomcontent' => $content !== false && $content !== '',
-            'customcontent' => $content,
-            'greeting' => $stringmanager->get_string(
-                'notificationgreeting',
-                'local_delegateaccount',
-                $authorisedname,
-                $language
-            ),
-            'accessgranted' => $stringmanager->get_string(
-                'notificationaccessgranted',
-                'local_delegateaccount',
-                null,
-                $language
-            ),
-            'accountaccess' => $stringmanager->get_string(
-                'notificationaccountaccess',
-                'local_delegateaccount',
-                (object) [
-                    'delegateduser' => $delegatedname,
-                    'sitefullname' => $sitename,
-                ],
-                $language
-            ),
-            'accessstarts' => $stringmanager->get_string(
-                'notificationaccessstarts',
-                'local_delegateaccount',
-                null,
-                $language
-            ),
-            'accessends' => $stringmanager->get_string(
-                'notificationaccessends',
-                'local_delegateaccount',
-                null,
-                $language
-            ),
+            'hascustomcontent' => false,
+            'greeting' => $string('notificationgreeting', fullname($recipient)),
+            'heading' => $string($isgranted ? 'notificationaccessgranted' : 'notificationaccessrevoked'),
+            'summary' => $string('notification_' . ($isgranted ? 'granted' : 'revoked') . '_' . $audience, $names),
+            'isgranted' => $isgranted,
+            'accessstarts' => $string('notificationaccessstarts'),
             'timestart' => $timestart,
+            'accessends' => $string('notificationaccessends'),
             'timeend' => $timeend,
-            'supportmessage' => $stringmanager->get_string(
-                'notificationsupportmessage',
-                'local_delegateaccount',
-                null,
-                $language
-            ),
+            'supportmessage' => $string('notificationsupportmessage'),
         ]);
     }
 
@@ -257,19 +249,24 @@ class notification_manager {
     }
 
     /**
-     * Returns the configurable notification subject in the recipient language.
+     * Returns the notification subject in the recipient language.
      *
+     * The configured subject, when present, applies to granted access only.
+     *
+     * @param string $action Lifecycle action.
      * @param string $language Recipient language.
      * @return string Notification subject.
      */
-    private static function get_subject(string $language): string {
-        $subject = get_config('local_delegateaccount', 'notificationsubject_' . $language);
-        if ($subject !== false && $subject !== '') {
-            return format_string($subject, true);
+    private static function get_subject(string $action, string $language): string {
+        if ($action === self::ACTION_CREATED) {
+            $subject = trim((string)get_config('local_delegateaccount', 'notificationsubject'));
+            if ($subject !== '') {
+                return format_string($subject, true);
+            }
         }
 
         return get_string_manager()->get_string(
-            'delegationnotificationsubject',
+            $action === self::ACTION_CREATED ? 'notification_subject_granted' : 'notification_subject_revoked',
             'local_delegateaccount',
             null,
             $language
