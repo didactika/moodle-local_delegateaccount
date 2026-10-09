@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="pix/icon.svg" width="96" alt="">
+<img src="pix/icon.svg" width="96" alt="Plugin Delegate Account Icon">
 
 # Delegate Account for Moodle
 
