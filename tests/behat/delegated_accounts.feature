@@ -21,6 +21,7 @@ Feature: Delegate access to an account
 
   Scenario: An administrator creates a delegation from the management page
     Given I log in as "admin"
+    And I change window size to "large"
     And I navigate to "Users > Accounts > Manage delegated accounts" in site administration
     When I click on "Add delegated account" "button" in the "Ada Authorised" "table_row"
     And I set the field "Delegated accounts" to "Tom Target"
