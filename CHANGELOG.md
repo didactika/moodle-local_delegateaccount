@@ -7,87 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+## [1.0.0] - 2026-10-09
 
-- Initial delegated-account management functionality.
-- Moodle 4.5 through 5.2 support declaration.
-- English, Spanish, Portuguese, Italian and French language packs.
-- Delegation validity periods, logical revocation, lifecycle audit events and
-  granular management capabilities.
-- Site-wide limits for delegation quantity, duration, bulk actions and
-  privileged target accounts, plus configurable notification policy and
-  per-language templates.
-- Moodle popup and email notifications that honour the effective policy,
-  selected recipients and safely validated templates.
-- Localised, configurable notification subjects and a professional Mustache
-  default message, with optional rich replacement content; settings that are
-  not meaningful under a never-notify policy are dynamically hidden.
-- A paginated, searchable and sortable authorised-user overview, plus an
-  individual delegation list with lifecycle dates, last delegated access and
-  safe POST-only revocation.
-- Delegation creation now records the selected validity period and, where the
-  site allows it, the creator's notification decision. Individual delegation
-  pages also link to the corresponding standard-log activity report and expose
-  read-only lifecycle and audit details, with a capability-protected edit
-  action for active delegations.
-- Moodle-native GET filters, user pictures and compact lifecycle-information
-  modals in the delegated-account management tables.
-- A standard report description for delegated activity, plus management tabs
-  that distinguish currently authorised users from retained historical users.
-- A Moodle-style delegated-account carousel submenu, with a complete
-  paginated self-service page as its accessible fallback.
-- Date, component and action filters for each delegation-period activity
-  report.
-- Moodle core modal forms for multi-user/multi-account assignment and common
-  lifecycle updates across selected active delegations, with the existing
-  page preserved as a no-JavaScript fallback.
-- A disabled, restricted web service with seven independently authorised
-  inventory, singular and bulk creation, update, revocation and activity
-  functions.
+First public release.
 
-### Changed
-
-- Standardised licensing, ownership metadata and release packaging.
-- Active delegated sessions now require a delegation that is neither scheduled,
-  expired nor revoked.
-- Management tables show separate active and scheduled delegation counts; the
-  redundant combined count was removed.
-- The authorised-user overview now includes every active current holder of
-  `local/delegateaccount:use`, including users without a delegation. New
-  assignments are blocked for users who no longer hold that capability.
-- Delegated accounts use Moodle 4.5 and 5.2's native
-  `core_user\hook\extend_user_menu` extension for one durable fallback entry;
-  an early output hook progressively enhances it into the same carousel
-  interaction Moodle uses for user-menu submenus.
-- Mustache templates are grouped by delegation, management, notification,
-  report, shared and user-menu responsibilities.
-- Revoked delegations display their revocation as the end date. Last-access
-  values and paginated activity reports are isolated to each delegation's
-  effective access period, including repeated delegations of the same account.
-- Activity report dates are calendar-day filters, and repeated user-menu hook
-  execution is explicitly deduplicated.
-- Individual lifecycle editing now uses the same core modal workflow as bulk
-  editing, filter and date controls share one responsive layout, and displayed
-  user identities link to their Moodle profiles.
-- Contextual assignment fixes the authorised user, omits every target that
-  already has a non-revoked delegation for that user, and returns to the same
-  detail page after save or cancel.
-- Delegation detail now opens on **Active** and no longer includes the
-  redundant **All** tab.
-- Compact form normalisation now targets Moodle's actual date-selector
-  container, keeping optional end-date calendars on the control row at desktop
-  widths; filter dropdowns also remove nested action margins and unused space.
-- Filter panels now use Moodle's native Bootstrap dropdown behaviour and a
-  compact responsive form surface instead of maintaining a parallel toggle
-  implementation. Their action separator spans the panel, while date controls
-  use compact spacing that keeps the calendar action on the same row.
-- Individual and bulk lifecycle editing share the same 50-rem Moodle modal
-  geometry and aligned, non-wrapping desktop date rows.
-- The delegated activity report now mirrors Moodle's standard log report with
-  actor, affected user, context, component, event, description, origin and IP
-  columns while retaining delegation-period filtering and 25-row pagination.
-- Browser-facing controllers now live under `pages/`, matching the repository's
-  established Moodle plugin structure without duplicate root entry points.
-- Every registered external function now has its own autoloadable class and
-  `execute` contract; only unregistered validation and serialisation helpers
-  remain in a shared internal base.
+- Delegations that let an authorised user log in as another account through
+  Moodle's "Log in as", with a start date, an optional end date and revocation.
+- Access is checked when a delegated account is opened and on every request of
+  the delegated session, so revoked or expired delegations, users who lost
+  permission and suspended or administrator targets end the session.
+- Management pages to create, edit and revoke delegations in bulk, a details
+  view and a per-delegation activity report built on the site's log store.
+- A "Delegated accounts" entry in the user menu and a "My delegated accounts"
+  page for authorised users.
+- Granular capabilities, with `local/delegateaccount:manage` granting every
+  management action unless a specific capability is set to Prevent or Prohibit.
+- Site limits for delegations per user, duration, bulk actions and protection of
+  site administrator accounts.
+- Optional notifications when access is granted or revoked, with a subject and
+  message per installed language.
+- Events for every change, Privacy API support and a restricted web service.

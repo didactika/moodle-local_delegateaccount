@@ -22,6 +22,7 @@ use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Shared implementation for delegated-account external functions.
@@ -39,17 +40,13 @@ abstract class delegation_service extends external_api {
     protected const MAX_PAGE_SIZE = 100;
 
     /**
-     * Requires one exact capability for an external operation.
+     * Validates the system context and requires permission for an external operation.
      *
-     * The transitional manage capability is intentionally not accepted here;
-     * integration users receive only the operations explicitly assigned to them.
-     *
-     * @param string $capability Required system capability.
+     * @param string $action One of the \local_delegateaccount\permission action constants.
      */
-    protected static function require_granular_capability(string $capability): void {
-        $context = context_system::instance();
-        self::validate_context($context);
-        require_capability($capability, $context);
+    protected static function require_permission(string $action): void {
+        self::validate_context(context_system::instance());
+        permission::require_action($action);
     }
 
     /**
@@ -83,30 +80,24 @@ abstract class delegation_service extends external_api {
     ): array {
         $realuserids = array_values(array_unique(array_map('intval', $realuserids)));
         $delegateduserids = array_values(array_unique(array_map('intval', $delegateduserids)));
-        $existing = [];
-        foreach ($realuserids as $realuserid) {
-            foreach ($delegateduserids as $delegateduserid) {
-                $existing[$realuserid . ':' . $delegateduserid] = manager::get_current_delegation_id(
-                    $realuserid,
-                    $delegateduserid
-                );
-            }
-        }
+        $existing = manager::get_current_delegation_ids($realuserids, $delegateduserids);
         $createdcount = manager::create_delegations($realuserids, $delegateduserids, [
             'timestart' => $timestart,
             'timeend' => $timeend,
             'notificationmode' => $notificationmode,
         ]);
+        $current = manager::get_current_delegation_ids($realuserids, $delegateduserids);
+
         $results = [];
         foreach ($realuserids as $realuserid) {
             foreach ($delegateduserids as $delegateduserid) {
                 $key = $realuserid . ':' . $delegateduserid;
-                $delegationid = manager::get_current_delegation_id($realuserid, $delegateduserid);
+                $delegationid = $current[$key] ?? 0;
                 $results[] = [
                     'realuserid' => $realuserid,
                     'delegateduserid' => $delegateduserid,
                     'delegationid' => $delegationid,
-                    'outcome' => $existing[$key] > 0
+                    'outcome' => isset($existing[$key])
                         ? 'unchanged'
                         : ($delegationid > 0 ? 'created' : 'skipped'),
                 ];

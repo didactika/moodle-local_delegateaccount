@@ -27,20 +27,10 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-$context = context_system::instance();
-if (
-    !has_any_capability(
-        [
-            'local/delegateaccount:view',
-            'local/delegateaccount:manage',
-        ],
-        $context
-    )
-) {
-    require_capability('local/delegateaccount:view', $context);
-}
+permission::require_action(permission::VIEW);
 
 $realuserid = required_param('realuserid', PARAM_INT);
 $delegationid = required_param('delegationid', PARAM_INT);
@@ -71,7 +61,7 @@ $auditusers = empty($audituserids) ? [] : $DB->get_records_list(
     'id',
     $audituserids,
     '',
-    'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic, picture, imagealt'
+    implode(', ', \core_user\fields::get_picture_fields())
 );
 $getuseridentity = static function (int $userid) use ($auditusers, $OUTPUT): string {
     if (!isset($auditusers[$userid])) {
@@ -90,7 +80,7 @@ $displayend = manager::get_delegation_display_end($delegation);
 $templatecontext = [
     'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
     'status' => get_string('delegation_status_' . manager::get_delegation_status($delegation), 'local_delegateaccount'),
-    'authoriseduserlabel' => get_string('realuser', 'local_delegateaccount'),
+    'authoriseduserlabel' => get_string('authoriseduser', 'local_delegateaccount'),
     'authoriseduser' => $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
         'userpicture' => $OUTPUT->user_picture($realuser, ['size' => 35, 'link' => false]),
         'fullname' => fullname($realuser),
@@ -130,7 +120,6 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($title);
 echo $OUTPUT->action_link(
     $backurl,
     get_string('back'),

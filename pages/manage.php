@@ -30,21 +30,11 @@ require_once($CFG->libdir . '/tablelib.php');
 
 use local_delegateaccount\form\manage_filter_form;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 use local_delegateaccount\table\delegated_users_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-$context = context_system::instance();
-if (
-    !has_any_capability(
-        [
-            'local/delegateaccount:view',
-            'local/delegateaccount:manage',
-        ],
-        $context
-    )
-) {
-    require_capability('local/delegateaccount:view', $context);
-}
+permission::require_action(permission::VIEW);
 
 $tab = optional_param('tab', 'authorised', PARAM_ALPHA);
 if (!in_array($tab, ['authorised', 'historical'], true)) {
@@ -81,10 +71,12 @@ $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
 $PAGE->requires->js_call_amd('local_delegateaccount/management_modals', 'init');
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('manage_accounts', 'local_delegateaccount'));
 echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
     'description' => get_string('manage_' . $tab . '_users_description', 'local_delegateaccount'),
 ]);
+if ($tab === 'authorised' && ($hint = manager::get_role_setup_hint()) !== null) {
+    echo $OUTPUT->notification($hint, \core\output\notification::NOTIFY_INFO, false);
+}
 
 $tabs = [
     new tabobject(
@@ -108,11 +100,9 @@ $filterform->set_data($filters);
 ob_start();
 $filterform->display();
 $filterformhtml = ob_get_clean();
-$cancreate = $tab === 'authorised' && (has_capability('local/delegateaccount:create', $context) ||
-    has_capability('local/delegateaccount:manage', $context));
+$cancreate = $tab === 'authorised' && permission::has(permission::CREATE);
 echo $OUTPUT->render_from_template('local_delegateaccount/manage/actions', [
     'cancreate' => $cancreate,
-    'assignurl' => (new moodle_url('/local/delegateaccount/pages/assign.php'))->out(false),
     'addlabel' => get_string('create_delegations', 'local_delegateaccount'),
     'filterlabel' => get_string('filters'),
     'filterid' => 'local-delegateaccount-manage-filters',
@@ -122,9 +112,6 @@ echo $OUTPUT->render_from_template('local_delegateaccount/manage/actions', [
     'resetlabel' => get_string('reset'),
 ]);
 
-$userids = $tab === 'authorised'
-    ? array_keys(manager::get_authorised_users())
-    : manager::get_historical_user_ids();
-$table = new delegated_users_table($dashboardurl, $userids, $filters, $tab === 'authorised', $context);
+$table = new delegated_users_table($dashboardurl, $tab === 'authorised', $filters);
 $table->out(25, true);
 echo $OUTPUT->footer();

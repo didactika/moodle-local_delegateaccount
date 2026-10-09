@@ -26,6 +26,7 @@
 namespace local_delegateaccount\table;
 
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Renders the delegated-account user overview using Moodle's table API.
@@ -36,33 +37,26 @@ use local_delegateaccount\manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class delegated_users_table extends \table_sql {
-    /** @var \context_system Context used to evaluate action capabilities. */
-    private \context_system $context;
-
-    /** @var bool Whether rows in this table can receive new delegations. */
+    /** @var bool Whether the current user may add delegations to rows in this table. */
     private bool $allowsdelegationcreation;
 
     /**
      * Creates the user overview table.
      *
+     * The authorised tab lists active users who may use delegated accounts. The other tab
+     * lists users who keep delegation records but may no longer use them.
+     *
      * @param \moodle_url $baseurl URL retaining table and filter state.
-     * @param int[] $userids Users included by the selected management tab.
+     * @param bool $authorised Whether to list authorised users rather than users without permission.
      * @param array $filters User filters indexed by field name.
-     * @param bool $allowsdelegationcreation Whether this tab contains authorised users.
-     * @param \context_system $context System context for capabilities.
      */
     public function __construct(
         \moodle_url $baseurl,
-        array $userids,
-        array $filters,
-        bool $allowsdelegationcreation,
-        \context_system $context
+        bool $authorised,
+        array $filters
     ) {
-        global $DB;
-
         parent::__construct('local_delegateaccount_delegated_users');
-        $this->context = $context;
-        $this->allowsdelegationcreation = $allowsdelegationcreation;
+        $this->allowsdelegationcreation = $authorised && permission::has(permission::CREATE);
 
         $this->define_columns([
             'lastname',
@@ -88,13 +82,17 @@ class delegated_users_table extends \table_sql {
 
         $now = time();
         [$where, $filterparams] = self::get_filter_sql($filters, $now);
-        if (empty($userids)) {
-            $where .= ' AND u.id = 0';
+        [$authorisedsql, $authorisedparams] = manager::get_authorised_users_condition('u.id');
+        if ($authorised) {
+            $where .= " AND u.suspended = 0 AND $authorisedsql";
         } else {
-            [$useridsql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'manageduser');
-            $where .= ' AND u.id ' . $useridsql;
-            $filterparams = array_merge($filterparams, $userparams);
+            $where .= " AND EXISTS (
+                          SELECT 1
+                            FROM {local_delegateaccount} historyda
+                           WHERE historyda.realuserid = u.id
+                       ) AND NOT (u.suspended = 0 AND $authorisedsql)";
         }
+        $filterparams = array_merge($filterparams, $authorisedparams);
         $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename,
                    u.firstnamephonetic, u.lastnamephonetic, u.email, u.picture, u.imagealt,
                    SUM(CASE WHEN da.activekey = 0 AND da.timestart <= :activefrom
@@ -109,9 +107,10 @@ class delegated_users_table extends \table_sql {
             'activeto' => $now,
             'scheduledfrom' => $now,
         ]);
-        $countsql = 'SELECT COUNT(DISTINCT u.id) FROM {user} u
-                       LEFT JOIN {local_delegateaccount} da ON da.realuserid = u.id
-                      WHERE ' . $where;
+        $countsql = sprintf(
+            'SELECT COUNT(DISTINCT u.id) FROM {user} u LEFT JOIN {local_delegateaccount} da ON da.realuserid = u.id WHERE %s',
+            $where
+        );
 
         $this->set_count_sql($countsql, $filterparams);
         $this->set_sql($fields, $from, $where . ' GROUP BY ' . $groupby, $dataparams);
@@ -147,17 +146,10 @@ class delegated_users_table extends \table_sql {
             new \moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $row->id]),
             new \pix_icon('t/edit', get_string('manage_user_delegations', 'local_delegateaccount'), 'core')
         );
-        if (
-            $this->allowsdelegationcreation &&
-            (
-                has_capability('local/delegateaccount:create', $this->context) ||
-                has_capability('local/delegateaccount:manage', $this->context)
-            )
-        ) {
-            $actions[] = $OUTPUT->action_icon(
-                new \moodle_url('/local/delegateaccount/pages/assign.php', ['realuserid' => $row->id]),
-                new \pix_icon('t/add', get_string('add_delegation', 'local_delegateaccount'), 'core'),
-                null,
+        if ($this->allowsdelegationcreation) {
+            $actions[] = delegated_accounts_table::render_modal_button(
+                't/add',
+                get_string('add_delegation', 'local_delegateaccount'),
                 [
                     'data-action' => 'local-delegateaccount-open-assign',
                     'data-real-user-id' => (int)$row->id,

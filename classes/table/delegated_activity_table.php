@@ -25,6 +25,8 @@
 
 namespace local_delegateaccount\table;
 
+use local_delegateaccount\manager;
+
 /**
  * Renders activity that Moodle recorded while an authorised user acted as a target account.
  *
@@ -34,9 +36,6 @@ namespace local_delegateaccount\table;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class delegated_activity_table extends \table_sql {
-    /** @var array<int, \core\event\base|null> Restored events keyed by log id. */
-    private array $events = [];
-
     /** @var array<int, string|false> User names keyed by user id. */
     private array $usernames = [];
 
@@ -98,21 +97,10 @@ class delegated_activity_table extends \table_sql {
         $this->set_attribute('id', 'local-delegateaccount-activity');
         $this->set_attribute('class', 'reportlog generaltable generalbox table-sm');
 
-        $where = 'log.userid = :delegateduserid
-                  AND log.realuserid = :realuserid
-                  AND log.timecreated >= :timestart';
-        $params = [
-            'realuserid' => (int)$delegation->realuserid,
-            'delegateduserid' => (int)$delegation->delegateduserid,
-            'timestart' => (int)$delegation->timestart,
-        ];
-        $accessend = \local_delegateaccount\manager::get_delegation_access_end($delegation);
-        if ($accessend > 0) {
-            $where .= ' AND log.timecreated < :timeend';
-            $params['timeend'] = $accessend;
-        }
+        [$where, $params] = manager::get_delegation_log_selector($delegation);
+        $accessend = manager::get_delegation_access_end($delegation);
         if (!empty($filters['datefrom'])) {
-            $where .= ' AND log.timecreated >= :filterdatefrom';
+            $where .= ' AND timecreated >= :filterdatefrom';
             $params['filterdatefrom'] = max((int)$delegation->timestart, (int)$filters['datefrom']);
         }
         if (!empty($filters['dateto'])) {
@@ -120,25 +108,60 @@ class delegated_activity_table extends \table_sql {
                 ->setTimezone(\core_date::get_user_timezone_object());
             $requestedend = $selecteddate->setTime(0, 0)->modify('+1 day')->getTimestamp();
             $params['filterdateto'] = $accessend > 0 ? min($accessend, $requestedend) : $requestedend;
-            $where .= ' AND log.timecreated < :filterdateto';
+            $where .= ' AND timecreated < :filterdateto';
         }
         if (!empty($filters['component'])) {
-            $where .= ' AND ' . $DB->sql_like('log.component', ':filtercomponent', false);
+            $where .= ' AND ' . $DB->sql_like('component', ':filtercomponent', false);
             $params['filtercomponent'] = '%' . $DB->sql_like_escape($filters['component']) . '%';
         }
         if (!empty($filters['action'])) {
-            $where .= ' AND ' . $DB->sql_like('log.action', ':filteraction', false);
+            $where .= ' AND ' . $DB->sql_like('action', ':filteraction', false);
             $params['filteraction'] = '%' . $DB->sql_like_escape($filters['action']) . '%';
         }
-        $countsql = 'SELECT COUNT(log.id) FROM {logstore_standard_log} log WHERE ' . $where;
 
-        $this->set_count_sql($countsql, $params);
-        $this->set_sql(
-            'log.*',
-            '{logstore_standard_log} log',
-            $where,
-            $params
+        // The rows come from the site's log reader in query_db(), not from a table of this plugin.
+        $this->sql = (object)['where' => $where, 'params' => $params];
+    }
+
+    /**
+     * Reads one page of events through the site's log reader, like Moodle's log report.
+     *
+     * @param int $pagesize Number of rows per page.
+     * @param bool $useinitialsbar Unused: this report has no initials bar.
+     */
+    public function query_db($pagesize, $useinitialsbar = true) {
+        $this->rawdata = [];
+        $reader = manager::get_log_reader();
+        if (!$reader) {
+            $this->pagesize($pagesize, 0);
+            return;
+        }
+
+        $this->pagesize($pagesize, $reader->get_events_select_count($this->sql->where, $this->sql->params));
+        $sort = $this->get_sql_sort() ?: 'timecreated DESC';
+        $events = $reader->get_events_select(
+            $this->sql->where,
+            $this->sql->params,
+            $sort . ', id DESC',
+            $this->get_page_start(),
+            $this->get_page_size()
         );
+        foreach ($events as $event) {
+            $this->rawdata[] = self::event_to_row($event);
+        }
+    }
+
+    /**
+     * Converts a logged event into a table row.
+     *
+     * @param \core\event\base $event Event restored by the log reader.
+     * @return \stdClass Row with the event data, its log details and the event itself.
+     */
+    public static function event_to_row(\core\event\base $event): \stdClass {
+        $row = (object)($event->get_data() + $event->get_logextra());
+        $row->event = $event;
+
+        return $row;
     }
 
     /**
@@ -295,30 +318,13 @@ class delegated_activity_table extends \table_sql {
     }
 
     /**
-     * Restores a standard-log row to its Moodle event object.
+     * Returns the event represented by a row.
      *
-     * @param \stdClass $row Standard-log record.
-     * @return \core\event\base|null Restored event.
+     * @param \stdClass $row Activity row.
+     * @return \core\event\base|null Event, or null when it could not be restored.
      */
     private function get_event(\stdClass $row): ?\core\event\base {
-        $id = (int)$row->id;
-        if (array_key_exists($id, $this->events)) {
-            return $this->events[$id];
-        }
-
-        $data = (array)$row;
-        $extra = [
-            'origin' => $data['origin'],
-            'ip' => $data['ip'],
-            'realuserid' => $data['realuserid'],
-        ];
-        $data['other'] = \logstore_standard\log\store::decode_other($data['other']);
-        if (!is_array($data['other'])) {
-            $data['other'] = [];
-        }
-        unset($data['id'], $data['origin'], $data['ip'], $data['realuserid']);
-
-        return $this->events[$id] = \core\event\base::restore($data, $extra) ?: null;
+        return $row->event ?? null;
     }
 
     /**

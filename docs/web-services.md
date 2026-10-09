@@ -18,10 +18,12 @@ for that integration.
 | `local_delegateaccount_revoke_delegations` | `local/delegateaccount:revoke` | Logically revoke selected records after explicit confirmation. |
 | `local_delegateaccount_get_delegation_activity` | `local/delegateaccount:viewactivity` | Read standard-log activity within one immutable delegation period. |
 
-The compatibility capability `local/delegateaccount:manage` is not accepted by
-these external functions. This prevents an integration intended only for
-inventory from gaining mutation access and keeps service permissions aligned
-with the granular management interface.
+`local/delegateaccount:manage` grants every function above, exactly as it does
+in the management pages. Setting a specific capability to **Prevent** or
+**Prohibit** in one of the integration user's system roles still refuses that
+function, even when the role allows `local/delegateaccount:manage`. For an
+inventory-only integration, grant `local/delegateaccount:view` instead of
+`local/delegateaccount:manage`.
 
 Each registered function maps to one dedicated class under
 `classes/external/`. The shared `delegation_service` base is internal, is not
@@ -32,7 +34,7 @@ creation-result and serialisation helpers.
 
 - Pages are zero-based and accept between 1 and 100 records.
 - Bulk creation is the Cartesian product of the supplied authorised users and
-  target accounts. The site's **Maximum records per bulk operation** and
+  target accounts. The site's **Maximum records per bulk action** and
   **Maximum delegated accounts per user** settings are enforced before any
   row is created.
 - Singular and batch creation share the same domain implementation. Use the
@@ -41,15 +43,32 @@ creation-result and serialisation helpers.
 - An existing non-revoked user-target pair returns `unchanged`; the operation
   does not create a duplicate.
 - The same user cannot be both the authorised user and target account.
-- Suspended, deleted, unauthorised and protected privileged accounts are
-  rejected using the same domain rules as the web interface.
-- Revocation requires `confirm=true`, remains logical, preserves history and
-  immediately prevents a new delegated session.
+- Suspended, deleted, guest, unauthorised and protected site administrator
+  accounts are rejected using the same rules as the web interface.
+- Revocation requires `confirm=true`, remains logical and preserves history.
+  It prevents new delegated sessions and ends a delegated session that is
+  already open on its next request.
 - Activity results are clamped to the selected delegation's own start and end
   boundary. A later delegation between the same users is a different period.
-- Notification policy and template rules are identical to the management
-  interface. Service responses never contain message bodies, tokens or
-  credentials.
+- Notification rules are identical to the management interface. Service
+  responses never contain message bodies, tokens or credentials.
+
+## Notification decision
+
+`create_delegation`, `create_delegations` and `update_delegations` accept an
+optional `notificationmode` of `always`, `never` or `site`. When it is omitted,
+`site` is used, meaning "let the site decide". The decision that is stored and
+applied depends on the **Notification policy** setting:
+
+| Notification policy | `always` | `never` | `site` or omitted |
+| --- | --- | --- | --- |
+| Allow the person creating the delegation to choose (default) | Notify | Do not notify | Notify, as the creation form does by default |
+| Always notify | Notify | Notify | Notify |
+| Never notify | Do not notify | Do not notify | Do not notify |
+
+The stored decision is always `always` or `never`, so the value returned by the
+read functions shows what was actually applied. Send `notificationmode=never`
+explicitly when an integration must not notify anyone.
 
 ## Example requests
 

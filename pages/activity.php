@@ -27,12 +27,12 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
-use local_delegateaccount\table\delegated_activity_table;
 use local_delegateaccount\form\activity_filter_form;
+use local_delegateaccount\permission;
+use local_delegateaccount\table\delegated_activity_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
-$context = context_system::instance();
-require_capability('local/delegateaccount:viewactivity', $context);
+permission::require_action(permission::VIEWACTIVITY);
 
 $realuserid = required_param('realuserid', PARAM_INT);
 $delegationid = required_param('delegationid', PARAM_INT);
@@ -51,12 +51,10 @@ $filterform = new activity_filter_form(new moodle_url('/local/delegateaccount/pa
     'periodend' => $accessend > 0 ? $accessend : time(),
 ]);
 $submittedfilters = $filterform->get_data();
-$datefromparam = isset($_GET['datefrom']) && !is_array($_GET['datefrom'])
-    ? optional_param('datefrom', 0, PARAM_INT)
-    : 0;
-$datetoparam = isset($_GET['dateto']) && !is_array($_GET['dateto'])
-    ? optional_param('dateto', 0, PARAM_INT)
-    : 0;
+// A submitted form sends each date as day, month and year fields; pagination links send a timestamp.
+$formsubmitted = $filterform->is_submitted();
+$datefromparam = $formsubmitted ? 0 : optional_param('datefrom', 0, PARAM_INT);
+$datetoparam = $formsubmitted ? 0 : optional_param('dateto', 0, PARAM_INT);
 $filters = [
     'datefrom' => $submittedfilters ? (int)$submittedfilters->datefrom : $datefromparam,
     'dateto' => $submittedfilters ? (int)$submittedfilters->dateto : $datetoparam,
@@ -87,7 +85,6 @@ $PAGE->set_heading($title);
 $PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($title);
 echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
     'description' => get_string('delegated_activity_description', 'local_delegateaccount', (object)[
         'authoriseduser' => fullname($realuser),

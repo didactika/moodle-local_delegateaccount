@@ -58,9 +58,9 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Deletes the selected delegations without affecting other records.
+     * Revokes the selected delegations without affecting other records.
      */
-    public function test_delete_delegations_only_removes_selected_records(): void {
+    public function test_revoke_delegations_only_affects_selected_records(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -81,7 +81,7 @@ final class manager_test extends \advanced_testcase {
             'delegateduserid' => $firsttarget->id,
         ], '*', MUST_EXIST);
 
-        manager::delete_delegations([(int) $first->id]);
+        manager::revoke_delegations([(int) $first->id]);
 
         $this->assertFalse(manager::delegation_exists((int) $sourceuser->id, (int) $firsttarget->id));
         $this->assertTrue(manager::delegation_exists((int) $sourceuser->id, (int) $secondtarget->id));
@@ -453,6 +453,121 @@ final class manager_test extends \advanced_testcase {
         } catch (\moodle_exception $exception) {
             $this->assertSame('error_unauthorised_realuser', $exception->errorcode);
         }
+    }
+
+    /**
+     * Target options exclude the authorised user and every current non-revoked target.
+     */
+    public function test_target_options_exclude_self_and_existing_delegations(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('notificationpolicy', manager::NOTIFICATION_NEVER, 'local_delegateaccount');
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $existingtarget = $generator->create_user();
+        $availabletarget = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
+        manager::create_delegations([(int)$authoriseduser->id], [(int)$existingtarget->id]);
+
+        $options = manager::get_delegated_account_options((int)$authoriseduser->id);
+
+        $this->assertArrayNotHasKey((int)$authoriseduser->id, $options);
+        $this->assertArrayNotHasKey((int)$existingtarget->id, $options);
+        $this->assertArrayHasKey((int)$availabletarget->id, $options);
+    }
+
+    /**
+     * The maximum duration only applies while every delegation must have an end date.
+     */
+    public function test_maximum_duration_applies_only_when_end_date_is_required(): void {
+        $this->resetAfterTest();
+        set_config('maximumdurationdays', 30, 'local_delegateaccount');
+        $start = time();
+        $longend = $start + (90 * DAYSECS);
+
+        set_config('allowopenended', 1, 'local_delegateaccount');
+        $this->assertNull(manager::get_period_error($start, $longend));
+        $this->assertNull(manager::get_period_error($start, 0));
+
+        set_config('allowopenended', 0, 'local_delegateaccount');
+        $this->assertSame(
+            get_string('error_maximumduration', 'local_delegateaccount', 30),
+            manager::get_period_error($start, $longend)
+        );
+        $this->assertNull(manager::get_period_error($start, $start + (30 * DAYSECS)));
+        $this->assertSame(
+            get_string('error_openendednotallowed', 'local_delegateaccount'),
+            manager::get_period_error($start, 0)
+        );
+    }
+
+    /**
+     * The test data generator creates and revokes delegations.
+     */
+    public function test_data_generator_creates_and_revokes_delegations(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user();
+        $target = $generator->create_user();
+        $this->grant_delegated_account_use($authoriseduser);
+        $plugingenerator = $generator->get_plugin_generator('local_delegateaccount');
+        $record = ['realuserid' => (int)$authoriseduser->id, 'delegateduserid' => (int)$target->id];
+
+        $delegation = $plugingenerator->create_delegation($record);
+        $this->assertSame(manager::STATUS_ACTIVE, manager::get_delegation_status($delegation));
+
+        $plugingenerator->create_revocation($record);
+        $this->assertFalse(manager::delegation_exists((int)$authoriseduser->id, (int)$target->id));
+    }
+
+    /**
+     * Both user pickers find people by their full name.
+     */
+    public function test_user_pickers_search_by_full_name(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user(['firstname' => 'Ada', 'lastname' => 'Authorised']);
+        $target = $generator->create_user(['firstname' => 'Tom', 'lastname' => 'Target']);
+        $this->grant_delegated_account_use($authoriseduser);
+
+        $this->assertArrayHasKey((int)$target->id, manager::get_delegated_account_options(0, 'Tom Target', 30));
+        $this->assertArrayHasKey((int)$authoriseduser->id, manager::get_authorised_users('Ada Authorised', 30));
+    }
+
+    /**
+     * Every management tab has the description that its page displays.
+     */
+    public function test_management_tab_descriptions_exist(): void {
+        foreach (['authorised', 'historical'] as $tab) {
+            $this->assertTrue(
+                get_string_manager()->string_exists('manage_' . $tab . '_users_description', 'local_delegateaccount'),
+                $tab
+            );
+        }
+    }
+
+    /**
+     * Role setup guidance is shown until a role grants the use capability.
+     */
+    public function test_role_setup_hint_until_a_role_grants_use(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->assertStringContainsString('/admin/roles/manage.php', manager::get_role_setup_hint());
+
+        $this->grant_delegated_account_use($this->getDataGenerator()->create_user());
+        $this->assertNull(manager::get_role_setup_hint());
+    }
+
+    /**
+     * Role setup guidance is not shown to users who cannot define roles.
+     */
+    public function test_role_setup_hint_requires_role_management(): void {
+        $this->resetAfterTest();
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        $this->assertNull(manager::get_role_setup_hint());
     }
 
     /**

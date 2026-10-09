@@ -21,6 +21,7 @@ use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Updates selected delegated-account relationships.
@@ -78,7 +79,7 @@ final class update_delegations extends delegation_service {
             'timeend' => $timeend,
             'notificationmode' => $notificationmode,
         ]);
-        self::require_granular_capability('local/delegateaccount:update');
+        self::require_permission(permission::UPDATE);
 
         return ['updatedcount' => manager::update_delegations(
             $params['delegationids'],

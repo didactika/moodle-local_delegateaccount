@@ -53,27 +53,67 @@ class manager {
     /**
      * Returns active users who currently have permission to use delegated accounts.
      *
+     * @param string $search Optional search query.
+     * @param int $limit Maximum number of users to return (0 means no limit).
      * @return array<int, string> User IDs mapped to display names.
      */
-    public static function get_authorised_users(): array {
+    public static function get_authorised_users(string $search = '', int $limit = 0): array {
+        global $DB;
         $context = \context_system::instance();
+
+        $fields = 'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
+                . 'u.lastnamephonetic, u.deleted, u.suspended';
+
+        $authorisedusers = [];
+
+        if ($search !== '') {
+            $searchvalue = '%' . $DB->sql_like_escape($search) . '%';
+            $sql = "SELECT $fields
+                      FROM {user} u
+                     WHERE u.deleted = 0 AND u.suspended = 0
+                       AND (" . $DB->sql_like($DB->sql_fullname('u.firstname', 'u.lastname'), ':search1', false) . " OR " .
+                                $DB->sql_like('u.username', ':search2', false) . ")
+                  ORDER BY u.lastname ASC, u.firstname ASC";
+
+            $params = ['search1' => $searchvalue, 'search2' => $searchvalue];
+            $users = $DB->get_records_sql($sql, $params, 0, 500);
+
+            $admins = get_admins();
+            $adminids = [];
+            foreach ($admins as $admin) {
+                if ((int)$admin->suspended === 0) {
+                    $adminids[(int)$admin->id] = true;
+                }
+            }
+
+            foreach ($users as $user) {
+                if (isset($adminids[(int)$user->id]) || has_capability('local/delegateaccount:use', $context, $user->id)) {
+                    $authorisedusers[(int)$user->id] = fullname($user);
+                }
+                if ($limit > 0 && count($authorisedusers) >= $limit) {
+                    break;
+                }
+            }
+
+            return $authorisedusers;
+        }
+
+        $limitnum = $limit > 0 ? $limit : '';
         $users = \get_users_by_capability(
             $context,
             'local/delegateaccount:use',
-            'u.id, u.firstname, u.lastname, u.middlename, u.alternatename, u.firstnamephonetic, '
-                . 'u.lastnamephonetic, u.deleted, u.suspended',
-            'u.lastname ASC, u.firstname ASC'
+            $fields,
+            'u.lastname ASC, u.firstname ASC',
+            '',
+            $limitnum
         );
 
-        $authorisedusers = [];
         foreach ($users as $user) {
             if ((int)$user->deleted === 0 && (int)$user->suspended === 0) {
                 $authorisedusers[(int)$user->id] = fullname($user);
             }
         }
 
-        // Site administrators have every capability, including use, even when
-        // it is not represented by a role assignment in the capability query.
         foreach (get_admins() as $administrator) {
             if ((int)$administrator->suspended === 0) {
                 $authorisedusers[(int)$administrator->id] = fullname($administrator);
@@ -82,32 +122,125 @@ class manager {
 
         asort($authorisedusers, SORT_NATURAL | SORT_FLAG_CASE);
 
+        if ($limit > 0) {
+            $authorisedusers = array_slice($authorisedusers, 0, $limit, true);
+        }
+
         return $authorisedusers;
+    }
+    /**
+     * Returns setup guidance when no role grants the use capability yet.
+     *
+     * Without such a role only site administrators can be chosen as authorised users.
+     * The guidance is only returned to users who can define roles.
+     *
+     * @return string|null Guidance text with links to the role pages, or null when none is needed.
+     */
+    public static function get_role_setup_hint(): ?string {
+        $context = \context_system::instance();
+        if (!has_capability('moodle/role:manage', $context)) {
+            return null;
+        }
+        if (\get_users_by_capability($context, 'local/delegateaccount:use', 'u.id', '', 0, 1)) {
+            return null;
+        }
+
+        return get_string('setup_role_hint', 'local_delegateaccount', (object)[
+            'defineroles' => (new \moodle_url('/admin/roles/manage.php'))->out(),
+            'assignroles' => (new \moodle_url('/admin/roles/assign.php', ['contextid' => $context->id]))->out(),
+        ]);
     }
 
     /**
-     * Returns user IDs that retain delegation records but can no longer use them.
+     * Returns active accounts that can be offered as delegation targets.
      *
-     * @return int[] User IDs.
+     * Excludes the guest account, protected site administrators and, for one authorised
+     * user, that user and the accounts already delegated to them.
+     *
+     * @param int $realuserid Authorised user the targets are for, or zero.
+     * @param string $search Optional name or email fragment.
+     * @param int $limit Maximum number of options, or zero for no limit.
+     * @return array<int, string> Full names indexed by user ID.
      */
-    public static function get_historical_user_ids(): array {
+    public static function get_delegated_account_options(int $realuserid = 0, string $search = '', int $limit = 0): array {
         global $DB;
 
-        $users = $DB->get_records_sql(
-            'SELECT DISTINCT u.id
-               FROM {user} u
-               JOIN {local_delegateaccount} da ON da.realuserid = u.id
-              WHERE u.deleted = 0'
+        $wheresql = 'deleted = 0 AND suspended = 0';
+        $params = [];
+        if ($search !== '') {
+            $searchparam = '%' . $DB->sql_like_escape($search) . '%';
+            $wheresql .= ' AND (' . implode(' OR ', [
+                $DB->sql_like($DB->sql_fullname('firstname', 'lastname'), ':search1', false, false),
+                $DB->sql_like('email', ':search2', false, false),
+            ]) . ')';
+            $params['search1'] = $searchparam;
+            $params['search2'] = $searchparam;
+        }
+
+        // Read a larger page than requested, so that the options left after exclusions still fill the limit.
+        $users = $DB->get_records_select(
+            'user',
+            $wheresql,
+            $params,
+            'lastname ASC, firstname ASC',
+            'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic',
+            0,
+            $limit > 0 ? max($limit, 300) : 0
         );
 
-        $historicaluserids = [];
+        $excludeduserids = [];
+        if ($realuserid > 0) {
+            $excludeduserids = array_fill_keys($DB->get_fieldset_select(
+                'local_delegateaccount',
+                'delegateduserid',
+                'realuserid = :realuserid AND activekey = 0',
+                ['realuserid' => $realuserid]
+            ), true);
+            $excludeduserids[$realuserid] = true;
+        }
+
+        $options = [];
+        $protectprivilegedtargets = self::protect_privileged_targets();
         foreach ($users as $user) {
-            if (!self::can_use_delegated_accounts((int)$user->id)) {
-                $historicaluserids[] = (int)$user->id;
+            $userid = (int)$user->id;
+            if (isset($excludeduserids[$userid]) || isguestuser($user)) {
+                continue;
+            }
+            if ($protectprivilegedtargets && is_siteadmin($userid)) {
+                continue;
+            }
+            $options[$userid] = fullname($user);
+            if ($limit > 0 && count($options) >= $limit) {
+                break;
             }
         }
 
-        return $historicaluserids;
+        return $options;
+    }
+
+    /**
+     * Returns an SQL condition matching users who hold the use capability or are site administrators.
+     *
+     * The capability part is Moodle's own get_with_capability_sql() subquery, so the condition
+     * stays a single bounded query however many users hold the capability.
+     *
+     * @param string $useridcolumn Column holding the user identifier, for example 'u.id'.
+     * @return array The SQL condition and its named parameters.
+     */
+    public static function get_authorised_users_condition(string $useridcolumn): array {
+        global $CFG, $DB;
+
+        [$capabilitysql, $params] = get_with_capability_sql(\context_system::instance(), 'local/delegateaccount:use');
+        $condition = "$useridcolumn IN ($capabilitysql)";
+
+        $adminids = array_filter(array_map('intval', explode(',', (string)$CFG->siteadmins)));
+        if ($adminids) {
+            [$adminsql, $adminparams] = $DB->get_in_or_equal($adminids, SQL_PARAMS_NAMED, 'siteadmin');
+            $condition = "($condition OR $useridcolumn $adminsql)";
+            $params += $adminparams;
+        }
+
+        return [$condition, $params];
     }
 
     /**
@@ -129,6 +262,74 @@ class manager {
             \context_system::instance(),
             $userid
         );
+    }
+
+    /**
+     * Returns why an authorised user cannot currently open a delegated account.
+     *
+     * Every condition is evaluated when access is requested, so a target that
+     * became a site administrator, or was suspended, after the delegation was
+     * created cannot be opened.
+     *
+     * @param int $realuserid Authorised user identifier.
+     * @param int $targetuserid Target account identifier.
+     * @return string|null Language string identifier describing the problem, or null when access is allowed.
+     */
+    public static function get_delegated_access_error(int $realuserid, int $targetuserid): ?string {
+        global $DB;
+
+        if (!self::can_use_delegated_accounts($realuserid) || !self::delegation_exists($realuserid, $targetuserid)) {
+            return 'error_unauthorised';
+        }
+
+        $target = $DB->get_record('user', ['id' => $targetuserid], 'id, deleted, suspended');
+        if (!$target || (int)$target->deleted !== 0 || (int)$target->suspended !== 0 || isguestuser($target)) {
+            return 'error_targetunavailable';
+        }
+
+        if (self::protect_privileged_targets() && is_siteadmin($targetuserid)) {
+            return 'error_privilegedtarget';
+        }
+
+        return null;
+    }
+
+    /**
+     * Starts a delegated session for the current user and marks it for later verification.
+     *
+     * @param int $targetuserid Target account identifier, already checked with get_delegated_access_error().
+     */
+    public static function start_delegated_session(int $targetuserid): void {
+        global $SESSION;
+
+        \core\session\manager::loginas($targetuserid, \context_system::instance());
+        // The login-as session has a fresh $SESSION, so the marker only exists inside the delegated session.
+        $SESSION->local_delegateaccount_delegated = true;
+    }
+
+    /**
+     * Logs out a delegated session whose delegation is no longer usable.
+     *
+     * @return bool Whether the current session was ended.
+     */
+    public static function end_invalid_delegated_session(): bool {
+        global $SESSION, $USER;
+
+        if (empty($SESSION->local_delegateaccount_delegated)) {
+            return false;
+        }
+        if (!\core\session\manager::is_loggedinas()) {
+            unset($SESSION->local_delegateaccount_delegated);
+            return false;
+        }
+
+        $realuserid = (int)\core\session\manager::get_realuser()->id;
+        if (self::get_delegated_access_error($realuserid, (int)$USER->id) === null) {
+            return false;
+        }
+
+        require_logout();
+        return true;
     }
 
     /**
@@ -172,26 +373,13 @@ class manager {
         $delegateduserids = array_values(array_unique(array_map('intval', $delegateduserids)));
         self::validate_users($realuserids, $delegateduserids);
 
-        [$realin, $realparams] = $DB->get_in_or_equal($realuserids, SQL_PARAMS_NAMED, 'real');
-        [$delin, $delparams] = $DB->get_in_or_equal($delegateduserids, SQL_PARAMS_NAMED, 'del');
-        $params = array_merge($realparams, $delparams);
-
-        $sql = "SELECT id, " . $DB->sql_concat('realuserid', "'-'", 'delegateduserid') . " AS delegationkey
-                  FROM {local_delegateaccount}
-                 WHERE realuserid $realin
-                   AND delegateduserid $delin
-                   AND activekey = 0";
-
-        $existing = $DB->get_records_sql_menu($sql, $params);
-        $existingmap = array_flip($existing);
+        $existingmap = self::get_current_delegation_ids($realuserids, $delegateduserids);
 
         $candidates = [];
         $newcounts = [];
         foreach ($realuserids as $realid) {
             foreach ($delegateduserids as $delid) {
-                $key = "{$realid}-{$delid}";
-
-                if ($realid === $delid || isset($existingmap[$key])) {
+                if ($realid === $delid || isset($existingmap[$realid . ':' . $delid])) {
                     continue;
                 }
 
@@ -261,15 +449,6 @@ class manager {
         ]);
 
         return $delegation !== false && self::get_delegation_status($delegation) === self::STATUS_ACTIVE;
-    }
-
-    /**
-     * Revokes delegated account records by their primary keys.
-     *
-     * @param array $delegationids Array of primary key IDs from the local_delegateaccount table.
-     */
-    public static function delete_delegations(array $delegationids): void {
-        self::revoke_delegations($delegationids);
     }
 
     /**
@@ -348,6 +527,7 @@ class manager {
         if ($record === false) {
             return false;
         }
+        self::validate_update([$record], $timeend);
 
         $record->timestart = $timestart;
         $record->timeend = $timeend;
@@ -397,6 +577,7 @@ class manager {
         if (count($records) !== count($delegationids)) {
             throw new \moodle_exception('error_invaliddelegations', 'local_delegateaccount');
         }
+        self::validate_update($records, $timeend);
 
         $now = time();
         $transaction = $DB->start_delegated_transaction();
@@ -469,89 +650,6 @@ class manager {
         return (int)$delegation->timerevoked > 0
             ? (int)$delegation->timerevoked
             : (int)$delegation->timeend;
-    }
-
-    /**
-     * Builds the SQL for filtering delegations based on user details.
-     *
-     * @param string $search The search query string.
-     * @return array A list containing the SQL WHERE clause and its parameters.
-     */
-    private static function get_delegations_filters_sql(string $search): array {
-        global $DB;
-
-        $sqlwhere = "1=1";
-        $params = [];
-
-        if (!empty($search)) {
-            $searchparam = '%' . $DB->sql_like_escape(\core_text::strtolower($search)) . '%';
-
-            $sqlwhere .= ' AND (' . implode(' OR ', [
-                $DB->sql_like('u1.firstname', '?', false),
-                $DB->sql_like('u1.lastname', '?', false),
-                $DB->sql_like('u1.email', '?', false),
-                $DB->sql_like('u2.firstname', '?', false),
-                $DB->sql_like('u2.lastname', '?', false),
-                $DB->sql_like('u2.email', '?', false),
-            ]) . ')';
-
-            $params = array_fill(0, 6, $searchparam);
-        }
-
-        return [$sqlwhere, $params];
-    }
-
-    /**
-     * Counts the total number of delegations (useful for pagination).
-     *
-     * @param string $search The search query string.
-     * @return int The total count of delegation records.
-     */
-    public static function count_delegations(string $search = ''): int {
-        global $DB;
-        [$sqlwhere, $params] = self::get_delegations_filters_sql($search);
-
-        $sql = "SELECT COUNT(da.id)
-                  FROM {local_delegateaccount} da
-                  JOIN {user} u1 ON u1.id = da.realuserid
-                  JOIN {user} u2 ON u2.id = da.delegateduserid
-                 WHERE $sqlwhere";
-
-        return $DB->count_records_sql($sql, $params);
-    }
-
-    /**
-     * Retrieves delegations, optionally paginated and filtered.
-     *
-     * @param int $page The current page number (0-indexed). Defaults to 0.
-     * @param int $perpage The number of records per page. 0 means all records.
-     * @param string $search The search query string.
-     * @return array Array of paginated delegation records including user details.
-     */
-    public static function get_delegations(int $page = 0, int $perpage = 0, string $search = ''): array {
-        global $DB;
-        [$sqlwhere, $params] = self::get_delegations_filters_sql($search);
-
-        $userfields1 = \core_user\fields::for_name()->get_sql('u1', false, 'real', '', false)->selects;
-        $userfields2 = \core_user\fields::for_name()->get_sql('u2', false, 'del', '', false)->selects;
-
-        $sql = "SELECT da.id,
-                       u1.email AS realemail,
-                       u2.email AS delemail,
-                       da.timecreated,
-                       da.timestart,
-                       da.timeend,
-                       da.timerevoked,
-                       $userfields1,
-                       $userfields2
-                  FROM {local_delegateaccount} da
-                  JOIN {user} u1 ON u1.id = da.realuserid
-                  JOIN {user} u2 ON u2.id = da.delegateduserid
-                 WHERE $sqlwhere
-              ORDER BY da.timecreated DESC";
-
-        $limitfrom = $page * $perpage;
-        return $DB->get_records_sql($sql, $params, $limitfrom, $perpage);
     }
 
     /**
@@ -648,12 +746,9 @@ class manager {
                  JOIN {user} u1 ON u1.id = da.realuserid
                  JOIN {user} u2 ON u2.id = da.delegateduserid';
         $wheresql = implode(' AND ', $where);
-        $total = $DB->count_records_sql("SELECT COUNT(da.id) FROM $from WHERE $wheresql", $params);
+        $total = $DB->count_records_sql(sprintf('SELECT COUNT(da.id) FROM %s WHERE %s', $from, $wheresql), $params);
         $records = $DB->get_records_sql(
-            "SELECT da.*
-               FROM $from
-              WHERE $wheresql
-           ORDER BY da.id DESC",
+            sprintf('SELECT da.* FROM %s WHERE %s ORDER BY da.id DESC', $from, $wheresql),
             $params,
             $page * $perpage,
             $perpage
@@ -698,6 +793,100 @@ class manager {
     }
 
     /**
+     * Returns the current non-revoked delegation identifiers for every pair of the given users.
+     *
+     * @param int[] $realuserids Authorised user identifiers.
+     * @param int[] $delegateduserids Target account identifiers.
+     * @return array<string, int> Delegation identifiers indexed by "realuserid:delegateduserid".
+     */
+    public static function get_current_delegation_ids(array $realuserids, array $delegateduserids): array {
+        global $DB;
+
+        if (empty($realuserids) || empty($delegateduserids)) {
+            return [];
+        }
+
+        [$realsql, $params] = $DB->get_in_or_equal($realuserids, SQL_PARAMS_NAMED, 'real');
+        [$delegatedsql, $delegatedparams] = $DB->get_in_or_equal($delegateduserids, SQL_PARAMS_NAMED, 'delegated');
+        $records = $DB->get_records_select(
+            'local_delegateaccount',
+            "realuserid $realsql AND delegateduserid $delegatedsql AND activekey = 0",
+            $params + $delegatedparams,
+            '',
+            'id, realuserid, delegateduserid'
+        );
+
+        $ids = [];
+        foreach ($records as $record) {
+            $ids[$record->realuserid . ':' . $record->delegateduserid] = (int)$record->id;
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Returns the log store reader used for delegated activity, or null when no SQL reader is enabled.
+     *
+     * @return \core\log\sql_reader|null Log reader.
+     */
+    public static function get_log_reader(): ?\core\log\sql_reader {
+        $readers = get_log_manager()->get_readers(\core\log\sql_reader::class);
+        $reader = reset($readers);
+
+        return $reader ?: null;
+    }
+
+    /**
+     * Builds the log selector for everything done through one delegation period.
+     *
+     * Anonymous events are left out unless the current user may view them, as in Moodle's log report.
+     *
+     * @param \stdClass $delegation Delegation database record.
+     * @return array The selector and its named parameters.
+     */
+    public static function get_delegation_log_selector(\stdClass $delegation): array {
+        $where = [
+            'userid = :delegateduserid',
+            'realuserid = :realuserid',
+            'timecreated >= :delegationstart',
+        ];
+        $params = [
+            'delegateduserid' => (int)$delegation->delegateduserid,
+            'realuserid' => (int)$delegation->realuserid,
+            'delegationstart' => (int)$delegation->timestart,
+        ];
+        $accessend = self::get_delegation_access_end($delegation);
+        if ($accessend > 0) {
+            $where[] = 'timecreated < :delegationend';
+            $params['delegationend'] = $accessend;
+        }
+        if (!has_capability('moodle/site:viewanonymousevents', \context_system::instance())) {
+            $where[] = 'anonymous = 0';
+        }
+
+        return [implode(' AND ', $where), $params];
+    }
+
+    /**
+     * Returns when an authorised user last acted through a delegation period.
+     *
+     * @param \stdClass $delegation Delegation database record.
+     * @return int Timestamp of the latest logged event, or zero when there is none.
+     */
+    public static function get_last_delegated_access(\stdClass $delegation): int {
+        $reader = self::get_log_reader();
+        if (!$reader) {
+            return 0;
+        }
+
+        [$where, $params] = self::get_delegation_log_selector($delegation);
+        $events = $reader->get_events_select($where, $params, 'timecreated DESC, id DESC', 0, 1);
+        $event = reset($events);
+
+        return $event ? (int)$event->timecreated : 0;
+    }
+
+    /**
      * Returns one stable page of activity attributed to a delegation period.
      *
      * @param int $delegationid Delegation identifier.
@@ -721,50 +910,78 @@ class manager {
         global $DB;
 
         $delegation = $DB->get_record('local_delegateaccount', ['id' => $delegationid], '*', MUST_EXIST);
-        $where = [
-            'log.userid = :delegateduserid',
-            'log.realuserid = :realuserid',
-            'log.timecreated >= :delegationstart',
-        ];
-        $params = [
-            'delegateduserid' => (int)$delegation->delegateduserid,
-            'realuserid' => (int)$delegation->realuserid,
-            'delegationstart' => max((int)$delegation->timestart, $timefrom),
-        ];
-        $accessend = self::get_delegation_access_end($delegation);
-        $requestedend = $timeuntil > 0 ? $timeuntil : $accessend;
-        if ($accessend > 0 && ($requestedend === 0 || $requestedend > $accessend)) {
-            $requestedend = $accessend;
+        $reader = self::get_log_reader();
+        if (!$reader) {
+            return ['total' => 0, 'events' => []];
         }
-        if ($requestedend > 0) {
-            $where[] = 'log.timecreated < :activityend';
-            $params['activityend'] = $requestedend;
+
+        [$where, $params] = self::get_delegation_log_selector($delegation);
+        if ($timefrom > 0) {
+            $where .= ' AND timecreated >= :timefrom';
+            $params['timefrom'] = $timefrom;
+        }
+        if ($timeuntil > 0) {
+            $where .= ' AND timecreated < :timeuntil';
+            $params['timeuntil'] = $timeuntil;
         }
         if ($component !== '') {
-            $where[] = $DB->sql_like('log.component', ':component', false);
+            $where .= ' AND ' . $DB->sql_like('component', ':component', false);
             $params['component'] = '%' . $DB->sql_like_escape($component) . '%';
         }
         if ($action !== '') {
-            $where[] = $DB->sql_like('log.action', ':action', false);
+            $where .= ' AND ' . $DB->sql_like('action', ':action', false);
             $params['action'] = '%' . $DB->sql_like_escape($action) . '%';
         }
-        $wheresql = implode(' AND ', $where);
-        $total = $DB->count_records_sql(
-            'SELECT COUNT(log.id) FROM {logstore_standard_log} log WHERE ' . $wheresql,
-            $params
-        );
-        $events = $DB->get_records_sql(
-            'SELECT log.id, log.timecreated, log.eventname, log.component, log.action,
-                    log.target, log.contextid, log.contextlevel
-               FROM {logstore_standard_log} log
-              WHERE ' . $wheresql . '
-           ORDER BY log.timecreated DESC, log.id DESC',
-            $params,
-            $page * $perpage,
-            $perpage
-        );
 
-        return ['total' => $total, 'events' => array_values($events)];
+        $total = $reader->get_events_select_count($where, $params);
+        $events = $reader->get_events_select($where, $params, 'timecreated DESC, id DESC', $page * $perpage, $perpage);
+
+        $records = [];
+        foreach ($events as $logid => $event) {
+            $record = (object)($event->get_data() + $event->get_logextra());
+            $record->id = (int)$logid;
+            $records[] = $record;
+        }
+
+        return ['total' => $total, 'events' => $records];
+    }
+
+    /**
+     * Returns why a delegation period is not allowed, as a language string identifier and its parameter.
+     *
+     * @param int $timestart Unix timestamp when access starts.
+     * @param int $timeend Unix timestamp when access ends, or zero for no end date.
+     * @return array|null The string identifier and its parameter, or null when the period is allowed.
+     */
+    private static function get_period_problem(int $timestart, int $timeend): ?array {
+        if ($timeend > 0 && $timeend <= $timestart) {
+            return ['error_invalidperiod', null];
+        }
+        if ($timeend === 0 && !self::get_config_bool('allowopenended', true)) {
+            return ['error_openendednotallowed', null];
+        }
+        // The maximum duration only applies when every delegation must have an end date.
+        $maximumdurationdays = self::get_config_bool('allowopenended', true)
+            ? 0
+            : self::get_config_int('maximumdurationdays', 0);
+        if ($maximumdurationdays > 0 && $timeend > $timestart + ($maximumdurationdays * DAYSECS)) {
+            return ['error_maximumduration', $maximumdurationdays];
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns why a delegation period is not allowed by the site settings.
+     *
+     * @param int $timestart Unix timestamp when access starts.
+     * @param int $timeend Unix timestamp when access ends, or zero for no end date.
+     * @return string|null Localised error, or null when the period is allowed.
+     */
+    public static function get_period_error(int $timestart, int $timeend): ?string {
+        $problem = self::get_period_problem($timestart, $timeend);
+
+        return $problem === null ? null : get_string($problem[0], 'local_delegateaccount', $problem[1]);
     }
 
     /**
@@ -774,22 +991,11 @@ class manager {
      * @param int $timeend Unix timestamp when access ends, or zero for no end date.
      */
     private static function validate_period(int $timestart, int $timeend): void {
-        if ($timestart <= 0 || ($timeend > 0 && $timeend <= $timestart)) {
-            throw new \coding_exception('A delegation end date must be later than its start date.');
+        if ($timestart <= 0) {
+            throw new \coding_exception('A delegation must have a start date.');
         }
-
-        if ($timeend === 0 && !self::get_config_bool('allowopenended', true)) {
-            throw new \moodle_exception('error_openendednotallowed', 'local_delegateaccount');
-        }
-
-        $maximumdurationdays = self::get_config_int('maximumdurationdays', 0);
-        if ($maximumdurationdays > 0 && $timeend > $timestart + ($maximumdurationdays * DAYSECS)) {
-            throw new \moodle_exception(
-                'error_maximumduration',
-                'local_delegateaccount',
-                '',
-                $maximumdurationdays
-            );
+        if ($problem = self::get_period_problem($timestart, $timeend)) {
+            throw new \moodle_exception($problem[0], 'local_delegateaccount', '', $problem[1]);
         }
     }
 
@@ -817,21 +1023,22 @@ class manager {
     /**
      * Resolves a requested notification decision against the site policy.
      *
-     * @param string $notificationmode Requested notification mode.
-     * @return string Effective notification mode.
+     * The stored decision is always 'always' or 'never'. A request for the site
+     * decision ('site') under the policy that lets the creator choose sends the
+     * notification, matching the default of the creation form.
+     *
+     * @param string $notificationmode Requested notification mode: site, always or never.
+     * @return string Effective notification mode: always or never.
      */
     private static function resolve_notification_mode(string $notificationmode): string {
         self::validate_notification_mode($notificationmode);
 
         $policy = get_config('local_delegateaccount', 'notificationpolicy');
-        if ($policy === self::NOTIFICATION_ALWAYS) {
-            return self::NOTIFICATION_ALWAYS;
-        }
-        if ($policy === self::NOTIFICATION_NEVER) {
-            return self::NOTIFICATION_NEVER;
+        if ($policy === self::NOTIFICATION_ALWAYS || $policy === self::NOTIFICATION_NEVER) {
+            return $policy;
         }
 
-        return $notificationmode;
+        return $notificationmode === self::NOTIFICATION_SITE ? self::NOTIFICATION_ALWAYS : $notificationmode;
     }
 
     /**
@@ -854,20 +1061,27 @@ class manager {
         }
 
         foreach ($users as $user) {
-            if ((int) $user->deleted !== 0 || (int) $user->suspended !== 0) {
+            if ((int) $user->deleted !== 0 || (int) $user->suspended !== 0 || isguestuser($user)) {
                 throw new \moodle_exception('error_ineligibleuser', 'local_delegateaccount');
             }
         }
 
+        // Bulk capability preloading to avoid N+1 queries inside loops.
+        $syscontext = \context_system::instance();
+        $adminmap = [];
+        foreach (get_admins() as $admin) {
+            $adminmap[(int)$admin->id] = true;
+        }
+
         foreach ($realuserids as $realuserid) {
-            if (!self::can_use_delegated_accounts($realuserid)) {
+            if (!isset($adminmap[$realuserid]) && !has_capability('local/delegateaccount:use', $syscontext, $realuserid)) {
                 throw new \moodle_exception('error_unauthorised_realuser', 'local_delegateaccount');
             }
         }
 
         if (self::protect_privileged_targets()) {
             foreach ($delegateduserids as $delegateduserid) {
-                if (is_siteadmin($delegateduserid)) {
+                if (isset($adminmap[$delegateduserid])) {
                     throw new \moodle_exception('error_privilegedtarget', 'local_delegateaccount');
                 }
             }
@@ -875,16 +1089,47 @@ class manager {
     }
 
     /**
-     * Enforces the configured limit of current or scheduled accounts per user.
+     * Applies the creation rules to delegations whose lifecycle is being changed.
      *
-     * @param array $newcounts Number of candidate delegations indexed by authorised user ID.
+     * The users must still be eligible, and a delegation that becomes current or
+     * scheduled again counts towards the authorised user's limit.
+     *
+     * @param \stdClass[] $records Delegation records before the change.
+     * @param int $timeend Requested end timestamp, or zero for no end date.
      */
-    private static function validate_delegation_limit(array $newcounts): void {
+    private static function validate_update(array $records, int $timeend): void {
+        $now = time();
+        $realuserids = [];
+        $delegateduserids = [];
+        $newcounts = [];
+        foreach ($records as $record) {
+            $realuserid = (int)$record->realuserid;
+            $realuserids[$realuserid] = $realuserid;
+            $delegateduserids[(int)$record->delegateduserid] = (int)$record->delegateduserid;
+
+            $wascounted = (int)$record->timeend === 0 || (int)$record->timeend > $now;
+            $willcount = $timeend === 0 || $timeend > $now;
+            if ($willcount && !$wascounted) {
+                $newcounts[$realuserid] = ($newcounts[$realuserid] ?? 0) + 1;
+            }
+        }
+
+        self::validate_users(array_values($realuserids), array_values($delegateduserids));
+        self::validate_delegation_limit($newcounts);
+    }
+
+    /**
+     * Checks if the proposed delegation operations exceed the user limits.
+     *
+     * @param array $newcounts Number of requested assignments keyed by real user ID.
+     * @return string|null Localized error message if any limit is exceeded, null otherwise.
+     */
+    public static function get_delegation_limit_error(array $newcounts): ?string {
         global $DB;
 
         $maximum = self::get_config_int('maxdelegationsperuser', 10);
         if ($maximum === 0 || empty($newcounts)) {
-            return;
+            return null;
         }
 
         [$inorsql, $params] = $DB->get_in_or_equal(array_keys($newcounts), SQL_PARAMS_NAMED, 'realuser');
@@ -902,19 +1147,48 @@ class manager {
         foreach ($newcounts as $realuserid => $newcount) {
             $existingcount = (int) ($existingcounts[$realuserid] ?? 0);
             if ($existingcount + $newcount > $maximum) {
-                throw new \moodle_exception('error_maxdelegations', 'local_delegateaccount', '', $maximum);
+                return get_string('error_maxdelegations', 'local_delegateaccount', $maximum);
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * Enforces the configured limit of current or scheduled accounts per user.
+     *
+     * @param array $newcounts Number of candidate delegations indexed by authorised user ID.
+     */
+    private static function validate_delegation_limit(array $newcounts): void {
+        if ($error = self::get_delegation_limit_error($newcounts)) {
+            $maximum = self::get_config_int('maxdelegationsperuser', 10);
+            throw new \moodle_exception('error_maxdelegations', 'local_delegateaccount', '', $maximum);
         }
     }
 
     /**
-     * Enforces the configured maximum number of records in one action.
+     * Checks if a bulk operation exceeds the configured limit.
      *
      * @param int $count Number of delegation records affected by the action.
+     * @return string|null Localized error message if exceeded, null otherwise.
      */
-    private static function validate_bulk_operation_count(int $count): void {
+    public static function get_bulk_operation_error(int $count): ?string {
         $maximum = self::get_config_int('maxbulkoperations', 100);
         if ($maximum > 0 && $count > $maximum) {
+            return get_string('error_maxbulkoperations', 'local_delegateaccount', $maximum);
+        }
+        return null;
+    }
+
+    /**
+     * Throw an exception when a bulk operation exceeds the configured maximum.
+     *
+     * @param int $count Number of delegation records affected by the action.
+     * @throws \moodle_exception If the configured maximum is exceeded.
+     */
+    private static function validate_bulk_operation_count(int $count): void {
+        if ($error = self::get_bulk_operation_error($count)) {
+            $maximum = self::get_config_int('maxbulkoperations', 100);
             throw new \moodle_exception('error_maxbulkoperations', 'local_delegateaccount', '', $maximum);
         }
     }

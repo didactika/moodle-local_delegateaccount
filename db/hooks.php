@@ -28,6 +28,10 @@ defined('MOODLE_INTERNAL') || die();
 
 $callbacks = [
     [
+        'hook' => \core\hook\after_config::class,
+        'callback' => [\local_delegateaccount\hook\after_config::class, 'execute'],
+    ],
+    [
         'hook' => \core_user\hook\extend_user_menu::class,
         'callback' => [\local_delegateaccount\hook\extend_user_menu::class, 'execute'],
     ],

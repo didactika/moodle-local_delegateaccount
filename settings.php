@@ -58,6 +58,7 @@ if ($hassiteconfig) {
             0,
             PARAM_INT
         ));
+        $settings->hide_if('local_delegateaccount/maximumdurationdays', 'local_delegateaccount/allowopenended', 'checked');
         $settings->add(new admin_setting_configcheckbox(
             'local_delegateaccount/protectprivilegedtargets',
             get_string('protectprivilegedtargets', 'local_delegateaccount'),
@@ -99,10 +100,6 @@ if ($hassiteconfig) {
             ]
         ));
 
-        if (!defined('CLI_SCRIPT') || !CLI_SCRIPT) {
-            global $PAGE;
-            $PAGE->requires->js_call_amd('local_delegateaccount/notification_settings', 'init');
-        }
         $settings->add(new admin_setting_configselect(
             'local_delegateaccount/notificationrecipients',
             get_string('notificationrecipients', 'local_delegateaccount'),
@@ -121,8 +118,23 @@ if ($hassiteconfig) {
             1
         ));
 
-        $stringmanager = get_string_manager();
-        $languages = $stringmanager->get_list_of_translations();
+        $settings->add(new admin_setting_description(
+            'local_delegateaccount/testnotification',
+            get_string('testnotification', 'local_delegateaccount'),
+            get_string('testnotification_desc', 'local_delegateaccount', (new moodle_url(
+                '/local/delegateaccount/pages/testnotification.php'
+            ))->out())
+        ));
+
+        $hideifnever = [
+            'local_delegateaccount/notificationrecipients',
+            'local_delegateaccount/notifyonrevocation',
+            'local_delegateaccount/testnotification',
+        ];
+        $hideifnorevocation = [];
+
+        // One subject and message per action for each installed language. Empty fields use the built-in text.
+        $languages = get_string_manager()->get_list_of_translations();
         $languages['en'] = $languages['en'] ?? 'English';
         ksort($languages);
         foreach ($languages as $languagecode => $languagename) {
@@ -130,27 +142,41 @@ if ($hassiteconfig) {
                 continue;
             }
 
-            $settings->add(new admin_setting_configtext(
-                'local_delegateaccount/notificationsubject_' . $languagecode,
-                get_string('notificationsubject', 'local_delegateaccount', $languagename),
-                get_string('notificationsubject_desc', 'local_delegateaccount'),
-                $stringmanager->get_string(
-                    'delegationnotificationsubject',
-                    'local_delegateaccount',
-                    null,
-                    $languagecode
-                ),
-                PARAM_TEXT,
-                80
-            ));
+            foreach (['granted', 'revoked'] as $action) {
+                $subject = 'local_delegateaccount/notificationsubject_' . $action . '_' . $languagecode;
+                $template = 'local_delegateaccount/notificationtemplate_' . $action . '_' . $languagecode;
+                $settings->add(new admin_setting_configtext(
+                    $subject,
+                    get_string('notificationsubject_' . $action, 'local_delegateaccount', $languagename),
+                    get_string('notificationsubject_desc', 'local_delegateaccount'),
+                    '',
+                    PARAM_TEXT,
+                    80
+                ));
+                $settings->add(new \local_delegateaccount\admin_setting_notificationtemplate(
+                    $template,
+                    get_string('notificationtemplate_' . $action, 'local_delegateaccount', $languagename),
+                    get_string('notificationtemplate_desc', 'local_delegateaccount'),
+                    ''
+                ));
 
-            $settings->add(new \local_delegateaccount\admin_setting_notificationtemplate(
-                'local_delegateaccount/notificationtemplate_' . $languagecode,
-                get_string('notificationtemplate', 'local_delegateaccount', $languagename),
-                get_string('notificationtemplate_desc', 'local_delegateaccount'),
-                '',
-                PARAM_RAW
-            ));
+                array_push($hideifnever, $subject, $template);
+                if ($action === 'revoked') {
+                    array_push($hideifnorevocation, $subject, $template);
+                }
+            }
+        }
+
+        foreach ($hideifnever as $name) {
+            $settings->hide_if(
+                $name,
+                'local_delegateaccount/notificationpolicy',
+                'eq',
+                \local_delegateaccount\manager::NOTIFICATION_NEVER
+            );
+        }
+        foreach ($hideifnorevocation as $name) {
+            $settings->hide_if($name, 'local_delegateaccount/notifyonrevocation', 'notchecked');
         }
     }
 
@@ -171,7 +197,7 @@ if (
         'local_delegateaccount_manage',
         get_string('manage_accounts', 'local_delegateaccount'),
         new moodle_url('/local/delegateaccount/pages/manage.php'),
-        'local/delegateaccount:view'
+        ['local/delegateaccount:view', 'local/delegateaccount:manage']
     );
     $ADMIN->add('accounts', $managepage);
 }
