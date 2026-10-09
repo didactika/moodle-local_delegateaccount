@@ -27,34 +27,77 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          declare -A php_versions=(
-            [405]='8.1 8.2 8.3'
-            [502]='8.3 8.4'
-          )
 
-          supported=$(grep -oP '\$plugin->supported\s*=\s*\[\K[^\]]+' version.php)
+          # PHP versions each Moodle version supports. This is a fact about Moodle, so add a row
+          # here before adding a version to $plugin->supported in version.php.
+          # https://moodledev.io/general/development/policies/php
+          MOODLE_PHP_TABLE='{
+            "405": ["8.1", "8.2", "8.3"],
+            "500": ["8.2", "8.3", "8.4"],
+            "501": ["8.2", "8.3", "8.4"],
+            "502": ["8.3", "8.4"],
+            "503": ["8.3", "8.4"]
+          }'
+
+          # Database images for each Moodle version. Moodle 5.3 requires PostgreSQL 17 and MariaDB 11.4.
+          MOODLE_DB_TABLE='{
+            "405": {"postgres": "16", "mariadb": "10"},
+            "500": {"postgres": "16", "mariadb": "10"},
+            "501": {"postgres": "16", "mariadb": "10"},
+            "502": {"postgres": "16", "mariadb": "10"},
+            "503": {"postgres": "17", "mariadb": "11.4"}
+          }'
+
+          # Both ends of $plugin->supported are always tested. These are the versions in between
+          # that are tested as well; each must fall strictly inside the supported range.
+          MOODLE_EXTRA_VERSIONS='["502"]'
+
+          supported=$(grep -oP '\$plugin->supported\s*=\s*\[\K[^\]]+' version.php || true)
+          if [ -z "$supported" ]; then
+            echo "::error::Could not find \$plugin->supported = [...] in version.php."
+            exit 1
+          fi
+          ends=$(echo "$supported" | tr -d '[:space:]')
+          floor=${ends%%,*}
+          ceiling=${ends##*,}
+
+          extras=$(echo "$MOODLE_EXTRA_VERSIONS" | jq -r '.[]' | tr -d '\r')
+          for extra in $extras; do
+            if [ "$extra" -le "$floor" ] || [ "$extra" -ge "$ceiling" ]; then
+              echo "::error::Moodle $extra is in MOODLE_EXTRA_VERSIONS but not between the ends of \$plugin->supported ($floor to $ceiling)."
+              exit 1
+            fi
+          done
+
           entries='[]'
-
-          IFS=',' read -ra versions <<< "$supported"
-          for raw in "${versions[@]}"; do
-            moodle_version=$(echo "$raw" | tr -d '[:space:]')
-            if [[ -z "${php_versions[$moodle_version]+_}" ]]; then
-              echo "::error::No PHP compatibility entry exists for Moodle $moodle_version."
+          for version in $(printf '%s\n' "$floor" "$ceiling" $extras | sort -n -u); do
+            phps=$(echo "$MOODLE_PHP_TABLE" | jq -r --arg v "$version" '.[$v] // empty | .[]' | tr -d '\r')
+            if [ -z "$phps" ]; then
+              echo "::error::No PHP versions are listed in MOODLE_PHP_TABLE for Moodle $version."
+              exit 1
+            fi
+            dbs=$(echo "$MOODLE_DB_TABLE" | jq -c --arg v "$version" '.[$v] // empty')
+            if [ -z "$dbs" ]; then
+              echo "::error::No database versions are listed in MOODLE_DB_TABLE for Moodle $version."
               exit 1
             fi
 
-            for php_version in ${php_versions[$moodle_version]}; do
+            while IFS= read -r php; do
               for database in mariadb pgsql; do
                 entries=$(jq -c \
-                  --arg php "$php_version" \
-                  --arg branch "MOODLE_${moodle_version}_STABLE" \
+                  --arg php "$php" \
+                  --arg branch "MOODLE_${version}_STABLE" \
                   --arg database "$database" \
-                  '. + [{"php": $php, "moodle-branch": $branch, "database": $database}]' <<< "$entries")
+                  --argjson dbs "$dbs" \
+                  '. + [{"php": $php, "moodle-branch": $branch, "database": $database,
+                         "postgres-version": $dbs.postgres, "mariadb-version": $dbs.mariadb}]' <<< "$entries")
               done
-            done
+            done <<< "$phps"
           done
 
           matrix=$(jq -cn --argjson entries "$entries" '{include: $entries}')
+          echo "Generated test matrix:"
+          echo "$matrix" | jq .
           printf 'matrix=%s\n' "$matrix" >> "$GITHUB_OUTPUT"
 
   test:
@@ -66,7 +109,7 @@ jobs:
       matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
     services:
       postgres:
-        image: postgres:16
+        image: postgres:${{ matrix.postgres-version }}
         env:
           POSTGRES_USER: postgres
           POSTGRES_HOST_AUTH_METHOD: trust
@@ -75,7 +118,7 @@ jobs:
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
       mariadb:
-        image: mariadb:10
+        image: mariadb:${{ matrix.mariadb-version }}
         env:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
@@ -84,7 +127,7 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
+          --health-cmd="mariadb-admin ping" --health-interval 10s --health-timeout 5s --health-retries 3
     steps:
       - uses: actions/checkout@v7
         with:
@@ -144,7 +187,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: behat-faildump-${{ matrix.moodle-branch }}-${{ matrix.php }}-${{ matrix.database }}
-          path: ${{ github.workspace }}/ci/behat_faildump
+          path: ${{ github.workspace }}/moodledata/behat_dump
           if-no-files-found: ignore
           retention-days: 7
 

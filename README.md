@@ -7,7 +7,7 @@
 *Let chosen people log in as other accounts, only when and for as long as you allow it*
 
 [![Release](https://img.shields.io/github/v/release/didactika/moodle-local_delegateaccount?style=flat-square)](https://github.com/didactika/moodle-local_delegateaccount/releases)
-[![Moodle](https://img.shields.io/badge/Moodle-4.5_to_5.2-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
+[![Moodle](https://img.shields.io/badge/Moodle-4.5_to_5.3-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
 [![PHP](https://img.shields.io/badge/PHP-8.1+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE)
 
@@ -57,7 +57,7 @@ Access is checked when the account is opened and again on every page while the d
 
 ## Installation
 
-**Requirements:** Moodle 4.5 to 5.2, with the PHP version your Moodle release requires.
+**Requirements:** Moodle 4.5 to 5.3, with the PHP version your Moodle release requires.
 
 **From a release:** download the latest release ZIP, go to **Site administration > Plugins > Install plugins**, upload the file and follow the prompts.
 
