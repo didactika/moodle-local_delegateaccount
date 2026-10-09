@@ -33,11 +33,11 @@ repository's [GNU GPL v3 or later license](LICENSE).
 The checkout directory must be named `delegateaccount`.
 
 ```bash
-# Moodle 4.5.
+# Moodle 4.5 and 5.0.
 git clone https://github.com/didactika/moodle-local_delegateaccount.git \
     /path/to/moodle/local/delegateaccount
 
-# Moodle 5.0 and later.
+# Moodle 5.1 and later.
 git clone https://github.com/didactika/moodle-local_delegateaccount.git \
     /path/to/moodle/public/local/delegateaccount
 ```
@@ -47,7 +47,7 @@ the plugin.
 
 ## Required checks
 
-Run checks from the Moodle root, adjusting the plugin path for Moodle 5.0 and later:
+Run checks from the Moodle root, adjusting the plugin path for Moodle 5.1 and later:
 
 ```bash
 vendor/bin/phpunit --testsuite local_delegateaccount_testsuite

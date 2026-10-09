@@ -34,7 +34,7 @@ creation-result and serialisation helpers.
 
 - Pages are zero-based and accept between 1 and 100 records.
 - Bulk creation is the Cartesian product of the supplied authorised users and
-  target accounts. The site's **Maximum records per bulk operation** and
+  target accounts. The site's **Maximum records per bulk action** and
   **Maximum delegated accounts per user** settings are enforced before any
   row is created.
 - Singular and batch creation share the same domain implementation. Use the

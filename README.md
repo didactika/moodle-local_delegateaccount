@@ -1,224 +1,190 @@
+<div align="center">
+
+<img src="pix/icon.svg" width="96" alt="">
+
 # Delegate Account for Moodle
 
-[![Moodle Plugin CI](https://github.com/didactika/moodle-local_delegateaccount/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/didactika/moodle-local_delegateaccount/actions/workflows/ci.yml)
-[![Moodle 4.5 to 5.2](https://img.shields.io/badge/Moodle-4.5%20to%205.2-f98012.svg)](https://moodledev.io/general/releases)
-[![Maturity: Stable](https://img.shields.io/badge/maturity-stable-2e7d32.svg)](version.php)
-[![License: GPL v3 or later](https://img.shields.io/badge/license-GPLv3%2B-blue.svg)](LICENSE)
+*Let chosen people log in as other accounts, only when and for as long as you allow it*
 
-**Delegate Account** provides controlled, time-bound and auditable access to another
-Moodle account through Moodle's native **Log in as** mechanism. It is designed for support,
-service and delegated-administration workflows where broad impersonation privileges would
-be inappropriate.
+[![Release](https://img.shields.io/github/v/release/didactika/moodle-local_delegateaccount?style=flat-square)](https://github.com/didactika/moodle-local_delegateaccount/releases)
+[![Moodle](https://img.shields.io/badge/Moodle-4.5_to_5.2-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
+[![PHP](https://img.shields.io/badge/PHP-8.1+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
+[![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE)
 
-Administrators explicitly choose who may use delegated access, which accounts they may
-open, when each delegation is valid and whether affected users should be notified. Every
-lifecycle change records its actor, while delegated activity remains traceable through
-Moodle's standard log store.
+[Overview](#overview) • [Installation](#installation) • [Usage](#usage) • [Configuration](#configuration) • [Troubleshooting](#troubleshooting)
 
-The plugin never creates accounts, stores credentials, starts an impersonated session on
-its own or bypasses Moodle capabilities.
+</div>
 
-## At a glance
+Delegate Account (`local_delegateaccount`) is a Moodle local plugin that gives specific people access to specific accounts. An administrator decides who may act as whom and for which period. The person then opens the account from their user menu through Moodle's own **Log in as**, and everything they do is recorded in the site log under both names.
 
-| | |
+> [!IMPORTANT]
+> **Only site administrators can use delegated accounts until you give the permission to someone else.** Create a role with the capability `local/delegateaccount:use` and assign it in the system context to the people who should be able to use delegations. See [Give people permission](#1-give-people-permission-administrators).
+
+> [!NOTE]
+> Delegate Account never stores passwords and never creates accounts. It only decides whether Moodle's **Log in as** may be used for a given pair of users at a given time.
+
+## Overview
+
+Some people need to work inside another person's account: a support team fixing a profile, an assistant managing a manager's calendar, a teacher covering for a colleague. Moodle's **Log in as** capability lets someone open *any* account they can see, with no time limit. Delegate Account narrows that down to explicit, time-bound pairs.
+
+### How access is decided
+
+Two things must be true for someone to open an account:
+
+1. **They hold the permission.** They have `local/delegateaccount:use` in the system context, or they are a site administrator.
+2. **A delegation exists for that account.** An administrator created a delegation from them to that account, and it is currently active.
+
+Each delegation has a lifecycle:
+
+| Status | Meaning |
 |---|---|
-| **Component** | `local_delegateaccount` |
-| **Plugin type** | Local plugin |
-| **Supported Moodle releases** | 4.5 LTS through 5.2 |
-| **Current maturity** | Stable |
-| **Languages** | English |
-| **License** | GNU GPL v3 or later |
+| Scheduled | The start date has not been reached yet |
+| Active | The account can be opened now |
+| Expired | The end date has passed |
+| Revoked | An administrator ended it. Revoked delegations are kept for the record |
 
-### Key capabilities
+Access is checked when the account is opened and again on every page while the delegated session lasts. The session ends on the next page if the delegation is revoked or expires, if the person loses the permission, or if the account is suspended, deleted or becomes a site administrator while that is protected.
 
-- Granular permissions for viewing, creating, updating, revoking and auditing
-  delegations.
-- Scheduled start and end dates, explicit revocation and preserved lifecycle evidence.
-- Paginated Moodle-native management screens, filters, bulk operations and modal forms.
-- Per-delegation activity reports bounded to the period in which access was valid.
-- Configurable limits, administrator-account protection and localised notifications.
-- A restricted external service with independently authorised read and write functions.
-- Moodle privacy, event, logging, backup-friendly and accessibility conventions throughout.
+### Features
 
-## Contents
-
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Using delegated accounts](#using-delegated-accounts)
-- [Web services](#web-services)
-- [Privacy and security](#privacy-and-security)
-- [Languages](#languages)
-- [Development](#development)
-- [Support](#support)
-- [Contributing](#contributing)
-- [Contributors](#contributors)
-- [License](#license)
-
-## Requirements
-
-- Moodle 4.5 through 5.2.
-- A PHP version supported by the installed Moodle release.
-- A site administrator to install and manage the plugin.
-
-The supported range is declared in [`version.php`](version.php). Pull requests
-are tested on the endpoints of that range with every PHP and database variant
-supported by the project workflow.
+- **Time-bound delegations:** a start date, an optional end date and explicit revocation, with a full history of who created, changed and revoked each one.
+- **Bulk management:** create delegations for several people and several accounts at once, and edit or revoke many delegations together.
+- **Activity report:** for each delegation, every event recorded while the account was being used through it, with date, component and action filters.
+- **User menu entry:** people with delegations open them from **Delegated accounts** in their user menu.
+- **Site limits:** maximum delegations per person, maximum duration, maximum records per bulk action, and protection of administrator accounts.
+- **Notifications:** optional messages to the people involved when access is granted or revoked, in each recipient's language and customisable per language.
+- **Integration:** events for every change, a restricted web service and Privacy API support.
 
 ## Installation
 
-1. Place the plugin in `local/delegateaccount` in the Moodle code directory.
-2. Sign in as a site administrator.
-3. Visit **Site administration > Notifications** and complete the database
-   upgrade.
-4. Purge caches if the new administration page is not visible immediately.
+**Requirements:** Moodle 4.5 to 5.2, with the PHP version your Moodle release requires.
 
-For a command-line installation, run Moodle's normal upgrade command from the
-Moodle root:
+**From a release:** download the latest release ZIP, go to **Site administration > Plugins > Install plugins**, upload the file and follow the prompts.
+
+**From Git:**
 
 ```bash
-php admin/cli/upgrade.php --non-interactive
+cd /path/to/moodle
+# Moodle 4.5 and 5.0
+git clone https://github.com/didactika/moodle-local_delegateaccount.git local/delegateaccount
+# Moodle 5.1 and later
+git clone https://github.com/didactika/moodle-local_delegateaccount.git public/local/delegateaccount
+php admin/cli/upgrade.php
 ```
 
-## Using delegated accounts
+## Usage
 
-1. Go to **Site administration > Accounts > Manage delegated accounts**.
-2. Open **Authorised users** to browse every active user who currently has
-   `local/delegateaccount:use`, whether or not they already have a delegation.
-   Use the Moodle-style **Filters** control to narrow that list, then open the
-   relevant user's delegation list.
-3. Review each target account's lifecycle, validity dates and latest recorded
-   use under delegated access. Select the information action to open the
-   lifecycle details without leaving the list; its link remains available as a
-   full-page fallback when JavaScript is unavailable. With the update
-   capability, adjust the validity dates and notification decision; revoke
-   access from that list when it is no longer required.
-4. Use **Add delegated account** to open the Moodle modal. Select one or more
-   authorised users and one or more target accounts; the plugin creates the
-   requested user-account matrix while enforcing site limits. In an individual
-   delegation list, checkbox selections can also receive one common validity
-   period or be revoked together after explicit confirmation. The linked page
-   remains a functional fallback when JavaScript is unavailable.
-5. The authorised person can open **Delegated accounts** in Moodle's user
-   menu, then choose a target from the carousel submenu. The single native
-   menu entry links to a complete 25-row paginated list when JavaScript is
-   unavailable or the visual menu limit is reached.
-6. Moodle displays its normal session-switching state. Return to the original
-   account before selecting another delegated account.
+### 1. Give people permission (administrators)
 
-The **Users without permission** tab retains people who have delegation
-records but no longer hold `local/delegateaccount:use`. It is intentionally
-read-only for new assignments, while preserving their delegation details and
-activity reports for audit and support work.
+1. Go to **Site administration > Users > Permissions > Define roles** and add a new role, for example *Delegated account user*.
+2. Select **System** as the only context type and allow `local/delegateaccount:use` (**Log in as a delegated account**).
+3. Go to **Site administration > Users > Permissions > Assign system roles** and give the role to the people who should be able to use delegations.
 
-Site administrators can configure the maximum number of current or scheduled
-accounts per authorised user, a maximum validity period, whether an end date
-is mandatory, protection for site-administrator accounts, and a safe size
-limit for bulk actions. Notification policy, recipients and language templates
-are configured under **Site administration > Plugins > Local plugins >
-Delegate account**. The delegation form applies those boundaries directly:
-the person creating access selects its start and end dates, and can choose
-whether to notify affected users only when the site policy permits that choice.
+Until a role grants the capability, the management page shows a reminder with links to these two pages.
 
-When notification is enabled, Moodle delivers an accessible HTML message with
-a plain-text fallback through its standard popup and email processors. Its
-professional default is rendered by a Moodle Mustache template in each
-recipient's language. Site administrators can configure a subject and, when
-needed, replace that default with rich content using only documented
-placeholders. The plugin records only the delivery time; it does not duplicate
-message content in the delegation record. Selecting **Never notify** hides
-every dependent notification setting immediately and preserves its existing
-values for a later reactivation.
+> [!WARNING]
+> Do not grant `local/delegateaccount:use` to the **Authenticated user** role. Every user would then count as authorised.
 
-`local/delegateaccount:manage` remains available while sites transition to
-the granular `:view`, `:create`, `:update`, `:revoke` and `:viewactivity`
-capabilities. A user needs `local/delegateaccount:use` and an active,
-explicit delegation record to access a target account. The assignment form
-lists only current holders of that capability as authorised users, and the
-server enforces the same condition for every submitted request.
+### 2. Create delegations
 
-The overview requires `local/delegateaccount:view`. Creating, adding and
-revoking records additionally require their respective granular capability.
-The last-access value is derived from Moodle's standard log store only when
-the authorised user acted through that specific delegation period; it never
-represents the target account's ordinary sign-ins.
+Go to **Site administration > Users > Accounts > Manage delegated accounts**. The **Authorised users** tab lists everyone who holds the permission, with their active and scheduled delegations.
 
-Users with `local/delegateaccount:viewactivity` can open the related report
-from an individual delegation. It contains only standard-log events where the
-target account was used through that authorised user's selected delegation
-period. Its columns follow Moodle's standard log report: time, acting user,
-affected user, event context, component, event name, description, origin and IP
-address. Repeated delegations between the same users remain separate, and the
-report uses Moodle's standard 25-row pagination. Day-only date, component and
-action filters can narrow that immutable period but can never expose activity
-before access began or after it ended.
+- Select **Create delegations** to choose several authorised users and several accounts at once, or the add icon on a user's row to create delegations for that user only.
+- Choose when access starts and, optionally, when it ends.
+- When the site allows it, choose whether to notify the people involved.
 
-## Web services
+The account picker only offers active accounts. It leaves out the authorised user themselves, accounts they already have a delegation for that has not been revoked, the guest account and, while they are protected, site administrators. To give access again after a delegation expires, edit the expired delegation instead of creating a new one.
 
-The plugin registers a disabled, restricted service named **Delegated account
-management**. Enabling that service does not grant access by itself: an
-administrator must explicitly authorise each service user and assign only the
-capabilities needed for that integration. Read, create, update, revoke and
-activity operations are separate functions with separate capability checks;
-the transitional `local/delegateaccount:manage` capability is deliberately not
-accepted as a web-service wildcard.
+### 3. Manage delegations
 
-See [Web-service integration](docs/web-services.md) for the function and
-capability matrix, lifecycle rules, limits and examples that contain no tokens
-or personal data.
+Open a user's delegations with the edit icon on their row. The tabs show their **Active**, **Scheduled**, **Expired** and **Revoked** delegations, with the last time each one was used.
 
+- **Edit** changes the period and the notification choice. Select several rows and use **Edit selected** to change them together.
+- **Revoke** ends a delegation immediately, including a session that is using it. Use **Revoke selected** for several rows.
+- The information icon shows the delegation's status, period and notification choice. **View full details** adds who created, changed and revoked it, and when.
+- **View delegated activity** opens the activity report for that delegation.
 
-## Privacy and security
+The **Users without permission** tab lists people who still have delegations but no longer hold the permission, for example because their role was removed or their account was suspended. Their history and activity stay available, but they cannot use their delegations and cannot receive new ones.
 
-Delegations contain the source account, target account, the people who create,
-modify or revoke the record, its validity period, and the notification choice.
-The plugin exposes this information to Moodle's privacy subsystem and records
-each lifecycle change in Moodle's standard log store. Management remains
-restricted to the system context.
+### 4. Use a delegated account
 
-Before granting access, confirm that the target account is appropriate for the
-service, support or administrative purpose. Remove the delegation when that
-purpose ends. Revocation preserves the audit record while immediately blocking
-new delegated sessions. Delegated access is not suitable for sharing personal
-credentials or for avoiding normal role and permission design.
+People with active delegations see **Delegated accounts** in their user menu. Choosing an account opens it through Moodle's **Log in as** and goes to that account's Dashboard. When someone has more accounts than the menu shows, **View all delegated accounts** opens the **My delegated accounts** page.
 
-## Languages
+To stop working as the other account, log out. A delegated account cannot open another delegated account: log out first.
 
-The release package currently includes English strings only. A Moodle language pack
-can provide translations where available.
+## Configuration
 
-## Development
+Settings are located at **Site administration > Plugins > Local plugins > Delegated account settings**.
 
-The `Moodle Plugin CI` workflow runs Moodle's linting, validation, AMD,
-Mustache, PHPUnit and Behat checks for pull requests to `main` and maintained
-`MOODLE_*_STABLE` branches. The required status check is named `CI complete`.
+### Delegation controls
 
-For a local check, use [moodle-plugin-ci](https://github.com/moodlehq/moodle-plugin-ci)
-against a checkout of this plugin. Generated AMD files must be rebuilt through
-Moodle's Grunt task whenever an AMD source module changes.
+| Setting | Default | Description |
+|---|---|---|
+| Maximum delegated accounts per user | 10 | How many current or scheduled delegations one authorised user can have. Enter `0` for no limit |
+| Allow delegations with no end date | On | When off, every delegation needs an end date |
+| Maximum delegation duration | 0 | The longest a delegation can last, in days. Only shown and applied when **Allow delegations with no end date** is off. `0` means no limit |
+| Protect site administrator accounts | On | Site administrators cannot be delegated, and an existing delegation stops working if its account becomes an administrator |
+| Maximum records per bulk action | 100 | How many delegations one bulk action can create, edit or revoke. Enter `0` for no limit |
+| Delegated accounts shown in the user menu | 10 | Accounts listed in the user menu before **View all delegated accounts**. Enter `0` to list them all |
 
-## Support
+> [!CAUTION]
+> With **Protect site administrator accounts** turned off, an authorised user with a delegation to an administrator can log in as that administrator and take full control of the site.
 
-Use [GitHub Issues](https://github.com/didactika/moodle-local_delegateaccount/issues)
-for reproducible bugs and feature proposals. Include the Moodle, PHP and database versions,
-the delegation status and validity period, and the smallest sequence that demonstrates the
-problem. Do not include access tokens, private account data or sensitive log content.
+### Notifications
 
-Report security vulnerabilities privately through the repository's
-[security advisory form](https://github.com/didactika/moodle-local_delegateaccount/security/advisories/new).
+| Setting | Default | Description |
+|---|---|---|
+| Notification policy | Allow the person creating the delegation to choose | Or **Always notify**, or **Never notify**. **Never notify** hides the other notification settings |
+| Notification recipients | Both users | The authorised user, the delegated account, or both |
+| Notify when a delegation is revoked | On | Also notify when access is revoked |
+| Subject and message when access is granted or revoked | Empty | One subject and one message per action for each installed language. Empty fields use the built-in text, which is worded for each recipient |
 
-## Contributing
+Each recipient gets the notification in their profile language, or in the site language when theirs is not installed. Messages use the **Delegated account notifications** provider, sent as web and email notifications by default; users and administrators can change that in the usual notification preferences.
 
-Contributions are welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md) for the supported
-branch model, Moodle coding requirements, required checks and pull-request expectations.
+### Capabilities
 
-## Contributors
+All capabilities apply in the system context.
 
-Thanks to everyone who has contributed to this project:
+| Capability | Default roles | Allows the user to |
+|---|---|---|
+| `local/delegateaccount:use` | None | Open the accounts delegated to them |
+| `local/delegateaccount:view` | Manager | See delegations and the management pages |
+| `local/delegateaccount:create` | Manager | Create delegations |
+| `local/delegateaccount:update` | Manager | Change the period and notification choice of delegations |
+| `local/delegateaccount:revoke` | Manager | Revoke delegations |
+| `local/delegateaccount:viewactivity` | Manager | Open the activity report of a delegation |
+| `local/delegateaccount:manage` | Manager | Everything above except `use`. Setting one of the specific capabilities to Prevent or Prohibit still refuses that action |
 
-[![Contributors](https://contrib.rocks/image?repo=didactika/moodle-local_delegateaccount)](https://github.com/didactika/moodle-local_delegateaccount/graphs/contributors)
+> [!WARNING]
+> Whoever can create delegations decides who may log in as whom. Give `local/delegateaccount:create` and `local/delegateaccount:manage` only to people you would trust with Moodle's own **Log in as**.
 
-Want to help? Read [CONTRIBUTING.md](./CONTRIBUTING.md).
+### Web services
 
-## License
+The plugin adds a **Delegated account management** service that is disabled by default. It covers reading, creating, updating and revoking delegations and reading their activity, with the same rules and capabilities as the pages. See [Web-service integration](docs/web-services.md) for the functions, limits and examples.
 
-[GNU GPL v3 or later](LICENSE), the same license used by Moodle.
+### Scheduled tasks
+
+None. Start and end dates are checked each time an account is opened and on every page of a delegated session, so delegations start and stop on time without cron.
+
+### Privacy and backup
+
+- **Privacy:** the plugin implements the Privacy API. It stores, for each delegation, the authorised user, the delegated account, the period, the notification choice and who created, changed or revoked it. This data can be exported. Deleting a user's data removes the delegations they are part of and removes their name from the ones they only created, changed or revoked.
+- **Activity:** the plugin keeps no activity of its own. The activity report reads the site's log store, so it follows your log retention settings.
+- **Backup:** delegations are site-level data and are not part of course backups.
+
+## Troubleshooting
+
+| Problem | Possible cause |
+|---|---|
+| A person does not appear under **Authorised users** | They do not hold `local/delegateaccount:use` in the system context, or their account is suspended |
+| An account cannot be chosen as a target | It is suspended, the guest account, a protected site administrator or the authorised user themselves, or that user already has a delegation to it that has not been revoked, including an expired one. Edit that delegation instead |
+| **Delegated accounts** is missing from the user menu | The person has no active delegation, does not hold the permission, or is already logged in as someone else |
+| "Delegated session ended" appears | The delegation was revoked or expired, the person lost the permission, or the account became unavailable while it was in use |
+| The activity report is empty | Nothing was done through that delegation yet, no SQL log store is enabled, or the events are anonymous and you cannot view anonymous events |
+| Nobody receives notifications | The notification policy is **Never notify**, **Do not send a notification** was chosen, or the recipients disabled these notifications in their preferences |
+
+## Getting help
+
+To report a bug or request a feature, please open an [issue](https://github.com/didactika/moodle-local_delegateaccount/issues). Include your Moodle and PHP versions, the plugin settings involved and the steps that reproduce the problem. Do not include passwords, tokens or personal data.
+
+Report security problems privately through the repository's [security advisory form](https://github.com/didactika/moodle-local_delegateaccount/security/advisories/new).
