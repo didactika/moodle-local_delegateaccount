@@ -7,3 +7,4 @@ composer.lock
 lang/*
 !lang/en/
 !lang/en/**
+/phpunit.xml
