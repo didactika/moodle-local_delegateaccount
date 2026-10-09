@@ -27,6 +27,9 @@ Feature: Delegate access to an account
     And I click on "Save changes" "button" in the ".modal-dialog" "css_element"
     And I click on "Manage this user's delegated accounts" "link" in the "Ada Authorised" "table_row"
     Then "Tom Target" "table_row" should exist
+    And I click on "Delegation details" "link" in the "Tom Target" "table_row"
+    And I click on "View full details" "link" in the ".modal-dialog" "css_element"
+    And I should see "Admin User" in the "region-main" "region"
 
   Scenario: An authorised user opens a delegated account from the user menu
     Given the following "local_delegateaccount > delegations" exist:

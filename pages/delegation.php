@@ -61,7 +61,7 @@ $auditusers = empty($audituserids) ? [] : $DB->get_records_list(
     'id',
     $audituserids,
     '',
-    'id, firstname, lastname, middlename, alternatename, firstnamephonetic, lastnamephonetic, picture, imagealt'
+    implode(', ', \core_user\fields::get_picture_fields())
 );
 $getuseridentity = static function (int $userid) use ($auditusers, $OUTPUT): string {
     if (!isset($auditusers[$userid])) {
