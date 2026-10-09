@@ -521,6 +521,21 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Both user pickers find people by their full name.
+     */
+    public function test_user_pickers_search_by_full_name(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $authoriseduser = $generator->create_user(['firstname' => 'Ada', 'lastname' => 'Authorised']);
+        $target = $generator->create_user(['firstname' => 'Tom', 'lastname' => 'Target']);
+        $this->grant_delegated_account_use($authoriseduser);
+
+        $this->assertArrayHasKey((int)$target->id, manager::get_delegated_account_options(0, 'Tom Target', 30));
+        $this->assertArrayHasKey((int)$authoriseduser->id, manager::get_authorised_users('Ada Authorised', 30));
+    }
+
+    /**
      * Every management tab has the description that its page displays.
      */
     public function test_management_tab_descriptions_exist(): void {

@@ -71,12 +71,11 @@ class manager {
             $sql = "SELECT $fields
                       FROM {user} u
                      WHERE u.deleted = 0 AND u.suspended = 0
-                       AND (" . $DB->sql_like('u.firstname', ':search1', false) . " OR " .
-                                $DB->sql_like('u.lastname', ':search2', false) . " OR " .
-                                $DB->sql_like('u.username', ':search3', false) . ")
+                       AND (" . $DB->sql_like($DB->sql_fullname('u.firstname', 'u.lastname'), ':search1', false) . " OR " .
+                                $DB->sql_like('u.username', ':search2', false) . ")
                   ORDER BY u.lastname ASC, u.firstname ASC";
 
-            $params = ['search1' => $searchvalue, 'search2' => $searchvalue, 'search3' => $searchvalue];
+            $params = ['search1' => $searchvalue, 'search2' => $searchvalue];
             $users = $DB->get_records_sql($sql, $params, 0, 500);
 
             $admins = get_admins();
@@ -171,13 +170,11 @@ class manager {
         if ($search !== '') {
             $searchparam = '%' . $DB->sql_like_escape($search) . '%';
             $wheresql .= ' AND (' . implode(' OR ', [
-                $DB->sql_like('firstname', ':search1', false, false),
-                $DB->sql_like('lastname', ':search2', false, false),
-                $DB->sql_like('email', ':search3', false, false),
+                $DB->sql_like($DB->sql_fullname('firstname', 'lastname'), ':search1', false, false),
+                $DB->sql_like('email', ':search2', false, false),
             ]) . ')';
             $params['search1'] = $searchparam;
             $params['search2'] = $searchparam;
-            $params['search3'] = $searchparam;
         }
 
         // Read a larger page than requested, so that the options left after exclusions still fill the limit.
