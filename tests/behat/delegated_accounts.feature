@@ -22,7 +22,7 @@ Feature: Delegate access to an account
   Scenario: An administrator creates a delegation from the management page
     Given I log in as "admin"
     And I change window size to "large"
-    And I navigate to "Users > Accounts > Manage delegated accounts" in site administration
+    And I visit "/local/delegateaccount/pages/manage.php"
     When I click on "Add delegated account" "button" in the "Ada Authorised" "table_row"
     And I set the field "Delegated accounts" to "Tom Target"
     And I click on "Save changes" "button" in the ".modal-dialog" "css_element"
@@ -47,7 +47,7 @@ Feature: Delegate access to an account
       | user | account |
       | ada  | tom     |
     And I log in as "admin"
-    And I navigate to "Users > Accounts > Manage delegated accounts" in site administration
+    And I visit "/local/delegateaccount/pages/manage.php"
     And I click on "Manage this user's delegated accounts" "link" in the "Ada Authorised" "table_row"
     When I click on "Revoke delegation" "button" in the "Tom Target" "table_row"
     And I click on "Revoke delegation" "button" in the ".modal-dialog" "css_element"
@@ -73,7 +73,7 @@ Feature: Delegate access to an account
 
   Scenario: An administrator sends a test notification from the settings
     Given I log in as "admin"
-    And I navigate to "Plugins > Local plugins > Delegated account settings" in site administration
+    And I visit "/admin/settings.php?section=local_delegateaccount_settings"
     When I click on "Send yourself a test notification" "link"
     And I set the field "Notification" to "Delegated account access revoked"
     And I press "Send a test notification"
