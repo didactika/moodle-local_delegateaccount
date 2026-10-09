@@ -57,13 +57,11 @@ final class extend_user_menu_test extends \advanced_testcase {
         $this->setUser($authoriseduser);
         $hook = new \core_user\hook\extend_user_menu();
         \core\di::get(\core\hook\manager::class)->dispatch($hook);
-        $items = $hook->get_navitems();
+        $urls = \local_delegateaccount\hook\extend_user_menu::get_link_urls($hook);
 
-        $this->assertCount(1, $items);
-        $this->assertSame('link', $items[0]->itemtype);
-        $this->assertSame('i/switch', $items[0]->pix);
-        $this->assertStringContainsString('/local/delegateaccount/pages/accounts.php', $items[0]->url->out(false));
-        $this->assertStringNotContainsString('id=' . $futuretarget->id, $items[0]->url->out(false));
+        $this->assertCount(1, $urls);
+        $this->assertStringContainsString('/local/delegateaccount/pages/accounts.php', $urls[0]);
+        $this->assertStringNotContainsString('id=' . $futuretarget->id, $urls[0]);
     }
 
     /**
@@ -85,7 +83,7 @@ final class extend_user_menu_test extends \advanced_testcase {
         $hook = new \core_user\hook\extend_user_menu();
         \local_delegateaccount\hook\extend_user_menu::execute($hook);
 
-        $this->assertSame([], $hook->get_navitems());
+        $this->assertSame([], \local_delegateaccount\hook\extend_user_menu::get_link_urls($hook));
     }
 
     /**
@@ -112,6 +110,6 @@ final class extend_user_menu_test extends \advanced_testcase {
         \local_delegateaccount\hook\extend_user_menu::execute($hook);
         \local_delegateaccount\hook\extend_user_menu::execute($hook);
 
-        $this->assertCount(1, $hook->get_navitems());
+        $this->assertCount(1, \local_delegateaccount\hook\extend_user_menu::get_link_urls($hook));
     }
 }

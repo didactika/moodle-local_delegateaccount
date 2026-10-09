@@ -45,20 +45,51 @@ final class extend_user_menu {
             return;
         }
 
-        foreach ($hook->get_navitems() as $navitem) {
-            if (($navitem->itemtype ?? '') !== 'link' || !($navitem->url ?? null) instanceof \moodle_url) {
-                continue;
+        $url = new \moodle_url('/local/delegateaccount/pages/accounts.php');
+        $title = get_string('delegated_accounts_menu', 'local_delegateaccount');
+        if (in_array($url->out(false), self::get_link_urls($hook), true)) {
+            return;
+        }
+
+        if (method_exists($hook, 'add_menu_item')) {
+            // Moodle 5.3 and later replaced add_navitem() with typed menu items.
+            $hook->add_menu_item(new \core_user\output\user_action_menu\link($url, $title, null, new \pix_icon('i/switch', '')));
+        } else {
+            $hook->add_navitem((object) [
+                'itemtype' => 'link',
+                'url' => $url,
+                'title' => $title,
+                'pix' => 'i/switch',
+            ]);
+        }
+    }
+
+    /**
+     * Returns the URLs of the links already in the user menu.
+     *
+     * @param \core_user\hook\extend_user_menu $hook User-menu extension hook.
+     * @return string[] Link URLs.
+     */
+    public static function get_link_urls(\core_user\hook\extend_user_menu $hook): array {
+        global $PAGE;
+
+        $urls = [];
+        if (method_exists($hook, 'get_menu_items')) {
+            $renderer = $PAGE->get_renderer('core');
+            foreach ($hook->get_menu_items() as $item) {
+                if ($item instanceof \core_user\output\user_action_menu\link) {
+                    $urls[] = $item->export_for_template($renderer)['url'];
+                }
             }
-            if (str_contains($navitem->url->out(false), '/local/delegateaccount/pages/accounts.php')) {
-                return;
+            return $urls;
+        }
+
+        foreach ($hook->get_navitems() as $navitem) {
+            if (($navitem->itemtype ?? '') === 'link' && ($navitem->url ?? null) instanceof \moodle_url) {
+                $urls[] = $navitem->url->out(false);
             }
         }
 
-        $hook->add_navitem((object) [
-            'itemtype' => 'link',
-            'url' => new \moodle_url('/local/delegateaccount/pages/accounts.php'),
-            'title' => get_string('delegated_accounts_menu', 'local_delegateaccount'),
-            'pix' => 'i/switch',
-        ]);
+        return $urls;
     }
 }
