@@ -164,16 +164,23 @@ class notification_manager {
         \stdClass $actor,
         \stdClass $recipient
     ): \core\message\message {
-        $messagehtml = self::render_message(
-            $action,
-            $language,
-            $audience,
-            $delegation,
-            $authoriseduser,
-            $delegateduser,
-            $actor,
-            $recipient
-        );
+        // Compose in the recipient's language, so that dates and any other text formatted
+        // through the current language follow the recipient rather than whoever acted.
+        $previouslanguage = force_current_language($language);
+        try {
+            $messagehtml = self::render_message(
+                $action,
+                $language,
+                $audience,
+                $delegation,
+                $authoriseduser,
+                $delegateduser,
+                $actor,
+                $recipient
+            );
+        } finally {
+            force_current_language($previouslanguage);
+        }
         $messagebody = html_to_text($messagehtml);
 
         $message = new \core\message\message();

@@ -175,6 +175,24 @@ final class notification_test extends \advanced_testcase {
     }
 
     /**
+     * Dates in a notification follow the recipient's language, not the language of whoever acted.
+     */
+    public function test_dates_use_the_recipient_language(): void {
+        global $DB;
+
+        $this->install_language('es', ['strftimedaydatetime' => 'FECHA %d/%m/%Y']);
+        $DB->set_field('user', 'lang', 'es', ['id' => $this->target->id]);
+
+        $sink = $this->redirectMessages();
+        $this->create_delegation();
+        $messages = $this->index_by_recipient($sink->get_messages());
+
+        $this->assertStringContainsString('FECHA ', $messages[(int)$this->target->id]->fullmessagehtml);
+        $this->assertStringNotContainsString('FECHA ', $messages[(int)$this->realuser->id]->fullmessagehtml);
+        $this->assertSame('en', current_language());
+    }
+
+    /**
      * Never notify stops notifications for delegations created while notifications were on.
      */
     public function test_never_policy_applies_to_existing_delegations(): void {
@@ -271,16 +289,20 @@ final class notification_test extends \advanced_testcase {
      * Makes a minimal language pack available to the string manager.
      *
      * @param string $language Language code.
+     * @param array $strings Further langconfig strings indexed by identifier.
      */
-    private function install_language(string $language): void {
+    private function install_language(string $language, array $strings = []): void {
         global $CFG;
+
+        $strings = ['thislanguage' => 'Test language ' . $language] + $strings;
+        $content = "<?php\n";
+        foreach ($strings as $identifier => $value) {
+            $content .= '$string[' . var_export($identifier, true) . '] = ' . var_export($value, true) . ";\n";
+        }
 
         $directory = $CFG->langotherroot . '/' . $language;
         make_writable_directory($directory);
-        file_put_contents(
-            $directory . '/langconfig.php',
-            "<?php\n\$string['thislanguage'] = 'Test language {$language}';\n"
-        );
+        file_put_contents($directory . '/langconfig.php', $content);
         get_string_manager()->reset_caches();
     }
 
