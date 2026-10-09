@@ -66,3 +66,11 @@ Feature: Delegate access to an account
     And I reload the page
     Then I should see "Delegated session ended"
     And I should see "Your delegated session has ended"
+
+  Scenario: An administrator sends a test notification from the settings
+    Given I log in as "admin"
+    And I navigate to "Plugins > Local plugins > Delegated account settings" in site administration
+    When I click on "Send yourself a test notification" "link"
+    And I set the field "Notification" to "Delegated account access revoked"
+    And I press "Send a test notification"
+    Then I should see "Test notifications sent: 2."

@@ -175,6 +175,71 @@ final class notification_test extends \advanced_testcase {
     }
 
     /**
+     * Never notify stops notifications for delegations created while notifications were on.
+     */
+    public function test_never_policy_applies_to_existing_delegations(): void {
+        $id = $this->create_delegation();
+        set_config('notificationpolicy', manager::NOTIFICATION_NEVER, 'local_delegateaccount');
+
+        $sink = $this->redirectMessages();
+        manager::revoke_delegations([$id]);
+
+        $this->assertCount(0, $sink->get_messages());
+    }
+
+    /**
+     * The test notification reaches the administrator once for each recipient, worded for each.
+     */
+    public function test_test_notification_shows_each_recipient_version(): void {
+        global $USER;
+
+        $sink = $this->redirectMessages();
+        $sent = notification_manager::send_test(notification_manager::ACTION_REVOKED, 'en', $USER);
+        $messages = $sink->get_messages();
+
+        $this->assertSame(2, $sent);
+        $this->assertCount(2, $messages);
+        foreach ($messages as $message) {
+            $this->assertSame((int)$USER->id, (int)$message->useridto);
+        }
+        $this->assertSame('[Test: authorised user] Delegated account access revoked', $messages[0]->subject);
+        $this->assertStringContainsString(
+            'You can no longer access the account of Sam Example',
+            $messages[0]->fullmessagehtml
+        );
+        $this->assertSame('[Test: delegated account] Delegated account access revoked', $messages[1]->subject);
+        $this->assertStringContainsString(
+            'Alex Sample can no longer access your account',
+            $messages[1]->fullmessagehtml
+        );
+    }
+
+    /**
+     * The test notification uses the saved message for the chosen language and action.
+     */
+    public function test_test_notification_uses_the_saved_message(): void {
+        global $USER;
+
+        set_config('notificationsubject_granted_en', 'Custom subject', 'local_delegateaccount');
+        set_config(
+            'notificationtemplate_granted_en',
+            '<p>{$a->authoriseduser} uses {$a->delegateduser}</p>',
+            'local_delegateaccount'
+        );
+
+        $sink = $this->redirectMessages();
+        notification_manager::send_test(notification_manager::ACTION_CREATED, 'en', $USER);
+
+        foreach ($sink->get_messages() as $message) {
+            $this->assertStringEndsWith('] Custom subject', $message->subject);
+            $this->assertStringContainsString(
+                'Alex Sample uses Sam Example',
+                $message->fullmessagehtml
+            );
+        }
+    }
+
+    /**
      * A web-service request without a notification decision is stored as the decision that was applied.
      */
     public function test_web_service_default_is_stored_as_always(): void {

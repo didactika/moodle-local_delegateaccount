@@ -118,7 +118,19 @@ if ($hassiteconfig) {
             1
         ));
 
-        $hideifnever = ['local_delegateaccount/notificationrecipients', 'local_delegateaccount/notifyonrevocation'];
+        $settings->add(new admin_setting_description(
+            'local_delegateaccount/testnotification',
+            get_string('testnotification', 'local_delegateaccount'),
+            get_string('testnotification_desc', 'local_delegateaccount', (new moodle_url(
+                '/local/delegateaccount/pages/testnotification.php'
+            ))->out())
+        ));
+
+        $hideifnever = [
+            'local_delegateaccount/notificationrecipients',
+            'local_delegateaccount/notifyonrevocation',
+            'local_delegateaccount/testnotification',
+        ];
         $hideifnorevocation = [];
 
         // One subject and message per action for each installed language. Empty fields use the built-in text.

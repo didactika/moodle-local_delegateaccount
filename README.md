@@ -134,10 +134,13 @@ Settings are located at **Site administration > Plugins > Local plugins > Delega
 
 | Setting | Default | Description |
 |---|---|---|
-| Notification policy | Allow the person creating the delegation to choose | Or **Always notify**, or **Never notify**. **Never notify** hides the other notification settings |
+| Notification policy | Allow the person creating the delegation to choose | Or **Always notify**, or **Never notify**. **Never notify** sends nothing, also for delegations created before it was selected, and hides the other notification settings |
 | Notification recipients | Both users | The authorised user, the delegated account, or both |
 | Notify when a delegation is revoked | On | Also notify when access is revoked |
-| Subject and message when access is granted or revoked | Empty | One subject and one message per action for each installed language. Empty fields use the built-in text, which is worded for each recipient |
+| Subject and message when access is granted or revoked | Empty | One subject and one message per action for each installed language. Empty fields use the built-in text, which is worded for each recipient. A custom message is sent unchanged to both recipients, so write it to read well for both |
+
+> [!TIP]
+> Use **Send yourself a test notification**, below these settings, to receive the saved subject and message for a language as both recipients would see them. Save your changes first.
 
 Each recipient gets the notification in their profile language, or in the site language when theirs is not installed. Messages use the **Delegated account notifications** provider, sent as web and email notifications by default; users and administrators can change that in the usual notification preferences.
 

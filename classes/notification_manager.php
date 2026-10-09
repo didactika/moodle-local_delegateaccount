@@ -31,6 +31,12 @@ class notification_manager {
     /** Notification sent when a delegation is revoked. */
     public const ACTION_REVOKED = 'revoked';
 
+    /** Recipient who can use the delegated account. */
+    public const AUDIENCE_AUTHORISED = 'authorised';
+
+    /** Recipient whose account is delegated. */
+    public const AUDIENCE_TARGET = 'target';
+
     /**
      * Sends notifications for one delegation when the configured policy permits it.
      *
@@ -61,7 +67,6 @@ class notification_manager {
             return false;
         }
 
-        $sender = \core_user::get_noreply_user();
         $sent = false;
         foreach (self::get_recipient_ids($delegation) as $recipientid) {
             if (!isset($users[$recipientid])) {
@@ -69,39 +74,16 @@ class notification_manager {
             }
 
             $recipient = $users[$recipientid];
-            $language = self::get_recipient_language($recipient);
-            $messagehtml = self::render_message(
+            $message = self::build_message(
                 $action,
-                $language,
+                self::get_recipient_language($recipient),
+                (int)$recipientid === (int)$delegation->delegateduserid ? self::AUDIENCE_TARGET : self::AUDIENCE_AUTHORISED,
                 $delegation,
                 $users[$delegation->realuserid],
                 $users[$delegation->delegateduserid],
                 $users[$actorid],
                 $recipient
             );
-            $messagebody = html_to_text($messagehtml);
-            $message = new \core\message\message();
-            $message->component = 'local_delegateaccount';
-            $message->name = 'delegationnotification';
-            $message->userfrom = $sender;
-            $message->userto = $recipient;
-            $message->subject = self::get_subject($action, $language);
-            $message->fullmessage = $messagebody;
-            $message->fullmessageformat = FORMAT_PLAIN;
-            $message->fullmessagehtml = format_text($messagehtml, FORMAT_HTML, [
-                'context' => \context_system::instance(),
-            ]);
-            $message->smallmessage = shorten_text($messagebody, 255);
-            $message->notification = 1;
-            if ($action === self::ACTION_CREATED && (int)$recipientid === (int)$delegation->realuserid) {
-                $message->contexturl = (new \moodle_url('/local/delegateaccount/pages/accounts.php'))->out(false);
-                $message->contexturlname = get_string_manager()->get_string(
-                    'my_delegated_accounts',
-                    'local_delegateaccount',
-                    null,
-                    $language
-                );
-            }
 
             try {
                 $sent = message_send($message) !== false || $sent;
@@ -118,6 +100,124 @@ class notification_manager {
     }
 
     /**
+     * Sends a test notification to a user, once as each recipient would receive it.
+     *
+     * Uses the saved subject and message for the action in the chosen language, with sample
+     * names, and adds a test marker to the subject.
+     *
+     * @param string $action Lifecycle action.
+     * @param string $language Language whose subject and message are tested.
+     * @param \stdClass $user User who receives the test.
+     * @return int Number of messages accepted by Moodle.
+     */
+    public static function send_test(string $action, string $language, \stdClass $user): int {
+        $stringmanager = get_string_manager();
+        $sample = static fn(string $person): \stdClass => self::make_sample_user(
+            $stringmanager->get_string('test_' . $person . '_firstname', 'local_delegateaccount', null, $language),
+            $stringmanager->get_string('test_' . $person . '_lastname', 'local_delegateaccount', null, $language)
+        );
+        $authorised = $sample('authoriseduser');
+        $delegated = $sample('delegateduser');
+        $delegation = (object)[
+            'id' => 0,
+            'realuserid' => 0,
+            'delegateduserid' => 0,
+            'timestart' => time(),
+            'timeend' => time() + WEEKSECS,
+        ];
+
+        $sent = 0;
+        foreach ([self::AUDIENCE_AUTHORISED, self::AUDIENCE_TARGET] as $audience) {
+            $message = self::build_message($action, $language, $audience, $delegation, $authorised, $delegated, $user, $user);
+            $message->subject = $stringmanager->get_string('test_subject', 'local_delegateaccount', (object)[
+                'audience' => $stringmanager->get_string('test_audience_' . $audience, 'local_delegateaccount', null, $language),
+                'subject' => $message->subject,
+            ], $language);
+            if (message_send($message) !== false) {
+                $sent++;
+            }
+        }
+
+        return $sent;
+    }
+
+    /**
+     * Builds the notification one recipient receives.
+     *
+     * @param string $action Lifecycle action.
+     * @param string $language Language of the notification.
+     * @param string $audience Whether the recipient is the authorised user or the delegated account.
+     * @param \stdClass $delegation Delegation database record.
+     * @param \stdClass $authoriseduser Authorised user record.
+     * @param \stdClass $delegateduser Delegated account record.
+     * @param \stdClass $actor User who performed the action.
+     * @param \stdClass $recipient Notification recipient.
+     * @return \core\message\message Message ready to send.
+     */
+    private static function build_message(
+        string $action,
+        string $language,
+        string $audience,
+        \stdClass $delegation,
+        \stdClass $authoriseduser,
+        \stdClass $delegateduser,
+        \stdClass $actor,
+        \stdClass $recipient
+    ): \core\message\message {
+        $messagehtml = self::render_message(
+            $action,
+            $language,
+            $audience,
+            $delegation,
+            $authoriseduser,
+            $delegateduser,
+            $actor,
+            $recipient
+        );
+        $messagebody = html_to_text($messagehtml);
+
+        $message = new \core\message\message();
+        $message->component = 'local_delegateaccount';
+        $message->name = 'delegationnotification';
+        $message->userfrom = \core_user::get_noreply_user();
+        $message->userto = $recipient;
+        $message->subject = self::get_subject($action, $language);
+        $message->fullmessage = $messagebody;
+        $message->fullmessageformat = FORMAT_PLAIN;
+        $message->fullmessagehtml = format_text($messagehtml, FORMAT_HTML, [
+            'context' => \context_system::instance(),
+        ]);
+        $message->smallmessage = shorten_text($messagebody, 255);
+        $message->notification = 1;
+        if ($action === self::ACTION_CREATED && $audience === self::AUDIENCE_AUTHORISED) {
+            $message->contexturl = (new \moodle_url('/local/delegateaccount/pages/accounts.php'))->out(false);
+            $message->contexturlname = get_string_manager()->get_string(
+                'my_delegated_accounts',
+                'local_delegateaccount',
+                null,
+                $language
+            );
+        }
+
+        return $message;
+    }
+
+    /**
+     * Creates a user record with only a name, for test notifications.
+     *
+     * @param string $firstname First name.
+     * @param string $lastname Last name.
+     * @return \stdClass User record.
+     */
+    private static function make_sample_user(string $firstname, string $lastname): \stdClass {
+        $user = (object)array_fill_keys(\core_user\fields::get_name_fields(), '');
+        $user->firstname = $firstname;
+        $user->lastname = $lastname;
+
+        return $user;
+    }
+
+    /**
      * Decides whether the current lifecycle action should produce a notification.
      *
      * @param \stdClass $delegation Delegation database record.
@@ -125,6 +225,10 @@ class notification_manager {
      * @return bool Whether notification delivery is enabled.
      */
     private static function should_notify(\stdClass $delegation, string $action): bool {
+        // Never notify applies from the moment it is set, also to delegations created before.
+        if (get_config('local_delegateaccount', 'notificationpolicy') === manager::NOTIFICATION_NEVER) {
+            return false;
+        }
         if ($delegation->notificationmode === manager::NOTIFICATION_NEVER) {
             return false;
         }
@@ -165,6 +269,7 @@ class notification_manager {
      *
      * @param string $action Lifecycle action.
      * @param string $language Recipient language.
+     * @param string $audience Whether the recipient is the authorised user or the delegated account.
      * @param \stdClass $delegation Delegation database record.
      * @param \stdClass $authoriseduser Authorised user record.
      * @param \stdClass $delegateduser Target account record.
@@ -175,6 +280,7 @@ class notification_manager {
     private static function render_message(
         string $action,
         string $language,
+        string $audience,
         \stdClass $delegation,
         \stdClass $authoriseduser,
         \stdClass $delegateduser,
@@ -213,7 +319,6 @@ class notification_manager {
         }
 
         $isgranted = $action === self::ACTION_CREATED;
-        $audience = (int)$recipient->id === (int)$delegation->delegateduserid ? 'target' : 'authorised';
         $string = static fn(string $identifier, $a = null): string =>
             $stringmanager->get_string($identifier, 'local_delegateaccount', $a, $language);
 
