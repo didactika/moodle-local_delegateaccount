@@ -49,7 +49,7 @@ Feature: Delegate access to an account
     And I click on "Revoke delegation" "button" in the ".modal-dialog" "css_element"
     Then I should see "Delegations revoked: 1."
     And "Tom Target" "table_row" should not exist
-    And I click on "Revoked" "link" in the ".nav-tabs" "css_element"
+    And I click on "Revoked" "link" in the "region-main" "region"
     And "Tom Target" "table_row" should exist
 
   Scenario: Revoking a delegation ends the session that is using it
