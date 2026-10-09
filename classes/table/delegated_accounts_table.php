@@ -154,7 +154,7 @@ class delegated_accounts_table extends \table_sql {
 
         if (
             $this->status === manager::STATUS_REVOKED ||
-            !$this->canrevoke
+            !($this->canrevoke || $this->canupdate)
         ) {
             return '';
         }
@@ -165,7 +165,7 @@ class delegated_accounts_table extends \table_sql {
     }
 
     /**
-     * Renders a selection checkbox for delegations that can still be revoked.
+     * Renders a selection checkbox for delegations that are not revoked, for bulk editing or revocation.
      *
      * @param \stdClass $row Delegated-account row.
      * @return string Selection control or an empty value.
@@ -174,7 +174,7 @@ class delegated_accounts_table extends \table_sql {
         global $OUTPUT;
 
         if (
-            !$this->canrevoke ||
+            !($this->canrevoke || $this->canupdate) ||
             manager::get_delegation_status($row) === manager::STATUS_REVOKED
         ) {
             return '';
@@ -318,6 +318,10 @@ class delegated_accounts_table extends \table_sql {
             ? get_string($notificationkey, 'local_delegateaccount')
             : get_string('delegationnotificationmode_never', 'local_delegateaccount');
         $displayend = manager::get_delegation_display_end($row);
+        $detailsurl = (new \moodle_url('/local/delegateaccount/pages/delegation.php', [
+            'realuserid' => $this->realuserid,
+            'delegationid' => $row->id,
+        ]))->out(false);
         $content = $OUTPUT->render_from_template('local_delegateaccount/delegation/modal_body', [
             'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
             'status' => get_string('delegation_status_' . manager::get_delegation_status($row), 'local_delegateaccount'),
@@ -329,12 +333,11 @@ class delegated_accounts_table extends \table_sql {
                 : userdate($displayend),
             'notificationmodelabel' => get_string('delegationnotificationmode', 'local_delegateaccount'),
             'notificationmode' => $notificationmode,
+            'detailsurl' => $detailsurl,
+            'detailslabel' => get_string('view_full_details', 'local_delegateaccount'),
         ]);
         $actions[] = $OUTPUT->render_from_template('local_delegateaccount/delegation/info_action', [
-            'url' => (new \moodle_url('/local/delegateaccount/pages/delegation.php', [
-                'realuserid' => $this->realuserid,
-                'delegationid' => $row->id,
-            ]))->out(false),
+            'url' => $detailsurl,
             'title' => $title,
             'contentid' => 'local-delegateaccount-delegation-info-' . $row->id,
             'content' => $content,
