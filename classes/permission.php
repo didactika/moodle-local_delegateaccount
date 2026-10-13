@@ -76,12 +76,8 @@ final class permission {
      */
     public static function require_action(string $action): void {
         if (!self::has($action)) {
-            throw new \required_capability_exception(
-                \context_system::instance(),
-                self::get_capability($action),
-                'nopermissions',
-                ''
-            );
+            // Not allowed through the specific capability or manage: let core report the missing capability.
+            require_capability(self::get_capability($action), \context_system::instance());
         }
     }
 

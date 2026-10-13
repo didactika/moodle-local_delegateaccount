@@ -68,8 +68,8 @@ Feature: Delegate access to an account
       | user | account |
       | ada  | tom     |
     And I reload the page
-    Then I should see "Delegated session ended"
-    And I should see "Your delegated session has ended"
+    Then I should see "Your delegated session has ended"
+    And "Log in" "button" should exist
 
   Scenario: An administrator sends a test notification from the settings
     Given I log in as "admin"

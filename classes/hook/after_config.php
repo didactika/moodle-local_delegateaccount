@@ -26,15 +26,24 @@ use local_delegateaccount\manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class after_config {
+    /** URL parameter that asks the login page to explain why a delegated session ended. */
+    private const ENDED_PARAM = 'delegatedsessionended';
+
     /**
      * Verifies the current delegated session on every web request.
      *
      * @param \core\hook\after_config $hook Configuration hook.
      */
     public static function execute(\core\hook\after_config $hook): void {
-        global $CFG;
+        global $CFG, $SCRIPT;
 
         if (CLI_SCRIPT || during_initial_install() || !empty($CFG->upgraderunning)) {
+            return;
+        }
+
+        // The session is closed once it has been ended, so the notice is added on the login page that follows.
+        if (!isloggedin() && $SCRIPT === '/login/index.php' && optional_param(self::ENDED_PARAM, false, PARAM_BOOL)) {
+            \core\notification::warning(get_string('delegated_session_ended_desc', 'local_delegateaccount'));
             return;
         }
 
@@ -47,7 +56,7 @@ final class after_config {
         }
 
         if ($ended && !AJAX_SCRIPT) {
-            redirect(new \moodle_url('/local/delegateaccount/pages/sessionended.php'));
+            redirect(new \moodle_url('/login/index.php', [self::ENDED_PARAM => 1]));
         }
     }
 }

@@ -64,7 +64,10 @@ class get_authorised_user_options extends external_api {
         $syscontext = \context_system::instance();
         self::validate_context($syscontext);
 
-        permission::require_action(permission::CREATE);
+        // The manage capability also allows this, unless the create capability is explicitly refused.
+        if (!permission::has(permission::CREATE)) {
+            require_capability(permission::get_capability(permission::CREATE), $syscontext);
+        }
 
         $options = manager::get_authorised_users($query, 30);
 

@@ -51,7 +51,6 @@ $string['delegated_accounts_for'] = 'Delegated accounts for {$a}';
 $string['delegated_accounts_menu'] = 'Delegated accounts';
 $string['delegated_activity_description'] = 'This report shows events recorded by Moodle while {$a->authoriseduser} used the delegated account {$a->delegateduser}, from {$a->timestart} to {$a->timeend}. The site log store remains the source of record.';
 $string['delegated_activity_for'] = 'Delegated activity: {$a->authoriseduser} as {$a->delegateduser}';
-$string['delegated_session_ended'] = 'Delegated session ended';
 $string['delegated_session_ended_desc'] = 'Your delegated session has ended because the delegation is no longer active, the account can no longer be used, or you no longer have permission to use delegated accounts. Log in again to continue.';
 $string['delegateduser'] = 'Delegated account';
 $string['delegatedusers'] = 'Delegated accounts';

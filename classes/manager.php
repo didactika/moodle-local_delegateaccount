@@ -304,6 +304,8 @@ class manager {
 
         \core\session\manager::loginas($targetuserid, \context_system::instance());
         // The login-as session has a fresh $SESSION, so the marker only exists inside the delegated session.
+        // A session cache cannot hold it: Moodle keeps session caches in $SESSION, bound to the object that
+        // existed before loginas() replaced it, so a value cached in this request would be lost.
         $SESSION->local_delegateaccount_delegated = true;
     }
 
