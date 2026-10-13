@@ -26,6 +26,7 @@
 namespace local_delegateaccount\table;
 
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Renders the lifecycle and use history of one user's delegated accounts.
@@ -36,8 +37,14 @@ use local_delegateaccount\manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class delegated_accounts_table extends \table_sql {
-    /** @var \context_system Context used to evaluate action capabilities. */
-    private \context_system $context;
+    /** @var bool Whether the current user may revoke delegations. */
+    private bool $canrevoke;
+
+    /** @var bool Whether the current user may change delegation lifecycles. */
+    private bool $canupdate;
+
+    /** @var bool Whether the current user may view delegated activity. */
+    private bool $canviewactivity;
 
     /** @var int ID of the authorised user represented by this table. */
     private int $realuserid;
@@ -50,21 +57,21 @@ class delegated_accounts_table extends \table_sql {
      *
      * @param \moodle_url $baseurl URL retaining table state.
      * @param int $realuserid Authorised user ID.
-     * @param \context_system $context System context for capabilities.
      * @param string $status Lifecycle status represented by the current tab.
      * @param string $search Optional delegated-user search query.
      */
     public function __construct(
         \moodle_url $baseurl,
         int $realuserid,
-        \context_system $context,
         string $status = manager::STATUS_ACTIVE,
         string $search = ''
     ) {
         global $DB;
 
         parent::__construct('local_delegateaccount_delegated_accounts');
-        $this->context = $context;
+        $this->canrevoke = permission::has(permission::REVOKE);
+        $this->canupdate = permission::has(permission::UPDATE);
+        $this->canviewactivity = permission::has(permission::VIEWACTIVITY);
         $this->realuserid = $realuserid;
         $this->status = $status;
 
@@ -91,6 +98,7 @@ class delegated_accounts_table extends \table_sql {
         $this->sortable(true, 'lastname', SORT_ASC);
         $this->no_sorting('select');
         $this->no_sorting('status');
+        $this->no_sorting('lastaccess');
         $this->no_sorting('actions');
         $this->collapsible(false);
         $this->is_downloadable(false);
@@ -101,15 +109,9 @@ class delegated_accounts_table extends \table_sql {
         $fields = 'da.id, da.realuserid, da.delegateduserid, da.timestart, da.timeend,
                    da.timerevoked, da.activekey, da.notificationmode, u.firstname, u.lastname, u.middlename,
                    u.alternatename, u.firstnamephonetic, u.lastnamephonetic, u.email,
-                   u.picture, u.imagealt,
-                   COALESCE(MAX(log.timecreated), 0) AS lastaccess';
+                   u.picture, u.imagealt';
         $from = '{local_delegateaccount} da
-                 JOIN {user} u ON u.id = da.delegateduserid
-                 LEFT JOIN {logstore_standard_log} log ON log.userid = da.delegateduserid
-                    AND log.realuserid = da.realuserid
-                    AND log.timecreated >= da.timestart
-                    AND (da.timeend = 0 OR log.timecreated < da.timeend)
-                    AND (da.timerevoked = 0 OR log.timecreated < da.timerevoked)';
+                 JOIN {user} u ON u.id = da.delegateduserid';
         $where = 'da.realuserid = :realuserid';
         $params = ['realuserid' => $realuserid];
         if ($search !== '') {
@@ -138,17 +140,8 @@ class delegated_accounts_table extends \table_sql {
         } else if ($status === manager::STATUS_REVOKED) {
             $where .= ' AND (da.activekey <> 0 OR da.timerevoked > 0)';
         }
-        $groupby = 'da.id, da.realuserid, da.delegateduserid, da.timestart, da.timeend,
-                    da.timerevoked, da.activekey, da.notificationmode, u.firstname, u.lastname, u.middlename,
-                    u.alternatename, u.firstnamephonetic, u.lastnamephonetic, u.email,
-                    u.picture, u.imagealt';
-        $countsql = 'SELECT COUNT(da.id)
-                       FROM {local_delegateaccount} da
-                       JOIN {user} u ON u.id = da.delegateduserid
-                      WHERE ' . $where;
-
-        $this->set_count_sql($countsql, $params);
-        $this->set_sql($fields, $from, $where . ' GROUP BY ' . $groupby, $params);
+        $this->set_count_sql('SELECT COUNT(da.id) FROM ' . $from . ' WHERE ' . $where, $params);
+        $this->set_sql($fields, $from, $where, $params);
     }
 
     /**
@@ -161,7 +154,7 @@ class delegated_accounts_table extends \table_sql {
 
         if (
             $this->status === manager::STATUS_REVOKED ||
-            !has_capability('local/delegateaccount:revoke', $this->context)
+            !($this->canrevoke || $this->canupdate)
         ) {
             return '';
         }
@@ -172,7 +165,7 @@ class delegated_accounts_table extends \table_sql {
     }
 
     /**
-     * Renders a selection checkbox for delegations that can still be revoked.
+     * Renders a selection checkbox for delegations that are not revoked, for bulk editing or revocation.
      *
      * @param \stdClass $row Delegated-account row.
      * @return string Selection control or an empty value.
@@ -181,7 +174,7 @@ class delegated_accounts_table extends \table_sql {
         global $OUTPUT;
 
         if (
-            !has_capability('local/delegateaccount:revoke', $this->context) ||
+            !($this->canrevoke || $this->canupdate) ||
             manager::get_delegation_status($row) === manager::STATUS_REVOKED
         ) {
             return '';
@@ -267,11 +260,30 @@ class delegated_accounts_table extends \table_sql {
      * @return string Formatted timestamp or the no-access label.
      */
     public function col_lastaccess($row): string {
-        if ((int)$row->lastaccess === 0) {
+        $lastaccess = manager::get_last_delegated_access($row);
+        if ($lastaccess === 0) {
             return $this->render_badge(get_string('no_delegated_access', 'local_delegateaccount'), 'badge badge-secondary');
         }
 
-        return $this->render_badge(userdate((int)$row->lastaccess), 'badge badge-info font-weight-normal');
+        return $this->render_badge(userdate($lastaccess), 'badge badge-info font-weight-normal');
+    }
+
+    /**
+     * Renders an icon button that opens one of the management modals.
+     *
+     * @param string $icon Core icon identifier.
+     * @param string $label Accessible action label.
+     * @param array $attributes Data attributes read by the management_modals module.
+     * @return string Button HTML.
+     */
+    public static function render_modal_button(string $icon, string $label, array $attributes): string {
+        global $OUTPUT;
+
+        return \html_writer::tag('button', $OUTPUT->pix_icon($icon, $label), $attributes + [
+            'type' => 'button',
+            'class' => 'btn btn-link p-0 border-0 align-baseline action-icon',
+            'title' => $label,
+        ]);
     }
 
     /**
@@ -306,6 +318,10 @@ class delegated_accounts_table extends \table_sql {
             ? get_string($notificationkey, 'local_delegateaccount')
             : get_string('delegationnotificationmode_never', 'local_delegateaccount');
         $displayend = manager::get_delegation_display_end($row);
+        $detailsurl = (new \moodle_url('/local/delegateaccount/pages/delegation.php', [
+            'realuserid' => $this->realuserid,
+            'delegationid' => $row->id,
+        ]))->out(false);
         $content = $OUTPUT->render_from_template('local_delegateaccount/delegation/modal_body', [
             'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
             'status' => get_string('delegation_status_' . manager::get_delegation_status($row), 'local_delegateaccount'),
@@ -317,36 +333,25 @@ class delegated_accounts_table extends \table_sql {
                 : userdate($displayend),
             'notificationmodelabel' => get_string('delegationnotificationmode', 'local_delegateaccount'),
             'notificationmode' => $notificationmode,
+            'detailsurl' => $detailsurl,
+            'detailslabel' => get_string('view_full_details', 'local_delegateaccount'),
         ]);
         $actions[] = $OUTPUT->render_from_template('local_delegateaccount/delegation/info_action', [
-            'url' => (new \moodle_url('/local/delegateaccount/pages/delegation.php', [
-                'realuserid' => $this->realuserid,
-                'delegationid' => $row->id,
-            ]))->out(false),
+            'url' => $detailsurl,
             'title' => $title,
             'contentid' => 'local-delegateaccount-delegation-info-' . $row->id,
             'content' => $content,
         ]);
 
-        $canupdate = has_capability('local/delegateaccount:update', $this->context) ||
-            has_capability('local/delegateaccount:manage', $this->context);
-        if (manager::get_delegation_status($row) !== manager::STATUS_REVOKED && $canupdate) {
-            $actions[] = $OUTPUT->action_icon(
-                new \moodle_url('/local/delegateaccount/pages/edit.php', [
-                    'realuserid' => $this->realuserid,
-                    'delegationid' => $row->id,
-                ]),
-                new \pix_icon('t/edit', get_string('edit_delegation', 'local_delegateaccount'), 'core'),
-                null,
-                [
-                    'data-action' => 'local-delegateaccount-edit-one',
-                    'data-real-user-id' => $this->realuserid,
-                    'data-delegation-id' => (int)$row->id,
-                ]
-            );
+        if (manager::get_delegation_status($row) !== manager::STATUS_REVOKED && $this->canupdate) {
+            $actions[] = self::render_modal_button('t/edit', get_string('edit_delegation', 'local_delegateaccount'), [
+                'data-action' => 'local-delegateaccount-edit-one',
+                'data-real-user-id' => $this->realuserid,
+                'data-delegation-id' => (int)$row->id,
+            ]);
         }
 
-        if (has_capability('local/delegateaccount:viewactivity', $this->context)) {
+        if ($this->canviewactivity) {
             $actions[] = $OUTPUT->action_icon(
                 new \moodle_url('/local/delegateaccount/pages/activity.php', [
                     'realuserid' => $this->realuserid,
@@ -357,7 +362,7 @@ class delegated_accounts_table extends \table_sql {
         }
 
         if (
-            !has_capability('local/delegateaccount:revoke', $this->context) ||
+            !$this->canrevoke ||
             manager::get_delegation_status($row) === manager::STATUS_REVOKED
         ) {
             return implode('', $actions);

@@ -83,24 +83,13 @@ function xmldb_local_delegateaccount_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2026082100, 'local', 'delegateaccount');
     }
 
-    if ($oldversion < 2026082102) {
-        upgrade_plugin_savepoint(true, 2026082102, 'local', 'delegateaccount');
-    }
+    if ($oldversion < 2026100800) {
+        // Only 'always' and 'never' are stored now. Delegations saved with 'site' were notified.
+        $DB->set_field('local_delegateaccount', 'notificationmode', 'always', ['notificationmode' => 'site']);
+        $field = new xmldb_field('notificationmode', XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, 'always', 'activekey');
+        $dbman->change_field_default($table, $field);
 
-    if ($oldversion < 2026082103) {
-        upgrade_plugin_savepoint(true, 2026082103, 'local', 'delegateaccount');
-    }
-
-    if ($oldversion < 2026082200) {
-        upgrade_plugin_savepoint(true, 2026082200, 'local', 'delegateaccount');
-    }
-
-    if ($oldversion < 2026082201) {
-        upgrade_plugin_savepoint(true, 2026082201, 'local', 'delegateaccount');
-    }
-
-    if ($oldversion < 2026082202) {
-        upgrade_plugin_savepoint(true, 2026082202, 'local', 'delegateaccount');
+        upgrade_plugin_savepoint(true, 2026100800, 'local', 'delegateaccount');
     }
 
     return true;

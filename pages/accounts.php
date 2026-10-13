@@ -39,7 +39,6 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($title);
 echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
     'description' => get_string('my_delegated_accounts_description', 'local_delegateaccount'),
 ]);

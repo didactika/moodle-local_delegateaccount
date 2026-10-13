@@ -30,12 +30,21 @@ require_once($CFG->libdir . '/formslib.php');
  */
 final class activity_filter_form extends \moodleform {
     /**
+     * Creates the filter form, which is submitted with GET so that filters stay in the report URL.
+     *
+     * @param \moodle_url $action Report URL.
+     * @param array $customdata Delegation identifiers and period boundaries.
+     */
+    public function __construct(\moodle_url $action, array $customdata) {
+        parent::__construct($action, $customdata, 'get');
+    }
+
+    /**
      * Defines period and event metadata filters.
      */
     public function definition() {
         $mform = $this->_form;
         $mform->disable_form_change_checker();
-        $mform->updateAttributes(['method' => 'get']);
         $mform->updateAttributes(['class' => 'full-width-labels']);
 
         $mform->addElement(

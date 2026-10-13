@@ -21,7 +21,7 @@ repository's [GNU GPL v3 or later license](LICENSE).
 3. Follow the [Moodle coding style](https://moodledev.io/general/development/policies/codingstyle)
    and document every public API.
 4. Add or update PHPUnit and Behat coverage whenever behaviour changes.
-5. Keep all English, Spanish, Portuguese, Italian and French language packs aligned when
+5. Keep the English language pack (`lang/en/`) up to date and in alphabetical order when
    adding or changing user-facing strings.
 6. Rebuild and commit `amd/build/` whenever a module under `amd/src/` changes.
 7. Update the README, changelog and integration guide when the public behaviour changes.
@@ -33,11 +33,11 @@ repository's [GNU GPL v3 or later license](LICENSE).
 The checkout directory must be named `delegateaccount`.
 
 ```bash
-# Moodle 4.5.
+# Moodle 4.5 and 5.0.
 git clone https://github.com/didactika/moodle-local_delegateaccount.git \
     /path/to/moodle/local/delegateaccount
 
-# Moodle 5.0 and later.
+# Moodle 5.1 and later.
 git clone https://github.com/didactika/moodle-local_delegateaccount.git \
     /path/to/moodle/public/local/delegateaccount
 ```
@@ -47,7 +47,7 @@ the plugin.
 
 ## Required checks
 
-Run checks from the Moodle root, adjusting the plugin path for Moodle 5.0 and later:
+Run checks from the Moodle root, adjusting the plugin path for Moodle 5.1 and later:
 
 ```bash
 vendor/bin/phpunit --testsuite local_delegateaccount_testsuite

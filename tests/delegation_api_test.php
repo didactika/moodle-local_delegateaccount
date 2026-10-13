@@ -19,6 +19,8 @@ namespace local_delegateaccount;
 use core_external\external_api;
 use local_delegateaccount\external\create_delegation;
 use local_delegateaccount\external\create_delegations;
+use local_delegateaccount\external\get_authorised_user_options;
+use local_delegateaccount\external\get_delegated_account_options;
 use local_delegateaccount\external\get_delegation_activity;
 use local_delegateaccount\external\get_delegations;
 use local_delegateaccount\external\get_user_delegations;
@@ -35,6 +37,8 @@ use local_delegateaccount\external\update_delegations;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \local_delegateaccount\external\create_delegation
  * @covers     \local_delegateaccount\external\create_delegations
+ * @covers     \local_delegateaccount\external\get_authorised_user_options
+ * @covers     \local_delegateaccount\external\get_delegated_account_options
  * @covers     \local_delegateaccount\external\get_delegation_activity
  * @covers     \local_delegateaccount\external\get_delegations
  * @covers     \local_delegateaccount\external\get_user_delegations
@@ -59,6 +63,8 @@ final class delegation_api_test extends \advanced_testcase {
             'local_delegateaccount_update_delegations' => update_delegations::class,
             'local_delegateaccount_revoke_delegations' => revoke_delegations::class,
             'local_delegateaccount_get_delegation_activity' => get_delegation_activity::class,
+            'local_delegateaccount_get_delegated_account_options' => get_delegated_account_options::class,
+            'local_delegateaccount_get_authorised_user_options' => get_authorised_user_options::class,
         ];
 
         $this->assertSame(array_keys($expectedclasses), array_keys($definitions));

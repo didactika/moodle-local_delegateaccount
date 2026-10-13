@@ -21,6 +21,7 @@ use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Revokes selected delegated-account relationships.
@@ -58,7 +59,7 @@ final class revoke_delegations extends delegation_service {
             'delegationids' => $delegationids,
             'confirm' => $confirm,
         ]);
-        self::require_granular_capability('local/delegateaccount:revoke');
+        self::require_permission(permission::REVOKE);
         if (!$params['confirm']) {
             throw new \invalid_parameter_exception('Delegation revocation requires explicit confirmation.');
         }

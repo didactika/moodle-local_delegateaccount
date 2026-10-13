@@ -61,12 +61,29 @@ jobs:
           git archive --format=zip --prefix="${shortname}/" --output="$filename" "$GITHUB_SHA"
           echo "filename=$filename" >> "$GITHUB_OUTPUT"
 
+      - id: notes
+        if: steps.version.outputs.maturity != 'MATURITY_ALPHA' && steps.tag.outputs.exists == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          release='${{ steps.version.outputs.release }}'
+          # The notes are the CHANGELOG section of this release, up to the next "## [" heading.
+          awk -v heading="## [${release}]" '
+            index($0, heading) == 1 { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "::error::CHANGELOG.md has no section for ${release}."
+            exit 1
+          fi
+
       - name: Create GitHub release
         if: steps.version.outputs.maturity != 'MATURITY_ALPHA' && steps.tag.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create '${{ steps.tag.outputs.name }}' '${{ steps.package.outputs.filename }}' \
-            --target '$GITHUB_SHA' \
+            --target "$GITHUB_SHA" \
             --title '${{ steps.tag.outputs.name }}' \
-            --generate-notes
+            --notes-file release-notes.md

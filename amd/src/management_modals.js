@@ -60,7 +60,11 @@ const showForm = (trigger, formClass, args, title) => {
         modal.addClass('local-delegateaccount-modal');
         normalise(modal.get(0));
     });
-    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => window.location.reload());
+    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => {
+        // Keep anyone waiting for pending JavaScript, such as Behat, waiting until the reloaded page replaces this one.
+        M.util.js_pending('local_delegateaccount/management_modals:reload');
+        window.location.reload();
+    });
     modalForm.show();
 };
 

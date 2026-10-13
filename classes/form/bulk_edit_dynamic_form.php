@@ -20,6 +20,7 @@ use context;
 use context_system;
 use core_form\dynamic_form;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 use moodle_url;
 
 /**
@@ -31,34 +32,14 @@ use moodle_url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class bulk_edit_dynamic_form extends dynamic_form {
+    use lifecycle_fields;
+
     /**
      * Defines lifecycle fields and protected selection identifiers.
      */
     protected function definition() {
         $mform = $this->_form;
-        $mform->addElement('date_time_selector', 'timestart', get_string('delegation_start', 'local_delegateaccount'));
-        $allowopenended = get_config('local_delegateaccount', 'allowopenended');
-        $mform->addElement(
-            'date_time_selector',
-            'timeend',
-            get_string('delegation_end', 'local_delegateaccount'),
-            ['optional' => $allowopenended === false || (bool)$allowopenended]
-        );
-
-        $policy = get_config('local_delegateaccount', 'notificationpolicy') ?: manager::NOTIFICATION_OPTIONAL;
-        if ($policy === manager::NOTIFICATION_OPTIONAL) {
-            $mform->addElement(
-                'select',
-                'notificationmode',
-                get_string('delegationnotificationmode', 'local_delegateaccount'),
-                [
-                    manager::NOTIFICATION_ALWAYS =>
-                        get_string('delegationnotificationmode_always', 'local_delegateaccount'),
-                    manager::NOTIFICATION_NEVER =>
-                        get_string('delegationnotificationmode_never', 'local_delegateaccount'),
-                ]
-            );
-        }
+        $this->add_lifecycle_fields($mform);
 
         $mform->addElement('hidden', 'realuserid');
         $mform->setType('realuserid', PARAM_INT);
@@ -74,12 +55,14 @@ final class bulk_edit_dynamic_form extends dynamic_form {
      * @return array Validation errors.
      */
     public function validation($data, $files): array {
-        $errors = parent::validation($data, $files) + assign_form::validate_period_values(
-            (int)$data['timestart'],
-            (int)$data['timeend']
-        );
+        $errors = parent::validation($data, $files) + $this->get_lifecycle_errors($data);
         if (empty($data['delegationids'])) {
             $errors['delegationids'] = get_string('noselected', 'core');
+        } else {
+            $ids = explode(',', $data['delegationids']);
+            if ($bulkerror = manager::get_bulk_operation_error(count($ids))) {
+                $errors['timeend'] = $bulkerror;
+            }
         }
         return $errors;
     }
@@ -97,10 +80,7 @@ final class bulk_edit_dynamic_form extends dynamic_form {
      * Requires granular update access or the transitional capability.
      */
     protected function check_access_for_dynamic_submission(): void {
-        $context = $this->get_context_for_dynamic_submission();
-        if (!has_any_capability(['local/delegateaccount:update', 'local/delegateaccount:manage'], $context)) {
-            require_capability('local/delegateaccount:update', $context);
-        }
+        permission::require_action(permission::UPDATE);
     }
 
     /**
@@ -110,25 +90,27 @@ final class bulk_edit_dynamic_form extends dynamic_form {
      */
     public function process_dynamic_submission(): array {
         $data = $this->get_data();
-        $policy = get_config('local_delegateaccount', 'notificationpolicy') ?: manager::NOTIFICATION_OPTIONAL;
-        $notificationmode = $policy === manager::NOTIFICATION_OPTIONAL
-            ? $data->notificationmode
-            : $policy;
+        $notificationmode = $this->get_notification_mode($data);
         $ids = array_map('intval', explode(',', $data->delegationids));
-        $updatedcount = manager::update_delegations(
-            $ids,
-            (int)$data->realuserid,
-            (int)$data->timestart,
-            (int)$data->timeend,
-            $notificationmode
-        );
+        try {
+            $updatedcount = manager::update_delegations(
+                $ids,
+                (int)$data->realuserid,
+                (int)$data->timestart,
+                (int)$data->timeend,
+                $notificationmode
+            );
 
-        $message = $updatedcount === 1
-            ? get_string('delegation_updated_success', 'local_delegateaccount')
-            : get_string('delegations_updated_success', 'local_delegateaccount', $updatedcount);
-        \core\notification::success($message);
+            $message = $updatedcount === 1
+                ? get_string('delegation_updated_success', 'local_delegateaccount')
+                : get_string('delegations_updated_success', 'local_delegateaccount', $updatedcount);
+            \core\notification::success($message);
 
-        return ['updatedcount' => $updatedcount];
+            return ['updatedcount' => $updatedcount];
+        } catch (\moodle_exception $e) {
+            \core\notification::error($e->getMessage());
+            return ['updatedcount' => 0];
+        }
     }
 
     /**

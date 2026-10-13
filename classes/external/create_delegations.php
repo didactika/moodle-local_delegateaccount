@@ -21,6 +21,7 @@ use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use local_delegateaccount\manager;
+use local_delegateaccount\permission;
 
 /**
  * Creates a matrix of delegated-account relationships.
@@ -80,7 +81,7 @@ final class create_delegations extends delegation_service {
             'timeend' => $timeend,
             'notificationmode' => $notificationmode,
         ]);
-        self::require_granular_capability('local/delegateaccount:create');
+        self::require_permission(permission::CREATE);
 
         return self::create_delegation_matrix(
             $params['realuserids'],
