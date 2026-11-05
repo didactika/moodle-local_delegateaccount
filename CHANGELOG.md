@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Two guided tours for Moodle's User Tours, imported automatically on install and upgrade from the `tour_*.json` files. They are shown once, only to people who have an active delegation, and explain the "Delegated accounts" user menu entry and the "My delegated accounts" page.
+
 ## [1.0.0-m405] - 2026-10-14
 
 First public release.

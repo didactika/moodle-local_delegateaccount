@@ -112,6 +112,17 @@ People with active delegations see **Delegated accounts** in their user menu. Ch
 
 To stop working as the other account, log out. A delegated account cannot open another delegated account: log out first.
 
+### 5. Guided tours
+
+Two guided tours for Moodle's User Tours are shipped as `tour_*.json` files in the plugin folder. They are written for the people who use delegated accounts, not for administrators. Each tour is shown only to people who currently have an active delegation, because it depends on the **Delegated accounts** entry in the user menu, and each person sees it once, until they finish or skip it.
+
+| File | Where it appears | What it explains |
+| --- | --- | --- |
+| `tour_use_delegated_accounts.json` | Dashboard and My courses | Where to find **Delegated accounts** in the user menu and how to open an account. |
+| `tour_my_delegated_accounts.json` | **My delegated accounts** page | The list of accounts, the access dates and the **Use delegated account** button. |
+
+The tours are imported automatically when the plugin is installed or upgraded. A tour that already exists, identified by its name, is never overwritten, so your edits are kept. Tours can be edited, translated or disabled under **Site administration > Appearance > User tours**. If you delete a tour and want it back, select **Import tour** on that page and choose the file.
+
 ## Configuration
 
 Settings are located at **Site administration > Plugins > Local plugins > Delegated account settings**.

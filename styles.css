@@ -144,3 +144,23 @@
         overscroll-behavior: contain;
     }
 }
+
+/*
+ * Delegated-account guided tour, shown only to people who have the delegated submenu. Its popover has no arrow.
+ * The steps that wait for a click on a highlighted user menu control have no Next or End tour button either,
+ * so the tour cannot be skipped from the popover.
+ */
+body:has(#carousel-item-delegatedaccounts, template[data-region="local-delegateaccount-usermenu-source"]):has(
+    #user-menu-toggle[data-flexitour="highlight"],
+    a[data-carousel-target-id="carousel-item-delegatedaccounts"][data-flexitour="highlight"],
+    #user-action-menu[data-flexitour="highlight"]
+) span[data-flexitour="container"] [data-role="arrow"] {
+    display: none;
+}
+
+body:has(#carousel-item-delegatedaccounts, template[data-region="local-delegateaccount-usermenu-source"]):has(
+    #user-menu-toggle[data-flexitour="highlight"],
+    a[data-carousel-target-id="carousel-item-delegatedaccounts"][data-flexitour="highlight"]
+) span[data-flexitour="container"] .modal-footer {
+    display: none;
+}
