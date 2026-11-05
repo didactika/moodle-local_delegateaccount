@@ -36,8 +36,23 @@ const TOUR_TARGETS = [
     '#user-action-menu',
 ].map(selector => `${selector}[data-flexitour="highlight"]`).join(', ');
 
+// The only places that stay clickable while the tour runs: the control of the current step, the delegated
+// accounts in the last step (the highlighted user menu also holds the back arrow and the "view all" link),
+// and the buttons of the tour popover. A click anywhere else in the popover is blocked too, because it lies outside
+// the open user menu and would make Bootstrap close the menu under the tour.
+const TOUR_CLICKABLE = [
+    '#user-menu-toggle[data-flexitour="highlight"]',
+    'a[data-carousel-target-id="carousel-item-delegatedaccounts"][data-flexitour="highlight"]',
+    `#user-action-menu[data-flexitour="highlight"] #carousel-item-delegatedaccounts .items a:not(${FALLBACK_LINK})`,
+    '[data-flexitour="container"] button[data-role]',
+].join(', ');
+
 /**
- * Stops the guided tour from being closed by clicking the dark area or pressing Escape.
+ * Stops the guided tour from being closed by clicking anywhere except the control the current step asks for,
+ * or by pressing Escape.
+ *
+ * The padding the tour leaves around the highlighted control, the dark area, the rest of the page, the other
+ * links of the user menu and the popover text are blocked.
  *
  * It only applies to the delegated-account tour: one of its controls must be highlighted and the delegated
  * submenu must exist, which is the case only for people who hold an active delegation. The listeners run in
@@ -48,7 +63,7 @@ const keepTourOpen = () => {
         document.querySelector(`#carousel-item-delegatedaccounts, ${SOURCE}`) !== null;
 
     document.addEventListener('click', event => {
-        if (tourIsActive() && event.target.closest('[data-flexitour="backdrop"]')) {
+        if (tourIsActive() && !event.target.closest(TOUR_CLICKABLE)) {
             event.preventDefault();
             event.stopPropagation();
         }
