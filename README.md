@@ -7,7 +7,7 @@
 *Let chosen people log in as other accounts, only when and for as long as you allow it*
 
 [![Release](https://img.shields.io/github/v/release/didactika/moodle-local_delegateaccount?style=flat-square)](https://github.com/didactika/moodle-local_delegateaccount/releases)
-[![Moodle](https://img.shields.io/badge/Moodle-4.5_to_5.3-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
+[![Moodle](https://img.shields.io/badge/Moodle-4.5_to_5.2-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
 [![PHP](https://img.shields.io/badge/PHP-8.1+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE)
 
@@ -49,6 +49,7 @@ Access is checked when the account is opened and again on every page while the d
 
 - **Time-bound delegations:** a start date, an optional end date and explicit revocation, with a full history of who created, changed and revoked each one.
 - **Bulk management:** create delegations for several people and several accounts at once, and edit or revoke many delegations together.
+- **Session permissions:** allow, prevent or prohibit any capability while someone works through a delegation, for every delegation or for one, without creating roles, and change them for many delegations at once.
 - **Activity report:** for each delegation, every event recorded while the account was being used through it, with date, component and action filters.
 - **User menu entry:** people with delegations open them from **Delegated accounts** in their user menu.
 - **Site limits:** maximum delegations per person, maximum duration, maximum records per bulk action, and protection of administrator accounts.
@@ -57,7 +58,12 @@ Access is checked when the account is opened and again on every page while the d
 
 ## Installation
 
-**Requirements:** Moodle 4.5 to 5.3, with the PHP version your Moodle release requires.
+**Requirements:** Moodle 4.5 to 5.2, with the PHP version your Moodle release requires. For Moodle 5.3 and later, use the `main` branch and the `-m503` releases, which bring the same features built with React and TypeScript.
+
+| Moodle | Branch | Releases |
+|---|---|---|
+| 4.5 to 5.2 | `MOODLE_405_STABLE` | `X.Y.Z-m405` |
+| 5.3 | `main` | `X.Y.Z-m503` |
 
 **From a release:** download the latest release ZIP, go to **Site administration > Plugins > Install plugins**, upload the file and follow the prompts.
 
@@ -66,9 +72,9 @@ Access is checked when the account is opened and again on every page while the d
 ```bash
 cd /path/to/moodle
 # Moodle 4.5 and 5.0
-git clone https://github.com/didactika/moodle-local_delegateaccount.git local/delegateaccount
-# Moodle 5.1 and later
-git clone https://github.com/didactika/moodle-local_delegateaccount.git public/local/delegateaccount
+git clone -b MOODLE_405_STABLE https://github.com/didactika/moodle-local_delegateaccount.git local/delegateaccount
+# Moodle 5.1 and 5.2
+git clone -b MOODLE_405_STABLE https://github.com/didactika/moodle-local_delegateaccount.git public/local/delegateaccount
 php admin/cli/upgrade.php
 ```
 
@@ -87,9 +93,9 @@ Until a role grants the capability, the management page shows a reminder with li
 
 ### 2. Create delegations
 
-Go to **Site administration > Users > Accounts > Manage delegated accounts**. The **Authorised users** tab lists everyone who holds the permission, with their active and scheduled delegations.
+Go to **Site administration > Users > Accounts > Manage delegated accounts**. The **Authorised users** tab lists everyone who holds the permission, with their active and scheduled delegations. Search by name, username, email or ID number, and use the chips to see the people who have delegations in a status, or none.
 
-- Select **Create delegations** to choose several authorised users and several accounts at once, or the add icon on a user's row to create delegations for that user only.
+- Select **Create delegations** at the top of the page to choose several authorised users and several accounts at once, or the add icon on a user's row to create delegations for that user only.
 - Choose when access starts and, optionally, when it ends.
 - When the site allows it, choose whether to notify the people involved.
 
@@ -97,12 +103,11 @@ The account picker only offers active accounts. It leaves out the authorised use
 
 ### 3. Manage delegations
 
-Open a user's delegations with the edit icon on their row. The tabs show their **Active**, **Scheduled**, **Expired** and **Revoked** delegations, with the last time each one was used.
+Select a person's name to open their delegations, or use the **All delegations** tab to work with the delegations of everyone. The chips show the **Active**, **Scheduled**, **Expired** and **Revoked** ones with their counts, and each row shows the period, the last time it was used and its session permissions.
 
-- **Edit** changes the period and the notification choice. Select several rows and use **Edit selected** to change them together.
-- **Revoke** ends a delegation immediately, including a session that is using it. Use **Revoke selected** for several rows.
-- The information icon shows the delegation's status, period and notification choice. **View full details** adds who created, changed and revoked it, and when.
-- **View delegated activity** opens the activity report for that delegation.
+- The icons at the end of a row edit the period, open the session permissions, open the activity report and revoke the delegation (in red: it ends access at once, also in a session that is open).
+- Select rows to act on several at once from the bar that appears at the foot of the window: **Edit period**, **Session permissions** and **Revoke**. When a whole page is selected, **Select all** extends the selection to every delegation that matches the search and the chip.
+- Select the name of an account to open the page of its delegation, with its details, its history and its **Session permissions** tab.
 
 The **Users without permission** tab lists people who still have delegations but no longer hold the permission, for example because their role was removed or their account was suspended. Their history and activity stay available, but they cannot use their delegations and cannot receive new ones.
 
@@ -119,13 +124,13 @@ Two guided tours for Moodle's User Tours are shipped as `tour_*.json` files in t
 | File | Where it appears | What it explains |
 | --- | --- | --- |
 | `tour_use_delegated_accounts.json` | Dashboard and My courses | Where to find **Delegated accounts** in the user menu and how to open an account. |
-| `tour_my_delegated_accounts.json` | **My delegated accounts** page | The list of accounts, the access dates and the **Use delegated account** button. |
+| `tour_my_delegated_accounts.json` | **My delegated accounts** page | The cards of the accounts, until when each can be opened and the **Open account** button. |
 
 The tours are imported automatically when the plugin is installed or upgraded. A tour that already exists, identified by its name, is never overwritten, so your edits are kept. Tours can be edited, translated or disabled under **Site administration > Appearance > User tours**. If you delete a tour and want it back, select **Import tour** on that page and choose the file.
 
 ## Configuration
 
-Settings are located at **Site administration > Plugins > Local plugins > Delegated account settings**.
+Settings are located at **Site administration > Plugins > Local plugins > Delegated account settings**, in four tabs: **Delegations**, **Notifications**, **Messages** and **Session permissions**.
 
 ### Delegation controls
 
@@ -155,19 +160,25 @@ Settings are located at **Site administration > Plugins > Local plugins > Delega
 
 Each recipient gets the notification in their profile language, or in the site language when theirs is not installed. Messages use the **Delegated account notifications** provider, sent as web and email notifications by default; users and administrators can change that in the usual notification preferences.
 
-### Delegated session capabilities tab
+### Session permissions
 
-On the **Delegated session capabilities** tab of the plugin settings (**Site administration > Plugins > Local plugins > Delegated account settings**), choose a permission for each capability while a person works in a delegated account.
+The **Session permissions** tab of the settings, and the **Session permissions** tab of each delegation, set what a session opened through a delegation may do. Each capability of the site has one of four permissions:
 
-| Permission | Effect |
+| Permission | In the session |
 |---|---|
-| Prohibit | The capability is removed and no role can give it back. `moodle/user:editownprofile` is prohibited by default |
-| Allow | The capability is granted, even if the account has no role that grants it |
-| Remove from list | The capability is removed from the list |
+| Not set | Nothing changes: the account keeps what its roles give it. Every capability starts here |
+| Allow | The capability is granted everywhere in the session, unless a role prohibits it |
+| Prevent | The capability is taken from the roles of the account on the whole site, as Prevent does in **Define roles**. An override of a role in a course or an activity still applies |
+| Prohibit | The capability is refused everywhere in the session, and nothing can grant it back |
 
-Use Add capabilities below the list to search for other capabilities. Each one you pick joins the list marked as not saved yet, where you choose Allow or Prohibit before saving. The × button drops a pick.
+The setting of a delegation wins over the one of the site; a delegation set to Not set follows the site. Find capabilities by name, technical name or component, narrow them with the chips (overridden, each permission, with risks), and save the changes from the bar at the foot of the window. **Copy from another delegation** loads the overrides of another delegation to review before saving.
 
-The rules apply only to sessions opened through a delegation. They change no role, the account owner keeps every permission when logging in normally, and a normal login, the authorised user's own session and a "Log in as" started by anyone else are never affected. Site administrator accounts are never restricted, which is another reason to keep **Protect site administrator accounts** enabled.
+To change many delegations at once, select them in a list and choose **Session permissions** in the bar: pick the capabilities and the permission each gets (or **Remove the override**), or copy the overrides of one delegation, adding them to the ones there or replacing them. The selection can be every delegation that matches the list, and the change is written in batches, so it scales to any number of delegations.
+
+The overrides apply only to sessions opened through a delegation. No role is created or changed: the access data of the session is rewritten on every request, so a change reaches open sessions from their next page, and the owner of the account keeps every permission when logging in normally. Site administrator accounts have every capability whatever is set, which is another reason to keep **Protect site administrator accounts** enabled. Capabilities that Moodle checks with database queries instead of the session (for instance some lists of users or courses) are not affected.
+
+> [!WARNING]
+> Allow gives a capability to a session even when the account does not have it. Changing session permissions needs `local/delegateaccount:managepermissions`, which no role has by default, and a person can only allow capabilities they hold themselves.
 
 ### Capabilities
 
@@ -181,7 +192,8 @@ All capabilities apply in the system context.
 | `local/delegateaccount:update` | Manager | Change the period and notification choice of delegations |
 | `local/delegateaccount:revoke` | Manager | Revoke delegations |
 | `local/delegateaccount:viewactivity` | Manager | Open the activity report of a delegation |
-| `local/delegateaccount:manage` | Manager | Everything above except `use`. Setting one of the specific capabilities to Prevent or Prohibit still refuses that action |
+| `local/delegateaccount:manage` | Manager | Everything above except `use` and `managepermissions`. Setting one of the specific capabilities to Prevent or Prohibit still refuses that action |
+| `local/delegateaccount:managepermissions` | None | Change the session permissions of the site (also needs `moodle/site:config`) and of delegations |
 
 > [!WARNING]
 > Whoever can create delegations decides who may log in as whom. Give `local/delegateaccount:create` and `local/delegateaccount:manage` only to people you would trust with Moodle's own **Log in as**.

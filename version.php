@@ -26,9 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026110502;
+$plugin->version = 2026110600;
 $plugin->requires = 2024100700;
 $plugin->component = 'local_delegateaccount';
-$plugin->release   = '1.0.0-m405';
-$plugin->supported = [405, 503];
+$plugin->release   = '1.1.0-m405';
+$plugin->supported = [405, 502];
 $plugin->maturity = MATURITY_STABLE;
