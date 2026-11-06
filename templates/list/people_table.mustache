@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_delegateaccount/list/people_table
+
+    One page of the people of the management page. A row is opened by the name of the person.
+
+    @copyright  2026 Didactika.org
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "rows": [
+            {
+                "user": {
+                    "fullname": "Jane Doe",
+                    "email": "jane@example.com",
+                    "hasimage": false,
+                    "initials": "JD",
+                    "url": "https://moodle.example/local/delegateaccount/pages/delegations.php?realuserid=7",
+                    "linklabel": "Open the delegations of Jane Doe"
+                },
+                "activecount": 2,
+                "scheduledcount": 1,
+                "cancreate": true,
+                "addlabel": "Create delegations for Jane Doe"
+            }
+        ]
+    }
+}}
+<table class="table">
+    <caption class="sr-only visually-hidden">{{#str}}list_caption_people, local_delegateaccount{{/str}}</caption>
+    <thead>
+        <tr>
+            <th scope="col" data-sort="name"><button type="button" class="table-sort" data-focuskey="sort-name">{{#str}}authoriseduser, local_delegateaccount{{/str}}</button></th>
+            <th scope="col" class="text-right text-end" data-sort="active"><button type="button" class="table-sort" data-focuskey="sort-active">{{#str}}active_delegations, local_delegateaccount{{/str}}</button></th>
+            <th scope="col" class="text-right text-end" data-sort="scheduled"><button type="button" class="table-sort" data-focuskey="sort-scheduled">{{#str}}scheduled_delegations, local_delegateaccount{{/str}}</button></th>
+            <th scope="col" class="table-actions"><span class="sr-only visually-hidden">{{#str}}actions{{/str}}</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#rows}}
+            <tr>
+                <th scope="row">{{#user}}{{> local_delegateaccount/shared/person }}{{/user}}</th>
+                <td class="text-right text-end">{{activecount}}</td>
+                <td class="text-right text-end">{{scheduledcount}}</td>
+                <td class="table-actions">
+                    {{#cancreate}}
+                        <button type="button" class="btn btn-link btn-icon btn-sm" data-action="create" data-id="{{user.id}}" title="{{addlabel}}" aria-label="{{addlabel}}">{{#pix}}t/add, core{{/pix}}</button>
+                    {{/cancreate}}
+                </td>
+            </tr>
+        {{/rows}}
+    </tbody>
+</table>

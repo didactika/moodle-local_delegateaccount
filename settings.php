@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,10 +12,13 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Site settings and administration navigation for delegated accounts.
+ *
+ * The settings answer four separate questions, so each has a tab: what a delegation may be (Delegations), who is told about
+ * it (Notifications), what they are told (Messages) and what a delegated session may do (Session permissions).
  *
  * @package    local_delegateaccount
  * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
@@ -27,60 +30,78 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $settings = new \local_delegateaccount\admin_settingpage_tabs(
+    require_once($CFG->dirroot . '/theme/boost/classes/admin_settingspage_tabs.php');
+
+    $settings = new theme_boost_admin_settingspage_tabs(
         'local_delegateaccount_settings',
         get_string('settings', 'local_delegateaccount')
     );
-    $general = new admin_settingpage(
-        'local_delegateaccount_general',
-        get_string('settings_general', 'local_delegateaccount')
+
+    $delegations = new admin_settingpage(
+        'local_delegateaccount_delegations',
+        get_string('settings_delegations', 'local_delegateaccount')
     );
-    $capabilities = new admin_settingpage(
-        'local_delegateaccount_capabilities',
+    $notifications = new admin_settingpage(
+        'local_delegateaccount_notifications',
+        get_string('settings_notifications', 'local_delegateaccount')
+    );
+    $messages = new admin_settingpage(
+        'local_delegateaccount_messages',
+        get_string('settings_messages', 'local_delegateaccount')
+    );
+    $permissions = new admin_settingpage(
+        'local_delegateaccount_permissions',
         get_string('settings_sessioncapabilities', 'local_delegateaccount')
     );
+    $hideifnever = [];
+    $hideifnorevocation = [];
 
     if ($ADMIN->fulltree) {
-        $general->add(new admin_setting_heading(
+        // Delegations: the limits every delegation keeps.
+        $delegations->add(new admin_setting_heading(
             'local_delegateaccount/delegationsheading',
-            get_string('settings_delegations', 'local_delegateaccount'),
+            get_string('settings_limits', 'local_delegateaccount'),
             get_string('settings_delegations_desc', 'local_delegateaccount')
         ));
-        $general->add(new admin_setting_configtext(
+        $delegations->add(new admin_setting_configtext(
             'local_delegateaccount/maxdelegationsperuser',
             get_string('maxdelegationsperuser', 'local_delegateaccount'),
             get_string('maxdelegationsperuser_desc', 'local_delegateaccount'),
             10,
             PARAM_INT
         ));
-        $general->add(new admin_setting_configcheckbox(
+        $delegations->add(new admin_setting_configcheckbox(
             'local_delegateaccount/allowopenended',
             get_string('allowopenended', 'local_delegateaccount'),
             get_string('allowopenended_desc', 'local_delegateaccount'),
             1
         ));
-        $general->add(new admin_setting_configtext(
+        $delegations->add(new admin_setting_configtext(
             'local_delegateaccount/maximumdurationdays',
             get_string('maximumdurationdays', 'local_delegateaccount'),
             get_string('maximumdurationdays_desc', 'local_delegateaccount'),
             0,
             PARAM_INT
         ));
-        $general->hide_if('local_delegateaccount/maximumdurationdays', 'local_delegateaccount/allowopenended', 'checked');
-        $general->add(new admin_setting_configcheckbox(
+        $delegations->add(new admin_setting_configcheckbox(
             'local_delegateaccount/protectprivilegedtargets',
             get_string('protectprivilegedtargets', 'local_delegateaccount'),
             get_string('protectprivilegedtargets_desc', 'local_delegateaccount'),
             1
         ));
-        $general->add(new admin_setting_configtext(
+        $delegations->add(new admin_setting_configtext(
             'local_delegateaccount/maxbulkoperations',
             get_string('maxbulkoperations', 'local_delegateaccount'),
             get_string('maxbulkoperations_desc', 'local_delegateaccount'),
             100,
             PARAM_INT
         ));
-        $general->add(new admin_setting_configtext(
+        $delegations->add(new admin_setting_heading(
+            'local_delegateaccount/usermenuheading',
+            get_string('settings_usermenu', 'local_delegateaccount'),
+            ''
+        ));
+        $delegations->add(new admin_setting_configtext(
             'local_delegateaccount/usermenulimit',
             get_string('usermenulimit', 'local_delegateaccount'),
             get_string('usermenulimit_desc', 'local_delegateaccount'),
@@ -88,12 +109,13 @@ if ($hassiteconfig) {
             PARAM_INT
         ));
 
-        $general->add(new admin_setting_heading(
+        // Notifications: whether and to whom.
+        $notifications->add(new admin_setting_heading(
             'local_delegateaccount/notificationsheading',
             get_string('settings_notifications', 'local_delegateaccount'),
             get_string('settings_notifications_desc', 'local_delegateaccount')
         ));
-        $general->add(new admin_setting_configselect(
+        $notifications->add(new admin_setting_configselect(
             'local_delegateaccount/notificationpolicy',
             get_string('notificationpolicy', 'local_delegateaccount'),
             get_string('notificationpolicy_desc', 'local_delegateaccount'),
@@ -107,8 +129,7 @@ if ($hassiteconfig) {
                     get_string('notificationpolicy_never', 'local_delegateaccount'),
             ]
         ));
-
-        $general->add(new admin_setting_configselect(
+        $notifications->add(new admin_setting_configselect(
             'local_delegateaccount/notificationrecipients',
             get_string('notificationrecipients', 'local_delegateaccount'),
             get_string('notificationrecipients_desc', 'local_delegateaccount'),
@@ -119,29 +140,31 @@ if ($hassiteconfig) {
                 'both' => get_string('notificationrecipients_both', 'local_delegateaccount'),
             ]
         ));
-        $general->add(new admin_setting_configcheckbox(
+        $notifications->add(new admin_setting_configcheckbox(
             'local_delegateaccount/notifyonrevocation',
             get_string('notifyonrevocation', 'local_delegateaccount'),
             get_string('notifyonrevocation_desc', 'local_delegateaccount'),
             1
         ));
-
-        $general->add(new admin_setting_description(
+        $notifications->add(new admin_setting_description(
             'local_delegateaccount/testnotification',
             get_string('testnotification', 'local_delegateaccount'),
             get_string('testnotification_desc', 'local_delegateaccount', (new moodle_url(
                 '/local/delegateaccount/pages/testnotification.php'
             ))->out())
         ));
-
         $hideifnever = [
             'local_delegateaccount/notificationrecipients',
             'local_delegateaccount/notifyonrevocation',
             'local_delegateaccount/testnotification',
         ];
-        $hideifnorevocation = [];
 
-        // One subject and message per action for each installed language. Empty fields use the built-in text.
+        // Messages: one subject and message per action for each installed language. Empty fields use the built-in text.
+        $messages->add(new admin_setting_heading(
+            'local_delegateaccount/messagesheading',
+            get_string('settings_messages', 'local_delegateaccount'),
+            get_string('settings_messages_desc', 'local_delegateaccount')
+        ));
         $languages = get_string_manager()->get_list_of_translations();
         $languages['en'] = $languages['en'] ?? 'English';
         ksort($languages);
@@ -153,7 +176,7 @@ if ($hassiteconfig) {
             foreach (['granted', 'revoked'] as $action) {
                 $subject = 'local_delegateaccount/notificationsubject_' . $action . '_' . $languagecode;
                 $template = 'local_delegateaccount/notificationtemplate_' . $action . '_' . $languagecode;
-                $general->add(new admin_setting_configtext(
+                $messages->add(new admin_setting_configtext(
                     $subject,
                     get_string('notificationsubject_' . $action, 'local_delegateaccount', $languagename),
                     get_string('notificationsubject_desc', 'local_delegateaccount'),
@@ -161,7 +184,7 @@ if ($hassiteconfig) {
                     PARAM_TEXT,
                     80
                 ));
-                $general->add(new \local_delegateaccount\admin_setting_notificationtemplate(
+                $messages->add(new \local_delegateaccount\admin_setting_notificationtemplate(
                     $template,
                     get_string('notificationtemplate_' . $action, 'local_delegateaccount', $languagename),
                     get_string('notificationtemplate_desc', 'local_delegateaccount'),
@@ -175,23 +198,30 @@ if ($hassiteconfig) {
             }
         }
 
-        foreach ($hideifnever as $name) {
-            $general->hide_if(
-                $name,
-                'local_delegateaccount/notificationpolicy',
-                'eq',
-                \local_delegateaccount\manager::NOTIFICATION_NEVER
-            );
-        }
-        foreach ($hideifnorevocation as $name) {
-            $general->hide_if($name, 'local_delegateaccount/notifyonrevocation', 'notchecked');
-        }
-
-        $capabilities->add(new \local_delegateaccount\admin_setting_sessioncapabilities());
+        // Session permissions: what every delegated session may do, whichever delegation opened it.
+        $permissions->add(new \local_delegateaccount\admin_setting_sessioncapabilities());
     }
 
-    $settings->add_tab($general);
-    $settings->add_tab($capabilities);
+    $settings->add($delegations);
+    $settings->add($notifications);
+    $settings->add($messages);
+    $settings->add($permissions);
+
+    // Registered on the tabs page and after the tabs are added: the tabs page copies the settings of each tab but not their
+    // dependencies, and the settings page reads them from it.
+    $settings->hide_if('local_delegateaccount/maximumdurationdays', 'local_delegateaccount/allowopenended', 'checked');
+    foreach ($hideifnever as $name) {
+        $settings->hide_if(
+            $name,
+            'local_delegateaccount/notificationpolicy',
+            'eq',
+            \local_delegateaccount\manager::NOTIFICATION_NEVER
+        );
+    }
+    foreach ($hideifnorevocation as $name) {
+        $settings->hide_if($name, 'local_delegateaccount/notifyonrevocation', 'notchecked');
+    }
+
     $ADMIN->add('localplugins', $settings);
 }
 

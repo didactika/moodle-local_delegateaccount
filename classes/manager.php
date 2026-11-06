@@ -300,13 +300,16 @@ class manager {
      * @param int $targetuserid Target account identifier, already checked with get_delegated_access_error().
      */
     public static function start_delegated_session(int $targetuserid): void {
-        global $SESSION;
+        global $SESSION, $USER;
 
+        $delegationid = self::get_current_delegation_id((int)$USER->id, $targetuserid);
         \core\session\manager::loginas($targetuserid, \context_system::instance());
         // The login-as session has a fresh $SESSION, so the marker only exists inside the delegated session.
         // A session cache cannot hold it: Moodle keeps session caches in $SESSION, bound to the object that
         // existed before loginas() replaced it, so a value cached in this request would be lost.
-        $SESSION->local_delegateaccount_delegated = true;
+        // It holds the delegation, whose permission overrides apply to the session.
+        $SESSION->local_delegateaccount_delegated = $delegationid > 0 ? $delegationid : true;
+        session_capabilities::apply();
         // Load the permissions of the delegated account now, so that the very first page is already restricted.
         load_all_capabilities();
         session_capabilities::apply();
@@ -549,7 +552,7 @@ class manager {
      * Applies one lifecycle configuration to several active delegations atomically.
      *
      * @param int[] $delegationids Delegation identifiers selected by an administrator.
-     * @param int $realuserid Authorised user that must own every selected delegation.
+     * @param int $realuserid Authorised user that must own every selected delegation, or zero for any.
      * @param int $timestart Unix timestamp when access starts.
      * @param int $timeend Unix timestamp when access ends, or zero for no end date.
      * @param string $notificationmode Site, always, or never.
@@ -573,12 +576,13 @@ class manager {
         self::validate_period($timestart, $timeend);
         $notificationmode = self::resolve_notification_mode($notificationmode);
         [$insql, $params] = $DB->get_in_or_equal($delegationids, SQL_PARAMS_NAMED, 'bulkupdate');
-        $params['realuserid'] = $realuserid;
-        $records = $DB->get_records_select(
-            'local_delegateaccount',
-            "id $insql AND realuserid = :realuserid AND activekey = 0",
-            $params
-        );
+        $select = "id $insql AND activekey = 0";
+        // Zero changes delegations of any authorised user, as chosen in the list of every delegation.
+        if ($realuserid > 0) {
+            $select .= ' AND realuserid = :realuserid';
+            $params['realuserid'] = $realuserid;
+        }
+        $records = $DB->get_records_select('local_delegateaccount', $select, $params);
         if (count($records) !== count($delegationids)) {
             throw new \moodle_exception('error_invaliddelegations', 'local_delegateaccount');
         }
@@ -945,6 +949,7 @@ class manager {
         foreach ($events as $logid => $event) {
             $record = (object)($event->get_data() + $event->get_logextra());
             $record->id = (int)$logid;
+            $record->event = $event;
             $records[] = $record;
         }
 

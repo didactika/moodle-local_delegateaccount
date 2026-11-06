@@ -100,5 +100,46 @@ function xmldb_local_delegateaccount_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2026110500, 'local', 'delegateaccount');
     }
 
+    if ($oldversion < 2026110600) {
+        // Permission overrides of delegated sessions, for the whole site (delegation zero) and for each delegation.
+        $caps = new xmldb_table('local_delegateaccount_caps');
+        $caps->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $caps->add_field('delegationid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $caps->add_field('capability', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL);
+        $caps->add_field('permission', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $caps->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $caps->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $caps->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $caps->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+        $caps->add_index('delegation_capability', XMLDB_INDEX_UNIQUE, ['delegationid', 'capability']);
+        $caps->add_index('capability', XMLDB_INDEX_NOTUNIQUE, ['capability']);
+        if (!$dbman->table_exists($caps)) {
+            $dbman->create_table($caps);
+        }
+
+        // The first version of the restrictions kept them in a setting, as JSON. They become site overrides.
+        $saved = get_config('local_delegateaccount', 'sessioncapabilities');
+        $decoded = $saved === false ? [] : json_decode($saved, true);
+        $now = time();
+        foreach (is_array($decoded) ? $decoded : [] as $capability => $permission) {
+            if (
+                in_array((int)$permission, [CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT], true) &&
+                $DB->record_exists('capabilities', ['name' => $capability]) &&
+                !$DB->record_exists('local_delegateaccount_caps', ['delegationid' => 0, 'capability' => $capability])
+            ) {
+                $DB->insert_record('local_delegateaccount_caps', (object)[
+                    'delegationid' => 0,
+                    'capability' => $capability,
+                    'permission' => (int)$permission,
+                    'timemodified' => $now,
+                    'usermodified' => 0,
+                ]);
+            }
+        }
+        unset_config('sessioncapabilities', 'local_delegateaccount');
+
+        upgrade_plugin_savepoint(true, 2026110600, 'local', 'delegateaccount');
+    }
+
     return true;
 }

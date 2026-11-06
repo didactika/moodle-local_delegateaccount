@@ -1,0 +1,298 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The permission editor and the dialog of many delegations, as overrides of the Bootstrap pieces they are made of (list-group,
+// card) and of the design system's segmented control and save bar. Nothing is folded away: the search, the chips, the
+// component and the pager narrow the list instead.
+// @copyright 2026 Didactika.org
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.lda,
+.lda-modal {
+    // A segmented control: one choice among a few, with the chosen one raised.
+    & .dd-segmented {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.125rem;
+        padding: 0.1875rem;
+        border-radius: var(--dd-radius-sm);
+        background-color: var(--dd-surface-3);
+
+        & button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4375rem;
+            min-height: 1.875rem;
+            padding: 0.25rem 0.75rem;
+            border: 0;
+            border-radius: calc(var(--dd-radius-sm) - 2px);
+            background: none;
+            color: var(--dd-muted);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color var(--dd-ease), color var(--dd-ease), box-shadow var(--dd-ease);
+
+            &:hover {
+                color: var(--dd-ink);
+            }
+
+            &:focus-visible {
+                outline: 0;
+                box-shadow: 0 0 0 3px var(--dd-ring);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
+            &[aria-checked="true"],
+            &[aria-pressed="true"] {
+                background-color: var(--dd-surface);
+                box-shadow: var(--dd-shadow-sm);
+                color: var(--dd-ink);
+            }
+
+            // The chosen permission takes the colour of its meaning, and says it in words too.
+            &[data-permission="1"][aria-checked="true"] {
+                background-color: color-mix(in srgb, var(--dd-success) 16%, var(--dd-surface));
+                color: color-mix(in srgb, var(--dd-success) 60%, var(--dd-ink));
+            }
+
+            &[data-permission="-1"][aria-checked="true"] {
+                background-color: color-mix(in srgb, var(--dd-warning) 22%, var(--dd-surface));
+                color: color-mix(in srgb, var(--dd-warning) 45%, var(--dd-ink));
+            }
+
+            &[data-permission="-1000"][aria-checked="true"] {
+                background-color: color-mix(in srgb, var(--dd-danger) 16%, var(--dd-surface));
+                color: color-mix(in srgb, var(--dd-danger) 65%, var(--dd-ink));
+            }
+        }
+    }
+
+    // A list of capabilities: the name and the technical name on the left, the permission on the right.
+    & .list-group-flush > .list-group-item,
+    & .list-group:not([role]) > .list-group-item {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem 1rem;
+        padding: 0.625rem 1rem;
+        border-color: var(--dd-hairline);
+        background-color: var(--dd-surface);
+        color: var(--dd-ink);
+        transition: background-color var(--dd-ease);
+
+        & > .d-flex.flex-column {
+            flex: 1 1 18rem;
+            min-width: 0;
+        }
+
+        & .small {
+            overflow-wrap: anywhere;
+        }
+
+        & .badge {
+            margin-right: 0.25rem;
+            font-size: 0.6875rem;
+        }
+
+        &:hover {
+            background-color: color-mix(in srgb, var(--dd-primary) 4%, var(--dd-surface));
+        }
+    }
+
+    & .list-group:not([role]) {
+        border-radius: var(--dd-radius-lg);
+    }
+
+    // The name of a component above its capabilities, kept in sight while the page scrolls.
+    & .list-group-flush > .list-group-item-light,
+    & .list-group-flush > .list-group-item-light:hover {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        display: block;
+        padding: 0.5rem 1rem;
+        background-color: var(--dd-surface-2);
+        color: var(--dd-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    // A capability changed and not saved yet.
+    & .list-group-flush > .list-group-item-primary,
+    & .list-group-flush > .list-group-item-primary:hover {
+        box-shadow: inset 3px 0 0 var(--dd-primary);
+        background-color: var(--dd-primary-soft);
+        color: var(--dd-ink);
+    }
+
+    // What each permission does, above the list.
+    & .row.list-unstyled.small {
+        line-height: 1.45;
+    }
+
+    // The bar of the unsaved changes: it floats at the foot of the window from the first change until they are saved or
+    // discarded, like the bar of a selection, so it is always at hand however long the list is.
+    & .dd-savebar {
+        position: fixed;
+        bottom: 1.5rem;
+        left: 50%;
+        z-index: 1030;
+        display: flex;
+        align-items: center;
+        gap: 1rem 1.5rem;
+        width: max-content;
+        max-width: calc(100vw - 2rem);
+        padding: 0.5rem 0.6rem 0.5rem 1.25rem;
+        border: 1px solid var(--dd-hairline);
+        border-radius: 1rem;
+        background: var(--dd-surface);
+        box-shadow: var(--dd-shadow-lg);
+        transform: translateX(-50%);
+        animation: lda-rise 200ms cubic-bezier(0.2, 0, 0, 1);
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    & .dd-savebar-text {
+        color: var(--dd-ink);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    & .dd-savebar-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}
+
+// The dialog of many delegations keeps one size whatever it shows, so nothing jumps while one searches or switches mode.
+.lda-modal {
+    & .modal-body:has([data-region="bulk"]) {
+        min-height: 32rem;
+    }
+
+    & [data-region="change"],
+    & [data-region="copy"] {
+        margin-top: 1rem;
+
+        & > * + * {
+            margin-top: 1.25rem;
+        }
+    }
+
+    // The lists to choose from: always on screen, with a fixed height, narrowed as one types.
+    & .list-group[role="listbox"] {
+        height: 12.5rem;
+        padding: 0.25rem;
+        overflow-y: auto;
+        border: 1px solid var(--dd-hairline);
+        border-radius: var(--dd-radius-lg);
+        background: var(--dd-surface);
+
+        & > li {
+            list-style: none;
+        }
+
+        & button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.5rem 0.625rem;
+            border: 0;
+            border-radius: var(--dd-radius);
+            background: none;
+            color: var(--dd-ink);
+            text-align: left;
+
+            &:hover,
+            &:focus-visible {
+                outline: 0;
+                background-color: var(--dd-primary-soft);
+            }
+
+            &[aria-selected="true"] {
+                background-color: var(--dd-primary-soft);
+                box-shadow: inset 3px 0 0 var(--dd-primary);
+            }
+
+            & small {
+                color: var(--dd-muted);
+                font-size: 0.8125rem;
+            }
+        }
+
+        & .list-group-item {
+            border: 0;
+        }
+    }
+
+    // Options shown as cards: the whole card is the choice, and the focus rings the card, not the small circle.
+    & label.card {
+        cursor: pointer;
+        transition: border-color var(--dd-ease), background-color var(--dd-ease), box-shadow var(--dd-ease);
+
+        &:hover {
+            border-color: var(--dd-line);
+        }
+
+        &:has(input:checked) {
+            border-color: var(--dd-primary);
+            background-color: var(--dd-primary-soft);
+        }
+
+        &:has(input:focus-visible) {
+            box-shadow: 0 0 0 3px var(--dd-ring);
+        }
+
+        & input {
+            flex: none;
+            width: 1rem;
+            height: 1rem;
+            margin: 0.2rem 0 0;
+            accent-color: var(--dd-primary);
+            box-shadow: none;
+
+            &:focus {
+                outline: 0;
+                box-shadow: none;
+            }
+        }
+    }
+
+    & .card {
+        border: 1px solid var(--dd-hairline);
+        border-radius: var(--dd-radius-lg);
+        box-shadow: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .lda .list-group-item .dd-segmented,
+    .lda-modal .list-group-item .dd-segmented {
+        width: 100%;
+
+        & button {
+            flex: 1 1 auto;
+            justify-content: center;
+        }
+    }
+
+    .lda .dd-savebar {
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: var(--dd-radius-lg);
+    }
+}
