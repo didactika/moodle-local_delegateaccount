@@ -51,11 +51,16 @@ class admin_setting_sessioncapabilities extends \admin_setting {
     /**
      * Saves the permissions posted by the form.
      *
-     * @param array $data Posted values: permissions by capability, plus the capabilities to add, each with its permission.
+     * @param array|string $data Posted values: permissions by capability, plus the capabilities to add, each with its
+     *                           permission. Moodle passes the default as JSON when it applies default settings.
      * @return string Empty when saved, otherwise an error message.
      */
     public function write_setting($data) {
         global $DB;
+
+        if (is_string($data)) {
+            $data = ['permissions' => json_decode($data, true)];
+        }
 
         $permissions = [];
         foreach ((array)($data['permissions'] ?? []) as $capability => $permission) {

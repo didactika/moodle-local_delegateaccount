@@ -50,6 +50,19 @@ final class session_capabilities_test extends \advanced_testcase {
     }
 
     /**
+     * Moodle applies the default of the admin setting by writing it as JSON, which must keep the default permissions.
+     */
+    public function test_applying_default_setting_keeps_default(): void {
+        $this->resetAfterTest();
+        unset_config(session_capabilities::SETTING, 'local_delegateaccount');
+
+        $setting = new admin_setting_sessioncapabilities();
+        $this->assertSame('', $setting->write_setting($setting->get_defaultsetting()));
+
+        $this->assertSame(session_capabilities::DEFAULT, session_capabilities::get_permissions());
+    }
+
+    /**
      * A saved list replaces the default, and an empty list sets nothing.
      */
     public function test_saved_list_replaces_default(): void {
