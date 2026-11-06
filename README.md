@@ -112,6 +112,17 @@ People with active delegations see **Delegated accounts** in their user menu. Ch
 
 To stop working as the other account, log out. A delegated account cannot open another delegated account: log out first.
 
+### 5. Guided tours
+
+Two guided tours for Moodle's User Tours are shipped as `tour_*.json` files in the plugin folder. They are written for the people who use delegated accounts, not for administrators. Each tour is shown only to people who currently have an active delegation, because it depends on the **Delegated accounts** entry in the user menu, and each person sees it once, until they finish or skip it.
+
+| File | Where it appears | What it explains |
+| --- | --- | --- |
+| `tour_use_delegated_accounts.json` | Dashboard and My courses | Where to find **Delegated accounts** in the user menu and how to open an account. |
+| `tour_my_delegated_accounts.json` | **My delegated accounts** page | The list of accounts, the access dates and the **Use delegated account** button. |
+
+The tours are imported automatically when the plugin is installed or upgraded. A tour that already exists, identified by its name, is never overwritten, so your edits are kept. Tours can be edited, translated or disabled under **Site administration > Appearance > User tours**. If you delete a tour and want it back, select **Import tour** on that page and choose the file.
+
 ## Configuration
 
 Settings are located at **Site administration > Plugins > Local plugins > Delegated account settings**.
@@ -143,6 +154,20 @@ Settings are located at **Site administration > Plugins > Local plugins > Delega
 > Use **Send yourself a test notification**, below these settings, to receive the saved subject and message for a language as both recipients would see them. Save your changes first.
 
 Each recipient gets the notification in their profile language, or in the site language when theirs is not installed. Messages use the **Delegated account notifications** provider, sent as web and email notifications by default; users and administrators can change that in the usual notification preferences.
+
+### Delegated session capabilities tab
+
+On the **Delegated session capabilities** tab of the plugin settings (**Site administration > Plugins > Local plugins > Delegated account settings**), choose a permission for each capability while a person works in a delegated account.
+
+| Permission | Effect |
+|---|---|
+| Prohibit | The capability is removed and no role can give it back. `moodle/user:editownprofile` is prohibited by default |
+| Allow | The capability is granted, even if the account has no role that grants it |
+| Remove from list | The capability is removed from the list |
+
+Use Add capabilities below the list to search for other capabilities. Each one you pick joins the list marked as not saved yet, where you choose Allow or Prohibit before saving. The × button drops a pick.
+
+The rules apply only to sessions opened through a delegation. They change no role, the account owner keeps every permission when logging in normally, and a normal login, the authorised user's own session and a "Log in as" started by anyone else are never affected. Site administrator accounts are never restricted, which is another reason to keep **Protect site administrator accounts** enabled.
 
 ### Capabilities
 

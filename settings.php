@@ -27,52 +27,60 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage(
+    $settings = new \local_delegateaccount\admin_settingpage_tabs(
         'local_delegateaccount_settings',
         get_string('settings', 'local_delegateaccount')
     );
+    $general = new admin_settingpage(
+        'local_delegateaccount_general',
+        get_string('settings_general', 'local_delegateaccount')
+    );
+    $capabilities = new admin_settingpage(
+        'local_delegateaccount_capabilities',
+        get_string('settings_sessioncapabilities', 'local_delegateaccount')
+    );
 
     if ($ADMIN->fulltree) {
-        $settings->add(new admin_setting_heading(
+        $general->add(new admin_setting_heading(
             'local_delegateaccount/delegationsheading',
             get_string('settings_delegations', 'local_delegateaccount'),
             get_string('settings_delegations_desc', 'local_delegateaccount')
         ));
-        $settings->add(new admin_setting_configtext(
+        $general->add(new admin_setting_configtext(
             'local_delegateaccount/maxdelegationsperuser',
             get_string('maxdelegationsperuser', 'local_delegateaccount'),
             get_string('maxdelegationsperuser_desc', 'local_delegateaccount'),
             10,
             PARAM_INT
         ));
-        $settings->add(new admin_setting_configcheckbox(
+        $general->add(new admin_setting_configcheckbox(
             'local_delegateaccount/allowopenended',
             get_string('allowopenended', 'local_delegateaccount'),
             get_string('allowopenended_desc', 'local_delegateaccount'),
             1
         ));
-        $settings->add(new admin_setting_configtext(
+        $general->add(new admin_setting_configtext(
             'local_delegateaccount/maximumdurationdays',
             get_string('maximumdurationdays', 'local_delegateaccount'),
             get_string('maximumdurationdays_desc', 'local_delegateaccount'),
             0,
             PARAM_INT
         ));
-        $settings->hide_if('local_delegateaccount/maximumdurationdays', 'local_delegateaccount/allowopenended', 'checked');
-        $settings->add(new admin_setting_configcheckbox(
+        $general->hide_if('local_delegateaccount/maximumdurationdays', 'local_delegateaccount/allowopenended', 'checked');
+        $general->add(new admin_setting_configcheckbox(
             'local_delegateaccount/protectprivilegedtargets',
             get_string('protectprivilegedtargets', 'local_delegateaccount'),
             get_string('protectprivilegedtargets_desc', 'local_delegateaccount'),
             1
         ));
-        $settings->add(new admin_setting_configtext(
+        $general->add(new admin_setting_configtext(
             'local_delegateaccount/maxbulkoperations',
             get_string('maxbulkoperations', 'local_delegateaccount'),
             get_string('maxbulkoperations_desc', 'local_delegateaccount'),
             100,
             PARAM_INT
         ));
-        $settings->add(new admin_setting_configtext(
+        $general->add(new admin_setting_configtext(
             'local_delegateaccount/usermenulimit',
             get_string('usermenulimit', 'local_delegateaccount'),
             get_string('usermenulimit_desc', 'local_delegateaccount'),
@@ -80,12 +88,12 @@ if ($hassiteconfig) {
             PARAM_INT
         ));
 
-        $settings->add(new admin_setting_heading(
+        $general->add(new admin_setting_heading(
             'local_delegateaccount/notificationsheading',
             get_string('settings_notifications', 'local_delegateaccount'),
             get_string('settings_notifications_desc', 'local_delegateaccount')
         ));
-        $settings->add(new admin_setting_configselect(
+        $general->add(new admin_setting_configselect(
             'local_delegateaccount/notificationpolicy',
             get_string('notificationpolicy', 'local_delegateaccount'),
             get_string('notificationpolicy_desc', 'local_delegateaccount'),
@@ -100,7 +108,7 @@ if ($hassiteconfig) {
             ]
         ));
 
-        $settings->add(new admin_setting_configselect(
+        $general->add(new admin_setting_configselect(
             'local_delegateaccount/notificationrecipients',
             get_string('notificationrecipients', 'local_delegateaccount'),
             get_string('notificationrecipients_desc', 'local_delegateaccount'),
@@ -111,14 +119,14 @@ if ($hassiteconfig) {
                 'both' => get_string('notificationrecipients_both', 'local_delegateaccount'),
             ]
         ));
-        $settings->add(new admin_setting_configcheckbox(
+        $general->add(new admin_setting_configcheckbox(
             'local_delegateaccount/notifyonrevocation',
             get_string('notifyonrevocation', 'local_delegateaccount'),
             get_string('notifyonrevocation_desc', 'local_delegateaccount'),
             1
         ));
 
-        $settings->add(new admin_setting_description(
+        $general->add(new admin_setting_description(
             'local_delegateaccount/testnotification',
             get_string('testnotification', 'local_delegateaccount'),
             get_string('testnotification_desc', 'local_delegateaccount', (new moodle_url(
@@ -145,7 +153,7 @@ if ($hassiteconfig) {
             foreach (['granted', 'revoked'] as $action) {
                 $subject = 'local_delegateaccount/notificationsubject_' . $action . '_' . $languagecode;
                 $template = 'local_delegateaccount/notificationtemplate_' . $action . '_' . $languagecode;
-                $settings->add(new admin_setting_configtext(
+                $general->add(new admin_setting_configtext(
                     $subject,
                     get_string('notificationsubject_' . $action, 'local_delegateaccount', $languagename),
                     get_string('notificationsubject_desc', 'local_delegateaccount'),
@@ -153,7 +161,7 @@ if ($hassiteconfig) {
                     PARAM_TEXT,
                     80
                 ));
-                $settings->add(new \local_delegateaccount\admin_setting_notificationtemplate(
+                $general->add(new \local_delegateaccount\admin_setting_notificationtemplate(
                     $template,
                     get_string('notificationtemplate_' . $action, 'local_delegateaccount', $languagename),
                     get_string('notificationtemplate_desc', 'local_delegateaccount'),
@@ -168,7 +176,7 @@ if ($hassiteconfig) {
         }
 
         foreach ($hideifnever as $name) {
-            $settings->hide_if(
+            $general->hide_if(
                 $name,
                 'local_delegateaccount/notificationpolicy',
                 'eq',
@@ -176,10 +184,14 @@ if ($hassiteconfig) {
             );
         }
         foreach ($hideifnorevocation as $name) {
-            $settings->hide_if($name, 'local_delegateaccount/notifyonrevocation', 'notchecked');
+            $general->hide_if($name, 'local_delegateaccount/notifyonrevocation', 'notchecked');
         }
+
+        $capabilities->add(new \local_delegateaccount\admin_setting_sessioncapabilities());
     }
 
+    $settings->add_tab($general);
+    $settings->add_tab($capabilities);
     $ADMIN->add('localplugins', $settings);
 }
 

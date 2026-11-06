@@ -307,6 +307,9 @@ class manager {
         // A session cache cannot hold it: Moodle keeps session caches in $SESSION, bound to the object that
         // existed before loginas() replaced it, so a value cached in this request would be lost.
         $SESSION->local_delegateaccount_delegated = true;
+        // Load the permissions of the delegated account now, so that the very first page is already restricted.
+        load_all_capabilities();
+        session_capabilities::apply();
     }
 
     /**

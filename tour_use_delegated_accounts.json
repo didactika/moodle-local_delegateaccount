@@ -1,0 +1,40 @@
+{
+  "name": "Delegate account: using a delegated account",
+  "description": "Shows people with delegated access where to find their accounts in the user menu.",
+  "pathmatch": "/my/%",
+  "enabled": "1",
+  "sortorder": "0",
+  "endtourlabel": "",
+  "configdata": "{\"placement\": \"bottom\", \"orphan\": \"0\", \"backdrop\": \"1\", \"reflex\": \"0\", \"showtourwhen\": 1, \"filtervalues\": {\"accessdate\": {\"filter_accessdate\": \"tool_usertours_accountcreation\", \"filter_accessdate_range\": 0, \"filter_accessdate_enabled\": \"0\"}, \"category\": [], \"course\": [], \"courseformat\": [], \"role\": [], \"theme\": [], \"cssselector\": [\"template[data-region=\\\"local-delegateaccount-usermenu-source\\\"], #carousel-item-delegatedaccounts\"]}}",
+  "displaystepnumbers": true,
+  "version": "2024100700",
+  "steps": [
+    {
+      "title": "You have access to other accounts",
+      "content": "<p>You have been given access to delegated accounts, which let you work in another person's account.</p><p>Select your user menu now to continue.</p>",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#user-menu-toggle",
+      "configdata": "{\"placement\": \"left\", \"reflex\": true}",
+      "sortorder": "0"
+    },
+    {
+      "title": "Delegated accounts",
+      "content": "<p>Select <strong>Delegated accounts</strong> to continue. It opens the list of accounts you may use.</p>",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#carousel-item-main a[data-carousel-target-id=\"carousel-item-delegatedaccounts\"]",
+      "configdata": "{\"placement\": \"left\", \"reflex\": true}",
+      "sortorder": "1"
+    },
+    {
+      "title": "Open a delegated account",
+      "content": "<p>Select the name of the account you want to use. Moodle then opens that account.</p><p>Everything you do while using it is recorded in the site log under both your name and the name of the account. To stop working as that account, log out.</p>",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#user-action-menu",
+      "configdata": "{\"placement\": \"left\"}",
+      "sortorder": "2"
+    }
+  ]
+}

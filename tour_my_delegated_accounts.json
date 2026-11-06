@@ -1,0 +1,58 @@
+{
+  "name": "Delegate account: my delegated accounts",
+  "description": "Shows authorised users how to open an account that has been delegated to them.",
+  "pathmatch": "/local/delegateaccount/pages/accounts.php%",
+  "enabled": "1",
+  "sortorder": "0",
+  "endtourlabel": "",
+  "configdata": "{\"placement\": \"bottom\", \"orphan\": \"0\", \"backdrop\": \"1\", \"reflex\": \"0\", \"showtourwhen\": 1, \"filtervalues\": {\"accessdate\": {\"filter_accessdate\": \"tool_usertours_accountcreation\", \"filter_accessdate_range\": 0, \"filter_accessdate_enabled\": \"0\"}, \"category\": [], \"course\": [], \"courseformat\": [], \"role\": [], \"theme\": [], \"cssselector\": [\"template[data-region=\\\"local-delegateaccount-usermenu-source\\\"], #carousel-item-delegatedaccounts\"]}}",
+  "displaystepnumbers": true,
+  "version": "2024100700",
+  "steps": [
+    {
+      "title": "My delegated accounts",
+      "content": "<p>This page lists every account that is currently delegated to you.</p><p>Everything you do while using a delegated account is recorded in the site log under both your name and the name of the account.</p>",
+      "contentformat": "1",
+      "targettype": "2",
+      "targetvalue": "",
+      "configdata": "{\"placement\": \"bottom\"}",
+      "sortorder": "0"
+    },
+    {
+      "title": "Delegated account column",
+      "content": "<p>This column shows the person whose account you may open. Select a name to see that person's profile.</p>",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#local-delegateaccount-my-accounts thead th.c0",
+      "configdata": "{\"placement\": \"bottom\"}",
+      "sortorder": "1"
+    },
+    {
+      "title": "Access starts and Access ends columns",
+      "content": "<p>You can open the account only between these two dates.</p><p><em>No end date</em> means access stays open until an administrator revokes it.</p>",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#local-delegateaccount-my-accounts thead th.c2",
+      "configdata": "{\"placement\": \"bottom\"}",
+      "sortorder": "2"
+    },
+    {
+      "title": "Use delegated account button",
+      "content": "<p>Select <strong>Use delegated account</strong>, followed by the person's name, in the row of the account you need. Moodle then opens that account.</p><p>To stop working as that account, log out. You cannot open a second delegated account until you have logged out.</p><p>If the delegation ends or is revoked while you are using the account, the session closes and you must log in again.</p>",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#local-delegateaccount-my-accounts tbody tr:first-child td.c4 a",
+      "configdata": "{\"placement\": \"left\"}",
+      "sortorder": "3"
+    },
+    {
+      "title": "User menu",
+      "content": "<p>You can also open a delegated account without coming to this page. Open your user menu, which is your name and picture at the top right of the page, and select <strong>Delegated accounts</strong>. A list of your accounts opens. Select a name to use that account.</p><p>If you have more accounts than the menu can list, the list ends with <strong>View all delegated accounts</strong>, which opens this page.</p>",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#user-menu-toggle",
+      "configdata": "{\"placement\": \"left\"}",
+      "sortorder": "4"
+    }
+  ]
+}
