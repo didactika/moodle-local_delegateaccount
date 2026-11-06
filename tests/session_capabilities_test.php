@@ -95,13 +95,15 @@ final class session_capabilities_test extends \advanced_testcase {
      * The own profile cannot be edited inside a delegated session, even though the account normally can.
      */
     public function test_delegated_session_cannot_edit_own_profile(): void {
-        $target = $this->open_delegated_session();
+        $this->open_delegated_session();
         $context = \context_system::instance();
 
         $this->assertFalse(has_capability('moodle/user:editownprofile', $context));
 
-        // The account owner is not affected.
-        $this->assertTrue(has_capability('moodle/user:editownprofile', $context, $target));
+        // Other accounts are not affected. The delegated account itself cannot be checked this way, because inside its
+        // session Moodle reads the access data of the session.
+        $other = $this->getDataGenerator()->create_user();
+        $this->assertTrue(has_capability('moodle/user:editownprofile', $context, $other));
     }
 
     /**
