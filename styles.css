@@ -144,3 +144,110 @@
         overscroll-behavior: contain;
     }
 }
+
+/*
+ * Delegated-account guided tour, shown only to people who have the delegated submenu. Its popover has no arrow.
+ * The steps that wait for a click on a highlighted user menu control have no Next or End tour button either,
+ * so the tour cannot be skipped from the popover.
+ */
+body:has(#carousel-item-delegatedaccounts, template[data-region="local-delegateaccount-usermenu-source"]):has(
+#user-menu-toggle[data-flexitour="highlight"],
+a[data-carousel-target-id="carousel-item-delegatedaccounts"][data-flexitour="highlight"],
+#user-action-menu[data-flexitour="highlight"]
+) span[data-flexitour="container"] [data-role="arrow"] {
+    display: none;
+}
+
+body:has(#carousel-item-delegatedaccounts, template[data-region="local-delegateaccount-usermenu-source"]):has(
+#user-menu-toggle[data-flexitour="highlight"],
+a[data-carousel-target-id="carousel-item-delegatedaccounts"][data-flexitour="highlight"]
+) span[data-flexitour="container"] .modal-footer {
+    display: none;
+}
+
+/*
+ * Capability list of the settings page: one row per capability, with the permission on the right.
+ * The list draws the frame and keeps the height of five rows, scrolling beyond that so a long list does not
+ * stretch the page. Rows only draw a divider below them, so the frame stays the same while scrolling.
+ * Selectors are chained with list-group because Bootstrap sets the row borders and display with the same specificity.
+ */
+.list-group.local-delegateaccount-capabilities {
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+    max-height: calc(5 * 3.75rem + 1px);
+    max-width: 48rem;
+    overflow-y: auto;
+}
+
+.list-group.local-delegateaccount-capabilities > .list-group-item {
+    border-radius: 0;
+    border-width: 0 0 1px;
+}
+
+.list-group.local-delegateaccount-capabilities > .list-group-item:last-child {
+    border-bottom-width: 0;
+}
+
+.list-group.local-delegateaccount-capabilities > .local-delegateaccount-capability-row {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    gap: .75rem;
+    justify-content: space-between;
+    min-height: 3.75rem;
+    padding-right: 3rem;
+}
+
+/* The remove button of an unsaved row sits in the padding on the right, so every row keeps its dropdown aligned. */
+.local-delegateaccount-capability-row .local-delegateaccount-capability-remove {
+    font-size: 1.25rem;
+    height: 1.75rem;
+    line-height: 1;
+    padding: 0;
+    position: absolute;
+    right: .75rem;
+    top: 50%;
+    text-decoration: none;
+    transform: translateY(-50%);
+    width: 1.75rem;
+}
+
+.local-delegateaccount-capability-row .local-delegateaccount-capability-remove:hover,
+.local-delegateaccount-capability-row .local-delegateaccount-capability-remove:focus {
+    text-decoration: none;
+}
+
+.list-group.local-delegateaccount-capabilities > .local-delegateaccount-capability-row:hover {
+    background-color: rgba(0, 0, 0, .025);
+}
+
+.list-group.local-delegateaccount-capabilities > .local-delegateaccount-capability-pending {
+    box-shadow: inset 3px 0 0 var(--bs-info, #0dcaf0);
+}
+
+.list-group.local-delegateaccount-capabilities > .local-delegateaccount-capabilities-empty[hidden] {
+    display: none;
+}
+
+.local-delegateaccount-capability-name {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.local-delegateaccount-capability-row select {
+    cursor: pointer;
+    flex: 0 0 9rem;
+    width: 9rem;
+}
+
+.local-delegateaccount-capability-row select option {
+    cursor: pointer;
+}
+
+/* Picked capabilities already appear in the list above, so the autocomplete's own copy is hidden. */
+.local-delegateaccount-capability-add .form-autocomplete-selection {
+    display: none;
+}

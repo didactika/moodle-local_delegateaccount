@@ -92,5 +92,13 @@ function xmldb_local_delegateaccount_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2026100800, 'local', 'delegateaccount');
     }
 
+    if ($oldversion < 2026110500) {
+        // Adds the guided tours to sites that installed the plugin before they existed.
+        require_once(__DIR__ . '/../lib.php');
+        local_delegateaccount_import_tours();
+
+        upgrade_plugin_savepoint(true, 2026110500, 'local', 'delegateaccount');
+    }
+
     return true;
 }
