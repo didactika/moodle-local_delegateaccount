@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- New "Delegated session capabilities" tab in the plugin settings, next to the existing settings. Administrators set Allow, Prohibit or Not set for each capability in delegated sessions and can add any capability. Editing the own profile is prohibited by default. The rules apply only to sessions opened through a delegation and change no role.
 - Two guided tours for Moodle's User Tours, imported automatically on install and upgrade from the `tour_*.json` files. They are shown once, only to people who have an active delegation, and explain the "Delegated accounts" user menu entry and the "My delegated accounts" page.
 
 ## [1.0.0-m405] - 2026-10-14

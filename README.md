@@ -155,6 +155,20 @@ Settings are located at **Site administration > Plugins > Local plugins > Delega
 
 Each recipient gets the notification in their profile language, or in the site language when theirs is not installed. Messages use the **Delegated account notifications** provider, sent as web and email notifications by default; users and administrators can change that in the usual notification preferences.
 
+### Delegated session capabilities tab
+
+On the **Delegated session capabilities** tab of the plugin settings (**Site administration > Plugins > Local plugins > Delegated account settings**), choose a permission for each capability while a person works in a delegated account.
+
+| Permission | Effect |
+|---|---|
+| Prohibit | The capability is removed and no role can give it back. `moodle/user:editownprofile` is prohibited by default |
+| Allow | The capability is granted, even if the account has no role that grants it |
+| Remove from list | The capability is removed from the list |
+
+Use Add capabilities below the list to search for other capabilities. Each one you pick joins the list marked as not saved yet, where you choose Allow or Prohibit before saving. The × button drops a pick.
+
+The rules apply only to sessions opened through a delegation. They change no role, the account owner keeps every permission when logging in normally, and a normal login, the authorised user's own session and a "Log in as" started by anyone else are never affected. Site administrator accounts are never restricted, which is another reason to keep **Protect site administrator accounts** enabled.
+
 ### Capabilities
 
 All capabilities apply in the system context.
