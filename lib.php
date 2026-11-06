@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Imports the guided tours shipped in the plugin folder as `tour_*.json` into Moodle's User Tours.
  *
