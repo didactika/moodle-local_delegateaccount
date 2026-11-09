@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0-m503] - 2026-11-09
+
+Line for Moodle 5.3. The same delivery as 1.1.0-m405, below, with the screens built as React components in TypeScript,
+mounted by Moodle's own core/react_autoinit, instead of AMD modules and Mustache.
+
 ## [1.1.0-m405] - 2026-11-06
 
 Line for Moodle 4.5 to 5.2. The same delivery for Moodle 5.3 is 1.1.0-m503.

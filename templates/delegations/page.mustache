@@ -35,11 +35,8 @@
         "authorised": true,
         "cancreate": true,
         "realuserid": 7,
-        "list": {
-            "id": "lda-delegations",
-            "config": "{}",
-            "searchlabel": "Search accounts"
-        }
+        "create": "<button type=\"button\" class=\"btn btn-primary\">Create</button>",
+        "list": "<div></div>"
     }
 }}
 <div class="lda">
@@ -54,14 +51,12 @@
                 </div>
             </div>
             <div class="dd-page-actions">
-                {{#cancreate}}
-                    <button type="button" class="btn btn-primary" data-action="local-delegateaccount-create" data-realuserid="{{realuserid}}">{{#pix}}t/add, core{{/pix}} {{#str}}create_delegations, local_delegateaccount{{/str}}</button>
-                {{/cancreate}}
+                {{{create}}}
             </div>
         </div>
     </header>
     {{^authorised}}
         <div class="alert alert-warning mb-0">{{#str}}delegations_user_not_authorised, local_delegateaccount{{/str}}</div>
     {{/authorised}}
-    {{#list}}{{> local_delegateaccount/list/delegations }}{{/list}}
+    {{{list}}}
 </div>

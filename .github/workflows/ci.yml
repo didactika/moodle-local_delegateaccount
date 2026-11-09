@@ -126,7 +126,7 @@ jobs:
           # regression could reach without CI noticing. Each one listed needs
           # a MOODLE_PHP_TABLE and a MOODLE_DB_TABLE row, and has to fall
           # strictly inside the range, or the matrix refuses to build.
-          MOODLE_EXTRA_VERSIONS='["500"]'
+          MOODLE_EXTRA_VERSIONS='[]'
 
           supported_raw=$(grep -oP '\$plugin->supported\s*=\s*\[\K[^\]]+' version.php || true)
           if [ -z "$supported_raw" ]; then
@@ -290,6 +290,14 @@ jobs:
       - name: Grunt
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci grunt --max-lint-warnings 0
+
+      - name: Moodle 5.3 React and TypeScript
+        if: ${{ !cancelled() }}
+        working-directory: moodle
+        run: |
+          npx grunt jsconfig
+          npx tsc --project public/local/delegateaccount/tsconfig.json
+          npx grunt esm
 
       - name: Check generated component styles
         if: ${{ !cancelled() }}

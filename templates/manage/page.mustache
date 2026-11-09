@@ -43,11 +43,8 @@
                 "active": false
             }
         ],
-        "people": {
-            "id": "lda-people",
-            "config": "{}",
-            "searchlabel": "Search people"
-        }
+        "create": "<button type=\"button\" class=\"btn btn-primary\">Create</button>",
+        "list": "<div></div>"
     }
 }}
 <div class="lda">
@@ -61,9 +58,7 @@
                 {{#settingsurl}}
                     <a class="btn btn-outline-secondary" href="{{settingsurl}}">{{#pix}}i/settings, core{{/pix}} {{#str}}settings{{/str}}</a>
                 {{/settingsurl}}
-                {{#cancreate}}
-                    <button type="button" class="btn btn-primary" data-action="local-delegateaccount-create" data-realuserid="0">{{#pix}}t/add, core{{/pix}} {{#str}}create_delegations, local_delegateaccount{{/str}}</button>
-                {{/cancreate}}
+                {{{create}}}
             </div>
         </div>
     </header>
@@ -78,6 +73,5 @@
         </ul>
     </nav>
     <p class="dd-page-subtitle mb-0">{{description}}</p>
-    {{#people}}{{> local_delegateaccount/list/people }}{{/people}}
-    {{#delegations}}{{> local_delegateaccount/list/delegations }}{{/delegations}}
+    {{{list}}}
 </div>

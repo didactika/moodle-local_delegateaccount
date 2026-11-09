@@ -23,8 +23,8 @@ namespace local_delegateaccount;
  * @category   test
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \local_delegateaccount\session_capabilities
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\session_capabilities::class)]
 final class session_capabilities_test extends \advanced_testcase {
     /**
      * Creates a delegation from the administrator to a new account.

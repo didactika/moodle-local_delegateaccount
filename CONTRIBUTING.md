@@ -23,7 +23,7 @@ repository's [GNU GPL v3 or later license](LICENSE).
 4. Add or update PHPUnit and Behat coverage whenever behaviour changes.
 5. Keep the English language pack (`lang/en/`) up to date and in alphabetical order when
    adding or changing user-facing strings.
-6. Rebuild and commit `amd/build/` whenever a module under `amd/src/` changes.
+6. Rebuild and commit `js/esm/build/` (`npx grunt esm`) whenever a component under `js/esm/src/` changes.
 7. Update the README, changelog and integration guide when the public behaviour changes.
 8. Open a pull request using the Didactika template. The required `CI complete` check must
    pass before merge.

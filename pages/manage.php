@@ -65,7 +65,7 @@ foreach (
 }
 
 $context = [
-    'cancreate' => permission::has(permission::CREATE),
+    'create' => permission::has(permission::CREATE) ? page::create_button(0) : '',
     'settingsurl' => has_capability('moodle/site:config', context_system::instance())
         ? (new moodle_url('/admin/settings.php', ['section' => 'local_delegateaccount_settings']))->out(false)
         : '',
@@ -74,12 +74,11 @@ $context = [
 ];
 if ($tab === 'delegations') {
     $context['description'] = get_string('all_delegations_description', 'local_delegateaccount');
-    $context['delegations'] = page::delegation_list(0, 'lda-delegations');
+    $context['list'] = page::delegation_list(0, 'lda-delegations');
 } else {
     $context['description'] = get_string('manage_' . $tab . '_users_description', 'local_delegateaccount');
-    $context['people'] = page::people_list($tab, 'lda-people');
+    $context['list'] = page::people_list($tab, 'lda-people');
 }
-page::require_create();
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/manage/page', $context);

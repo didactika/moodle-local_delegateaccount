@@ -25,8 +25,8 @@ use local_delegateaccount\local\listing;
  * @category   test
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \local_delegateaccount\local\listing
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\local\listing::class)]
 final class listing_test extends \advanced_testcase {
     /** @var \stdClass[] People who may use delegations. */
     private array $authorised = [];

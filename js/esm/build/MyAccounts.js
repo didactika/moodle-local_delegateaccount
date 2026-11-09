@@ -1,0 +1,13 @@
+import{useEffect as u,useState as g}from"react";import{Avatar as b,Empty as f,Icon as y,ListBody as N,Pager as x,SearchBox as v}from"./components/ui";import{useList as h,useDebounced as A}from"./hooks/useList";import{useText as _}from"./engine/text";import{getMyAccounts as B}from"./services/api";import{jsx as e,jsxs as r}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
+ * The accounts a person may open now, as cards, searched as they type. The first page comes with the page, so a guided tour
+ * finds the cards from the start.
+ *
+ * Mounted by core/react_autoinit from the data-react-component that the page writes.
+ *
+ * @module     local_delegateaccount/MyAccounts
+ * @copyright  2026 Didactika.org
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */function S({strings:c,id:d,initial:p}){const t=_(c),s=h({search:"",page:0,perpage:20},a=>B(String(a.search),{page:Number(a.page),perpage:Number(a.perpage)}),p),{state:o,page:l}=s,[i,m]=g(String(o.search)),n=A(i.trim(),300);return u(()=>{s.update({search:n})},[n]),r("section",{id:d,className:"d-grid gap-3",children:[e("div",{className:"table-toolbar px-0 border-0",children:e("div",{className:"table-toolbar-start",children:e(v,{strings:c,value:i,onChange:m,label:t("search_accounts")})})}),e(N,{error:s.error,onRetry:s.refresh,text:t,isEmpty:!!(l&&l.total===0),empty:e("div",{className:"card",children:e(f,{filtered:!!o.search,icon:"i/switch",text:t,strings:c,title:t("empty_mine_title"),message:t("empty_mine_text"),onClear:()=>m("")})}),children:e("ul",{className:"row list-unstyled mb-0","aria-busy":s.busy||void 0,children:(l?.rows??[]).map(a=>e("li",{className:"col-sm-6 col-xl-4 mb-3",children:e("div",{className:"card h-100",children:r("div",{className:"card-body d-flex flex-column",children:[r("div",{className:"d-flex align-items-center mb-3",children:[e(b,{user:a.user,size:50}),r("div",{className:"d-flex flex-column",children:[e("p",{className:"card-title mb-0 text-truncate",children:a.user.fullname}),e("span",{className:"small text-muted text-truncate",children:a.user.email})]})]}),r("span",{className:"d-flex flex-column mb-3",children:[e("small",{className:"text-muted",children:t("delegation_end")}),a.end]}),r("a",{className:"btn btn-primary btn-tonal mt-auto align-self-start",href:a.loginurl,title:a.loginlabel,children:[e(y,{name:"i/switch",strings:c})," ",t("open_account")]})]})})},a.delegationid))})}),l&&l.total>Number(o.perpage)&&e("div",{className:"card",children:e(x,{page:Number(o.page),perpage:Number(o.perpage),total:l.total,onChange:s.update,text:t,strings:c})})]})}export{S as default};

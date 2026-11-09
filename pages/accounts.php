@@ -34,7 +34,7 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->requires->js_call_amd('local_delegateaccount/accounts', 'init', ['#lda-accounts']);
+
 
 // The first page is drawn here, so the cards are there when the page opens; the script takes over from it.
 $first = \local_delegateaccount\local\listing::my_accounts((int)$USER->id, '', 0, 20);
@@ -46,10 +46,9 @@ $total = \core\session\manager::is_loggedinas() ? 0 : $first['total'];
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/accounts/page', [
-    'id' => 'lda-accounts',
-    'searchlabel' => get_string('search_accounts', 'local_delegateaccount'),
-    'initial' => json_encode(['total' => $total, 'rows' => $rows]),
-    'first' => ['rows' => array_map(fn(array $row): array => ['user' => $row['user'] + ['size' => 50]] + $row, $rows)],
-    'empty' => $total === 0,
+    'list' => \local_delegateaccount\output\page::render('MyAccounts', [
+        'id' => 'lda-accounts',
+        'initial' => ['total' => $total, 'rows' => $rows],
+    ]),
 ]);
 echo $OUTPUT->footer();

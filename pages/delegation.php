@@ -118,7 +118,7 @@ $tones = [
     manager::STATUS_REVOKED => 'secondary',
 ];
 
-$PAGE->requires->js_call_amd('local_delegateaccount/delegation', 'init', ['[data-region="delegation"]']);
+
 $editor = $tab === 'permissions' ? $OUTPUT->render(new permission_editor($delegationid)) : '';
 
 echo $OUTPUT->header();
@@ -136,6 +136,15 @@ echo $OUTPUT->render_from_template('local_delegateaccount/delegation/page', [
     'activityurl' => permission::has(permission::VIEWACTIVITY)
         ? (new moodle_url('/local/delegateaccount/pages/activity.php', $params))->out(false)
         : '',
+    'actions' => \local_delegateaccount\output\page::render('DelegationActions', [
+        'delegationid' => $delegationid,
+        'realuserid' => $realuserid,
+        'canupdate' => $open && permission::has(permission::UPDATE),
+        'canrevoke' => $open && permission::has(permission::REVOKE),
+        'activityurl' => permission::has(permission::VIEWACTIVITY)
+            ? (new moodle_url('/local/delegateaccount/pages/activity.php', $params))->out(false)
+            : '',
+    ]),
     'tabs' => $tabs,
     'summary' => $tab === 'summary',
     'details' => [

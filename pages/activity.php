@@ -56,7 +56,7 @@ $PAGE->navbar->add(
     new moodle_url('/local/delegateaccount/pages/delegation.php', $params)
 );
 $PAGE->navbar->add(get_string('view_delegated_activity', 'local_delegateaccount'), $url);
-$PAGE->requires->js_call_amd('local_delegateaccount/activity', 'init', ['#lda-activity']);
+
 
 // The date fields only offer the days of the delegation.
 $accessend = manager::get_delegation_access_end($delegation);
@@ -74,7 +74,11 @@ echo $OUTPUT->render_from_template('local_delegateaccount/activity/page', [
         'timeend' => $accessend > 0 ? userdate($accessend) : get_string('delegation_no_end', 'local_delegateaccount'),
     ]),
     'delegateduser' => exporter::user($delegateduser) + ['size' => 50],
-    'mindate' => $day((int)$delegation->timestart),
-    'maxdate' => $day($accessend > 0 ? min($accessend, time()) : time()),
+    'list' => \local_delegateaccount\output\page::render('ActivityList', [
+        'id' => 'lda-activity',
+        'delegationid' => $delegationid,
+        'mindate' => $day((int)$delegation->timestart),
+        'maxdate' => $day($accessend > 0 ? min($accessend, time()) : time()),
+    ]),
 ]);
 echo $OUTPUT->footer();

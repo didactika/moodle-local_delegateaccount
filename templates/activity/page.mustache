@@ -18,15 +18,13 @@
     @template local_delegateaccount/activity/page
 
     What was done through one delegation: its period, the filters and the events. The rows are loaded by
-    local_delegateaccount/activity.
+    the React component local_delegateaccount/ActivityList.
 
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
     Example context (json):
     {
-        "id": "lda-activity",
-        "config": "{\"delegationid\":3}",
         "backurl": "https://moodle.example/local/delegateaccount/pages/delegation.php?realuserid=7&delegationid=3",
         "subtitle": "What Jane Doe did as John Smith",
         "period": "From 1 November 2026 to No end date",
@@ -37,7 +35,8 @@
             "size": 50
         },
         "mindate": "2026-11-01",
-        "maxdate": "2026-11-30"
+        "maxdate": "2026-11-30",
+        "list": "<div></div>"
     }
 }}
 <div class="lda">
@@ -53,38 +52,5 @@
             </div>
         </div>
     </header>
-    <section id="{{id}}" data-region="list" data-config="{{config}}">
-        <div class="card">
-            <form class="card-body d-flex flex-wrap align-items-end border-bottom" data-region="filters" aria-label="{{#str}}filters{{/str}}">
-                <div>
-                    <label for="{{id}}-from">{{#str}}activity_filter_datefrom, local_delegateaccount{{/str}}</label>
-                    <input class="form-control" type="date" id="{{id}}-from" name="datefrom" min="{{mindate}}" max="{{maxdate}}">
-                </div>
-                <div>
-                    <label for="{{id}}-to">{{#str}}activity_filter_dateto, local_delegateaccount{{/str}}</label>
-                    <input class="form-control" type="date" id="{{id}}-to" name="dateto" min="{{mindate}}" max="{{maxdate}}">
-                </div>
-                <div>
-                    <label for="{{id}}-component">{{#str}}activity_filter_component, local_delegateaccount{{/str}}</label>
-                    <input class="form-control" type="search" id="{{id}}-component" name="component" autocomplete="off">
-                </div>
-                <div>
-                    <label for="{{id}}-action">{{#str}}activity_filter_action, local_delegateaccount{{/str}}</label>
-                    <input class="form-control" type="search" id="{{id}}-action" name="action" autocomplete="off">
-                </div>
-            </form>
-            <div class="table-responsive" data-region="tablewrap" aria-busy="true">
-                <table class="table">
-                    <caption class="sr-only visually-hidden">{{#str}}list_caption_activity, local_delegateaccount{{/str}}</caption>
-                    <tbody>
-                        <tr aria-hidden="true"><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td></tr>
-                        <tr aria-hidden="true"><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div data-region="empty" hidden></div>
-            <div data-region="error" hidden></div>
-            {{> local_delegateaccount/list/pager }}
-        </div>
-    </section>
+    {{{list}}}
 </div>

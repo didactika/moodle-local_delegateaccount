@@ -55,17 +55,17 @@
             }
 
             // The chosen permission takes the colour of its meaning, and says it in words too.
-            &[data-permission="1"][aria-checked="true"] {
+            &[data-tone="allow"][aria-checked="true"] {
                 background-color: color-mix(in srgb, var(--dd-success) 16%, var(--dd-surface));
                 color: color-mix(in srgb, var(--dd-success) 60%, var(--dd-ink));
             }
 
-            &[data-permission="-1"][aria-checked="true"] {
+            &[data-tone="prevent"][aria-checked="true"] {
                 background-color: color-mix(in srgb, var(--dd-warning) 22%, var(--dd-surface));
                 color: color-mix(in srgb, var(--dd-warning) 45%, var(--dd-ink));
             }
 
-            &[data-permission="-1000"][aria-checked="true"] {
+            &[data-tone="prohibit"][aria-checked="true"] {
                 background-color: color-mix(in srgb, var(--dd-danger) 16%, var(--dd-surface));
                 color: color-mix(in srgb, var(--dd-danger) 65%, var(--dd-ink));
             }

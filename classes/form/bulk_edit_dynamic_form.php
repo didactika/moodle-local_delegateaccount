@@ -86,7 +86,7 @@ final class bulk_edit_dynamic_form extends dynamic_form {
     /**
      * Applies the common lifecycle settings atomically.
      *
-     * @return array Submission result consumed by AMD.
+     * @return array Submission result consumed by the screen that opened the form.
      */
     public function process_dynamic_submission(): array {
         $data = $this->get_data();

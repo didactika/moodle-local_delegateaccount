@@ -25,9 +25,9 @@ use local_delegateaccount\external\create_delegations;
  * @category   test
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \local_delegateaccount\notification_manager
- * @covers     \local_delegateaccount\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\notification_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\manager::class)]
 final class notification_test extends \advanced_testcase {
     /** @var \stdClass Authorised user. */
     private \stdClass $realuser;

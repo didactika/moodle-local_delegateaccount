@@ -7,7 +7,7 @@
 *Let chosen people log in as other accounts, only when and for as long as you allow it*
 
 [![Release](https://img.shields.io/github/v/release/didactika/moodle-local_delegateaccount?style=flat-square)](https://github.com/didactika/moodle-local_delegateaccount/releases)
-[![Moodle](https://img.shields.io/badge/Moodle-4.5_to_5.2-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
+[![Moodle](https://img.shields.io/badge/Moodle-5.3-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
 [![PHP](https://img.shields.io/badge/PHP-8.1+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE)
 
@@ -58,7 +58,7 @@ Access is checked when the account is opened and again on every page while the d
 
 ## Installation
 
-**Requirements:** Moodle 4.5 to 5.2, with the PHP version your Moodle release requires. For Moodle 5.3 and later, use the `main` branch and the `-m503` releases, which bring the same features built with React and TypeScript.
+**Requirements:** Moodle 5.3, with the PHP version it requires. For Moodle 4.5 to 5.2, use the `MOODLE_405_STABLE` branch and the `-m405` releases, which bring the same features.
 
 | Moodle | Branch | Releases |
 |---|---|---|
@@ -71,10 +71,7 @@ Access is checked when the account is opened and again on every page while the d
 
 ```bash
 cd /path/to/moodle
-# Moodle 4.5 and 5.0
-git clone -b MOODLE_405_STABLE https://github.com/didactika/moodle-local_delegateaccount.git local/delegateaccount
-# Moodle 5.1 and 5.2
-git clone -b MOODLE_405_STABLE https://github.com/didactika/moodle-local_delegateaccount.git public/local/delegateaccount
+git clone https://github.com/didactika/moodle-local_delegateaccount.git public/local/delegateaccount
 php admin/cli/upgrade.php
 ```
 
@@ -127,6 +124,15 @@ Two guided tours for Moodle's User Tours are shipped as `tour_*.json` files in t
 | `tour_my_delegated_accounts.json` | **My delegated accounts** page | The cards of the accounts, until when each can be opened and the **Open account** button. |
 
 The tours are imported automatically when the plugin is installed or upgraded. A tour that already exists, identified by its name, is never overwritten, so your edits are kept. Tours can be edited, translated or disabled under **Site administration > Appearance > User tours**. If you delete a tour and want it back, select **Import tour** on that page and choose the file.
+
+## Development
+
+The screens are React 19 components written in TypeScript, mounted by Moodle's own `core/react_autoinit` from
+`core\output\react_component_renderable` classes. The source is in `js/esm/src` and the build that Moodle serves is committed
+in `js/esm/build`; rebuild it with `npx grunt esm` from the root of Moodle and check the types with
+`npx tsc --project public/local/delegateaccount/tsconfig.json`. The styles are nested SCSS (`styles.scss` and `scss/`),
+compiled into `styles.css` by `node tools/build-styles.mjs /path/to/moodle`. Each component can be overridden with the
+swizzle mechanism of Moodle 5.3 (`js/esm/src/swizzle.json`). The forms that create and edit delegations stay Moodle forms.
 
 ## Configuration
 

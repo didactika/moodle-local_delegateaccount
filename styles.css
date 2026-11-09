@@ -1015,6 +1015,20 @@
 
 /* stylelint-enable declaration-no-important */
 
+.lda .dd-searchbox > span[aria-hidden=true],
+.lda-modal .dd-searchbox > span[aria-hidden=true] {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--dd-muted);
+    pointer-events: none;
+}
+
+.lda .dd-searchbox > span[aria-hidden=true] .icon,
+.lda-modal .dd-searchbox > span[aria-hidden=true] .icon {
+    position: static;
+    margin: 0;
+}
+
 .lda > .btn-link {
     display: inline-flex;
     align-items: center;
@@ -1223,20 +1237,20 @@
     color: var(--dd-ink);
 }
 
-.lda .dd-segmented button[data-permission=1][aria-checked=true],
-.lda-modal .dd-segmented button[data-permission=1][aria-checked=true] {
+.lda .dd-segmented button[data-tone=allow][aria-checked=true],
+.lda-modal .dd-segmented button[data-tone=allow][aria-checked=true] {
     background-color: color-mix(in srgb, var(--dd-success) 16%, var(--dd-surface));
     color: color-mix(in srgb, var(--dd-success) 60%, var(--dd-ink));
 }
 
-.lda .dd-segmented button[data-permission=-1][aria-checked=true],
-.lda-modal .dd-segmented button[data-permission=-1][aria-checked=true] {
+.lda .dd-segmented button[data-tone=prevent][aria-checked=true],
+.lda-modal .dd-segmented button[data-tone=prevent][aria-checked=true] {
     background-color: color-mix(in srgb, var(--dd-warning) 22%, var(--dd-surface));
     color: color-mix(in srgb, var(--dd-warning) 45%, var(--dd-ink));
 }
 
-.lda .dd-segmented button[data-permission=-1000][aria-checked=true],
-.lda-modal .dd-segmented button[data-permission=-1000][aria-checked=true] {
+.lda .dd-segmented button[data-tone=prohibit][aria-checked=true],
+.lda-modal .dd-segmented button[data-tone=prohibit][aria-checked=true] {
     background-color: color-mix(in srgb, var(--dd-danger) 16%, var(--dd-surface));
     color: color-mix(in srgb, var(--dd-danger) 65%, var(--dd-ink));
 }

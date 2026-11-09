@@ -23,7 +23,7 @@
   "content": "<p>Each card is a person whose account you may open, with their name and email.</p>",
   "contentformat": "1",
   "targettype": "0",
-  "targetvalue": "#lda-accounts .lda-account:first-child .lda-account-head",
+  "targetvalue": "#lda-accounts li:first-child .card-body > .d-flex.align-items-center",
   "configdata": "{\"placement\": \"bottom\"}",
   "sortorder": "1"
   },
@@ -32,7 +32,7 @@
   "content": "<p>You can open the account until this date.</p><p><em>No end date</em> means access stays open until an administrator revokes it.</p>",
   "contentformat": "1",
   "targettype": "0",
-  "targetvalue": "#lda-accounts .lda-account:first-child .lda-dates",
+  "targetvalue": "#lda-accounts li:first-child .card-body > .d-flex.flex-column",
   "configdata": "{\"placement\": \"bottom\"}",
   "sortorder": "2"
   },
@@ -41,7 +41,7 @@
   "content": "<p>Select <strong>Open account</strong> on the card of the account you need. Moodle then opens that account.</p><p>To stop working as that account, log out. You cannot open a second delegated account until you have logged out.</p><p>If the delegation ends or is revoked while you are using the account, the session closes and you must log in again.</p>",
   "contentformat": "1",
   "targettype": "0",
-  "targetvalue": "#lda-accounts .lda-account:first-child .btn",
+  "targetvalue": "#lda-accounts li:first-child .card-body > .btn",
   "configdata": "{\"placement\": \"bottom\"}",
   "sortorder": "3"
   },

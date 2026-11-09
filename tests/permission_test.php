@@ -25,9 +25,9 @@ use local_delegateaccount\external\get_delegations;
  * @category   test
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \local_delegateaccount\permission
- * @covers     \local_delegateaccount\external\get_delegations
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\permission::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_delegations::class)]
 final class permission_test extends \advanced_testcase {
     /** @var string[] Every management action. */
     private const ACTIONS = [

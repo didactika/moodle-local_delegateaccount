@@ -434,3 +434,17 @@
     }
 }
 /* stylelint-enable declaration-no-important */
+
+// On Moodle 5.3 the icon of a search comes wrapped in a span; it sits in the field as the icon itself does.
+.lda .dd-searchbox > span[aria-hidden="true"],
+.lda-modal .dd-searchbox > span[aria-hidden="true"] {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--dd-muted);
+    pointer-events: none;
+
+    & .icon {
+        position: static;
+        margin: 0;
+    }
+}

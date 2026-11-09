@@ -20,7 +20,7 @@ use local_delegateaccount\external\list_service;
 use local_delegateaccount\permission;
 
 /**
- * The parts the pages of the plugin are made of: each list with what it may do, and the scripts that draw them.
+ * The parts the pages of the plugin are made of: each list, drawn by its React component with what it may do.
  *
  * @package    local_delegateaccount
  * @copyright  2026 Didactika.org
@@ -32,18 +32,10 @@ final class page {
      *
      * @param string $scope authorised or historical.
      * @param string $id Identifier of the element of the list.
-     * @return array Context of local_delegateaccount/list/people.
+     * @return string HTML.
      */
-    public static function people_list(string $scope, string $id): array {
-        global $PAGE;
-
-        $PAGE->requires->js_call_amd('local_delegateaccount/people', 'init', ['#' . $id]);
-
-        return [
-            'id' => $id,
-            'config' => json_encode(['scope' => $scope]),
-            'searchlabel' => get_string('search_people', 'local_delegateaccount'),
-        ];
+    public static function people_list(string $scope, string $id): string {
+        return self::render('PeopleList', ['id' => $id, 'scope' => $scope]);
     }
 
     /**
@@ -51,40 +43,45 @@ final class page {
      *
      * @param int $realuserid The authorised user, or zero for everyone.
      * @param string $id Identifier of the element of the list.
-     * @return array Context of local_delegateaccount/list/delegations.
+     * @return string HTML.
      */
-    public static function delegation_list(int $realuserid, string $id): array {
-        global $PAGE;
-
+    public static function delegation_list(int $realuserid, string $id): string {
         $canupdate = permission::has(permission::UPDATE);
         $canrevoke = permission::has(permission::REVOKE);
         $canpermissions = has_capability(list_service::MANAGE_PERMISSIONS, \context_system::instance());
-        $canbulk = $canupdate || $canrevoke || $canpermissions;
-        $PAGE->requires->js_call_amd('local_delegateaccount/delegations', 'init', ['#' . $id]);
 
-        return [
+        return self::render('DelegationList', [
             'id' => $id,
-            'config' => json_encode([
-                'realuserid' => $realuserid,
-                'canbulk' => $canbulk,
-                'canpermissions' => $canpermissions,
-                // On the page of one person the list opens with every status, so nothing of theirs is hidden at first.
-                'status' => $realuserid > 0 ? '' : 'active',
-            ]),
-            'searchlabel' => get_string($realuserid > 0 ? 'search_accounts' : 'search_delegations', 'local_delegateaccount'),
-            'canbulk' => $canbulk,
+            'realuserid' => $realuserid,
+            // On the page of one person the list opens with every status, so nothing of theirs is hidden at first.
+            'status' => $realuserid > 0 ? '' : 'active',
+            'canbulk' => $canupdate || $canrevoke || $canpermissions,
             'canupdate' => $canupdate,
             'canrevoke' => $canrevoke,
             'canpermissions' => $canpermissions,
-        ];
+        ]);
     }
 
     /**
-     * Starts the buttons that create delegations.
+     * The button that creates delegations, for several people or for one.
+     *
+     * @param int $realuserid The authorised user, or zero to choose several.
+     * @return string HTML.
      */
-    public static function require_create(): void {
-        global $PAGE;
+    public static function create_button(int $realuserid): string {
+        return self::render('CreateButton', ['realuserid' => $realuserid]);
+    }
 
-        $PAGE->requires->js_call_amd('local_delegateaccount/create', 'init');
+    /**
+     * Draws one React component of the plugin.
+     *
+     * @param string $name Name of the component.
+     * @param array $props Its properties.
+     * @return string HTML.
+     */
+    public static function render(string $name, array $props): string {
+        global $OUTPUT;
+
+        return $OUTPUT->render(new component($name, $props));
     }
 }

@@ -1,0 +1,12 @@
+import{useCallback as m,useEffect as P,useRef as L,useState as c}from"react";import U from"@moodle/lms/core/pending";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
+ * A list people work with, as the design system describes it: its state kept in the address (search, chip, sort, page and
+ * rows per page), one page loaded at a time from a web service, the skeleton shown only when a load is slow, and a selection
+ * that can grow to every row that matches.
+ *
+ * @module     local_delegateaccount/hooks/useList
+ * @copyright  2026 Didactika.org
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */const _=300,C=o=>{const s=new URL(window.location.href).searchParams,r={...o};return Object.keys(o).forEach(t=>{const l=s.get(t);l!==null&&(r[t]=typeof o[t]=="number"?Number(l)||0:l)}),r},F=(o,s)=>{const r=new URL(window.location.href);Object.keys(s).forEach(t=>{o[t]===s[t]||o[t]===""?r.searchParams.delete(t):r.searchParams.set(t,String(o[t]))}),window.history.replaceState(window.history.state,"",r)},I=["search","status","datefrom","dateto","component","action"];function q(o,s,r){const[t,l]=c(()=>C(o)),[T,h]=c(r??null),[R,d]=c(null),[E,S]=c(!1),[x,g]=c(!1),[v,f]=c(new Set),[O,u]=c(!1),[j,N]=c(0),p=L(!!r),b=L(s);b.current=s,P(()=>{if(F(t,o),p.current&&(p.current=!1,Object.keys(o).every(e=>t[e]===o[e])))return;let n=!0;const a=new U("local_delegateaccount/list:load"),i=window.setTimeout(()=>g(!0),_);return S(!0),b.current(t).then(e=>{if(window.clearTimeout(i),!n)return e;const w=Math.max(0,Math.ceil(e.total/Number(t.perpage))-1);return Number(t.page)>w?(l(M=>({...M,page:w})),e):(h(e),d(null),e)}).catch(e=>{n&&d(e)}).finally(()=>{window.clearTimeout(i),n&&(S(!1),g(!1)),a.resolve()}),()=>{n=!1,window.clearTimeout(i)}},[t,j]);const y=m(n=>{l(a=>{const i=Object.keys(n).some(e=>I.includes(e)&&n[e]!==a[e]);return(i||"page"in n&&n.page!==a.page)&&(f(new Set),u(!1)),{...a,...i&&!("page"in n)?{page:0}:{},...n}})},[]),A=m((n,a)=>{f(i=>{const e=new Set(i);return a?e.add(n):e.delete(n),e}),a||u(!1)},[]),B=m((n,a)=>{f(i=>{const e=new Set(i);return n.forEach(w=>a?e.add(w):e.delete(w)),e}),u(!1)},[]),D=m(()=>{f(new Set),u(!1)},[]);return{state:t,update:y,page:T,error:R,busy:E,skeleton:x,selected:v,all:O,setAll:u,toggle:A,togglePage:B,clear:D,refresh:()=>N(n=>n+1)}}function z(o,s){const[r,t]=c(o);return P(()=>{const l=window.setTimeout(()=>t(o),s);return()=>window.clearTimeout(l)},[o,s]),r}export{z as useDebounced,q as useList};

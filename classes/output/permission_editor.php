@@ -18,10 +18,9 @@ namespace local_delegateaccount\output;
 
 use local_delegateaccount\session_capabilities;
 
-
 /**
  * The permission editor: every capability of the site with Not set, Allow, Prevent and Prohibit, searchable, filtered and
- * paged, and a floating bar that saves what changed.
+ * paged, and a floating bar that saves what changed. It is the React component local_delegateaccount/PermissionEditor.
  *
  * It edits the overrides of the whole site, in its tab of the settings page, or the overrides of one delegation.
  *
@@ -29,46 +28,17 @@ use local_delegateaccount\session_capabilities;
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class permission_editor implements \renderable, \templatable {
+class permission_editor extends component {
     /**
      * Creates the editor.
      *
      * @param int $delegationid Delegation whose overrides are edited, or session_capabilities::SITE.
      */
-    public function __construct(
-        /** @var int Delegation whose overrides are edited, or zero for the site. */
-        private readonly int $delegationid,
-    ) {
-    }
-
-    /**
-     * What the editor starts from.
-     *
-     * @return array Configuration of the editor.
-     */
-    public function get_config(): array {
-        return [
-            'delegationid' => $this->delegationid,
-            'site' => $this->delegationid === session_capabilities::SITE,
-        ];
-    }
-
-    /**
-     * Exports the editor for its template and starts its script.
-     *
-     * @param \renderer_base $output Renderer.
-     * @return array Template context.
-     */
-    public function export_for_template(\renderer_base $output): array {
-        global $PAGE;
-
-        $id = \html_writer::random_id('lda-permissions');
-        $PAGE->requires->js_call_amd('local_delegateaccount/permission_editor', 'init', ['#' . $id]);
-
-        return [
-            'id' => $id,
-            'config' => json_encode($this->get_config()),
-            'site' => $this->delegationid === session_capabilities::SITE,
-        ];
+    public function __construct(int $delegationid) {
+        parent::__construct('PermissionEditor', [
+            'id' => \html_writer::random_id('lda-permissions'),
+            'delegationid' => $delegationid,
+            'site' => $delegationid === session_capabilities::SITE,
+        ]);
     }
 }

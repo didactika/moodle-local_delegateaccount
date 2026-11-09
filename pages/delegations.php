@@ -47,7 +47,6 @@ $PAGE->navbar->add(get_string('manage_accounts', 'local_delegateaccount'), $mana
 $PAGE->navbar->add(fullname($realuser), $url);
 
 $authorised = manager::can_use_delegated_accounts($realuserid);
-page::require_create();
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/delegations/page', [
@@ -55,6 +54,7 @@ echo $OUTPUT->render_from_template('local_delegateaccount/delegations/page', [
     'user' => exporter::user($realuser) + ['size' => 50],
     'authorised' => $authorised,
     'cancreate' => $authorised && permission::has(permission::CREATE),
+    'create' => $authorised && permission::has(permission::CREATE) ? page::create_button($realuserid) : '',
     'realuserid' => $realuserid,
     'list' => page::delegation_list($realuserid, 'lda-delegations'),
 ]);

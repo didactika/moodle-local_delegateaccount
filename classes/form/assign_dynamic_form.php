@@ -66,7 +66,7 @@ final class assign_dynamic_form extends dynamic_form {
             [
                 'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
-                'ajax' => 'local_delegateaccount/form_user_selector',
+                'ajax' => 'core/esm!@moodle/lms/local_delegateaccount/userSelector',
                 'data-ws' => 'local_delegateaccount_get_authorised_user_options',
             ]
         );
@@ -87,7 +87,7 @@ final class assign_dynamic_form extends dynamic_form {
             [
                 'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
-                'ajax' => 'local_delegateaccount/form_user_selector',
+                'ajax' => 'core/esm!@moodle/lms/local_delegateaccount/userSelector',
                 'data-realuserid' => $realuserid,
             ]
         );
@@ -166,7 +166,7 @@ final class assign_dynamic_form extends dynamic_form {
     /**
      * Creates the requested delegation matrix.
      *
-     * @return array Submission result consumed by AMD.
+     * @return array Submission result consumed by the screen that opened the form.
      */
     public function process_dynamic_submission(): array {
         $data = $this->get_data();

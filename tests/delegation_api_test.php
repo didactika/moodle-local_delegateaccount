@@ -43,16 +43,16 @@ use local_delegateaccount\external\update_session_permissions;
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \local_delegateaccount\external\create_delegation
- * @covers     \local_delegateaccount\external\create_delegations
- * @covers     \local_delegateaccount\external\get_authorised_user_options
- * @covers     \local_delegateaccount\external\get_delegated_account_options
- * @covers     \local_delegateaccount\external\get_delegation_activity
- * @covers     \local_delegateaccount\external\get_delegations
- * @covers     \local_delegateaccount\external\get_user_delegations
- * @covers     \local_delegateaccount\external\revoke_delegations
- * @covers     \local_delegateaccount\external\update_delegations
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\create_delegation::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\create_delegations::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_authorised_user_options::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_delegated_account_options::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_delegation_activity::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_delegations::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_user_delegations::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\revoke_delegations::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\update_delegations::class)]
 final class delegation_api_test extends \advanced_testcase {
     /**
      * Verifies that every public function is backed by its own external class.

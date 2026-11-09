@@ -18,20 +18,14 @@
     @template local_delegateaccount/accounts/page
 
     The accounts a person may open now, as cards, with a search when they are many. The cards are loaded by
-    local_delegateaccount/accounts.
+    the React component local_delegateaccount/MyAccounts.
 
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
     Example context (json):
     {
-        "id": "lda-accounts",
-        "searchlabel": "Search accounts",
-        "initial": "{\"total\":0,\"rows\":[]}",
-        "first": {
-            "rows": []
-        },
-        "empty": false
+        "list": "<div></div>"
     }
 }}
 <div class="lda">
@@ -43,21 +37,5 @@
             </div>
         </div>
     </header>
-    <section id="{{id}}" data-region="list" data-config="{}" data-initial="{{initial}}">
-        <div class="table-toolbar px-0">
-            <div class="table-toolbar-start">
-                <form class="dd-searchbox" role="search" data-region="searchform" aria-label="{{searchlabel}}">
-                    {{#pix}}a/search, core{{/pix}}
-                    <label class="sr-only visually-hidden" for="{{id}}-search">{{searchlabel}}</label>
-                    <input class="form-control" type="search" id="{{id}}-search" data-region="search" placeholder="{{searchlabel}}" autocomplete="off">
-                </form>
-            </div>
-        </div>
-        <div data-region="tablewrap">
-            {{#first}}{{> local_delegateaccount/accounts/cards }}{{/first}}
-        </div>
-        <div class="card" data-region="empty"{{^empty}} hidden{{/empty}}></div>
-        <div data-region="error" hidden></div>
-        {{> local_delegateaccount/list/pager }}
-    </section>
+    {{{list}}}
 </div>

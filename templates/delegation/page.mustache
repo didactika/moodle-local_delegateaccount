@@ -73,7 +73,8 @@
                 "tone": "success"
             }
         ],
-        "editor": ""
+        "editor": "",
+        "actions": "<div></div>"
     }
 }}
 <div class="lda" data-region="delegation" data-id="{{id}}" data-realuserid="{{realuserid}}">
@@ -87,17 +88,7 @@
                     <p class="dd-page-subtitle"><span class="badge badge-soft badge-dot text-bg-{{statustone}}">{{statuslabel}}</span></p>
                 </div>
             </div>
-            <div class="dd-page-actions">
-                {{#activityurl}}
-                    <a class="btn btn-outline-secondary" href="{{activityurl}}">{{#pix}}i/log, core{{/pix}} {{#str}}view_delegated_activity, local_delegateaccount{{/str}}</a>
-                {{/activityurl}}
-                {{#canupdate}}
-                    <button type="button" class="btn btn-outline-secondary" data-action="edit">{{#pix}}t/edit, core{{/pix}} {{#str}}edit_period, local_delegateaccount{{/str}}</button>
-                {{/canupdate}}
-                {{#canrevoke}}
-                    <button type="button" class="btn btn-outline-danger" data-action="revoke">{{#pix}}t/delete, core{{/pix}} {{#str}}revoke, local_delegateaccount{{/str}}</button>
-                {{/canrevoke}}
-            </div>
+            {{{actions}}}
         </div>
     </header>
     <nav aria-label="{{label}}">

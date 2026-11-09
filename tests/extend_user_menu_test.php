@@ -24,8 +24,8 @@ namespace local_delegateaccount;
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \local_delegateaccount\hook\extend_user_menu
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\hook\extend_user_menu::class)]
 final class extend_user_menu_test extends \advanced_testcase {
     /**
      * Adds one native fallback entry when an active delegated account exists.
