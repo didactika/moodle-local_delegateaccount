@@ -28,7 +28,7 @@
  */
 
 /** The selects that open the menu: single selects of the screens and dialogs of the plugin. */
-const SELECTOR = ':is(.lda, .lda-modal) select:is(.form-select, .custom-select)';
+const SELECTOR = ':is(.lda, .modal) select:is(.form-select, .custom-select)';
 
 /** Room kept between the menu and the edge of the window. */
 const MARGIN = 8;
@@ -129,13 +129,16 @@ const place = (select, menu) => {
  */
 const open = (select) => {
     close();
-    const scope = select.closest('.lda, .lda-modal');
+    const scope = select.closest('.lda, .modal');
     const menu = document.createElement('div');
     menu.className = 'dropdown-menu show dd-select-menu';
     menu.setAttribute('role', 'listbox');
     menu.tabIndex = -1;
     const entries = [];
     const add = (option, parent) => {
+        if (option.hidden) {
+            return;
+        }
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'dropdown-item';

@@ -41,7 +41,7 @@ final class get_my_accounts extends list_service {
         return new external_function_parameters([
             'search' => new external_value(PARAM_TEXT, 'Name or email fragment.', VALUE_DEFAULT, ''),
             'page' => new external_value(PARAM_INT, 'Zero-based page.', VALUE_DEFAULT, 0),
-            'perpage' => new external_value(PARAM_INT, 'Rows per page, from 1 to 100.', VALUE_DEFAULT, 20),
+            'perpage' => new external_value(PARAM_INT, 'Rows per page, from 1 to 100, or 0 for all.', VALUE_DEFAULT, 12),
         ]);
     }
 
@@ -50,10 +50,10 @@ final class get_my_accounts extends list_service {
      *
      * @param string $search Name or email fragment.
      * @param int $page Zero-based page.
-     * @param int $perpage Rows per page.
+     * @param int $perpage Rows per page, 0 for all.
      * @return array The page.
      */
-    public static function execute(string $search = '', int $page = 0, int $perpage = 20): array {
+    public static function execute(string $search = '', int $page = 0, int $perpage = 12): array {
         global $USER;
 
         $params = self::validate_parameters(self::execute_parameters(), compact('search', 'page', 'perpage'));

@@ -46,7 +46,7 @@ final class get_activity_list extends list_service {
             'component' => new external_value(PARAM_TEXT, 'Component fragment.', VALUE_DEFAULT, ''),
             'action' => new external_value(PARAM_TEXT, 'Action fragment.', VALUE_DEFAULT, ''),
             'page' => new external_value(PARAM_INT, 'Zero-based page.', VALUE_DEFAULT, 0),
-            'perpage' => new external_value(PARAM_INT, 'Rows per page, from 1 to 100.', VALUE_DEFAULT, 20),
+            'perpage' => new external_value(PARAM_INT, 'Rows per page, from 1 to 100, or 0 for all.', VALUE_DEFAULT, 12),
         ]);
     }
 
@@ -59,7 +59,7 @@ final class get_activity_list extends list_service {
      * @param string $component Component fragment.
      * @param string $action Action fragment.
      * @param int $page Zero-based page.
-     * @param int $perpage Rows per page.
+     * @param int $perpage Rows per page, 0 for all.
      * @return array The page.
      */
     public static function execute(
@@ -69,7 +69,7 @@ final class get_activity_list extends list_service {
         string $component = '',
         string $action = '',
         int $page = 0,
-        int $perpage = 20
+        int $perpage = 12
     ): array {
         $params = self::validate_parameters(self::execute_parameters(), compact(
             'delegationid',

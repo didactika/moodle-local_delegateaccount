@@ -7,7 +7,7 @@
 // @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 .lda,
-.lda-modal {
+#{$lda-modal} {
     // Search field: the magnifier is a decoration inside the field.
     & .dd-searchbox {
         position: relative;
@@ -90,22 +90,68 @@
         }
     }
 
+    // The quick actions of a row: each in the colour of what it does, on a soft tint of it, so they are told apart at a
+    // glance. They keep their place in every row; the ones a row does not allow are there, faded, and do nothing.
     & .btn-link.btn-icon {
-        color: var(--dd-muted);
+        --dd-c: var(--dd-muted);
+        background-color: transparent;
+        color: var(--dd-c);
         text-decoration: none;
+        transition: background-color var(--dd-ease), color var(--dd-ease), opacity var(--dd-ease), transform var(--dd-ease);
 
-        &:hover,
-        &:focus-visible {
-            background-color: var(--dd-surface-3);
-            color: var(--dd-ink);
+        &.text-primary {
+            --dd-c: var(--dd-primary);
         }
 
-        &.text-danger:hover,
-        &.text-danger:focus-visible {
-            background-color: color-mix(in srgb, var(--dd-danger) 12%, var(--dd-surface));
-            color: color-mix(in srgb, var(--dd-danger) 70%, var(--dd-ink));
+        &.text-info {
+            --dd-c: var(--dd-info);
+        }
+
+        &.text-success {
+            --dd-c: var(--dd-success);
+        }
+
+        &.text-warning {
+            --dd-c: color-mix(in srgb, var(--dd-warning) 70%, var(--dd-ink));
+        }
+
+        &.text-danger {
+            --dd-c: var(--dd-danger);
+        }
+
+        &:not(.disabled, :disabled) {
+            background-color: color-mix(in srgb, var(--dd-c) 9%, var(--dd-surface));
+        }
+
+        &:not(.disabled, :disabled):hover,
+        &:not(.disabled, :disabled):focus-visible {
+            outline: 0;
+            background-color: color-mix(in srgb, var(--dd-c) 18%, var(--dd-surface));
+            color: color-mix(in srgb, var(--dd-c) 80%, var(--dd-ink));
+            transform: translateY(-1px);
+        }
+
+        &:focus-visible {
+            box-shadow: 0 0 0 3px var(--dd-ring);
+        }
+
+        &.disabled,
+        &:disabled {
+            color: var(--dd-muted);
+            opacity: 0.35;
+            cursor: not-allowed;
+            pointer-events: auto;
         }
     }
+
+    & .table-actions {
+        white-space: nowrap;
+
+        & .btn-icon + .btn-icon {
+            margin-left: 0.25rem;
+        }
+    }
+
 
     // A tonal button: the soft tint of its role, for the actions of a selection.
     & .btn.btn-tonal {
@@ -278,7 +324,7 @@
 // The menu a select opens, the dropdown menu of the design system: the chosen option tinted and checked, the groups as
 // headers. It is fixed to the window, so the card of a list never cuts it, and opens below or above the select.
 .lda,
-.lda-modal {
+#{$lda-modal} {
     & .dropdown-menu.dd-select-menu {
         position: fixed;
         z-index: 1060;
@@ -386,9 +432,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .lda .dd-select-menu,
-    .lda-modal .dd-select-menu {
-        animation: none;
+    .lda,
+    #{$lda-modal} {
+        & .dd-select-menu {
+            animation: none;
+        }
     }
 }
 
@@ -405,7 +453,7 @@
 // text-bg-*, as the design system does; Bootstrap 5 paints those with !important, so the tint has to say it as well.
 /* stylelint-disable declaration-no-important */
 .lda,
-.lda-modal {
+#{$lda-modal} {
     & .badge.badge-soft {
         display: inline-flex;
         align-items: center;
@@ -436,15 +484,17 @@
 /* stylelint-enable declaration-no-important */
 
 // On Moodle 5.3 the icon of a search comes wrapped in a span; it sits in the field as the icon itself does.
-.lda .dd-searchbox > span[aria-hidden="true"],
-.lda-modal .dd-searchbox > span[aria-hidden="true"] {
-    position: absolute;
-    left: 0.75rem;
-    color: var(--dd-muted);
-    pointer-events: none;
+.lda,
+#{$lda-modal} {
+    & .dd-searchbox > span[aria-hidden="true"] {
+        position: absolute;
+        left: 0.75rem;
+        color: var(--dd-muted);
+        pointer-events: none;
 
-    & .icon {
-        position: static;
-        margin: 0;
+        & .icon {
+            position: static;
+            margin: 0;
+        }
     }
 }

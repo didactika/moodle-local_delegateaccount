@@ -29,7 +29,7 @@ import Ajax from 'core/ajax';
 import Templates from 'core/templates';
 import Pending from 'core/pending';
 import {getString} from 'core/str';
-import {debounce, describeError} from 'local_delegateaccount/local/ui';
+import {debounce, describeError, fitPageSizes, pageRange, pageSize} from 'local_delegateaccount/local/ui';
 import {init as initSelectMenus} from 'local_delegateaccount/local/select_menu';
 
 /** Milliseconds a load may take before the skeleton appears, so a fast answer does not flash. */
@@ -82,6 +82,9 @@ export default class List {
                 state[key] = typeof defaults[key] === 'number' ? Number(value) || 0 : value;
             }
         });
+        if (typeof state.perpage === 'number') {
+            state.perpage = pageSize(state.perpage, defaults.perpage);
+        }
         return state;
     }
 
@@ -168,7 +171,7 @@ export default class List {
                 return;
             }
             // A page past the end, after rows went away, goes back to the last page that has rows.
-            const lastpage = Math.max(0, Math.ceil(response.total / this.state.perpage) - 1);
+            const {lastpage} = pageRange(this.state.page, this.state.perpage, response.total);
             if (this.state.page > lastpage) {
                 this.state.page = lastpage;
                 this.writeState();
@@ -195,6 +198,7 @@ export default class List {
      * @returns {Promise<void>}
      */
     async render(response) {
+        this.region('tablewrap')?.removeAttribute('aria-busy');
         this.total = response.total;
         this.rows = response.rows;
         const context = this.options.context ? this.options.context(response, this.state) : {rows: response.rows};
@@ -226,7 +230,7 @@ export default class List {
         const wrap = this.region('tablewrap');
         const columns = wrap.querySelectorAll('thead th').length || 4;
         const cells = '<td><span class="dd-skeleton"></span></td>'.repeat(columns);
-        const body = `<tr aria-hidden="true">${cells}</tr>`.repeat(Math.min(this.state.perpage, 6));
+        const body = `<tr aria-hidden="true">${cells}</tr>`.repeat(Math.min(this.state.perpage || 6, 6));
         const table = wrap.querySelector('table');
         if (table && table.tBodies[0]) {
             table.tBodies[0].innerHTML = body;
@@ -304,8 +308,8 @@ export default class List {
      * @returns {Promise<void>}
      */
     async renderPager() {
-        const from = this.total === 0 ? 0 : this.state.page * this.state.perpage + 1;
-        const to = Math.min(this.total, (this.state.page + 1) * this.state.perpage);
+        const {from, to} = pageRange(this.state.page, this.state.perpage, this.total);
+        fitPageSizes(this.region('perpage'), this.state.perpage, this.total);
         const range = this.region('range');
         if (range) {
             range.textContent = await getString('pager_range', 'local_delegateaccount', {from, to, total: this.total});

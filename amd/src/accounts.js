@@ -39,7 +39,7 @@ export const init = async(selector) => {
     const list = new List(root, {
         method: 'local_delegateaccount_get_my_accounts',
         template: 'local_delegateaccount/accounts/cards',
-        defaults: {search: '', page: 0, perpage: 20},
+        defaults: {search: '', page: 0, perpage: 12},
         args: (state) => ({search: state.search, page: state.page, perpage: state.perpage}),
         context: (response) => ({rows: response.rows.map((row) => ({...row, user: {...row.user, size: 50}}))}),
         empty: () => ({icon: 'i/switch', title: emptytitle, text: emptytext}),

@@ -152,7 +152,6 @@ export const chooseDelegation = async(trigger, exclude) => {
     const modal = await ModalSaveCancel.create({title, body, large: true, buttons: {save: button}, removeOnClose: true,
         returnElement: trigger});
     const root = modal.getRoot()[0];
-    root.classList.add('lda-modal');
     const save = root.querySelector('[data-action="save"]');
     save.disabled = true;
     let chosen = null;
@@ -200,7 +199,6 @@ export const openBulkPermissions = async({selection, count, trigger, onApplied})
         returnElement: trigger,
     });
     const root = modal.getRoot()[0];
-    root.classList.add('lda-modal');
     const region = (name) => root.querySelector(`[data-region="${name}"]`);
     const save = root.querySelector('[data-action="save"]');
     const byname = new Map(data.capabilities.map((capability) => [capability.name, capability]));

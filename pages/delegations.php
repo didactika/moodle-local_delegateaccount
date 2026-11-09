@@ -48,6 +48,8 @@ $PAGE->navbar->add(fullname($realuser), $url);
 
 $authorised = manager::can_use_delegated_accounts($realuserid);
 page::require_create();
+// The list runs its web service for its first rows, which sets up the page, so it comes before the header.
+$list = page::delegation_list($realuserid, 'lda-delegations');
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/delegations/page', [
@@ -56,6 +58,6 @@ echo $OUTPUT->render_from_template('local_delegateaccount/delegations/page', [
     'authorised' => $authorised,
     'cancreate' => $authorised && permission::has(permission::CREATE),
     'realuserid' => $realuserid,
-    'list' => page::delegation_list($realuserid, 'lda-delegations'),
+    'list' => $list,
 ]);
 echo $OUTPUT->footer();

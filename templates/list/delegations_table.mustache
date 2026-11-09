@@ -106,16 +106,15 @@
                     {{^overrides}}<span class="small text-muted text-truncate">{{#str}}overrides_none, local_delegateaccount{{/str}}</span>{{/overrides}}
                 </td>
                 <td class="table-actions">
-                    {{#canupdate}}
-                        <button type="button" class="btn btn-link btn-icon btn-sm" data-action="edit" data-id="{{id}}" title="{{#str}}edit_period_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}edit_period_of, local_delegateaccount, {{label}}{{/str}}">{{#pix}}t/edit, core{{/pix}}</button>
-                    {{/canupdate}}
-                    <a class="btn btn-link btn-icon btn-sm" href="{{permissionsurl}}" title="{{#str}}session_permissions_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}session_permissions_of, local_delegateaccount, {{label}}{{/str}}">{{#pix}}i/permissions, core{{/pix}}</a>
+                    <button type="button" class="btn btn-link btn-icon btn-sm text-primary" data-action="edit" data-id="{{id}}" title="{{#str}}edit_period_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}edit_period_of, local_delegateaccount, {{label}}{{/str}}"{{^canupdate}} disabled{{/canupdate}}>{{#pix}}t/edit, core{{/pix}}</button>
+                    <a class="btn btn-link btn-icon btn-sm text-info" href="{{permissionsurl}}" title="{{#str}}session_permissions_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}session_permissions_of, local_delegateaccount, {{label}}{{/str}}">{{#pix}}i/permissions, core{{/pix}}</a>
                     {{#canviewactivity}}
-                        <a class="btn btn-link btn-icon btn-sm" href="{{activityurl}}" title="{{#str}}view_activity_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}view_activity_of, local_delegateaccount, {{label}}{{/str}}">{{#pix}}i/log, core{{/pix}}</a>
+                        <a class="btn btn-link btn-icon btn-sm text-success" href="{{activityurl}}" title="{{#str}}view_activity_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}view_activity_of, local_delegateaccount, {{label}}{{/str}}">{{#pix}}i/log, core{{/pix}}</a>
                     {{/canviewactivity}}
-                    {{#canrevoke}}
-                        <button type="button" class="btn btn-link btn-icon btn-sm text-danger" data-action="revoke" data-id="{{id}}" title="{{#str}}revoke_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}revoke_of, local_delegateaccount, {{label}}{{/str}}">{{#pix}}t/delete, core{{/pix}}</button>
-                    {{/canrevoke}}
+                    {{^canviewactivity}}
+                        <span class="btn btn-link btn-icon btn-sm text-success disabled" aria-disabled="true" title="{{#str}}view_activity_of, local_delegateaccount, {{label}}{{/str}}">{{#pix}}i/log, core{{/pix}}</span>
+                    {{/canviewactivity}}
+                    <button type="button" class="btn btn-link btn-icon btn-sm text-danger" data-action="revoke" data-id="{{id}}" title="{{#str}}revoke_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}revoke_of, local_delegateaccount, {{label}}{{/str}}"{{^canrevoke}} disabled{{/canrevoke}}>{{#pix}}t/delete, core{{/pix}}</button>
                 </td>
             </tr>
         {{/rows}}

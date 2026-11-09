@@ -90,7 +90,6 @@ export const confirmDanger = async({title, text, button, trigger, action}) => {
         returnElement: trigger,
     });
     const root = modal.getRoot()[0];
-    root.classList.add('lda-modal');
     const save = root.querySelector('[data-action="save"]');
     save.classList.remove('btn-primary');
     save.classList.add('btn-danger');
@@ -132,9 +131,58 @@ export const openForm = ({formClass, args, title, trigger, onSubmitted}) => {
     });
     modalForm.addEventListener(modalForm.events.LOADED, () => {
         const root = modalForm.modal.getRoot()[0];
-        root.classList.add('lda-modal');
         normalise(root);
     });
     modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (event) => onSubmitted(event.detail || {}));
     modalForm.show();
+};
+
+/** The sizes a page of a list may have, 0 being every row at once. */
+export const PAGE_SIZES = [12, 24, 48, 96, 0];
+
+/** The size a list starts with. */
+export const DEFAULT_PAGE_SIZE = 12;
+
+/**
+ * Brings a size read from the address to one the pager offers.
+ *
+ * @param {number} perpage The size asked for.
+ * @param {number} fallback The size to use when it is not one of them.
+ * @returns {number}
+ */
+export const pageSize = (perpage, fallback = DEFAULT_PAGE_SIZE) => (PAGE_SIZES.includes(perpage) ? perpage : fallback);
+
+/**
+ * Which rows a page shows: the first and the last, counted from 1, and the last page there is.
+ *
+ * @param {number} page The page, from 0.
+ * @param {number} perpage Rows per page, 0 for all of them.
+ * @param {number} total How many rows there are.
+ * @returns {{from: number, to: number, lastpage: number, start: number, end: number}}
+ */
+export const pageRange = (page, perpage, total) => {
+    const size = perpage > 0 ? perpage : Math.max(total, 1);
+    const lastpage = Math.max(0, Math.ceil(total / size) - 1);
+    const start = Math.min(page, lastpage) * size;
+    const end = Math.min(total, start + size);
+    return {from: total ? start + 1 : 0, to: end, lastpage, start, end};
+};
+
+/**
+ * Fits the sizes of a pager to a list: only the sizes smaller than the list are offered, besides all of it, and the select
+ * always shows one of them, All when every row fits on the page.
+ *
+ * @param {HTMLSelectElement|null} select The select of the rows per page.
+ * @param {number} perpage Rows per page, 0 for all of them.
+ * @param {number} total How many rows there are.
+ */
+export const fitPageSizes = (select, perpage, total) => {
+    if (!select) {
+        return;
+    }
+    Array.from(select.options).forEach((option) => {
+        const size = Number(option.value);
+        option.hidden = size > 0 && size >= total;
+    });
+    select.value = perpage > 0 && perpage < total ? String(perpage) : '0';
 };

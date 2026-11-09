@@ -29,7 +29,7 @@ import Ajax from 'core/ajax';
 import Templates from 'core/templates';
 import Pending from 'core/pending';
 import {getString, getStrings} from 'core/str';
-import {debounce, describeError, toast} from 'local_delegateaccount/local/ui';
+import {DEFAULT_PAGE_SIZE, debounce, describeError, fitPageSizes, pageRange, toast} from 'local_delegateaccount/local/ui';
 import {
     ALLOW,
     INHERIT,
@@ -64,7 +64,8 @@ class Editor {
         this.component = '';
         this.search = '';
         this.page = 0;
-        this.perpage = 20;
+        this.perpage = DEFAULT_PAGE_SIZE;
+        this.view = '';
         this.canedit = false;
     }
 
@@ -212,9 +213,9 @@ class Editor {
      */
     async render() {
         const shown = this.visible();
-        const lastpage = Math.max(0, Math.ceil(shown.length / this.perpage) - 1);
+        const {from, to, lastpage, start, end} = pageRange(this.page, this.perpage, shown.length);
         this.page = Math.min(this.page, lastpage);
-        const page = shown.slice(this.page * this.perpage, (this.page + 1) * this.perpage);
+        const page = shown.slice(start, end);
         const rows = await Promise.all(page.map((capability) => this.row(capability)));
         const groups = [];
         page.forEach((capability, index) => {
@@ -227,11 +228,16 @@ class Editor {
         });
         const {html, js} = await Templates.renderForPromise('local_delegateaccount/permissions/rows', {groups});
         Templates.replaceNodeContents(this.region('rows'), html, js);
+        // Another page or other filters start at the top of the box; a change of permission keeps the place.
+        const view = [this.page, this.perpage, this.filter, this.component, this.search].join('|');
+        if (view !== this.view) {
+            this.view = view;
+            this.region('capabilities').scrollTop = 0;
+        }
         this.region('rows').hidden = shown.length === 0;
         this.region('empty').hidden = shown.length > 0;
         this.region('foot').hidden = shown.length === 0;
-        const from = shown.length ? this.page * this.perpage + 1 : 0;
-        const to = Math.min(shown.length, (this.page + 1) * this.perpage);
+        fitPageSizes(this.region('perpage'), this.perpage, shown.length);
         this.region('range').textContent = await getString('pager_range', 'local_delegateaccount', {
             from,
             to,

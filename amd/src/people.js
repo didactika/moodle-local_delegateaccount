@@ -43,7 +43,7 @@ export const init = async(selector) => {
     const list = new List(root, {
         method: 'local_delegateaccount_get_user_list',
         template: 'local_delegateaccount/list/people_table',
-        defaults: {search: '', status: '', sort: 'name', direction: 'asc', page: 0, perpage: 20},
+        defaults: {search: '', status: '', sort: 'name', direction: 'asc', page: 0, perpage: 12},
         args: (state) => ({
             scope: config.scope,
             search: state.search,

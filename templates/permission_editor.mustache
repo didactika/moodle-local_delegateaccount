@@ -70,22 +70,24 @@
                 <button type="button" class="dd-chip" data-filter="risky" aria-pressed="false">{{#str}}perm_filter_risky, local_delegateaccount{{/str}} <span class="dd-chip-count" data-count="risky">&nbsp;</span></button>
             </div>
         </div>
-        <div data-region="rows" aria-busy="true">
-            <ul class="list-group list-group-flush" aria-hidden="true">
-                <li class="list-group-item"><span class="dd-skeleton w-50"></span></li>
-                <li class="list-group-item"><span class="dd-skeleton w-50"></span></li>
-                <li class="list-group-item"><span class="dd-skeleton w-50"></span></li>
-            </ul>
-        </div>
-        <div data-region="empty" hidden>
-            <div class="dd-empty">
-                <span class="dd-tile dd-tile-lg">{{#pix}}a/search, core{{/pix}}</span>
-                <p class="dd-empty-title">{{#str}}perm_empty_title, local_delegateaccount{{/str}}</p>
-                <p class="dd-empty-text">{{#str}}perm_empty_text, local_delegateaccount{{/str}}</p>
-                <button type="button" class="btn btn-outline-secondary" data-action="clearfilters">{{#str}}clear_filters, local_delegateaccount{{/str}}</button>
+        <div class="overflow-auto" data-region="capabilities">
+            <div data-region="rows" aria-busy="true">
+                <ul class="list-group list-group-flush" aria-hidden="true">
+                    <li class="list-group-item"><span class="dd-skeleton w-50"></span></li>
+                    <li class="list-group-item"><span class="dd-skeleton w-50"></span></li>
+                    <li class="list-group-item"><span class="dd-skeleton w-50"></span></li>
+                </ul>
             </div>
+            <div data-region="empty" hidden>
+                <div class="dd-empty">
+                    <span class="dd-tile dd-tile-lg">{{#pix}}a/search, core{{/pix}}</span>
+                    <p class="dd-empty-title">{{#str}}perm_empty_title, local_delegateaccount{{/str}}</p>
+                    <p class="dd-empty-text">{{#str}}perm_empty_text, local_delegateaccount{{/str}}</p>
+                    <button type="button" class="btn btn-outline-secondary" data-action="clearfilters">{{#str}}clear_filters, local_delegateaccount{{/str}}</button>
+                </div>
+            </div>
+            <div data-region="error" hidden></div>
         </div>
-        <div data-region="error" hidden></div>
         {{> local_delegateaccount/list/pager }}
     </div>
     <div class="dd-savebar" role="region" aria-live="polite" aria-label="{{#str}}session_permissions, local_delegateaccount{{/str}}" data-region="savebar" hidden>

@@ -6,6 +6,10 @@
 // @copyright 2026 Didactika.org
 // @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
+// The dialogs of the plugin: Moodle puts them at the end of the page, outside the screen, so they are reached by the classes
+// Moodle gives the body of the pages of the plugin and of its settings.
+$lda-modal: ".path-local-delegateaccount .modal, .path-admin-local-delegateaccount .modal, #page-admin-setting-local_delegateaccount_settings .modal";
+
 @import 'scss/tokens';
 @import 'scss/chrome';
 @import 'scss/feedback';

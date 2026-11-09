@@ -47,7 +47,7 @@ export const init = async(selector) => {
     const list = new List(root, {
         method: 'local_delegateaccount_get_activity_list',
         template: 'local_delegateaccount/activity/table',
-        defaults: {datefrom: '', dateto: '', component: '', action: '', page: 0, perpage: 20},
+        defaults: {datefrom: '', dateto: '', component: '', action: '', page: 0, perpage: 12},
         args: (state) => ({
             delegationid: config.delegationid,
             datefrom: state.datefrom,

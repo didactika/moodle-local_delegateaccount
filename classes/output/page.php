@@ -16,6 +16,9 @@
 
 namespace local_delegateaccount\output;
 
+use core_external\external_api;
+use local_delegateaccount\external\get_delegation_list;
+use local_delegateaccount\external\get_user_list;
 use local_delegateaccount\external\list_service;
 use local_delegateaccount\permission;
 
@@ -42,6 +45,7 @@ final class page {
         return [
             'id' => $id,
             'config' => json_encode(['scope' => $scope]),
+            'initial' => self::first(get_user_list::class, ['scope' => $scope]),
             'searchlabel' => get_string('search_people', 'local_delegateaccount'),
         ];
     }
@@ -71,6 +75,11 @@ final class page {
                 // On the page of one person the list opens with every status, so nothing of theirs is hidden at first.
                 'status' => $realuserid > 0 ? '' : 'active',
             ]),
+            'initial' => self::first(get_delegation_list::class, ['filters' => [
+                'realuserid' => $realuserid,
+                'status' => $realuserid > 0 ? '' : 'active',
+                'search' => '',
+            ]]),
             'searchlabel' => get_string($realuserid > 0 ? 'search_accounts' : 'search_delegations', 'local_delegateaccount'),
             'canbulk' => $canbulk,
             'canupdate' => $canupdate,
@@ -86,5 +95,22 @@ final class page {
         global $PAGE;
 
         $PAGE->requires->js_call_amd('local_delegateaccount/create', 'init');
+    }
+
+    /**
+     * The first page of a list, as its web service returns it, so the page shows its rows without waiting for a request.
+     *
+     * @param string $service Class of the web service of the list.
+     * @param array $args Its arguments for the first page; the rest take their defaults.
+     * @return string The response, in JSON, or empty when it cannot be had here.
+     */
+    private static function first(string $service, array $args): string {
+        try {
+            $response = external_api::clean_returnvalue($service::execute_returns(), $service::execute(...$args));
+            return json_encode($response);
+        } catch (\moodle_exception $e) {
+            // The list asks for its rows itself, and shows the error there.
+            return '';
+        }
     }
 }

@@ -141,7 +141,7 @@ export const init = async(selector) => {
         method: 'local_delegateaccount_get_delegation_list',
         template: 'local_delegateaccount/list/delegations_table',
         prefix: config.prefix || '',
-        defaults: {search: '', status: config.status ?? 'active', sort: 'account', direction: 'asc', page: 0, perpage: 20},
+        defaults: {search: '', status: config.status ?? 'active', sort: 'account', direction: 'asc', page: 0, perpage: 12},
         args: (state) => ({
             filters: filters(state),
             sort: state.sort,
