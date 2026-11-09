@@ -15,6 +15,7 @@ import {useEffect, useState} from 'react';
 import {Avatar, Empty, Icon, ListBody, Pager, SearchBox} from './components/ui';
 import {useList, useDebounced} from './hooks/useList';
 import {useText} from './engine/text';
+import {DEFAULT_PAGE_SIZE} from './engine/paging';
 import {getMyAccounts} from './services/api';
 import type {AccountRow, MyAccountsProps} from './types';
 
@@ -27,7 +28,7 @@ import type {AccountRow, MyAccountsProps} from './types';
 export default function MyAccounts({strings, id, initial}: MyAccountsProps) {
     const text = useText(strings);
     const list = useList<AccountRow & {id?: number}>(
-        {search: '', page: 0, perpage: 20},
+        {search: '', page: 0, perpage: DEFAULT_PAGE_SIZE},
         (state) => getMyAccounts(String(state.search), {page: Number(state.page), perpage: Number(state.perpage)}),
         initial,
     );

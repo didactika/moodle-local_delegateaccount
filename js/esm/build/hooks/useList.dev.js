@@ -14,6 +14,7 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import Pending from "@moodle/lms/core/pending";
+import { pageRange, pageSize } from "../engine/paging";
 const SKELETON_DELAY = 300;
 const readState = /* @__PURE__ */ __name((defaults) => {
   const params = new URL(window.location.href).searchParams;
@@ -24,6 +25,9 @@ const readState = /* @__PURE__ */ __name((defaults) => {
       state[key] = typeof defaults[key] === "number" ? Number(value) || 0 : value;
     }
   });
+  if (typeof defaults.perpage === "number") {
+    state.perpage = pageSize(Number(state.perpage), defaults.perpage);
+  }
   return state;
 }, "readState");
 const writeState = /* @__PURE__ */ __name((state, defaults) => {
@@ -67,7 +71,7 @@ function useList(defaults, load, initial) {
       if (!current) {
         return response;
       }
-      const lastpage = Math.max(0, Math.ceil(response.total / Number(state.perpage)) - 1);
+      const { lastpage } = pageRange(Number(state.page), Number(state.perpage), response.total);
       if (Number(state.page) > lastpage) {
         setState((before) => ({ ...before, page: lastpage }));
         return response;
@@ -94,6 +98,9 @@ function useList(defaults, load, initial) {
   }, [state, reload]);
   const update = useCallback((changes) => {
     setState((before) => {
+      if (Object.keys(changes).every((key) => changes[key] === before[key])) {
+        return before;
+      }
       const filtered = Object.keys(changes).some((key) => FILTERS.includes(key) && changes[key] !== before[key]);
       if (filtered || "page" in changes && changes.page !== before.page) {
         setSelected(/* @__PURE__ */ new Set());

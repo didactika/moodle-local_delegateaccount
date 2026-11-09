@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { Chips, Empty, Icon, ListBody, Pager, Person, SearchBox, SkeletonRows, SortHeader } from "./components/ui";
 import { useList, useDebounced } from "./hooks/useList";
 import { useText } from "./engine/text";
+import { DEFAULT_PAGE_SIZE } from "./engine/paging";
 import { openCreate } from "./CreateButton";
 import { getUserList } from "./services/api";
 const CHIPS = [
@@ -28,16 +29,17 @@ const CHIPS = [
   { key: "revoked", label: "delegation_status_revoked" },
   { key: "none", label: "no_delegations" }
 ];
-function PeopleList({ strings, scope }) {
+function PeopleList({ strings, scope, initial }) {
   const text = useText(strings);
   const list = useList(
-    { search: "", status: "", sort: "name", direction: "asc", page: 0, perpage: 20 },
+    { search: "", status: "", sort: "name", direction: "asc", page: 0, perpage: DEFAULT_PAGE_SIZE },
     (state2) => getUserList(scope, String(state2.search), String(state2.status), {
       sort: String(state2.sort),
       direction: String(state2.direction),
       page: Number(state2.page),
       perpage: Number(state2.perpage)
-    })
+    }),
+    initial
   );
   const { state, page } = list;
   const [search, setSearch] = useState(String(state.search));
@@ -71,7 +73,7 @@ function PeopleList({ strings, scope }) {
     false,
     {
       fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-      lineNumber: 64,
+      lineNumber: 66,
       columnNumber: 19
     },
     this
@@ -90,7 +92,7 @@ function PeopleList({ strings, scope }) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-        lineNumber: 72,
+        lineNumber: 74,
         columnNumber: 9
       },
       this
@@ -98,15 +100,15 @@ function PeopleList({ strings, scope }) {
     /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
       /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar", children: /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: /* @__PURE__ */ jsxDEV(SearchBox, { strings, value: search, onChange: setSearch, label: text("search_people") }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-        lineNumber: 77,
+        lineNumber: 79,
         columnNumber: 21
       }, this) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-        lineNumber: 76,
+        lineNumber: 78,
         columnNumber: 17
       }, this) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-        lineNumber: 75,
+        lineNumber: 77,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -120,78 +122,78 @@ function PeopleList({ strings, scope }) {
           children: /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "aria-busy": list.busy || void 0, children: /* @__PURE__ */ jsxDEV("table", { className: "table", children: [
             /* @__PURE__ */ jsxDEV("caption", { className: "visually-hidden", children: text("list_caption_people") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-              lineNumber: 84,
+              lineNumber: 86,
               columnNumber: 25
             }, this),
             /* @__PURE__ */ jsxDEV("thead", { children: /* @__PURE__ */ jsxDEV("tr", { children: [
               /* @__PURE__ */ jsxDEV(SortHeader, { column: "name", label: text("authoriseduser"), ...headers }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 87,
+                lineNumber: 89,
                 columnNumber: 33
               }, this),
               /* @__PURE__ */ jsxDEV(SortHeader, { column: "active", label: text("active_delegations"), numeric: true, ...headers }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 88,
+                lineNumber: 90,
                 columnNumber: 33
               }, this),
               /* @__PURE__ */ jsxDEV(SortHeader, { column: "scheduled", label: text("scheduled_delegations"), numeric: true, ...headers }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 89,
+                lineNumber: 91,
                 columnNumber: 33
               }, this),
               /* @__PURE__ */ jsxDEV("th", { scope: "col", className: "table-actions", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: text("core:actions") }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 91,
+                lineNumber: 93,
                 columnNumber: 37
               }, this) }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 90,
+                lineNumber: 92,
                 columnNumber: 33
               }, this)
             ] }, void 0, true, {
               fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-              lineNumber: 86,
+              lineNumber: 88,
               columnNumber: 29
             }, this) }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-              lineNumber: 85,
+              lineNumber: 87,
               columnNumber: 25
             }, this),
             /* @__PURE__ */ jsxDEV("tbody", { children: list.skeleton || !page ? /* @__PURE__ */ jsxDEV(SkeletonRows, { columns: 4 }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-              lineNumber: 96,
+              lineNumber: 98,
               columnNumber: 55
             }, this) : page.rows.map((row) => /* @__PURE__ */ jsxDEV("tr", { children: [
               /* @__PURE__ */ jsxDEV("th", { scope: "row", children: /* @__PURE__ */ jsxDEV(Person, { user: row.user }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 97,
+                lineNumber: 99,
                 columnNumber: 49
               }, this) }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 97,
+                lineNumber: 99,
                 columnNumber: 33
               }, this),
               /* @__PURE__ */ jsxDEV("td", { className: "text-end", children: row.activecount }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 98,
+                lineNumber: 100,
                 columnNumber: 33
               }, this),
               /* @__PURE__ */ jsxDEV("td", { className: "text-end", children: row.scheduledcount }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 99,
+                lineNumber: 101,
                 columnNumber: 33
               }, this),
               /* @__PURE__ */ jsxDEV("td", { className: "table-actions", children: row.cancreate && /* @__PURE__ */ jsxDEV(
                 "button",
                 {
                   type: "button",
-                  className: "btn btn-link btn-icon btn-sm",
+                  className: "btn btn-link btn-icon btn-sm text-primary",
                   title: row.addlabel,
                   "aria-label": row.addlabel,
                   onClick: (event) => void openCreate(row.user.id, event.currentTarget, text),
                   children: /* @__PURE__ */ jsxDEV(Icon, { name: "t/add", strings }, void 0, false, {
                     fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                    lineNumber: 104,
+                    lineNumber: 106,
                     columnNumber: 41
                   }, this)
                 },
@@ -199,31 +201,31 @@ function PeopleList({ strings, scope }) {
                 false,
                 {
                   fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                  lineNumber: 101,
+                  lineNumber: 103,
                   columnNumber: 55
                 },
                 this
               ) }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-                lineNumber: 100,
+                lineNumber: 102,
                 columnNumber: 33
               }, this)
             ] }, row.user.id, true, {
               fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-              lineNumber: 96,
+              lineNumber: 98,
               columnNumber: 109
             }, this)) }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-              lineNumber: 95,
+              lineNumber: 97,
               columnNumber: 25
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-            lineNumber: 83,
+            lineNumber: 85,
             columnNumber: 21
           }, this) }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-            lineNumber: 82,
+            lineNumber: 84,
             columnNumber: 17
           }, this)
         },
@@ -231,7 +233,7 @@ function PeopleList({ strings, scope }) {
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-          lineNumber: 80,
+          lineNumber: 82,
           columnNumber: 13
         },
         this
@@ -250,19 +252,19 @@ function PeopleList({ strings, scope }) {
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-          lineNumber: 112,
+          lineNumber: 114,
           columnNumber: 55
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-      lineNumber: 74,
+      lineNumber: 76,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/PeopleList.tsx",
-    lineNumber: 71,
+    lineNumber: 73,
     columnNumber: 12
   }, this);
 }

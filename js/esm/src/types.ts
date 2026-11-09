@@ -148,6 +148,7 @@ export interface BaseProps {
 export interface PeopleListProps extends BaseProps {
     id: string;
     scope: string;
+    initial?: Page<PersonRow>;
 }
 
 export interface DelegationListProps extends BaseProps {
@@ -158,6 +159,7 @@ export interface DelegationListProps extends BaseProps {
     canupdate: boolean;
     canrevoke: boolean;
     canpermissions: boolean;
+    initial?: Page<DelegationRow>;
 }
 
 export interface ActivityListProps extends BaseProps {

@@ -14,6 +14,7 @@ import {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
 import type {KeyboardEvent as ReactKeyboardEvent, ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 import type {Counts, Person as PersonData, Strings, Text} from '../types';
+import {fitPageSizes, pageRange} from '../engine/paging';
 
 /**
  * A Moodle icon, drawn by the server with the icon map of the theme.
@@ -214,7 +215,7 @@ export function SelectMenu({options, value, onChange, label, className = '', sma
         }
     };
 
-    const scope = select.current?.closest('.lda, .lda-modal') ?? document.body;
+    const scope = select.current?.closest('.lda, .modal') ?? document.body;
     const position = place
         ? {top: place.top, left: place.left, minWidth: place.width, maxHeight: place.height}
         : {visibility: 'hidden' as const};
@@ -258,14 +259,15 @@ export function Pager({page, perpage, total, onChange, text, strings}: {
     text: Text;
     strings: Strings;
 }) {
-    const from = total === 0 ? 0 : page * perpage + 1;
-    const to = Math.min(total, (page + 1) * perpage);
+    const {from, to} = pageRange(page, perpage, total);
+    // Only the sizes smaller than the list are offered, besides all of it, and the select always shows one of them.
+    const {sizes, shown} = fitPageSizes(perpage, total);
     return <div className="table-foot">
         <div className="dd-pager">
             <div className="dd-pager-size">
                 <span>{text('rows_per_page')}</span>
-                <SelectMenu small label={text('rows_per_page')} value={String(perpage)}
-                    options={[10, 20, 50, 100].map((size) => ({value: String(size), label: String(size)}))}
+                <SelectMenu small label={text('rows_per_page')} value={String(shown)}
+                    options={sizes.map((size) => ({value: String(size), label: size ? String(size) : text('core:all')}))}
                     onChange={(size) => onChange({perpage: Number(size), page: 0})} />
             </div>
             <div className="dd-pager-end">
@@ -454,7 +456,7 @@ export function Dialog({title, children, footer, onClose, size = 'lg', initialFo
     children: ReactNode;
     footer: ReactNode;
     onClose: () => void;
-    size?: 'sm' | 'lg';
+    size?: 'sm' | 'md' | 'lg';
     initialFocus?: string;
 }) {
     const root = useRef<HTMLDivElement>(null);
@@ -492,10 +494,10 @@ export function Dialog({title, children, footer, onClose, size = 'lg', initialFo
             first?.focus();
         }
     };
-    return createPortal(<div className="lda-modal">
+    return createPortal(<>
         <div ref={root} className="modal show d-block" role="dialog" aria-modal="true" aria-labelledby={titleid} tabIndex={-1}
             onKeyDown={keys} onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-            <div className={`modal-dialog modal-${size} modal-dialog-scrollable`}>
+            <div className={`modal-dialog${size === 'md' ? '' : ` modal-${size}`} modal-dialog-scrollable`}>
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id={titleid}>{title}</h5>
@@ -507,7 +509,7 @@ export function Dialog({title, children, footer, onClose, size = 'lg', initialFo
             </div>
         </div>
         <div className="modal-backdrop show" />
-    </div>, document.body);
+    </>, document.body);
 }
 
 /**
@@ -539,7 +541,7 @@ export function ConfirmDialog({title, message, button, onConfirm, onClose, text,
             setWorking(false);
         }
     };
-    return <Dialog title={title} size="sm" onClose={onClose} initialFocus="[data-action='cancel']" footer={<>
+    return <Dialog title={title} size="md" onClose={onClose} initialFocus="[data-action='cancel']" footer={<>
         <button type="button" className="btn btn-secondary" data-action="cancel" onClick={onClose}>{text('core:cancel')}</button>
         <button type="button" className="btn btn-danger" disabled={working} onClick={confirm}>{button}</button>
     </>}>

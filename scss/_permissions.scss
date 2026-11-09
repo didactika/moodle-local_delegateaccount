@@ -8,7 +8,7 @@
 // @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 .lda,
-.lda-modal {
+#{$lda-modal} {
     // A segmented control: one choice among a few, with the chosen one raised.
     & .dd-segmented {
         display: inline-flex;
@@ -109,25 +109,67 @@
         border-radius: var(--dd-radius-lg);
     }
 
-    // The name of a component above its capabilities, kept in sight while the page scrolls.
-    & .list-group-flush > .list-group-item-light,
-    & .list-group-flush > .list-group-item-light:hover {
+    // The capabilities scroll inside a box of one height, so the page does not jump while one pages, searches or filters.
+    & [data-region="capabilities"] {
+        height: 62vh;
+        min-height: 20rem;
+        max-height: 40rem;
+        overscroll-behavior: contain;
+        border-top: 1px solid var(--dd-hairline);
+        border-bottom: 1px solid var(--dd-hairline);
+        scrollbar-gutter: stable;
+
+        & > [data-region="empty"]:not([hidden]) {
+            display: grid;
+            place-items: center;
+            min-height: 100%;
+        }
+
+        & > .dd-empty {
+            justify-content: center;
+            min-height: 100%;
+        }
+    }
+
+    // The name of a component above its capabilities: a darker band, like the head of a category, kept in sight while the
+    // box scrolls.
+    & .list-group-flush:not([role]) > .list-group-item.list-group-item-light,
+    & .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover {
         position: sticky;
         top: 0;
         z-index: 1;
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        border-radius: 0;
+        gap: 0.5rem;
         padding: 0.5rem 1rem;
-        background-color: var(--dd-surface-2);
-        color: var(--dd-muted);
+        border-top: 1px solid var(--dd-line);
+        border-bottom: 1px solid var(--dd-line);
+        background-color: color-mix(in srgb, var(--dd-ink) 14%, var(--dd-surface));
+        color: var(--dd-ink);
         font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.05em;
+        font-weight: 700;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
+
+        &::before {
+            content: "";
+            flex: none;
+            width: 3px;
+            height: 0.875rem;
+            border-radius: 2px;
+            background-color: var(--dd-primary);
+        }
+    }
+
+    & .list-group-flush:not([role]) > .list-group-item.list-group-item-light:first-child {
+        border-top: 0;
     }
 
     // A capability changed and not saved yet.
-    & .list-group-flush > .list-group-item-primary,
-    & .list-group-flush > .list-group-item-primary:hover {
+    & .list-group-flush:not([role]) > .list-group-item.list-group-item-primary,
+    & .list-group-flush:not([role]) > .list-group-item.list-group-item-primary:hover {
         box-shadow: inset 3px 0 0 var(--dd-primary);
         background-color: var(--dd-primary-soft);
         color: var(--dd-ink);
@@ -177,7 +219,7 @@
 }
 
 // The dialog of many delegations keeps one size whatever it shows, so nothing jumps while one searches or switches mode.
-.lda-modal {
+#{$lda-modal} {
     & .modal-body:has([data-region="bulk"]) {
         min-height: 32rem;
     }
@@ -280,13 +322,15 @@
 }
 
 @media (max-width: 576px) {
-    .lda .list-group-item .dd-segmented,
-    .lda-modal .list-group-item .dd-segmented {
-        width: 100%;
+    .lda,
+    #{$lda-modal} {
+        & .list-group-item .dd-segmented {
+            width: 100%;
 
-        & button {
-            flex: 1 1 auto;
-            justify-content: center;
+            & button {
+                flex: 1 1 auto;
+                justify-content: center;
+            }
         }
     }
 

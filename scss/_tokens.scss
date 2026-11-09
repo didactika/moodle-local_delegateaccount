@@ -8,7 +8,7 @@
 // @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 .lda,
-.lda-modal {
+#{$lda-modal} {
     --dd-primary: var(--bs-primary, var(--primary, #0f6cbf));
     --dd-secondary: var(--bs-secondary, var(--secondary, #6a737b));
     --dd-success: var(--bs-success, var(--success, #357a32));

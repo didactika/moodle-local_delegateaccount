@@ -14,6 +14,7 @@ import {useEffect, useId, useState} from 'react';
 import {Empty, ListBody, Pager, SkeletonRows} from './components/ui';
 import {useList, useDebounced} from './hooks/useList';
 import {useText} from './engine/text';
+import {DEFAULT_PAGE_SIZE} from './engine/paging';
 import {getActivityList} from './services/api';
 import type {ActivityListProps, ActivityRow} from './types';
 
@@ -30,7 +31,7 @@ export default function ActivityList({strings, delegationid, mindate, maxdate}: 
     const text = useText(strings);
     const id = useId();
     const list = useList<ActivityRow>(
-        {datefrom: '', dateto: '', component: '', action: '', page: 0, perpage: 20},
+        {datefrom: '', dateto: '', component: '', action: '', page: 0, perpage: DEFAULT_PAGE_SIZE},
         (state) => getActivityList({
             delegationid,
             datefrom: String(state.datefrom),

@@ -20,6 +20,7 @@ import {CopyFromDialog} from './BulkPermissions';
 import type {Source} from './BulkPermissions';
 import {useDebounced} from './hooks/useList';
 import {useText} from './engine/text';
+import {DEFAULT_PAGE_SIZE, pageRange} from './engine/paging';
 import {describeError, toast} from './engine/moodle';
 import {ALLOW, INHERIT, PERMISSIONS, matches, toMap, words} from './engine/capabilities';
 import {getPermissions, savePermissions} from './services/api';
@@ -56,7 +57,8 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
     const [search, setSearch] = useState('');
     const typed = useDebounced(search, 200);
     const [page, setPage] = useState(0);
-    const [perpage, setPerpage] = useState(20);
+    const [perpage, setPerpage] = useState(DEFAULT_PAGE_SIZE);
+    const box = useRef<HTMLDivElement>(null);
     const [saving, setSaving] = useState(false);
     const [copying, setCopying] = useState(false);
     const [notice, setNotice] = useState('');
@@ -114,9 +116,15 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
     });
     const shown = visible(filter);
     const counts = Object.fromEntries(CHIPS.map(({key}) => [key || 'all', visible(key).length]));
-    const lastpage = Math.max(0, Math.ceil(shown.length / perpage) - 1);
+    const {lastpage, start, end} = pageRange(page, perpage, shown.length);
     const at = Math.min(page, lastpage);
-    const rows = shown.slice(at * perpage, (at + 1) * perpage);
+    const rows = shown.slice(start, end);
+    // Another page or other filters start at the top of the box; a change of permission keeps the place.
+    useEffect(() => {
+        if (box.current) {
+            box.current.scrollTop = 0;
+        }
+    }, [at, perpage, filter, component, typed]);
     const changes = Array.from(new Set([...saved.keys(), ...current.keys()]))
         .filter((name) => (saved.get(name) ?? INHERIT) !== (current.get(name) ?? INHERIT))
         .map((capability) => ({capability, permission: current.get(capability) ?? INHERIT}));
@@ -212,10 +220,12 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
                     chips={CHIPS.map(({key, label}) => ({key, label: text(label)}))}
                     onChange={(chip) => reset(() => setFilter(chip))} />
             </div>
-            <ListBody error={error} onRetry={() => setReload((count) => count + 1)} text={text} empty={empty}
-                isEmpty={Boolean(capabilities) && shown.length === 0}>
-                {capabilities ? <ul className="list-group list-group-flush">{items}</ul> : skeleton}
-            </ListBody>
+            <div ref={box} className="overflow-auto" data-region="capabilities">
+                <ListBody error={error} onRetry={() => setReload((count) => count + 1)} text={text} empty={empty}
+                    isEmpty={Boolean(capabilities) && shown.length === 0}>
+                    {capabilities ? <ul className="list-group list-group-flush">{items}</ul> : skeleton}
+                </ListBody>
+            </div>
             {capabilities && shown.length > 0 && <Pager page={at} perpage={perpage} total={shown.length} text={text}
                 strings={strings} onChange={(next) => {
                     if (next.perpage !== undefined) {

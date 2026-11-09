@@ -37,7 +37,7 @@ $PAGE->set_heading($title);
 
 
 // The first page is drawn here, so the cards are there when the page opens; the script takes over from it.
-$first = \local_delegateaccount\local\listing::my_accounts((int)$USER->id, '', 0, 20);
+$first = \local_delegateaccount\local\listing::my_accounts((int)$USER->id, '', 0, 12);
 $rows = \core\session\manager::is_loggedinas() ? [] : array_map(
     fn(\stdClass $row): array => \local_delegateaccount\output\exporter::account_row($row),
     $first['rows']

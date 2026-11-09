@@ -16,6 +16,9 @@
 
 namespace local_delegateaccount\output;
 
+use core_external\external_api;
+use local_delegateaccount\external\get_delegation_list;
+use local_delegateaccount\external\get_user_list;
 use local_delegateaccount\external\list_service;
 use local_delegateaccount\permission;
 
@@ -35,7 +38,11 @@ final class page {
      * @return string HTML.
      */
     public static function people_list(string $scope, string $id): string {
-        return self::render('PeopleList', ['id' => $id, 'scope' => $scope]);
+        return self::render('PeopleList', [
+            'id' => $id,
+            'scope' => $scope,
+            'initial' => self::first(get_user_list::class, ['scope' => $scope]),
+        ]);
     }
 
     /**
@@ -59,7 +66,27 @@ final class page {
             'canupdate' => $canupdate,
             'canrevoke' => $canrevoke,
             'canpermissions' => $canpermissions,
+            'initial' => self::first(get_delegation_list::class, ['filters' => [
+                'realuserid' => $realuserid,
+                'status' => $realuserid > 0 ? '' : 'active',
+                'search' => '',
+            ]]),
         ]);
+    }
+
+    /**
+     * The first page of a list, as its web service returns it, so the page shows its rows without waiting for a request.
+     *
+     * @param string $service Class of the web service of the list.
+     * @param array $args Its arguments for the first page; the rest take their defaults.
+     * @return array|null The response, or null when it cannot be had here and the list asks for its rows itself.
+     */
+    private static function first(string $service, array $args): ?array {
+        try {
+            return external_api::clean_returnvalue($service::execute_returns(), $service::execute(...$args));
+        } catch (\moodle_exception $e) {
+            return null;
+        }
     }
 
     /**

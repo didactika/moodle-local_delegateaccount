@@ -17,6 +17,7 @@ import {Chips, ConfirmDialog, Empty, FloatBar, Icon, ListBody, Pager, Person, Se
 import {BulkPermissions} from './BulkPermissions';
 import {useList, useDebounced} from './hooks/useList';
 import {useText} from './engine/text';
+import {DEFAULT_PAGE_SIZE} from './engine/paging';
 import {describeError, openForm, toast} from './engine/moodle';
 import {getDelegationIds, getDelegationList, revokeDelegations} from './services/api';
 import type {DelegationListProps, DelegationRow, Filters, Strings, Text} from './types';
@@ -58,23 +59,28 @@ function Row({row, checked, canbulk, showuser, onToggle, onEdit, onRevoke, text,
         <td><small className="text-muted">{row.lastaccess}</small></td>
         <td>{overrides}</td>
         <td className="table-actions">
-            {row.canupdate && <button type="button" className="btn btn-link btn-icon btn-sm"
+            <button type="button" className="btn btn-link btn-icon btn-sm text-primary" disabled={!row.canupdate}
                 title={text('edit_period_of', row.label)} aria-label={text('edit_period_of', row.label)}
                 onClick={(event) => onEdit(event.currentTarget)}>
                 <Icon name="t/edit" strings={strings} />
-            </button>}
-            <a className="btn btn-link btn-icon btn-sm" href={row.permissionsurl}
+            </button>
+            <a className="btn btn-link btn-icon btn-sm text-info" href={row.permissionsurl}
                 title={text('session_permissions_of', row.label)} aria-label={text('session_permissions_of', row.label)}>
                 <Icon name="i/permissions" strings={strings} />
             </a>
-            {row.canviewactivity && <a className="btn btn-link btn-icon btn-sm" href={row.activityurl}
-                title={text('view_activity_of', row.label)} aria-label={text('view_activity_of', row.label)}>
-                <Icon name="i/log" strings={strings} />
-            </a>}
-            {row.canrevoke && <button type="button" className="btn btn-link btn-icon btn-sm text-danger"
+            {row.canviewactivity
+                ? <a className="btn btn-link btn-icon btn-sm text-success" href={row.activityurl}
+                    title={text('view_activity_of', row.label)} aria-label={text('view_activity_of', row.label)}>
+                    <Icon name="i/log" strings={strings} />
+                </a>
+                : <span className="btn btn-link btn-icon btn-sm text-success disabled" aria-disabled="true"
+                    title={text('view_activity_of', row.label)}>
+                    <Icon name="i/log" strings={strings} />
+                </span>}
+            <button type="button" className="btn btn-link btn-icon btn-sm text-danger" disabled={!row.canrevoke}
                 title={text('revoke_of', row.label)} aria-label={text('revoke_of', row.label)} onClick={onRevoke}>
                 <Icon name="t/delete" strings={strings} />
-            </button>}
+            </button>
         </td>
     </tr>;
 }
@@ -183,7 +189,7 @@ export default function DelegationList(props: DelegationListProps) {
     const {strings, realuserid, canbulk, canupdate, canrevoke, canpermissions} = props;
     const text = useText(strings);
     const list = useList<DelegationRow>(
-        {search: '', status: props.status, sort: 'account', direction: 'asc', page: 0, perpage: 20},
+        {search: '', status: props.status, sort: 'account', direction: 'asc', page: 0, perpage: DEFAULT_PAGE_SIZE},
         (state) => getDelegationList(
             {realuserid, status: String(state.status), search: String(state.search)},
             {
@@ -193,6 +199,7 @@ export default function DelegationList(props: DelegationListProps) {
                 perpage: Number(state.perpage),
             },
         ),
+        props.initial,
     );
     const {state, page} = list;
     const [search, setSearch] = useState(String(state.search));

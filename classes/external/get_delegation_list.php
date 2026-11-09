@@ -45,7 +45,7 @@ final class get_delegation_list extends list_service {
             'sort' => new external_value(PARAM_ALPHA, 'account, user, start or end.', VALUE_DEFAULT, 'account'),
             'direction' => new external_value(PARAM_ALPHA, 'asc or desc.', VALUE_DEFAULT, 'asc'),
             'page' => new external_value(PARAM_INT, 'Zero-based page.', VALUE_DEFAULT, 0),
-            'perpage' => new external_value(PARAM_INT, 'Rows per page, from 1 to 100.', VALUE_DEFAULT, 20),
+            'perpage' => new external_value(PARAM_INT, 'Rows per page, from 1 to 100, or 0 for all.', VALUE_DEFAULT, 12),
         ]);
     }
 
@@ -56,7 +56,7 @@ final class get_delegation_list extends list_service {
      * @param string $sort Sort column.
      * @param string $direction Sort direction.
      * @param int $page Zero-based page.
-     * @param int $perpage Rows per page.
+     * @param int $perpage Rows per page, 0 for all.
      * @return array The page.
      */
     public static function execute(
@@ -64,7 +64,7 @@ final class get_delegation_list extends list_service {
         string $sort = 'account',
         string $direction = 'asc',
         int $page = 0,
-        int $perpage = 20
+        int $perpage = 12
     ): array {
         $params = self::validate_parameters(self::execute_parameters(), compact('filters', 'sort', 'direction', 'page', 'perpage'));
         self::require_permission(permission::VIEW);

@@ -18,11 +18,12 @@ import { useEffect, useState } from "react";
 import { Avatar, Empty, Icon, ListBody, Pager, SearchBox } from "./components/ui";
 import { useList, useDebounced } from "./hooks/useList";
 import { useText } from "./engine/text";
+import { DEFAULT_PAGE_SIZE } from "./engine/paging";
 import { getMyAccounts } from "./services/api";
 function MyAccounts({ strings, id, initial }) {
   const text = useText(strings);
   const list = useList(
-    { search: "", page: 0, perpage: 20 },
+    { search: "", page: 0, perpage: DEFAULT_PAGE_SIZE },
     (state2) => getMyAccounts(String(state2.search), { page: Number(state2.page), perpage: Number(state2.perpage) }),
     initial
   );
@@ -35,15 +36,15 @@ function MyAccounts({ strings, id, initial }) {
   return /* @__PURE__ */ jsxDEV("section", { id, className: "d-grid gap-3", children: [
     /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar px-0 border-0", children: /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: /* @__PURE__ */ jsxDEV(SearchBox, { strings, value: search, onChange: setSearch, label: text("search_accounts") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-      lineNumber: 44,
+      lineNumber: 45,
       columnNumber: 17
     }, this) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-      lineNumber: 43,
+      lineNumber: 44,
       columnNumber: 13
     }, this) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-      lineNumber: 42,
+      lineNumber: 43,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(
@@ -68,53 +69,53 @@ function MyAccounts({ strings, id, initial }) {
           false,
           {
             fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-            lineNumber: 48,
+            lineNumber: 49,
             columnNumber: 42
           },
           this
         ) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-          lineNumber: 48,
+          lineNumber: 49,
           columnNumber: 20
         }, this),
         children: /* @__PURE__ */ jsxDEV("ul", { className: "row list-unstyled mb-0", "aria-busy": list.busy || void 0, children: (page?.rows ?? []).map((row) => /* @__PURE__ */ jsxDEV("li", { className: "col-sm-6 col-xl-4 mb-3", children: /* @__PURE__ */ jsxDEV("div", { className: "card h-100", children: /* @__PURE__ */ jsxDEV("div", { className: "card-body d-flex flex-column", children: [
           /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center mb-3", children: [
             /* @__PURE__ */ jsxDEV(Avatar, { user: row.user, size: 50 }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-              lineNumber: 55,
+              lineNumber: 56,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-column", children: [
               /* @__PURE__ */ jsxDEV("p", { className: "card-title mb-0 text-truncate", children: row.user.fullname }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-                lineNumber: 57,
+                lineNumber: 58,
                 columnNumber: 37
               }, this),
               /* @__PURE__ */ jsxDEV("span", { className: "small text-muted text-truncate", children: row.user.email }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-                lineNumber: 58,
+                lineNumber: 59,
                 columnNumber: 37
               }, this)
             ] }, void 0, true, {
               fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-              lineNumber: 56,
+              lineNumber: 57,
               columnNumber: 33
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-            lineNumber: 54,
+            lineNumber: 55,
             columnNumber: 29
           }, this),
           /* @__PURE__ */ jsxDEV("span", { className: "d-flex flex-column mb-3", children: [
             /* @__PURE__ */ jsxDEV("small", { className: "text-muted", children: text("delegation_end") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-              lineNumber: 62,
+              lineNumber: 63,
               columnNumber: 33
             }, this),
             row.end
           ] }, void 0, true, {
             fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-            lineNumber: 61,
+            lineNumber: 62,
             columnNumber: 29
           }, this),
           /* @__PURE__ */ jsxDEV(
@@ -126,7 +127,7 @@ function MyAccounts({ strings, id, initial }) {
               children: [
                 /* @__PURE__ */ jsxDEV(Icon, { name: "i/switch", strings }, void 0, false, {
                   fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-                  lineNumber: 66,
+                  lineNumber: 67,
                   columnNumber: 33
                 }, this),
                 " ",
@@ -137,26 +138,26 @@ function MyAccounts({ strings, id, initial }) {
             true,
             {
               fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-              lineNumber: 64,
+              lineNumber: 65,
               columnNumber: 29
             },
             this
           )
         ] }, void 0, true, {
           fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-          lineNumber: 53,
+          lineNumber: 54,
           columnNumber: 53
         }, this) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-          lineNumber: 53,
+          lineNumber: 54,
           columnNumber: 25
         }, this) }, row.delegationid, false, {
           fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-          lineNumber: 52,
+          lineNumber: 53,
           columnNumber: 54
         }, this)) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-          lineNumber: 51,
+          lineNumber: 52,
           columnNumber: 17
         }, this)
       },
@@ -164,7 +165,7 @@ function MyAccounts({ strings, id, initial }) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-        lineNumber: 47,
+        lineNumber: 48,
         columnNumber: 9
       },
       this
@@ -183,18 +184,18 @@ function MyAccounts({ strings, id, initial }) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-        lineNumber: 73,
+        lineNumber: 74,
         columnNumber: 13
       },
       this
     ) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-      lineNumber: 72,
+      lineNumber: 73,
       columnNumber: 56
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
-    lineNumber: 41,
+    lineNumber: 42,
     columnNumber: 12
   }, this);
 }

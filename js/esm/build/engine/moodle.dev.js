@@ -44,7 +44,6 @@ const openForm = /* @__PURE__ */ __name(async (formClass, args, title, trigger, 
   const form = new ModalForm({ modalConfig: { title, large: true }, formClass, args, returnFocus: trigger });
   form.addEventListener(form.events.LOADED, () => {
     const root = form.modal.getRoot()[0];
-    root.classList.add("lda-modal");
     normalise(root);
   });
   form.addEventListener(form.events.FORM_SUBMITTED, (event) => onSubmitted(event.detail || {}));

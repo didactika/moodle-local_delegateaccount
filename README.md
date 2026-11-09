@@ -90,7 +90,7 @@ Until a role grants the capability, the management page shows a reminder with li
 
 ### 2. Create delegations
 
-Go to **Site administration > Users > Accounts > Manage delegated accounts**. The **Authorised users** tab lists everyone who holds the permission, with their active and scheduled delegations. Search by name, username, email or ID number, and use the chips to see the people who have delegations in a status, or none.
+Go to **Site administration > Users > Accounts > Delegated accounts**. The **Authorised users** tab lists everyone who holds the permission, with their active and scheduled delegations. Search by name, username, email or ID number, and use the chips to see the people who have delegations in a status, or none.
 
 - Select **Create delegations** at the top of the page to choose several authorised users and several accounts at once, or the add icon on a user's row to create delegations for that user only.
 - Choose when access starts and, optionally, when it ends.

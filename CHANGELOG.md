@@ -37,6 +37,13 @@ Line for Moodle 4.5 to 5.2. The same delivery for Moodle 5.3 is 1.1.0-m503.
 - The settings are grouped in tabs: Delegations, Notifications, Messages and Session permissions.
 - "My delegated accounts" shows the accounts as cards, each with the button that opens it.
 - The activity report filters as one types and keeps its filters in the address.
+- The lists open with their first page already drawn, without waiting for a request. A page holds 12, 24, 48 or 96 rows,
+  or all of them; the pager offers only the sizes smaller than the list.
+- The quick actions of a row keep their place in every row, each in the colour of what it does; the ones a delegation does
+  not allow are shown disabled.
+- The permission editor scrolls inside a box of fixed height, with the name of each component as the head of its group.
+- The dialogs of the plugin are drawn with the design system.
+- The management page is called "Delegated accounts" in the administration.
 
 - New "Delegated session capabilities" tab in the plugin settings, next to the existing settings. Administrators set Allow, Prohibit or Not set for each capability in delegated sessions and can add any capability. Editing the own profile is prohibited by default. The rules apply only to sessions opened through a delegation and change no role.
 - Two guided tours for Moodle's User Tours, imported automatically on install and upgrade from the `tour_*.json` files. They are shown once, only to people who have an active delegation, and explain the "Delegated accounts" user menu entry and the "My delegated accounts" page.

@@ -13,6 +13,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import Pending from '@moodle/lms/core/pending';
 import type {Page} from '../types';
+import {pageRange, pageSize} from '../engine/paging';
 
 /** Milliseconds a load may take before the skeleton appears, so a fast answer does not flash. */
 const SKELETON_DELAY = 300;
@@ -35,6 +36,9 @@ const readState = (defaults: ListState): ListState => {
             state[key] = typeof defaults[key] === 'number' ? Number(value) || 0 : value;
         }
     });
+    if (typeof defaults.perpage === 'number') {
+        state.perpage = pageSize(Number(state.perpage), defaults.perpage);
+    }
     return state;
 };
 
@@ -102,7 +106,7 @@ export function useList<Row extends {id?: number}>(
                 return response;
             }
             // A page past the end, after rows went away, goes back to the last page that has rows.
-            const lastpage = Math.max(0, Math.ceil(response.total / Number(state.perpage)) - 1);
+            const {lastpage} = pageRange(Number(state.page), Number(state.perpage), response.total);
             if (Number(state.page) > lastpage) {
                 setState((before) => ({...before, page: lastpage}));
                 return response;
@@ -136,6 +140,10 @@ export function useList<Row extends {id?: number}>(
      */
     const update = useCallback((changes: ListState): void => {
         setState((before) => {
+            // Nothing new keeps the same state, so the list does not load again.
+            if (Object.keys(changes).every((key) => changes[key] === before[key])) {
+                return before;
+            }
             const filtered = Object.keys(changes).some((key) => FILTERS.includes(key) && changes[key] !== before[key]);
             if (filtered || ('page' in changes && changes.page !== before.page)) {
                 setSelected(new Set());

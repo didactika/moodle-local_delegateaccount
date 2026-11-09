@@ -55,7 +55,7 @@ final class listing {
      * @param string $sort name, email, active or scheduled.
      * @param string $direction asc or desc.
      * @param int $page Zero-based page.
-     * @param int $perpage Rows per page.
+     * @param int $perpage Rows per page, 0 for all.
      * @return array{total: int, counts: int[], rows: \stdClass[]} Page, total and the count of each status.
      */
     public static function users(
@@ -119,7 +119,7 @@ final class listing {
      * @param string $sort account, user, start or end.
      * @param string $direction asc or desc.
      * @param int $page Zero-based page.
-     * @param int $perpage Rows per page.
+     * @param int $perpage Rows per page, 0 for all.
      * @return array{total: int, counts: int[], rows: \stdClass[]} Page, total and the count of each status.
      */
     public static function delegations(array $filters, string $sort, string $direction, int $page, int $perpage): array {
@@ -182,7 +182,7 @@ final class listing {
      * @param int $userid The authorised user.
      * @param string $search Name or email fragment.
      * @param int $page Zero-based page.
-     * @param int $perpage Rows per page.
+     * @param int $perpage Rows per page, 0 for all.
      * @return array{total: int, rows: \stdClass[]} Page and total.
      */
     public static function my_accounts(int $userid, string $search, int $page, int $perpage): array {

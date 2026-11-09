@@ -21,6 +21,7 @@ import { Chips, Empty, ListBody, Pager, SearchBox, Segmented, SelectMenu } from 
 import { CopyFromDialog } from "./BulkPermissions";
 import { useDebounced } from "./hooks/useList";
 import { useText } from "./engine/text";
+import { DEFAULT_PAGE_SIZE, pageRange } from "./engine/paging";
 import { describeError, toast } from "./engine/moodle";
 import { ALLOW, INHERIT, PERMISSIONS, matches, toMap, words } from "./engine/capabilities";
 import { getPermissions, savePermissions } from "./services/api";
@@ -46,7 +47,8 @@ function PermissionEditor({ strings, delegationid, site }) {
   const [search, setSearch] = useState("");
   const typed = useDebounced(search, 200);
   const [page, setPage] = useState(0);
-  const [perpage, setPerpage] = useState(20);
+  const [perpage, setPerpage] = useState(DEFAULT_PAGE_SIZE);
+  const box = useRef(null);
   const [saving, setSaving] = useState(false);
   const [copying, setCopying] = useState(false);
   const [notice, setNotice] = useState("");
@@ -101,9 +103,14 @@ function PermissionEditor({ strings, delegationid, site }) {
   }), "visible");
   const shown = visible(filter);
   const counts = Object.fromEntries(CHIPS.map(({ key }) => [key || "all", visible(key).length]));
-  const lastpage = Math.max(0, Math.ceil(shown.length / perpage) - 1);
+  const { lastpage, start, end } = pageRange(page, perpage, shown.length);
   const at = Math.min(page, lastpage);
-  const rows = shown.slice(at * perpage, (at + 1) * perpage);
+  const rows = shown.slice(start, end);
+  useEffect(() => {
+    if (box.current) {
+      box.current.scrollTop = 0;
+    }
+  }, [at, perpage, filter, component, typed]);
   const changes = Array.from(/* @__PURE__ */ new Set([...saved.keys(), ...current.keys()])).filter((name) => (saved.get(name) ?? INHERIT) !== (current.get(name) ?? INHERIT)).map((capability) => ({ capability, permission: current.get(capability) ?? INHERIT }));
   const reset = /* @__PURE__ */ __name((apply) => {
     apply();
@@ -146,7 +153,7 @@ function PermissionEditor({ strings, delegationid, site }) {
     if (index === 0 || rows[index - 1].componentlabel !== capability.componentlabel) {
       items.push(/* @__PURE__ */ jsxDEV("li", { className: "list-group-item list-group-item-light", children: capability.componentlabel }, `group-${capability.componentlabel}`, false, {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 167,
+        lineNumber: 175,
         columnNumber: 24
       }, this));
     }
@@ -167,7 +174,7 @@ function PermissionEditor({ strings, delegationid, site }) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 172,
+        lineNumber: 180,
         columnNumber: 20
       },
       this
@@ -175,15 +182,15 @@ function PermissionEditor({ strings, delegationid, site }) {
   });
   const skeleton = /* @__PURE__ */ jsxDEV("ul", { className: "list-group list-group-flush", "aria-busy": "true", children: [0, 1, 2].map((key) => /* @__PURE__ */ jsxDEV("li", { className: "list-group-item", children: /* @__PURE__ */ jsxDEV("span", { className: "dd-skeleton w-50" }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-    lineNumber: 178,
+    lineNumber: 186,
     columnNumber: 75
   }, this) }, key, false, {
     fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-    lineNumber: 178,
+    lineNumber: 186,
     columnNumber: 33
   }, this)) }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-    lineNumber: 177,
+    lineNumber: 185,
     columnNumber: 22
   }, this);
   const empty = /* @__PURE__ */ jsxDEV(
@@ -205,7 +212,7 @@ function PermissionEditor({ strings, delegationid, site }) {
     false,
     {
       fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-      lineNumber: 180,
+      lineNumber: 188,
       columnNumber: 19
     },
     this
@@ -213,33 +220,33 @@ function PermissionEditor({ strings, delegationid, site }) {
   return /* @__PURE__ */ jsxDEV("div", { ref: root, className: "lda pb-5 ignoredirty", children: [
     /* @__PURE__ */ jsxDEV("p", { className: "dd-page-subtitle mb-0", children: text(site ? "perm_intro_site" : "perm_intro_delegation") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-      lineNumber: 188,
+      lineNumber: 196,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("ul", { className: "row list-unstyled small text-muted mb-0", "aria-label": text("perm_legend"), children: legend.map(([name, description]) => /* @__PURE__ */ jsxDEV("li", { className: "col-sm-6 col-lg-3 mb-2", children: [
       /* @__PURE__ */ jsxDEV("b", { className: "d-block text-body", children: text(name) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 191,
+        lineNumber: 199,
         columnNumber: 17
       }, this),
       text(description)
     ] }, name, true, {
       fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-      lineNumber: 190,
+      lineNumber: 198,
       columnNumber: 50
     }, this)) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-      lineNumber: 189,
+      lineNumber: 197,
       columnNumber: 9
     }, this),
     capabilities && !canedit && /* @__PURE__ */ jsxDEV("div", { className: "alert alert-info mb-0", children: text("perm_readonly") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-      lineNumber: 194,
+      lineNumber: 202,
       columnNumber: 38
     }, this),
     notice && /* @__PURE__ */ jsxDEV("div", { className: "alert alert-info mb-0", role: "status", children: notice }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-      lineNumber: 195,
+      lineNumber: 203,
       columnNumber: 20
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
@@ -258,7 +265,7 @@ function PermissionEditor({ strings, delegationid, site }) {
             false,
             {
               fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-              lineNumber: 199,
+              lineNumber: 207,
               columnNumber: 21
             },
             this
@@ -276,28 +283,28 @@ function PermissionEditor({ strings, delegationid, site }) {
             false,
             {
               fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-              lineNumber: 201,
+              lineNumber: 209,
               columnNumber: 21
             },
             this
           )
         ] }, void 0, true, {
           fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-          lineNumber: 198,
+          lineNumber: 206,
           columnNumber: 17
         }, this),
         !site && canedit && /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-end", children: /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-outline-secondary btn-sm", onClick: () => setCopying(true), children: text("copy_from_delegation") }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-          lineNumber: 205,
+          lineNumber: 213,
           columnNumber: 21
         }, this) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-          lineNumber: 204,
+          lineNumber: 212,
           columnNumber: 38
         }, this)
       ] }, void 0, true, {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 197,
+        lineNumber: 205,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar", children: /* @__PURE__ */ jsxDEV(
@@ -313,16 +320,16 @@ function PermissionEditor({ strings, delegationid, site }) {
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-          lineNumber: 211,
+          lineNumber: 219,
           columnNumber: 17
         },
         this
       ) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 210,
+        lineNumber: 218,
         columnNumber: 13
       }, this),
-      /* @__PURE__ */ jsxDEV(
+      /* @__PURE__ */ jsxDEV("div", { ref: box, className: "overflow-auto", "data-region": "capabilities", children: /* @__PURE__ */ jsxDEV(
         ListBody,
         {
           error,
@@ -332,19 +339,23 @@ function PermissionEditor({ strings, delegationid, site }) {
           isEmpty: Boolean(capabilities) && shown.length === 0,
           children: capabilities ? /* @__PURE__ */ jsxDEV("ul", { className: "list-group list-group-flush", children: items }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-            lineNumber: 217,
-            columnNumber: 33
+            lineNumber: 226,
+            columnNumber: 37
           }, this) : skeleton
         },
         void 0,
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-          lineNumber: 215,
-          columnNumber: 13
+          lineNumber: 224,
+          columnNumber: 17
         },
         this
-      ),
+      ) }, void 0, false, {
+        fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
+        lineNumber: 223,
+        columnNumber: 13
+      }, this),
       capabilities && shown.length > 0 && /* @__PURE__ */ jsxDEV(
         Pager,
         {
@@ -364,14 +375,14 @@ function PermissionEditor({ strings, delegationid, site }) {
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-          lineNumber: 219,
+          lineNumber: 229,
           columnNumber: 50
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-      lineNumber: 196,
+      lineNumber: 204,
       columnNumber: 9
     }, this),
     changes.length > 0 && /* @__PURE__ */ jsxDEV(
@@ -385,7 +396,7 @@ function PermissionEditor({ strings, delegationid, site }) {
         children: [
           /* @__PURE__ */ jsxDEV("span", { className: "dd-savebar-text", children: text("perm_unsaved", changes.length) }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-            lineNumber: 229,
+            lineNumber: 239,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("span", { className: "dd-savebar-actions", children: [
@@ -394,17 +405,17 @@ function PermissionEditor({ strings, delegationid, site }) {
               setNotice("");
             }, children: text("perm_discard") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-              lineNumber: 231,
+              lineNumber: 241,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-primary", disabled: saving, onClick: () => void save(), children: saving ? text("perm_saving") : text("core:savechanges") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-              lineNumber: 235,
+              lineNumber: 245,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-            lineNumber: 230,
+            lineNumber: 240,
             columnNumber: 13
           }, this)
         ]
@@ -413,7 +424,7 @@ function PermissionEditor({ strings, delegationid, site }) {
       true,
       {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 227,
+        lineNumber: 237,
         columnNumber: 32
       },
       this
@@ -430,14 +441,14 @@ function PermissionEditor({ strings, delegationid, site }) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 240,
+        lineNumber: 250,
         columnNumber: 21
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-    lineNumber: 187,
+    lineNumber: 195,
     columnNumber: 12
   }, this);
 }
@@ -456,33 +467,33 @@ function CapabilityRow({ capability, permission, changed, canedit, names, sitepe
     /* @__PURE__ */ jsxDEV("span", { className: "d-flex flex-column", children: [
       /* @__PURE__ */ jsxDEV("span", { className: "font-weight-bold fw-bold", children: capability.label }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 273,
+        lineNumber: 283,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("span", { className: "small text-muted", children: [
         /* @__PURE__ */ jsxDEV("span", { className: "me-2", children: capability.name }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-          lineNumber: 275,
+          lineNumber: 285,
           columnNumber: 17
         }, this),
         capability.risks.map((risk) => /* @__PURE__ */ jsxDEV("span", { className: "badge badge-outline text-bg-warning", children: text(`core:risk${risk}short`) }, risk, false, {
           fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-          lineNumber: 276,
+          lineNumber: 286,
           columnNumber: 49
         }, this)),
         site && /* @__PURE__ */ jsxDEV("span", { className: "badge badge-soft text-bg-secondary", children: text("perm_site_value", names[sitepermission]) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-          lineNumber: 279,
+          lineNumber: 289,
           columnNumber: 26
         }, this)
       ] }, void 0, true, {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 274,
+        lineNumber: 284,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-      lineNumber: 272,
+      lineNumber: 282,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(
@@ -497,14 +508,14 @@ function CapabilityRow({ capability, permission, changed, canedit, names, sitepe
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-        lineNumber: 284,
+        lineNumber: 294,
         columnNumber: 9
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/PermissionEditor.tsx",
-    lineNumber: 271,
+    lineNumber: 281,
     columnNumber: 12
   }, this);
 }

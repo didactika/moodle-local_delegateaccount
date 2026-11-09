@@ -15,6 +15,7 @@ import {useEffect, useState} from 'react';
 import {Chips, Empty, Icon, ListBody, Pager, Person, SearchBox, SkeletonRows, SortHeader} from './components/ui';
 import {useList, useDebounced} from './hooks/useList';
 import {useText} from './engine/text';
+import {DEFAULT_PAGE_SIZE} from './engine/paging';
 import {openCreate} from './CreateButton';
 import {getUserList} from './services/api';
 import type {PeopleListProps, PersonRow} from './types';
@@ -35,16 +36,17 @@ const CHIPS = [
  * @param props Which people and the texts of the page.
  * @returns The list.
  */
-export default function PeopleList({strings, scope}: PeopleListProps) {
+export default function PeopleList({strings, scope, initial}: PeopleListProps) {
     const text = useText(strings);
     const list = useList<PersonRow & {id?: number}>(
-        {search: '', status: '', sort: 'name', direction: 'asc', page: 0, perpage: 20},
+        {search: '', status: '', sort: 'name', direction: 'asc', page: 0, perpage: DEFAULT_PAGE_SIZE},
         (state) => getUserList(scope, String(state.search), String(state.status), {
             sort: String(state.sort),
             direction: String(state.direction),
             page: Number(state.page),
             perpage: Number(state.perpage),
         }),
+        initial,
     );
     const {state, page} = list;
     const [search, setSearch] = useState(String(state.search));
@@ -98,7 +100,7 @@ export default function PeopleList({strings, scope}: PeopleListProps) {
                                 <td className="text-end">{row.activecount}</td>
                                 <td className="text-end">{row.scheduledcount}</td>
                                 <td className="table-actions">
-                                    {row.cancreate && <button type="button" className="btn btn-link btn-icon btn-sm"
+                                    {row.cancreate && <button type="button" className="btn btn-link btn-icon btn-sm text-primary"
                                         title={row.addlabel} aria-label={row.addlabel}
                                         onClick={(event) => void openCreate(row.user.id, event.currentTarget, text)}>
                                         <Icon name="t/add" strings={strings} />

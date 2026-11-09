@@ -36,6 +36,18 @@ abstract class list_service extends delegation_service {
     public const MANAGE_PERMISSIONS = 'local/delegateaccount:managepermissions';
 
     /**
+     * Validates the page of a list: a page from 0, and 1 to 100 rows per page, or 0 for every row at once.
+     *
+     * @param int $page Zero-based page number.
+     * @param int $perpage Rows per page, 0 for all of them.
+     */
+    protected static function validate_page(int $page, int $perpage): void {
+        if ($page < 0 || $perpage < 0 || $perpage > self::MAX_PAGE_SIZE) {
+            throw new \invalid_parameter_exception('Page must be non-negative and perpage must be 0 (all) or between 1 and 100.');
+        }
+    }
+
+    /**
      * A person, as exporter::user() describes them.
      *
      * @return external_single_structure

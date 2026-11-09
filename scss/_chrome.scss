@@ -270,33 +270,6 @@
         }
     }
 
-    // The actions of a row: icons in the colour of what they do, with a tint behind the one under the pointer. What removes
-    // or stops is always danger.
-    & .table-actions {
-        & .btn + .btn {
-            margin-left: 0.25rem;
-        }
-
-        & .btn-link.btn-icon {
-            color: var(--dd-primary-ink);
-
-            &:hover,
-            &:focus-visible {
-                background-color: var(--dd-primary-soft-2);
-                color: var(--dd-primary-ink);
-            }
-
-            &.text-danger {
-                color: color-mix(in srgb, var(--dd-danger) 80%, var(--dd-ink));
-
-                &:hover,
-                &:focus-visible {
-                    background-color: color-mix(in srgb, var(--dd-danger) 14%, var(--dd-surface));
-                }
-            }
-        }
-    }
-
     & .table-sort {
         display: inline-flex;
         align-items: center;
