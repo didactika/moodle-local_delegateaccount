@@ -242,10 +242,11 @@ export const openBulkPermissions = async({selection, count, trigger, onApplied})
             group.setAttribute('role', 'radiogroup');
             group.setAttribute('aria-label', capability.label);
             PERMISSIONS.filter(({value}) => value !== INHERIT).concat([{value: INHERIT, tone: 'notset', remove: true}])
-                .forEach(({value, remove}) => {
+                .forEach(({value, tone, remove}) => {
                     const option = element('button', '', remove ? removelabel : names[value]);
                     option.type = 'button';
                     option.dataset.permission = value;
+                    option.dataset.tone = tone;
                     option.setAttribute('role', 'radio');
                     option.setAttribute('aria-checked', String(value === permission));
                     option.disabled = value === ALLOW && !capability.canallow;

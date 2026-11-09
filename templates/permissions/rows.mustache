@@ -91,7 +91,7 @@
                 </span>
                 <span class="dd-segmented" role="radiogroup" aria-label="{{grouplabel}}">
                     {{#options}}
-                        <button type="button" role="radio" data-permission="{{value}}" aria-checked="{{#checked}}true{{/checked}}{{^checked}}false{{/checked}}" tabindex="{{#checked}}0{{/checked}}{{^checked}}-1{{/checked}}"{{#disabled}} disabled{{/disabled}}{{#hint}} title="{{hint}}"{{/hint}}>{{label}}</button>
+                        <button type="button" role="radio" data-permission="{{value}}" data-tone="{{tone}}" aria-checked="{{#checked}}true{{/checked}}{{^checked}}false{{/checked}}" tabindex="{{#checked}}0{{/checked}}{{^checked}}-1{{/checked}}"{{#disabled}} disabled{{/disabled}}{{#hint}} title="{{hint}}"{{/hint}}>{{label}}</button>
                     {{/options}}
                 </span>
             </li>
