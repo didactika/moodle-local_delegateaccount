@@ -1,0 +1,150 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// What stays Moodle: the forms that create and edit delegations, in a Moodle dialog, and the guided tour of the user menu.
+// Their layout is Moodle's, with a few adjustments so the date fields fit the dialog.
+// @copyright 2026 Didactika.org
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+#{$lda-modal} {
+    & .modal-dialog.modal-lg {
+        max-width: 56rem;
+    }
+
+    & .fdate_time_selector,
+    & .fdate_selector {
+        align-items: center;
+        column-gap: 0.5rem;
+        row-gap: 0.5rem;
+
+        & > .fitem {
+            margin-right: 0;
+            margin-bottom: 0;
+            margin-left: 0;
+        }
+
+        & select {
+            min-width: 0;
+        }
+    }
+}
+
+// The guided tour of delegated accounts is shown only to people who have the submenu. Its popover has no arrow, and the
+// steps that wait for a click on the user menu have no Next or End button, so the tour cannot be skipped from the popover.
+// The selectors name the controls of Moodle's user menu one by one, so their lines are longer than the rest.
+/* stylelint-disable max-line-length */
+body:has(#carousel-item-delegatedaccounts, template[data-region="local-delegateaccount-usermenu-source"]):has(
+    #user-menu-toggle[data-flexitour="highlight"],
+    a[data-carousel-target-id="carousel-item-delegatedaccounts"][data-flexitour="highlight"],
+    #user-action-menu[data-flexitour="highlight"]
+) span[data-flexitour="container"] [data-role="arrow"] {
+    display: none;
+}
+
+body:has(#carousel-item-delegatedaccounts, template[data-region="local-delegateaccount-usermenu-source"]):has(
+    #user-menu-toggle[data-flexitour="highlight"],
+    a[data-carousel-target-id="carousel-item-delegatedaccounts"][data-flexitour="highlight"]
+) span[data-flexitour="container"] .modal-footer {
+    display: none;
+}
+
+// The dialogs, as the design system draws them: a large radius and a deep shadow instead of the rules of Bootstrap, the
+// title in bold, room around the content, and the buttons of the foot apart from one another.
+#{$lda-modal} {
+    & .modal-content {
+        overflow: hidden;
+        border: 1px solid var(--dd-hairline);
+        border-radius: 1.25rem;
+        background-color: var(--dd-surface);
+        box-shadow: var(--dd-shadow-lg);
+        color: var(--dd-ink);
+    }
+
+    // Moodle rings the whole dialog when it takes the focus as it opens; the dialog keeps its shape and its shadow instead.
+    & .modal-dialog:focus .modal-content,
+    & .modal-dialog.focus .modal-content {
+        border-radius: 1.25rem;
+        box-shadow: var(--dd-shadow-lg);
+    }
+
+    & .modal-header {
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.25rem 1.25rem 0.5rem 1.5rem;
+        border-bottom: 0;
+
+        & .close,
+        & .btn-close {
+            display: inline-grid;
+            place-items: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            margin: 0 0 0 auto;
+            padding: 0;
+            border-radius: 50%;
+            color: var(--dd-muted);
+            opacity: 1;
+            text-shadow: none;
+            transition: background-color var(--dd-ease), color var(--dd-ease);
+
+            &:hover,
+            &:focus-visible {
+                outline: 0;
+                background-color: var(--dd-surface-3);
+                color: var(--dd-ink);
+            }
+        }
+    }
+
+    & .modal-title {
+        color: var(--dd-ink);
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.011em;
+    }
+
+    & .modal-body {
+        padding: 0.5rem 1.5rem 1rem;
+        line-height: 1.55;
+    }
+
+    & .modal-footer {
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem 1.25rem;
+        border-top: 0;
+
+        & > * {
+            margin: 0;
+        }
+    }
+
+    & .modal-dialog-scrollable .modal-body {
+        border-top: 1px solid var(--dd-hairline);
+        border-bottom: 1px solid var(--dd-hairline);
+    }
+
+    &.show .modal-dialog {
+        animation: lda-dialog 280ms cubic-bezier(0.2, 0, 0, 1);
+    }
+}
+
+@keyframes lda-dialog {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #{$lda-modal} {
+        &.show .modal-dialog {
+            animation: none;
+        }
+    }
+}

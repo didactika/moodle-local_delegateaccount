@@ -17,8 +17,23 @@ for that integration.
 | `local_delegateaccount_update_delegations` | `local/delegateaccount:update` | Apply one validity period and notification decision to selected records. |
 | `local_delegateaccount_revoke_delegations` | `local/delegateaccount:revoke` | Logically revoke selected records after explicit confirmation. |
 | `local_delegateaccount_get_delegation_activity` | `local/delegateaccount:viewactivity` | Read standard-log activity within one immutable delegation period. |
+| `local_delegateaccount_get_session_permissions` | `local/delegateaccount:view` (`moodle/site:config` for the site) | Read the capabilities of the site and the permission overrides of the site (`delegationid` 0) or of one delegation. |
+| `local_delegateaccount_save_session_permissions` | `local/delegateaccount:managepermissions` (and `moodle/site:config` for the site) | Change some overrides of the site or of one delegation; `permission` 0 removes one. |
+| `local_delegateaccount_update_session_permissions` | `local/delegateaccount:managepermissions` | Change, or copy from one delegation, the overrides of many delegations: the identifiers given, or `all` with the filters of a list. |
 
-`local/delegateaccount:manage` grants every function above, exactly as it does
+The pages of the plugin also call `local_delegateaccount_get_user_list`,
+`local_delegateaccount_get_delegation_list`, `local_delegateaccount_get_delegation_ids`,
+`local_delegateaccount_get_activity_list` and `local_delegateaccount_get_my_accounts`. They return
+what the screens draw (texts in the language of the user, addresses, flags of what can be done) and
+may change with the screens; integrations should prefer the functions above.
+
+An override can only set `1` (Allow), `-1` (Prevent) or `-1000` (Prohibit), Moodle's own values.
+Allow is refused for a capability the calling user does not hold, also when it is copied from
+another delegation. Bulk changes are written in batches of 500 delegations and are not limited by
+**Maximum records per bulk action**, which still applies to creating, editing and revoking.
+
+`local/delegateaccount:manage` grants every function above except the ones of session
+permissions, exactly as it does
 in the management pages. Setting a specific capability to **Prevent** or
 **Prohibit** in one of the integration user's system roles still refuses that
 function, even when the role allows `local/delegateaccount:manage`. For an

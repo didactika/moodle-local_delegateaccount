@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,10 +12,10 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Displays the audit details of one delegated-account relationship.
+ * One delegation in depth: its details and history, and the permission overrides of the sessions it opens.
  *
  * @package    local_delegateaccount
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
@@ -27,105 +27,135 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 use local_delegateaccount\manager;
+use local_delegateaccount\output\exporter;
+use local_delegateaccount\output\permission_editor;
 use local_delegateaccount\permission;
+use local_delegateaccount\session_capabilities;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 permission::require_action(permission::VIEW);
 
 $realuserid = required_param('realuserid', PARAM_INT);
 $delegationid = required_param('delegationid', PARAM_INT);
-$delegation = $DB->get_record('local_delegateaccount', [
-    'id' => $delegationid,
-    'realuserid' => $realuserid,
-], '*', MUST_EXIST);
+$tab = optional_param('tab', 'summary', PARAM_ALPHA) === 'permissions' ? 'permissions' : 'summary';
+$delegation = $DB->get_record('local_delegateaccount', ['id' => $delegationid, 'realuserid' => $realuserid], '*', MUST_EXIST);
 $realuser = $DB->get_record('user', ['id' => $delegation->realuserid, 'deleted' => 0], '*', MUST_EXIST);
 $delegateduser = $DB->get_record('user', ['id' => $delegation->delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
-$url = new moodle_url('/local/delegateaccount/pages/delegation.php', [
+
+$params = ['realuserid' => $realuserid, 'delegationid' => $delegationid];
+$url = new moodle_url('/local/delegateaccount/pages/delegation.php', $params + ($tab === 'summary' ? [] : ['tab' => $tab]));
+$label = get_string('delegation_pair', 'local_delegateaccount', (object)[
+    'authoriseduser' => fullname($realuser),
+    'delegateduser' => fullname($delegateduser),
+]);
+$PAGE->set_url($url);
+$PAGE->set_title($label);
+$PAGE->set_heading(get_string('delegation_details', 'local_delegateaccount'));
+$manageurl = new moodle_url('/local/delegateaccount/pages/manage.php');
+$PAGE->navbar->add(get_string('manage_accounts', 'local_delegateaccount'), $manageurl);
+$PAGE->navbar->add(fullname($realuser), new moodle_url('/local/delegateaccount/pages/delegations.php', [
     'realuserid' => $realuserid,
-    'delegationid' => $delegationid,
-]);
-$backurl = new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid]);
-$title = get_string('delegation_details', 'local_delegateaccount');
+]));
+$PAGE->navbar->add($label, $url);
 
-$notificationkey = 'delegationnotificationmode_' . $delegation->notificationmode;
-$notificationmode = get_string_manager()->string_exists($notificationkey, 'local_delegateaccount')
-    ? get_string($notificationkey, 'local_delegateaccount')
-    : get_string('delegationnotificationmode_never', 'local_delegateaccount');
-$audituserids = array_filter([
-    (int)$delegation->usercreated,
-    (int)$delegation->usermodified,
-    (int)$delegation->userrevoked,
-]);
-$auditusers = empty($audituserids) ? [] : $DB->get_records_list(
-    'user',
-    'id',
-    $audituserids,
-    '',
-    implode(', ', \core_user\fields::get_picture_fields())
-);
-$getuseridentity = static function (int $userid) use ($auditusers, $OUTPUT): string {
-    if (!isset($auditusers[$userid])) {
-        return s(get_string('delegation_unknown_user', 'local_delegateaccount'));
-    }
-
-    $user = $auditusers[$userid];
-    return $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
-        'userpicture' => $OUTPUT->user_picture($user, ['size' => 35, 'link' => false]),
-        'fullname' => fullname($user),
-        'profileurl' => (new moodle_url('/user/profile.php', ['id' => $userid]))->out(false),
-    ]);
-};
+$status = manager::get_delegation_status($delegation);
+$open = $status !== manager::STATUS_REVOKED;
 $displayend = manager::get_delegation_display_end($delegation);
+$lastaccess = manager::get_last_delegated_access($delegation);
+$notificationkey = 'delegationnotificationmode_' . $delegation->notificationmode;
 
-$templatecontext = [
-    'statuslabel' => get_string('delegation_status', 'local_delegateaccount'),
-    'status' => get_string('delegation_status_' . manager::get_delegation_status($delegation), 'local_delegateaccount'),
-    'authoriseduserlabel' => get_string('authoriseduser', 'local_delegateaccount'),
-    'authoriseduser' => $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
-        'userpicture' => $OUTPUT->user_picture($realuser, ['size' => 35, 'link' => false]),
-        'fullname' => fullname($realuser),
-        'profileurl' => (new moodle_url('/user/profile.php', ['id' => (int)$realuser->id]))->out(false),
-    ]),
-    'delegateduserlabel' => get_string('delegateduser', 'local_delegateaccount'),
-    'delegateduser' => $OUTPUT->render_from_template('local_delegateaccount/shared/user_identity', [
-        'userpicture' => $OUTPUT->user_picture($delegateduser, ['size' => 35, 'link' => false]),
-        'fullname' => fullname($delegateduser),
-        'profileurl' => (new moodle_url('/user/profile.php', ['id' => (int)$delegateduser->id]))->out(false),
-    ]),
-    'startlabel' => get_string('delegation_start', 'local_delegateaccount'),
-    'start' => userdate((int)$delegation->timestart),
-    'endlabel' => get_string('delegation_end', 'local_delegateaccount'),
-    'end' => $displayend === 0
-        ? get_string('delegation_no_end', 'local_delegateaccount')
-        : userdate($displayend),
-    'notificationmodelabel' => get_string('delegationnotificationmode', 'local_delegateaccount'),
-    'notificationmode' => $notificationmode,
-    'createdlabel' => get_string('delegation_created', 'local_delegateaccount'),
-    'created' => userdate((int)$delegation->timecreated),
-    'createdbylabel' => get_string('delegation_created_by', 'local_delegateaccount'),
-    'createdby' => $getuseridentity((int)$delegation->usercreated),
-    'modifiedlabel' => get_string('delegation_modified', 'local_delegateaccount'),
-    'modified' => userdate((int)$delegation->timemodified),
-    'modifiedbylabel' => get_string('delegation_modified_by', 'local_delegateaccount'),
-    'modifiedby' => $getuseridentity((int)$delegation->usermodified),
-    'isrevoked' => (int)$delegation->timerevoked > 0,
-    'revokedlabel' => get_string('delegation_revoked', 'local_delegateaccount'),
-    'revoked' => userdate((int)$delegation->timerevoked),
-    'revokedbylabel' => get_string('delegation_revoked_by', 'local_delegateaccount'),
-    'revokedby' => $getuseridentity((int)$delegation->userrevoked),
+// The people of the history, read at once.
+$userids = array_filter([(int)$delegation->usercreated, (int)$delegation->usermodified, (int)$delegation->userrevoked]);
+$namefields = 'id,' . implode(',', \core_user\fields::get_name_fields());
+$people = $userids ? $DB->get_records_list('user', 'id', $userids, '', $namefields) : [];
+$name = fn(int $userid): string => isset($people[$userid])
+    ? fullname($people[$userid])
+    : get_string('delegation_unknown_user', 'local_delegateaccount');
+$history = [];
+if ((int)$delegation->timerevoked > 0) {
+    $history[] = [
+        'title' => get_string('delegation_history_revoked', 'local_delegateaccount', $name((int)$delegation->userrevoked)),
+        'meta' => userdate((int)$delegation->timerevoked),
+        'tone' => 'danger',
+    ];
+}
+if ((int)$delegation->timemodified > (int)$delegation->timecreated) {
+    $history[] = [
+        'title' => get_string('delegation_history_modified', 'local_delegateaccount', $name((int)$delegation->usermodified)),
+        'meta' => userdate((int)$delegation->timemodified),
+        'tone' => '',
+    ];
+}
+$history[] = [
+    'title' => get_string('delegation_history_created', 'local_delegateaccount', $name((int)$delegation->usercreated)),
+    'meta' => userdate((int)$delegation->timecreated),
+    'tone' => 'success',
 ];
 
-$PAGE->set_url($url);
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
+$overrides = count(session_capabilities::get_overrides($delegationid));
+$tabs = [];
+foreach (['summary' => 'delegation_summary', 'permissions' => 'session_permissions'] as $key => $string) {
+    $tabs[] = [
+        'label' => get_string($string, 'local_delegateaccount'),
+        'url' => (new moodle_url(
+            '/local/delegateaccount/pages/delegation.php',
+            $params + ($key === 'summary' ? [] : ['tab' => $key])
+        ))
+            ->out(false),
+        'active' => $key === $tab,
+        'count' => $key === 'permissions' ? $overrides : 0,
+    ];
+}
+
+$real = exporter::user($realuser);
+$real['url'] = (new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid]))->out(false);
+$delegated = exporter::user($delegateduser);
+$delegated['url'] = $delegated['profileurl'];
+$tones = [
+    manager::STATUS_ACTIVE => 'success',
+    manager::STATUS_SCHEDULED => 'info',
+    manager::STATUS_EXPIRED => 'warning',
+    manager::STATUS_REVOKED => 'secondary',
+];
+
+$PAGE->requires->js_call_amd('local_delegateaccount/delegation', 'init', ['[data-region="delegation"]']);
+$editor = $tab === 'permissions' ? $OUTPUT->render(new permission_editor($delegationid)) : '';
 
 echo $OUTPUT->header();
-echo $OUTPUT->action_link(
-    $backurl,
-    get_string('back'),
-    null,
-    ['class' => 'btn btn-secondary mb-3'],
-    new \pix_icon('t/left', '', 'core', ['class' => 'mr-1'])
-);
-echo $OUTPUT->render_from_template('local_delegateaccount/delegation/info', $templatecontext);
+echo $OUTPUT->render_from_template('local_delegateaccount/delegation/page', [
+    'id' => $delegationid,
+    'realuserid' => $realuserid,
+    'backurl' => (new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid]))->out(false),
+    'label' => $label,
+    'statuslabel' => get_string('delegation_status_' . $status, 'local_delegateaccount'),
+    'statustone' => $tones[$status],
+    'realuser' => $real,
+    'delegateduser' => $delegated + ['size' => 50],
+    'canupdate' => $open && permission::has(permission::UPDATE),
+    'canrevoke' => $open && permission::has(permission::REVOKE),
+    'activityurl' => permission::has(permission::VIEWACTIVITY)
+        ? (new moodle_url('/local/delegateaccount/pages/activity.php', $params))->out(false)
+        : '',
+    'tabs' => $tabs,
+    'summary' => $tab === 'summary',
+    'details' => [
+        ['label' => get_string('delegation_status', 'local_delegateaccount'),
+            'value' => get_string('delegation_status_' . $status, 'local_delegateaccount')],
+        ['label' => get_string('delegation_start', 'local_delegateaccount'), 'value' => userdate((int)$delegation->timestart)],
+        ['label' => get_string('delegation_end', 'local_delegateaccount'), 'value' => $displayend === 0
+            ? get_string('delegation_no_end', 'local_delegateaccount')
+            : userdate($displayend)],
+        ['label' => get_string('last_access', 'local_delegateaccount'), 'value' => $lastaccess > 0
+            ? userdate($lastaccess)
+            : get_string('no_delegated_access', 'local_delegateaccount')],
+        ['label' => get_string('delegationnotificationmode', 'local_delegateaccount'),
+            'value' => get_string_manager()->string_exists($notificationkey, 'local_delegateaccount')
+                ? get_string($notificationkey, 'local_delegateaccount')
+                : get_string('delegationnotificationmode_never', 'local_delegateaccount')],
+        ['label' => get_string('session_permissions', 'local_delegateaccount'),
+            'value' => get_string('overridecount', 'local_delegateaccount', $overrides)],
+    ],
+    'history' => $history,
+    'editor' => $editor,
+]);
 echo $OUTPUT->footer();

@@ -1,0 +1,79 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_delegateaccount/list/delegations
+
+    A list of delegations, of one person or of everyone: status chips, search, the table, the pager and the floating bar of
+    a selection. The rows are loaded by local_delegateaccount/delegations.
+
+    @copyright  2026 Didactika.org
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "id": "lda-delegations",
+        "config": "{\"realuserid\":0}",
+        "searchlabel": "Search people and accounts",
+        "canbulk": true,
+        "canupdate": true,
+        "canrevoke": true,
+        "canpermissions": true
+    }
+}}
+<section id="{{id}}" data-region="list" data-config="{{config}}" data-initial="{{initial}}">
+    <div class="dd-chips" role="group" aria-label="{{#str}}filter_by_status, local_delegateaccount{{/str}}">
+        <button type="button" class="dd-chip" data-chip="" aria-pressed="true">{{#str}}perm_filter_all, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
+        <button type="button" class="dd-chip" data-chip="active" aria-pressed="false">{{#str}}delegation_status_active, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
+        <button type="button" class="dd-chip" data-chip="scheduled" aria-pressed="false">{{#str}}delegation_status_scheduled, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
+        <button type="button" class="dd-chip" data-chip="expired" aria-pressed="false">{{#str}}delegation_status_expired, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
+        <button type="button" class="dd-chip" data-chip="revoked" aria-pressed="false">{{#str}}delegation_status_revoked, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
+    </div>
+    <div class="card">
+        {{> local_delegateaccount/list/toolbar }}
+        <div class="table-responsive" data-region="tablewrap" aria-busy="true">
+            <table class="table">
+                <caption class="sr-only visually-hidden">{{#str}}list_caption_delegations, local_delegateaccount{{/str}}</caption>
+                <tbody>
+                    <tr aria-hidden="true"><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td></tr>
+                    <tr aria-hidden="true"><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td></tr>
+                    <tr aria-hidden="true"><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div data-region="empty" hidden></div>
+        <div data-region="error" hidden></div>
+        {{> local_delegateaccount/list/pager }}
+    </div>
+    {{#canbulk}}
+        <div class="dd-floatbar" role="region" aria-label="{{#str}}bulk_region, local_delegateaccount{{/str}}" data-region="floatbar" hidden>
+            <span class="dd-floatbar-count" role="status" data-region="selectedcount"></span>
+            <button type="button" class="btn btn-link dd-floatbar-all" data-action="selectall" hidden></button>
+            <div class="dd-floatbar-actions">
+                {{#canupdate}}
+                    <button type="button" class="btn btn-secondary btn-tonal btn-sm" data-action="bulk-edit">{{#pix}}t/edit, core{{/pix}} {{#str}}edit_period, local_delegateaccount{{/str}}</button>
+                {{/canupdate}}
+                {{#canpermissions}}
+                    <button type="button" class="btn btn-secondary btn-tonal btn-sm" data-action="bulk-permissions">{{#pix}}i/permissions, core{{/pix}} {{#str}}session_permissions, local_delegateaccount{{/str}}</button>
+                {{/canpermissions}}
+                {{#canrevoke}}
+                    <button type="button" class="btn btn-danger btn-tonal btn-sm" data-action="bulk-revoke">{{#pix}}t/delete, core{{/pix}} {{#str}}revoke, local_delegateaccount{{/str}}</button>
+                {{/canrevoke}}
+            </div>
+            <button type="button" class="dd-floatbar-clear" data-action="clearselection" title="{{#str}}clear_selection, local_delegateaccount{{/str}}" aria-label="{{#str}}clear_selection, local_delegateaccount{{/str}}"></button>
+        </div>
+    {{/canbulk}}
+</section>

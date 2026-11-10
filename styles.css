@@ -1,146 +1,2014 @@
-/*
- * Delegated-account administration styles.
- *
- * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
- * @copyright  2026 Didactika.org
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+/* Generated from styles.scss. Edit the SCSS component sources and rebuild. */
+/* Moodle 4.0 and later cores disagree on decimal formatting; use the current leading-zero style. */
+/* stylelint-disable number-leading-zero */
 
-.local-delegateaccount-filters .local-delegateaccount-filter-menu {
-    box-sizing: border-box;
-    left: auto;
-    right: 0;
-    inset-inline-start: auto;
-    inset-inline-end: 0;
-    width: 24rem;
-    max-width: calc(100vw - 2rem);
-    height: auto;
-    min-height: 0;
-    max-height: none;
-    padding: 0;
-    overflow-x: hidden;
-    overflow-y: visible;
+.lda,
+.path-local-delegateaccount .modal,
+.path-admin-local-delegateaccount .modal,
+#page-admin-setting-local_delegateaccount_settings .modal {
+    --dd-primary: var(--bs-primary, var(--primary, #0f6cbf));
+    --dd-secondary: var(--bs-secondary, var(--secondary, #6a737b));
+    --dd-success: var(--bs-success, var(--success, #357a32));
+    --dd-info: var(--bs-info, var(--info, #008196));
+    --dd-warning: var(--bs-warning, var(--warning, #f0ad4e));
+    --dd-danger: var(--bs-danger, var(--danger, #ca3120));
+    --dd-ink: var(--bs-body-color, #1d2125);
+    --dd-surface: var(--bs-body-bg, #fff);
+    --dd-muted: var(--bs-secondary-color, #6a737b);
+    --dd-hairline: var(--bs-border-color, #dee2e6);
+    --dd-line: color-mix(in srgb, var(--dd-ink) 42%, var(--dd-surface));
+    --dd-line-hover: color-mix(in srgb, var(--dd-ink) 62%, var(--dd-surface));
+    --dd-surface-2: color-mix(in srgb, var(--dd-ink) 4%, var(--dd-surface));
+    --dd-surface-3: color-mix(in srgb, var(--dd-ink) 9%, var(--dd-surface));
+    --dd-ring: color-mix(in srgb, var(--dd-primary) 30%, transparent);
+    --dd-radius: 0.625rem;
+    --dd-radius-sm: 0.5rem;
+    --dd-radius-lg: 0.75rem;
+    --dd-h: 2.25rem;
+    --dd-h-sm: 1.75rem;
+    --dd-ease: 140ms cubic-bezier(0.2, 0, 0, 1);
+    --dd-shadow-sm: 0 1px 2px rgb(15 23 42 / 6%), 0 1px 3px rgb(15 23 42 / 8%);
+    --dd-shadow-md: 0 14px 34px -12px rgb(15 23 42 / 30%), 0 2px 6px rgb(15 23 42 / 8%);
+    --dd-shadow-lg: 0 28px 64px -18px rgb(15 23 42 / 40%), 0 4px 12px rgb(15 23 42 / 10%);
+    --dd-primary-soft: color-mix(in srgb, var(--dd-primary) 10%, var(--dd-surface));
+    --dd-primary-soft-2: color-mix(in srgb, var(--dd-primary) 18%, var(--dd-surface));
+    --dd-primary-ink: color-mix(in srgb, var(--dd-primary) 78%, var(--dd-ink));
+    color: var(--dd-ink);
 }
 
-.local-delegateaccount-filter-menu .local-delegateaccount-filter-content {
-    width: 100%;
+.lda .btn,
+.lda .badge,
+.lda .dd-tile,
+.path-local-delegateaccount .modal .btn,
+.path-local-delegateaccount .modal .badge,
+.path-local-delegateaccount .modal .dd-tile,
+.path-admin-local-delegateaccount .modal .btn,
+.path-admin-local-delegateaccount .modal .badge,
+.path-admin-local-delegateaccount .modal .dd-tile,
+#page-admin-setting-local_delegateaccount_settings .modal .btn,
+#page-admin-setting-local_delegateaccount_settings .modal .badge,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-tile {
+    --dd-c: var(--dd-primary);
+}
+
+.lda [class*=-primary],
+.path-local-delegateaccount .modal [class*=-primary],
+.path-admin-local-delegateaccount .modal [class*=-primary],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-primary] {
+    --dd-c: var(--dd-primary);
+}
+
+.lda [class*=-secondary],
+.path-local-delegateaccount .modal [class*=-secondary],
+.path-admin-local-delegateaccount .modal [class*=-secondary],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary] {
+    --dd-c: var(--dd-secondary);
+}
+
+.lda [class*=-success],
+.path-local-delegateaccount .modal [class*=-success],
+.path-admin-local-delegateaccount .modal [class*=-success],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-success] {
+    --dd-c: var(--dd-success);
+}
+
+.lda [class*=-info],
+.path-local-delegateaccount .modal [class*=-info],
+.path-admin-local-delegateaccount .modal [class*=-info],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-info] {
+    --dd-c: var(--dd-info);
+}
+
+.lda [class*=-warning],
+.path-local-delegateaccount .modal [class*=-warning],
+.path-admin-local-delegateaccount .modal [class*=-warning],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-warning] {
+    --dd-c: var(--dd-warning);
+}
+
+.lda [class*=-danger],
+.path-local-delegateaccount .modal [class*=-danger],
+.path-admin-local-delegateaccount .modal [class*=-danger],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-danger] {
+    --dd-c: var(--dd-danger);
+}
+
+.lda .btn,
+.lda .badge,
+.lda .dd-tile,
+.lda [class*=-primary],
+.lda [class*=-secondary],
+.lda [class*=-success],
+.lda [class*=-info],
+.lda [class*=-warning],
+.lda [class*=-danger],
+.path-local-delegateaccount .modal .btn,
+.path-local-delegateaccount .modal .badge,
+.path-local-delegateaccount .modal .dd-tile,
+.path-local-delegateaccount .modal [class*=-primary],
+.path-local-delegateaccount .modal [class*=-secondary],
+.path-local-delegateaccount .modal [class*=-success],
+.path-local-delegateaccount .modal [class*=-info],
+.path-local-delegateaccount .modal [class*=-warning],
+.path-local-delegateaccount .modal [class*=-danger],
+.path-admin-local-delegateaccount .modal .btn,
+.path-admin-local-delegateaccount .modal .badge,
+.path-admin-local-delegateaccount .modal .dd-tile,
+.path-admin-local-delegateaccount .modal [class*=-primary],
+.path-admin-local-delegateaccount .modal [class*=-secondary],
+.path-admin-local-delegateaccount .modal [class*=-success],
+.path-admin-local-delegateaccount .modal [class*=-info],
+.path-admin-local-delegateaccount .modal [class*=-warning],
+.path-admin-local-delegateaccount .modal [class*=-danger],
+#page-admin-setting-local_delegateaccount_settings .modal .btn,
+#page-admin-setting-local_delegateaccount_settings .modal .badge,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-tile,
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-primary],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-success],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-info],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-warning],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-danger] {
+    --dd-c-soft: color-mix(in srgb, var(--dd-c) 10%, var(--dd-surface));
+    --dd-c-soft-2: color-mix(in srgb, var(--dd-c) 18%, var(--dd-surface));
+    --dd-c-ink: color-mix(in srgb, var(--dd-c) 55%, var(--dd-ink));
+}
+
+.lda [class*=-secondary],
+.path-local-delegateaccount .modal [class*=-secondary],
+.path-admin-local-delegateaccount .modal [class*=-secondary],
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary] {
+    --dd-c-soft: color-mix(in srgb, var(--dd-c) 24%, var(--dd-surface));
+    --dd-c-soft-2: color-mix(in srgb, var(--dd-c) 36%, var(--dd-surface));
+    --dd-c-ink: color-mix(in srgb, var(--dd-c) 18%, var(--dd-ink));
+}
+
+.lda {
+    display: grid;
+    gap: 1.25rem;
     min-width: 0;
 }
 
-.local-delegateaccount-filter-menu .mform,
-.local-delegateaccount-filter-menu .mform > div {
+.lda .dd-page-header {
+    display: grid;
+    gap: 0.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
+.lda .dd-page-header-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+}
+
+.lda .dd-page-header-main {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-width: 0;
+}
+
+.lda .dd-page-title {
     margin: 0;
-    min-height: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--dd-ink);
 }
 
-.local-delegateaccount-filter-menu .fitem {
-    display: block;
-    margin-bottom: .625rem;
-    margin-left: 0;
-    margin-right: 0;
+.lda .dd-page-subtitle {
+    margin: 0;
+    color: var(--dd-muted);
+    font-size: 0.9375rem;
 }
 
-.local-delegateaccount-filter-menu .fitem .col-form-label,
-.local-delegateaccount-filter-menu .fitem .felement {
-    flex: 0 0 100%;
-    max-width: 100%;
-    width: 100%;
-    padding-left: 0;
+.lda .dd-page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lda .nav-tabs {
+    gap: 0.25rem;
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
+.lda .nav-tabs .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: -1px;
+    padding: 0.625rem 1rem;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: var(--dd-radius-sm) var(--dd-radius-sm) 0 0;
+    background: none;
+    color: var(--dd-muted);
+    font-weight: 500;
+    transition: border-color var(--dd-ease), background-color var(--dd-ease), color var(--dd-ease);
+}
+
+.lda .nav-tabs .nav-link:hover {
+    border-bottom-color: var(--dd-line);
+    color: var(--dd-ink);
+}
+
+.lda .nav-tabs .nav-link.active {
+    border-bottom-color: var(--dd-primary);
+    background-color: var(--dd-primary-soft);
+    color: var(--dd-primary-ink);
+    font-weight: 600;
+}
+
+.lda .dd-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lda .dd-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4375rem;
+    min-height: 2rem;
+    padding: 0.1875rem 0.75rem;
+    border: 1px solid var(--dd-line);
+    border-radius: 999px;
+    background: var(--dd-surface);
+    color: var(--dd-ink);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color var(--dd-ease), border-color var(--dd-ease), color var(--dd-ease);
+}
+
+.lda .dd-chip:hover {
+    border-color: var(--dd-line-hover);
+    background: var(--dd-surface-2);
+}
+
+.lda .dd-chip:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.lda .dd-chip[aria-pressed=true] {
+    border-color: var(--dd-primary);
+    background: var(--dd-primary-soft);
+    color: var(--dd-primary-ink);
+    font-weight: 600;
+}
+
+.lda .dd-chip[aria-pressed=true] .dd-chip-count {
+    background: var(--dd-primary);
+    color: #fff;
+}
+
+.lda .dd-chip-count {
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    background: var(--dd-surface-3);
+    color: var(--dd-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.lda .card {
+    overflow: hidden;
+    border: 1px solid var(--dd-hairline);
+    border-radius: var(--dd-radius-lg);
+    background: var(--dd-surface);
+    box-shadow: none;
+}
+
+.lda .card-body {
+    padding: 1.25rem;
+}
+
+.lda .card-title {
+    margin-bottom: 0.75rem;
+    color: var(--dd-ink);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.lda .table-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
+.lda .table-toolbar-start,
+.lda .table-toolbar-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lda .table-toolbar-start {
+    flex: 1 1 18rem;
+}
+
+.lda .table-responsive {
+    margin: 0;
+    transition: opacity var(--dd-ease);
+}
+
+.lda .table-responsive[aria-busy=true] {
+    opacity: 0.6;
+}
+
+.lda .table {
+    margin-bottom: 0;
+    color: var(--dd-ink);
+    font-size: 0.9375rem;
+}
+
+.lda .table th,
+.lda .table td {
+    padding: 0.75rem 1rem;
+    border-color: var(--dd-hairline);
+    vertical-align: middle;
+}
+
+.lda .table thead th {
+    border-top: 0;
+    border-bottom: 1px solid var(--dd-line);
+    color: var(--dd-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.lda .table tbody th {
+    font-weight: 600;
+}
+
+.lda .table tbody tr:last-child > * {
+    border-bottom: 0;
+}
+
+.lda .table tbody tr:hover > * {
+    background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
+}
+
+.lda .table tbody tr.table-active > * {
+    background-color: var(--dd-primary-soft);
+}
+
+.lda .table .table-select {
+    width: 2.75rem;
     padding-right: 0;
 }
 
-.local-delegateaccount-filter-menu .fitem .col-form-label {
-    box-sizing: border-box;
-    float: none;
-    margin-bottom: .25rem;
-    padding-top: 0;
-}
-
-.local-delegateaccount-filter-menu .fitem .col-form-label label {
-    max-width: 100%;
-    white-space: normal;
-    word-break: normal;
-}
-
-.local-delegateaccount-filter-menu .fitem.femptylabel {
-    border-top: 0;
-    margin-bottom: 0;
-    margin-top: .5rem;
-    padding-top: 0;
-}
-
-.local-delegateaccount-filter-menu .fitem.femptylabel::before {
-    content: "";
+.lda .table .table-select .form-check-input {
+    position: static;
     display: block;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0;
+    cursor: pointer;
+}
+
+.lda .table .table-actions {
+    width: 1%;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.lda .table .userpicture,
+.lda .table .userinitials {
+    flex: none;
+    margin: 0 0.75rem 0 0;
+}
+
+.lda .table .text-truncate {
+    max-width: 16rem;
+}
+
+.lda .table-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+}
+
+.lda .table-sort::after {
+    content: "";
+    flex: none;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    opacity: 0.35;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 200ms cubic-bezier(0.2, 0, 0, 1), opacity 150ms;
+}
+
+.lda .table-sort:hover {
+    color: var(--dd-ink);
+}
+
+.lda .table-sort:hover::after {
+    opacity: 0.8;
+}
+
+.lda .table-sort:focus-visible {
+    outline: 0;
+    border-radius: 0.25rem;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.lda th[aria-sort] {
+    color: var(--dd-ink);
+}
+
+.lda th[aria-sort] .table-sort {
+    color: var(--dd-primary-ink);
+}
+
+.lda th[aria-sort] .table-sort::after {
+    opacity: 1;
+    color: var(--dd-primary);
+}
+
+.lda th[aria-sort=ascending] .table-sort::after {
+    transform: translateY(2px) rotate(-135deg);
+}
+
+.lda .table-foot {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--dd-hairline);
+}
+
+.lda .dd-pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    color: var(--dd-muted);
+    font-size: 0.875rem;
+}
+
+.lda .dd-pager-size {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.lda .dd-pager-size select {
     width: auto;
-    margin: 0 -1rem .75rem;
-    border-top: 1px solid var(--bs-border-color, #dee2e6);
 }
 
-.local-delegateaccount-filter-menu .fitem.femptylabel > .felement {
-    margin-left: 0;
+.lda .dd-pager-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
 }
 
-.local-delegateaccount-filter-menu .fitem.femptylabel .fitem {
-    margin-bottom: 0;
+.lda .dd-pager-range {
+    color: var(--dd-ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
-.local-delegateaccount-filter-menu .fitem.femptylabel .d-flex {
-    min-height: 0;
+.lda .dd-pager-arrows {
+    display: flex;
+    gap: 0.25rem;
 }
 
-.local-delegateaccount-filter-menu .fitem input.form-control,
-.local-delegateaccount-filter-menu .fitem textarea.form-control {
+.lda .dd-skeleton {
+    display: block;
+    height: 0.875rem;
+    border-radius: 0.375rem;
+    background: linear-gradient(90deg, var(--dd-hairline) 0%, var(--dd-surface-3) 50%, var(--dd-hairline) 100%);
+    background-size: 200% 100%;
+    animation: lda-shimmer 1.4s linear infinite;
+}
+
+.lda .dd-empty {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+}
+
+.lda .dd-empty .dd-tile {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 1rem;
+    font-size: 1.5rem;
+}
+
+.lda .dd-empty .btn {
+    margin-top: 0.75rem;
+}
+
+.lda .dd-empty-title {
+    margin: 0;
+    color: var(--dd-ink);
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.lda .dd-empty-text {
+    max-width: 28rem;
+    margin: 0;
+    color: var(--dd-muted);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+.lda .card > .alert {
+    margin: 1rem;
+}
+
+@keyframes lda-shimmer {
+
+    from {
+        background-position: 100% 0;
+    }
+
+    to {
+        background-position: -100% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .lda .dd-skeleton {
+        animation: none;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .lda .dd-searchbox {
+        max-width: none;
+    }
+
+    .lda .dd-pager-size {
+        display: none;
+    }
+}
+
+.lda .dd-searchbox,
+.path-local-delegateaccount .modal .dd-searchbox,
+.path-admin-local-delegateaccount .modal .dd-searchbox,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    max-width: 22rem;
+}
+
+.lda .dd-searchbox.mw-100,
+.path-local-delegateaccount .modal .dd-searchbox.mw-100,
+.path-admin-local-delegateaccount .modal .dd-searchbox.mw-100,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox.mw-100 {
+    max-width: 100%;
+}
+
+.lda .dd-searchbox .icon,
+.path-local-delegateaccount .modal .dd-searchbox .icon,
+.path-admin-local-delegateaccount .modal .dd-searchbox .icon,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox .icon {
+    position: absolute;
+    left: 0.75rem;
+    margin: 0;
+    color: var(--dd-muted);
+    pointer-events: none;
+}
+
+.lda .dd-searchbox .form-control,
+.path-local-delegateaccount .modal .dd-searchbox .form-control,
+.path-admin-local-delegateaccount .modal .dd-searchbox .form-control,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox .form-control {
+    min-height: var(--dd-h);
+    padding-left: 2.25rem;
+    border-color: var(--dd-line);
+    border-radius: 999px;
+}
+
+.lda .dd-select,
+.path-local-delegateaccount .modal .dd-select,
+.path-admin-local-delegateaccount .modal .dd-select,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select {
+    width: auto;
+    min-width: 12rem;
+    max-width: 20rem;
+    min-height: var(--dd-h);
+    padding-left: 1rem;
+    border-color: var(--dd-line);
+    border-radius: 999px;
+    background-color: var(--dd-surface);
+    color: var(--dd-ink);
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: border-color var(--dd-ease), box-shadow var(--dd-ease);
+}
+
+.lda .dd-select:hover,
+.path-local-delegateaccount .modal .dd-select:hover,
+.path-admin-local-delegateaccount .modal .dd-select:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select:hover {
+    border-color: var(--dd-line-hover);
+}
+
+.lda .dd-select:focus,
+.path-local-delegateaccount .modal .dd-select:focus,
+.path-admin-local-delegateaccount .modal .dd-select:focus,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select:focus {
+    border-color: var(--dd-primary);
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.lda .dd-select.border-primary,
+.path-local-delegateaccount .modal .dd-select.border-primary,
+.path-admin-local-delegateaccount .modal .dd-select.border-primary,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select.border-primary {
+    border-color: var(--dd-primary);
+    background-color: var(--dd-primary-soft);
+    color: var(--dd-primary-ink);
+    font-weight: 600;
+}
+
+.lda .btn-icon,
+.path-local-delegateaccount .modal .btn-icon,
+.path-admin-local-delegateaccount .modal .btn-icon,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--dd-h);
+    height: var(--dd-h);
+    padding: 0;
+    border-radius: 50%;
+}
+
+.lda .btn-icon.btn-sm,
+.path-local-delegateaccount .modal .btn-icon.btn-sm,
+.path-admin-local-delegateaccount .modal .btn-icon.btn-sm,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-icon.btn-sm {
+    width: var(--dd-h-sm);
+    height: var(--dd-h-sm);
+}
+
+.lda .btn-icon .icon,
+.path-local-delegateaccount .modal .btn-icon .icon,
+.path-admin-local-delegateaccount .modal .btn-icon .icon,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-icon .icon {
+    margin: 0;
+}
+
+.lda .btn-link.btn-icon,
+.path-local-delegateaccount .modal .btn-link.btn-icon,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon {
+    --dd-c: var(--dd-muted);
+    background-color: transparent;
+    color: var(--dd-c);
+    text-decoration: none;
+    transition: background-color var(--dd-ease), color var(--dd-ease), opacity var(--dd-ease), transform var(--dd-ease);
+}
+
+.lda .btn-link.btn-icon.text-primary,
+.path-local-delegateaccount .modal .btn-link.btn-icon.text-primary,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon.text-primary,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon.text-primary {
+    --dd-c: var(--dd-primary);
+}
+
+.lda .btn-link.btn-icon.text-info,
+.path-local-delegateaccount .modal .btn-link.btn-icon.text-info,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon.text-info,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon.text-info {
+    --dd-c: var(--dd-info);
+}
+
+.lda .btn-link.btn-icon.text-success,
+.path-local-delegateaccount .modal .btn-link.btn-icon.text-success,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon.text-success,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon.text-success {
+    --dd-c: var(--dd-success);
+}
+
+.lda .btn-link.btn-icon.text-warning,
+.path-local-delegateaccount .modal .btn-link.btn-icon.text-warning,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon.text-warning,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon.text-warning {
+    --dd-c: color-mix(in srgb, var(--dd-warning) 70%, var(--dd-ink));
+}
+
+.lda .btn-link.btn-icon.text-danger,
+.path-local-delegateaccount .modal .btn-link.btn-icon.text-danger,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon.text-danger,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon.text-danger {
+    --dd-c: var(--dd-danger);
+}
+
+.lda .btn-link.btn-icon:not(.disabled, :disabled),
+.path-local-delegateaccount .modal .btn-link.btn-icon:not(.disabled, :disabled),
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon:not(.disabled, :disabled),
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon:not(.disabled, :disabled) {
+    background-color: color-mix(in srgb, var(--dd-c) 9%, var(--dd-surface));
+}
+
+.lda .btn-link.btn-icon:not(.disabled, :disabled):hover,
+.lda .btn-link.btn-icon:not(.disabled, :disabled):focus-visible,
+.path-local-delegateaccount .modal .btn-link.btn-icon:not(.disabled, :disabled):hover,
+.path-local-delegateaccount .modal .btn-link.btn-icon:not(.disabled, :disabled):focus-visible,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon:not(.disabled, :disabled):hover,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon:not(.disabled, :disabled):focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon:not(.disabled, :disabled):hover,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon:not(.disabled, :disabled):focus-visible {
+    outline: 0;
+    background-color: color-mix(in srgb, var(--dd-c) 18%, var(--dd-surface));
+    color: color-mix(in srgb, var(--dd-c) 80%, var(--dd-ink));
+    transform: translateY(-1px);
+}
+
+.lda .btn-link.btn-icon:focus-visible,
+.path-local-delegateaccount .modal .btn-link.btn-icon:focus-visible,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon:focus-visible {
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.lda .btn-link.btn-icon.disabled,
+.lda .btn-link.btn-icon:disabled,
+.path-local-delegateaccount .modal .btn-link.btn-icon.disabled,
+.path-local-delegateaccount .modal .btn-link.btn-icon:disabled,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon.disabled,
+.path-admin-local-delegateaccount .modal .btn-link.btn-icon:disabled,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon.disabled,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-link.btn-icon:disabled {
+    color: var(--dd-muted);
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: auto;
+}
+
+.lda .table-actions,
+.path-local-delegateaccount .modal .table-actions,
+.path-admin-local-delegateaccount .modal .table-actions,
+#page-admin-setting-local_delegateaccount_settings .modal .table-actions {
+    white-space: nowrap;
+}
+
+.lda .table-actions .btn-icon + .btn-icon,
+.path-local-delegateaccount .modal .table-actions .btn-icon + .btn-icon,
+.path-admin-local-delegateaccount .modal .table-actions .btn-icon + .btn-icon,
+#page-admin-setting-local_delegateaccount_settings .modal .table-actions .btn-icon + .btn-icon {
+    margin-left: 0.25rem;
+}
+
+.lda .btn.btn-tonal,
+.path-local-delegateaccount .modal .btn.btn-tonal,
+.path-admin-local-delegateaccount .modal .btn.btn-tonal,
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn-tonal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-color: transparent;
+    background-color: var(--dd-c-soft);
+    box-shadow: none;
+    color: var(--dd-c-ink);
+}
+
+.lda .btn.btn-tonal:hover,
+.lda .btn.btn-tonal:focus-visible,
+.path-local-delegateaccount .modal .btn.btn-tonal:hover,
+.path-local-delegateaccount .modal .btn.btn-tonal:focus-visible,
+.path-admin-local-delegateaccount .modal .btn.btn-tonal:hover,
+.path-admin-local-delegateaccount .modal .btn.btn-tonal:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn-tonal:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn-tonal:focus-visible {
+    background-color: var(--dd-c-soft-2);
+    color: var(--dd-c-ink);
+}
+
+.lda .btn.btn-tonal .icon,
+.path-local-delegateaccount .modal .btn.btn-tonal .icon,
+.path-admin-local-delegateaccount .modal .btn.btn-tonal .icon,
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn-tonal .icon {
+    margin: 0;
+    color: inherit;
+}
+
+.lda .badge-dot::before,
+.path-local-delegateaccount .modal .badge-dot::before,
+.path-admin-local-delegateaccount .modal .badge-dot::before,
+#page-admin-setting-local_delegateaccount_settings .modal .badge-dot::before {
+    content: "";
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--dd-c);
+}
+
+.lda .dd-tile,
+.path-local-delegateaccount .modal .dd-tile,
+.path-admin-local-delegateaccount .modal .dd-tile,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-tile {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.75rem;
+    background-color: var(--dd-c-soft-2);
+    color: var(--dd-c-ink);
+    font-size: 1.0625rem;
+    line-height: 1;
+}
+
+.lda .dd-tile .icon,
+.path-local-delegateaccount .modal .dd-tile .icon,
+.path-admin-local-delegateaccount .modal .dd-tile .icon,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-tile .icon {
+    margin: 0;
+    color: inherit;
+}
+
+.lda .dd-tile-lg,
+.path-local-delegateaccount .modal .dd-tile-lg,
+.path-admin-local-delegateaccount .modal .dd-tile-lg,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-tile-lg {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1rem;
+    font-size: 1.375rem;
+}
+
+.lda .dd-floatbar {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    z-index: 1030;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: calc(100vw - 2rem);
+    padding: 0.5rem 0.6rem 0.5rem 1.25rem;
+    border: 1px solid var(--dd-hairline);
+    border-radius: 1rem;
+    background-color: var(--dd-surface);
+    box-shadow: var(--dd-shadow-lg);
+    transform: translateX(-50%);
+    animation: lda-rise 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.lda .dd-floatbar[hidden] {
+    display: none;
+}
+
+.lda .dd-floatbar .dd-floatbar-count {
+    color: var(--dd-ink);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.lda .dd-floatbar .dd-floatbar-all {
+    padding: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.lda .dd-floatbar .dd-floatbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.lda .dd-floatbar .dd-floatbar-clear {
+    position: relative;
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--dd-muted);
+    transition: background-color var(--dd-ease), color var(--dd-ease);
+}
+
+.lda .dd-floatbar .dd-floatbar-clear::before,
+.lda .dd-floatbar .dd-floatbar-clear::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.75rem;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+}
+
+.lda .dd-floatbar .dd-floatbar-clear::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.lda .dd-floatbar .dd-floatbar-clear::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.lda .dd-floatbar .dd-floatbar-clear:hover,
+.lda .dd-floatbar .dd-floatbar-clear:focus-visible {
+    outline: 0;
+    background-color: var(--dd-primary-soft);
+    color: var(--dd-primary-ink);
+}
+
+@keyframes lda-rise {
+
+    from {
+        opacity: 0;
+        transform: translate(-50%, 0.75rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .lda .dd-floatbar {
+        animation: none;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .lda .dd-floatbar {
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: var(--dd-radius-lg);
+    }
+}
+
+.lda .dropdown-menu.dd-select-menu,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu {
+    position: fixed;
+    z-index: 1060;
+    display: block;
+    min-width: 10rem;
+    margin: 0;
+    padding: 0.375rem;
+    overflow-y: auto;
+    border: 1px solid var(--dd-hairline);
+    border-radius: var(--dd-radius);
+    background-color: var(--dd-surface);
+    box-shadow: var(--dd-shadow-md);
+    color: var(--dd-ink);
+    font-size: 0.9375rem;
+    animation: lda-pop 140ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.lda .dropdown-menu.dd-select-menu .dropdown-header,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-header,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-header,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-header {
+    padding: 0.5rem 0.75rem 0.25rem;
+    color: var(--dd-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.lda .dropdown-menu.dd-select-menu .dropdown-item,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.625rem;
     width: 100%;
-    max-width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: none;
+    color: var(--dd-ink);
+    line-height: 1.5;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--dd-ease), color var(--dd-ease);
 }
 
-.local-delegateaccount-filter-menu .fdate_selector {
+.lda .dropdown-menu.dd-select-menu .dropdown-item + .dropdown-item,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item + .dropdown-item,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item + .dropdown-item,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item + .dropdown-item {
+    margin-top: 2px;
+}
+
+.lda .dropdown-menu.dd-select-menu .dropdown-item:hover,
+.lda .dropdown-menu.dd-select-menu .dropdown-item:focus,
+.lda .dropdown-menu.dd-select-menu .dropdown-item.active,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item:hover,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item:focus,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item.active,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item:hover,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item:focus,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item.active,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item:focus,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item.active {
+    outline: 0;
+    background-color: var(--dd-surface-2);
+    color: var(--dd-ink);
+}
+
+.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true],
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true],
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true],
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true] {
+    background-color: var(--dd-primary-soft);
+    color: var(--dd-primary-ink);
+    font-weight: 600;
+}
+
+.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::after,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::after,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::after,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::after {
+    content: "";
+    flex: none;
+    width: 0.3rem;
+    height: 0.6rem;
+    margin-right: 0.25rem;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translateY(-1px);
+}
+
+.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]:focus,
+.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true].active,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]:focus,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true].active,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]:focus,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true].active,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]:focus,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true].active {
+    background-color: var(--dd-primary-soft-2);
+}
+
+.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::before,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::before,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::before,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::before {
+    content: none;
+    display: none;
+}
+
+.lda .dropdown-menu.dd-select-menu .dropdown-item.disabled,
+.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item.disabled,
+.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item.disabled,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lda select[aria-expanded=true],
+.path-local-delegateaccount .modal select[aria-expanded=true],
+.path-admin-local-delegateaccount .modal select[aria-expanded=true],
+#page-admin-setting-local_delegateaccount_settings .modal select[aria-expanded=true] {
+    border-color: var(--dd-primary);
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+@keyframes lda-pop {
+
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .lda .dd-select-menu,
+    .path-local-delegateaccount .modal .dd-select-menu,
+    .path-admin-local-delegateaccount .modal .dd-select-menu,
+    #page-admin-setting-local_delegateaccount_settings .modal .dd-select-menu {
+        animation: none;
+    }
+}
+
+.lda .dd-select.form-select-sm {
+    min-width: 4.75rem;
+    min-height: var(--dd-h-sm);
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    font-size: 0.875rem;
+}
+
+/* stylelint-disable declaration-no-important */
+
+.lda .badge.badge-soft,
+.path-local-delegateaccount .modal .badge.badge-soft,
+.path-admin-local-delegateaccount .modal .badge.badge-soft,
+#page-admin-setting-local_delegateaccount_settings .modal .badge.badge-soft {
+    display: inline-flex;
     align-items: center;
-    column-gap: .25rem;
-    row-gap: .375rem;
+    gap: 0.3rem;
+    padding: 0.35em 0.8em;
+    border-radius: 999px;
+    background-color: var(--dd-c-soft-2) !important;
+    color: var(--dd-c-ink) !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
-.local-delegateaccount-filter-menu .fdate_selector > .fitem {
-    flex: 0 1 auto;
+.lda .badge.badge-outline,
+.path-local-delegateaccount .modal .badge.badge-outline,
+.path-admin-local-delegateaccount .modal .badge.badge-outline,
+#page-admin-setting-local_delegateaccount_settings .modal .badge.badge-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35em 0.8em;
+    border-radius: 999px;
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 1px var(--dd-c);
+    color: var(--dd-c-ink) !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* stylelint-enable declaration-no-important */
+
+.lda .dd-searchbox > span[aria-hidden=true],
+.path-local-delegateaccount .modal .dd-searchbox > span[aria-hidden=true],
+.path-admin-local-delegateaccount .modal .dd-searchbox > span[aria-hidden=true],
+#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox > span[aria-hidden=true] {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--dd-muted);
+    pointer-events: none;
+}
+
+.lda .dd-searchbox > span[aria-hidden=true] .icon,
+.path-local-delegateaccount .modal .dd-searchbox > span[aria-hidden=true] .icon,
+.path-admin-local-delegateaccount .modal .dd-searchbox > span[aria-hidden=true] .icon,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox > span[aria-hidden=true] .icon {
+    position: static;
+    margin: 0;
+}
+
+.lda > .btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    justify-self: start;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.lda [data-region=list] {
+    display: grid;
+    gap: 1rem;
     min-width: 0;
-    margin-right: 0;
-    margin-left: 0;
 }
 
-.local-delegateaccount-filter-menu .fdate_selector select {
-    width: auto;
-    max-width: 100%;
+.lda .row > li > .card {
+    transition: border-color var(--dd-ease), box-shadow var(--dd-ease);
 }
 
-.local-delegateaccount-modal .modal-dialog {
-    max-width: 50rem;
+.lda .row > li > .card:hover {
+    border-color: var(--dd-line);
+    box-shadow: var(--dd-shadow-sm);
 }
 
-.local-delegateaccount-modal .fdate_time_selector,
-.local-delegateaccount-modal .fdate_selector {
+.lda .row > li > .card .userpicture,
+.lda .row > li > .card .userinitials {
+    flex: none;
+    margin: 0 0.875rem 0 0;
+}
+
+.lda [data-region=filters] {
+    gap: 0.75rem;
+}
+
+.lda [data-region=filters] label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.lda [data-region=filters] .form-control {
+    min-width: 10rem;
+    border-color: var(--dd-line);
+}
+
+.lda .dd-dl {
+    display: grid;
+    grid-template-columns: minmax(7rem, 11rem) 1fr;
+    margin: 0;
+}
+
+.lda .dd-dl dt,
+.lda .dd-dl dd {
+    margin: 0;
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
+.lda .dd-dl dt {
+    padding-right: 1rem;
+    color: var(--dd-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.lda .dd-dl dd {
+    color: var(--dd-ink);
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+}
+
+.lda .dd-dl dt:last-of-type,
+.lda .dd-dl dd:last-of-type {
+    border-bottom: 0;
+}
+
+.lda .dd-timeline {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lda .dd-timeline-item {
+    position: relative;
+    display: grid;
+    gap: 0.125rem;
+    padding: 0 0 1.25rem 1.75rem;
+}
+
+.lda .dd-timeline-item::before {
+    content: "";
+    position: absolute;
+    top: 0.3125rem;
+    left: 0.1875rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border: 2px solid var(--dd-primary);
+    border-radius: 50%;
+    background: var(--dd-surface);
+}
+
+.lda .dd-timeline-item::after {
+    content: "";
+    position: absolute;
+    top: 1.25rem;
+    bottom: 0.25rem;
+    left: 0.5rem;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--dd-hairline);
+}
+
+.lda .dd-timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.lda .dd-timeline-item:last-child::after {
+    display: none;
+}
+
+.lda .dd-timeline-item.is-success::before {
+    border-color: var(--dd-success);
+    background: var(--dd-success);
+}
+
+.lda .dd-timeline-item.is-danger::before {
+    border-color: var(--dd-danger);
+    background: var(--dd-danger);
+}
+
+.lda .dd-timeline-title {
+    color: var(--dd-ink);
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.lda .dd-timeline-meta {
+    color: var(--dd-muted);
+    font-size: 0.8125rem;
+}
+
+@media (max-width: 480px) {
+
+    .lda .dd-dl {
+        grid-template-columns: 1fr;
+    }
+
+    .lda .dd-dl dt {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+}
+
+.lda .dd-segmented,
+.path-local-delegateaccount .modal .dd-segmented,
+.path-admin-local-delegateaccount .modal .dd-segmented,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.125rem;
+    padding: 0.1875rem;
+    border-radius: var(--dd-radius-sm);
+    background-color: var(--dd-surface-3);
+}
+
+.lda .dd-segmented button,
+.path-local-delegateaccount .modal .dd-segmented button,
+.path-admin-local-delegateaccount .modal .dd-segmented button,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button {
+    display: inline-flex;
     align-items: center;
-    column-gap: .5rem;
-    row-gap: .5rem;
+    gap: 0.4375rem;
+    min-height: 1.875rem;
+    padding: 0.25rem 0.75rem;
+    border: 0;
+    border-radius: calc(var(--dd-radius-sm) - 2px);
+    background: none;
+    color: var(--dd-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--dd-ease), color var(--dd-ease), box-shadow var(--dd-ease);
 }
 
-.local-delegateaccount-modal .fdate_time_selector > .fitem,
-.local-delegateaccount-modal .fdate_selector > .fitem {
+.lda .dd-segmented button:hover,
+.path-local-delegateaccount .modal .dd-segmented button:hover,
+.path-admin-local-delegateaccount .modal .dd-segmented button:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button:hover {
+    color: var(--dd-ink);
+}
+
+.lda .dd-segmented button:focus-visible,
+.path-local-delegateaccount .modal .dd-segmented button:focus-visible,
+.path-admin-local-delegateaccount .modal .dd-segmented button:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.lda .dd-segmented button:disabled,
+.path-local-delegateaccount .modal .dd-segmented button:disabled,
+.path-admin-local-delegateaccount .modal .dd-segmented button:disabled,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.lda .dd-segmented button[aria-checked=true],
+.lda .dd-segmented button[aria-pressed=true],
+.path-local-delegateaccount .modal .dd-segmented button[aria-checked=true],
+.path-local-delegateaccount .modal .dd-segmented button[aria-pressed=true],
+.path-admin-local-delegateaccount .modal .dd-segmented button[aria-checked=true],
+.path-admin-local-delegateaccount .modal .dd-segmented button[aria-pressed=true],
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[aria-checked=true],
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[aria-pressed=true] {
+    background-color: var(--dd-surface);
+    box-shadow: var(--dd-shadow-sm);
+    color: var(--dd-ink);
+}
+
+.lda .dd-segmented button[data-tone=allow][aria-checked=true],
+.path-local-delegateaccount .modal .dd-segmented button[data-tone=allow][aria-checked=true],
+.path-admin-local-delegateaccount .modal .dd-segmented button[data-tone=allow][aria-checked=true],
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[data-tone=allow][aria-checked=true] {
+    background-color: color-mix(in srgb, var(--dd-success) 16%, var(--dd-surface));
+    color: color-mix(in srgb, var(--dd-success) 60%, var(--dd-ink));
+}
+
+.lda .dd-segmented button[data-tone=prevent][aria-checked=true],
+.path-local-delegateaccount .modal .dd-segmented button[data-tone=prevent][aria-checked=true],
+.path-admin-local-delegateaccount .modal .dd-segmented button[data-tone=prevent][aria-checked=true],
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[data-tone=prevent][aria-checked=true] {
+    background-color: color-mix(in srgb, var(--dd-warning) 22%, var(--dd-surface));
+    color: color-mix(in srgb, var(--dd-warning) 45%, var(--dd-ink));
+}
+
+.lda .dd-segmented button[data-tone=prohibit][aria-checked=true],
+.path-local-delegateaccount .modal .dd-segmented button[data-tone=prohibit][aria-checked=true],
+.path-admin-local-delegateaccount .modal .dd-segmented button[data-tone=prohibit][aria-checked=true],
+#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[data-tone=prohibit][aria-checked=true] {
+    background-color: color-mix(in srgb, var(--dd-danger) 16%, var(--dd-surface));
+    color: color-mix(in srgb, var(--dd-danger) 65%, var(--dd-ink));
+}
+
+.lda .list-group-flush > .list-group-item,
+.lda .list-group:not([role]) > .list-group-item,
+.path-local-delegateaccount .modal .list-group-flush > .list-group-item,
+.path-local-delegateaccount .modal .list-group:not([role]) > .list-group-item,
+.path-admin-local-delegateaccount .modal .list-group-flush > .list-group-item,
+.path-admin-local-delegateaccount .modal .list-group:not([role]) > .list-group-item,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush > .list-group-item,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group:not([role]) > .list-group-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding: 0.625rem 1rem;
+    border-color: var(--dd-hairline);
+    background-color: var(--dd-surface);
+    color: var(--dd-ink);
+    transition: background-color var(--dd-ease);
+}
+
+.lda .list-group-flush > .list-group-item > .d-flex.flex-column,
+.lda .list-group:not([role]) > .list-group-item > .d-flex.flex-column,
+.path-local-delegateaccount .modal .list-group-flush > .list-group-item > .d-flex.flex-column,
+.path-local-delegateaccount .modal .list-group:not([role]) > .list-group-item > .d-flex.flex-column,
+.path-admin-local-delegateaccount .modal .list-group-flush > .list-group-item > .d-flex.flex-column,
+.path-admin-local-delegateaccount .modal .list-group:not([role]) > .list-group-item > .d-flex.flex-column,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush > .list-group-item > .d-flex.flex-column,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group:not([role]) > .list-group-item > .d-flex.flex-column {
+    flex: 1 1 18rem;
+    min-width: 0;
+}
+
+.lda .list-group-flush > .list-group-item .small,
+.lda .list-group:not([role]) > .list-group-item .small,
+.path-local-delegateaccount .modal .list-group-flush > .list-group-item .small,
+.path-local-delegateaccount .modal .list-group:not([role]) > .list-group-item .small,
+.path-admin-local-delegateaccount .modal .list-group-flush > .list-group-item .small,
+.path-admin-local-delegateaccount .modal .list-group:not([role]) > .list-group-item .small,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush > .list-group-item .small,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group:not([role]) > .list-group-item .small {
+    overflow-wrap: anywhere;
+}
+
+.lda .list-group-flush > .list-group-item .badge,
+.lda .list-group:not([role]) > .list-group-item .badge,
+.path-local-delegateaccount .modal .list-group-flush > .list-group-item .badge,
+.path-local-delegateaccount .modal .list-group:not([role]) > .list-group-item .badge,
+.path-admin-local-delegateaccount .modal .list-group-flush > .list-group-item .badge,
+.path-admin-local-delegateaccount .modal .list-group:not([role]) > .list-group-item .badge,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush > .list-group-item .badge,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group:not([role]) > .list-group-item .badge {
+    margin-right: 0.25rem;
+    font-size: 0.6875rem;
+}
+
+.lda .list-group-flush > .list-group-item:hover,
+.lda .list-group:not([role]) > .list-group-item:hover,
+.path-local-delegateaccount .modal .list-group-flush > .list-group-item:hover,
+.path-local-delegateaccount .modal .list-group:not([role]) > .list-group-item:hover,
+.path-admin-local-delegateaccount .modal .list-group-flush > .list-group-item:hover,
+.path-admin-local-delegateaccount .modal .list-group:not([role]) > .list-group-item:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush > .list-group-item:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group:not([role]) > .list-group-item:hover {
+    background-color: color-mix(in srgb, var(--dd-primary) 4%, var(--dd-surface));
+}
+
+.lda .list-group:not([role]),
+.path-local-delegateaccount .modal .list-group:not([role]),
+.path-admin-local-delegateaccount .modal .list-group:not([role]),
+#page-admin-setting-local_delegateaccount_settings .modal .list-group:not([role]) {
+    border-radius: var(--dd-radius-lg);
+}
+
+.lda [data-region=capabilities],
+.path-local-delegateaccount .modal [data-region=capabilities],
+.path-admin-local-delegateaccount .modal [data-region=capabilities],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=capabilities] {
+    height: 62vh;
+    min-height: 20rem;
+    max-height: 40rem;
+    overscroll-behavior: contain;
+    border-top: 1px solid var(--dd-hairline);
+    border-bottom: 1px solid var(--dd-hairline);
+    scrollbar-gutter: stable;
+}
+
+.lda [data-region=capabilities] > [data-region=empty]:not([hidden]),
+.path-local-delegateaccount .modal [data-region=capabilities] > [data-region=empty]:not([hidden]),
+.path-admin-local-delegateaccount .modal [data-region=capabilities] > [data-region=empty]:not([hidden]),
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=capabilities] > [data-region=empty]:not([hidden]) {
+    display: grid;
+    place-items: center;
+    min-height: 100%;
+}
+
+.lda [data-region=capabilities] > .dd-empty,
+.path-local-delegateaccount .modal [data-region=capabilities] > .dd-empty,
+.path-admin-local-delegateaccount .modal [data-region=capabilities] > .dd-empty,
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=capabilities] > .dd-empty {
+    justify-content: center;
+    min-height: 100%;
+}
+
+.lda .list-group-flush:not([role]) > .list-group-item-light,
+.lda .list-group-flush:not([role]) > .list-group-item-light:hover,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:hover,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light:hover {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 0;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid var(--dd-line);
+    border-bottom: 1px solid var(--dd-line);
+    background-color: color-mix(in srgb, var(--dd-ink) 14%, var(--dd-surface));
+    color: var(--dd-ink);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.lda .list-group-flush:not([role]) > .list-group-item-light::before,
+.lda .list-group-flush:not([role]) > .list-group-item-light:hover::before,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light::before,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:hover::before,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light::before,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:hover::before,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light::before,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light:hover::before {
+    content: "";
+    flex: none;
+    width: 3px;
+    height: 0.875rem;
+    border-radius: 2px;
+    background-color: var(--dd-primary);
+}
+
+.lda .list-group-flush:not([role]) > .list-group-item-light:first-child,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:first-child,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:first-child,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light:first-child {
+    border-top: 0;
+}
+
+.lda .list-group-flush:not([role]) > .list-group-item-primary,
+.lda .list-group-flush:not([role]) > .list-group-item-primary:hover,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-primary,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-primary:hover,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-primary,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-primary:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-primary,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-primary:hover {
+    box-shadow: inset 3px 0 0 var(--dd-primary);
+    background-color: var(--dd-primary-soft);
+    color: var(--dd-ink);
+}
+
+.lda .row.list-unstyled.small,
+.path-local-delegateaccount .modal .row.list-unstyled.small,
+.path-admin-local-delegateaccount .modal .row.list-unstyled.small,
+#page-admin-setting-local_delegateaccount_settings .modal .row.list-unstyled.small {
+    line-height: 1.45;
+}
+
+.lda .dd-savebar,
+.path-local-delegateaccount .modal .dd-savebar,
+.path-admin-local-delegateaccount .modal .dd-savebar,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-savebar {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    z-index: 1030;
+    display: flex;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    width: max-content;
+    max-width: calc(100vw - 2rem);
+    padding: 0.5rem 0.6rem 0.5rem 1.25rem;
+    border: 1px solid var(--dd-hairline);
+    border-radius: 1rem;
+    background: var(--dd-surface);
+    box-shadow: var(--dd-shadow-lg);
+    transform: translateX(-50%);
+    animation: lda-rise 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.lda .dd-savebar[hidden],
+.path-local-delegateaccount .modal .dd-savebar[hidden],
+.path-admin-local-delegateaccount .modal .dd-savebar[hidden],
+#page-admin-setting-local_delegateaccount_settings .modal .dd-savebar[hidden] {
+    display: none;
+}
+
+.lda .dd-savebar-text,
+.path-local-delegateaccount .modal .dd-savebar-text,
+.path-admin-local-delegateaccount .modal .dd-savebar-text,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-savebar-text {
+    color: var(--dd-ink);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.lda .dd-savebar-actions,
+.path-local-delegateaccount .modal .dd-savebar-actions,
+.path-admin-local-delegateaccount .modal .dd-savebar-actions,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-savebar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.path-local-delegateaccount .modal .modal-body:has([data-region=bulk]),
+.path-admin-local-delegateaccount .modal .modal-body:has([data-region=bulk]),
+#page-admin-setting-local_delegateaccount_settings .modal .modal-body:has([data-region=bulk]) {
+    min-height: 32rem;
+}
+
+.path-local-delegateaccount .modal [data-region=change],
+.path-local-delegateaccount .modal [data-region=copy],
+.path-admin-local-delegateaccount .modal [data-region=change],
+.path-admin-local-delegateaccount .modal [data-region=copy],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=change],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=copy] {
+    margin-top: 1rem;
+}
+
+.path-local-delegateaccount .modal [data-region=change] > * + *,
+.path-local-delegateaccount .modal [data-region=copy] > * + *,
+.path-admin-local-delegateaccount .modal [data-region=change] > * + *,
+.path-admin-local-delegateaccount .modal [data-region=copy] > * + *,
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=change] > * + *,
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=copy] > * + * {
+    margin-top: 1.25rem;
+}
+
+.path-local-delegateaccount .modal .list-group[role=listbox],
+.path-admin-local-delegateaccount .modal .list-group[role=listbox],
+#page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] {
+    height: 12.5rem;
+    padding: 0.25rem;
+    overflow-y: auto;
+    border: 1px solid var(--dd-hairline);
+    border-radius: var(--dd-radius-lg);
+    background: var(--dd-surface);
+}
+
+.path-local-delegateaccount .modal .list-group[role=listbox] > li,
+.path-admin-local-delegateaccount .modal .list-group[role=listbox] > li,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] > li {
+    list-style: none;
+}
+
+.path-local-delegateaccount .modal .list-group[role=listbox] button,
+.path-admin-local-delegateaccount .modal .list-group[role=listbox] button,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.5rem 0.625rem;
+    border: 0;
+    border-radius: var(--dd-radius);
+    background: none;
+    color: var(--dd-ink);
+    text-align: left;
+}
+
+.path-local-delegateaccount .modal .list-group[role=listbox] button:hover,
+.path-local-delegateaccount .modal .list-group[role=listbox] button:focus-visible,
+.path-admin-local-delegateaccount .modal .list-group[role=listbox] button:hover,
+.path-admin-local-delegateaccount .modal .list-group[role=listbox] button:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] button:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] button:focus-visible {
+    outline: 0;
+    background-color: var(--dd-primary-soft);
+}
+
+.path-local-delegateaccount .modal .list-group[role=listbox] button[aria-selected=true],
+.path-admin-local-delegateaccount .modal .list-group[role=listbox] button[aria-selected=true],
+#page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] button[aria-selected=true] {
+    background-color: var(--dd-primary-soft);
+    box-shadow: inset 3px 0 0 var(--dd-primary);
+}
+
+.path-local-delegateaccount .modal .list-group[role=listbox] button small,
+.path-admin-local-delegateaccount .modal .list-group[role=listbox] button small,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] button small {
+    color: var(--dd-muted);
+    font-size: 0.8125rem;
+}
+
+.path-local-delegateaccount .modal .list-group[role=listbox] .list-group-item,
+.path-admin-local-delegateaccount .modal .list-group[role=listbox] .list-group-item,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] .list-group-item {
+    border: 0;
+}
+
+.path-local-delegateaccount .modal label.card,
+.path-admin-local-delegateaccount .modal label.card,
+#page-admin-setting-local_delegateaccount_settings .modal label.card {
+    cursor: pointer;
+    transition: border-color var(--dd-ease), background-color var(--dd-ease), box-shadow var(--dd-ease);
+}
+
+.path-local-delegateaccount .modal label.card:hover,
+.path-admin-local-delegateaccount .modal label.card:hover,
+#page-admin-setting-local_delegateaccount_settings .modal label.card:hover {
+    border-color: var(--dd-line);
+}
+
+.path-local-delegateaccount .modal label.card:has(input:checked),
+.path-admin-local-delegateaccount .modal label.card:has(input:checked),
+#page-admin-setting-local_delegateaccount_settings .modal label.card:has(input:checked) {
+    border-color: var(--dd-primary);
+    background-color: var(--dd-primary-soft);
+}
+
+.path-local-delegateaccount .modal label.card:has(input:focus-visible),
+.path-admin-local-delegateaccount .modal label.card:has(input:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal label.card:has(input:focus-visible) {
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.path-local-delegateaccount .modal label.card input,
+.path-admin-local-delegateaccount .modal label.card input,
+#page-admin-setting-local_delegateaccount_settings .modal label.card input {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    margin: 0.2rem 0 0;
+    accent-color: var(--dd-primary);
+    box-shadow: none;
+}
+
+.path-local-delegateaccount .modal label.card input:focus,
+.path-admin-local-delegateaccount .modal label.card input:focus,
+#page-admin-setting-local_delegateaccount_settings .modal label.card input:focus {
+    outline: 0;
+    box-shadow: none;
+}
+
+.path-local-delegateaccount .modal .card,
+.path-admin-local-delegateaccount .modal .card,
+#page-admin-setting-local_delegateaccount_settings .modal .card {
+    border: 1px solid var(--dd-hairline);
+    border-radius: var(--dd-radius-lg);
+    box-shadow: none;
+}
+
+@media (max-width: 576px) {
+
+    .lda .list-group-item .dd-segmented,
+    .path-local-delegateaccount .modal .list-group-item .dd-segmented,
+    .path-admin-local-delegateaccount .modal .list-group-item .dd-segmented,
+    #page-admin-setting-local_delegateaccount_settings .modal .list-group-item .dd-segmented {
+        width: 100%;
+    }
+
+    .lda .list-group-item .dd-segmented button,
+    .path-local-delegateaccount .modal .list-group-item .dd-segmented button,
+    .path-admin-local-delegateaccount .modal .list-group-item .dd-segmented button,
+    #page-admin-setting-local_delegateaccount_settings .modal .list-group-item .dd-segmented button {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .lda .dd-savebar {
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: var(--dd-radius-lg);
+    }
+}
+
+.path-local-delegateaccount .modal .modal-dialog.modal-lg,
+.path-admin-local-delegateaccount .modal .modal-dialog.modal-lg,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-dialog.modal-lg {
+    max-width: 56rem;
+}
+
+.path-local-delegateaccount .modal .fdate_time_selector,
+.path-local-delegateaccount .modal .fdate_selector,
+.path-admin-local-delegateaccount .modal .fdate_time_selector,
+.path-admin-local-delegateaccount .modal .fdate_selector,
+#page-admin-setting-local_delegateaccount_settings .modal .fdate_time_selector,
+#page-admin-setting-local_delegateaccount_settings .modal .fdate_selector {
+    align-items: center;
+    column-gap: 0.5rem;
+    row-gap: 0.5rem;
+}
+
+.path-local-delegateaccount .modal .fdate_time_selector > .fitem,
+.path-local-delegateaccount .modal .fdate_selector > .fitem,
+.path-admin-local-delegateaccount .modal .fdate_time_selector > .fitem,
+.path-admin-local-delegateaccount .modal .fdate_selector > .fitem,
+#page-admin-setting-local_delegateaccount_settings .modal .fdate_time_selector > .fitem,
+#page-admin-setting-local_delegateaccount_settings .modal .fdate_selector > .fitem {
+    margin-right: 0;
     margin-bottom: 0;
-    margin-right: 0;
     margin-left: 0;
 }
 
-.local-delegateaccount-modal .fdate_time_selector select,
-.local-delegateaccount-modal .fdate_selector select {
+.path-local-delegateaccount .modal .fdate_time_selector select,
+.path-local-delegateaccount .modal .fdate_selector select,
+.path-admin-local-delegateaccount .modal .fdate_time_selector select,
+.path-admin-local-delegateaccount .modal .fdate_selector select,
+#page-admin-setting-local_delegateaccount_settings .modal .fdate_time_selector select,
+#page-admin-setting-local_delegateaccount_settings .modal .fdate_selector select {
     min-width: 0;
 }
 
-@media (max-width: 575.98px) {
-    .local-delegateaccount-filters .local-delegateaccount-filter-menu {
-        width: calc(100vw - 2rem);
-        max-height: calc(100vh - 6rem);
-        overflow-y: auto;
-        overscroll-behavior: contain;
+/* stylelint-disable max-line-length */
+
+body:has(#carousel-item-delegatedaccounts, template[data-region=local-delegateaccount-usermenu-source]):has(#user-menu-toggle[data-flexitour=highlight],
+a[data-carousel-target-id=carousel-item-delegatedaccounts][data-flexitour=highlight],
+#user-action-menu[data-flexitour=highlight]) span[data-flexitour=container] [data-role=arrow] {
+    display: none;
+}
+
+body:has(#carousel-item-delegatedaccounts, template[data-region=local-delegateaccount-usermenu-source]):has(#user-menu-toggle[data-flexitour=highlight],
+a[data-carousel-target-id=carousel-item-delegatedaccounts][data-flexitour=highlight]) span[data-flexitour=container] .modal-footer {
+    display: none;
+}
+
+.path-local-delegateaccount .modal .modal-content,
+.path-admin-local-delegateaccount .modal .modal-content,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-content {
+    overflow: hidden;
+    border: 1px solid var(--dd-hairline);
+    border-radius: 1.25rem;
+    background-color: var(--dd-surface);
+    box-shadow: var(--dd-shadow-lg);
+    color: var(--dd-ink);
+}
+
+.path-local-delegateaccount .modal .modal-dialog:focus .modal-content,
+.path-local-delegateaccount .modal .modal-dialog.focus .modal-content,
+.path-admin-local-delegateaccount .modal .modal-dialog:focus .modal-content,
+.path-admin-local-delegateaccount .modal .modal-dialog.focus .modal-content,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-dialog:focus .modal-content,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-dialog.focus .modal-content {
+    border-radius: 1.25rem;
+    box-shadow: var(--dd-shadow-lg);
+}
+
+.path-local-delegateaccount .modal .modal-header,
+.path-admin-local-delegateaccount .modal .modal-header,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-header {
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 1.25rem 0.5rem 1.5rem;
+    border-bottom: 0;
+}
+
+.path-local-delegateaccount .modal .modal-header .close,
+.path-local-delegateaccount .modal .modal-header .btn-close,
+.path-admin-local-delegateaccount .modal .modal-header .close,
+.path-admin-local-delegateaccount .modal .modal-header .btn-close,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-header .close,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-header .btn-close {
+    display: inline-grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border-radius: 50%;
+    color: var(--dd-muted);
+    opacity: 1;
+    text-shadow: none;
+    transition: background-color var(--dd-ease), color var(--dd-ease);
+}
+
+.path-local-delegateaccount .modal .modal-header .close:hover,
+.path-local-delegateaccount .modal .modal-header .close:focus-visible,
+.path-local-delegateaccount .modal .modal-header .btn-close:hover,
+.path-local-delegateaccount .modal .modal-header .btn-close:focus-visible,
+.path-admin-local-delegateaccount .modal .modal-header .close:hover,
+.path-admin-local-delegateaccount .modal .modal-header .close:focus-visible,
+.path-admin-local-delegateaccount .modal .modal-header .btn-close:hover,
+.path-admin-local-delegateaccount .modal .modal-header .btn-close:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-header .close:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-header .close:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-header .btn-close:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-header .btn-close:focus-visible {
+    outline: 0;
+    background-color: var(--dd-surface-3);
+    color: var(--dd-ink);
+}
+
+.path-local-delegateaccount .modal .modal-title,
+.path-admin-local-delegateaccount .modal .modal-title,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-title {
+    color: var(--dd-ink);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.011em;
+}
+
+.path-local-delegateaccount .modal .modal-body,
+.path-admin-local-delegateaccount .modal .modal-body,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-body {
+    padding: 0.5rem 1.5rem 1rem;
+    line-height: 1.55;
+}
+
+.path-local-delegateaccount .modal .modal-footer,
+.path-admin-local-delegateaccount .modal .modal-footer,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-footer {
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem 1.25rem;
+    border-top: 0;
+}
+
+.path-local-delegateaccount .modal .modal-footer > *,
+.path-admin-local-delegateaccount .modal .modal-footer > *,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-footer > * {
+    margin: 0;
+}
+
+.path-local-delegateaccount .modal .modal-dialog-scrollable .modal-body,
+.path-admin-local-delegateaccount .modal .modal-dialog-scrollable .modal-body,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-dialog-scrollable .modal-body {
+    border-top: 1px solid var(--dd-hairline);
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
+.path-local-delegateaccount .modal.show .modal-dialog,
+.path-admin-local-delegateaccount .modal.show .modal-dialog,
+#page-admin-setting-local_delegateaccount_settings .modal.show .modal-dialog {
+    animation: lda-dialog 280ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes lda-dialog {
+
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .path-local-delegateaccount .modal.show .modal-dialog,
+    .path-admin-local-delegateaccount .modal.show .modal-dialog,
+    #page-admin-setting-local_delegateaccount_settings .modal.show .modal-dialog {
+        animation: none;
     }
 }

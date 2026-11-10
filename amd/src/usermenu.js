@@ -14,7 +14,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Enhances the native delegated-account fallback link into a Moodle carousel submenu.
+ * Enhances the native delegated-account fallback link into a Moodle carousel submenu
+ * and keeps the delegated-account guided tour open until it is finished.
  *
  * @module     local_delegateaccount/usermenu
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
@@ -27,10 +28,59 @@ import $ from 'jquery';
 const SOURCE = '[data-region="local-delegateaccount-usermenu-source"]';
 const FALLBACK_LINK = 'a[href*="/local/delegateaccount/pages/accounts.php"]';
 
+// Controls that the guided tour highlights while it waits for the person to click them. The submenu link is
+// found by the attribute that init() gives it, because its href is replaced with "#" once the submenu is built.
+const TOUR_TARGETS = [
+    '#user-menu-toggle',
+    'a[data-carousel-target-id="carousel-item-delegatedaccounts"]',
+    '#user-action-menu',
+].map(selector => `${selector}[data-flexitour="highlight"]`).join(', ');
+
+// The only places that stay clickable while the tour runs: the control of the current step, the delegated
+// accounts in the last step (the highlighted user menu also holds the back arrow and the "view all" link),
+// and the buttons of the tour popover. A click anywhere else in the popover is blocked too, because it lies outside
+// the open user menu and would make Bootstrap close the menu under the tour.
+const TOUR_CLICKABLE = [
+    '#user-menu-toggle[data-flexitour="highlight"]',
+    'a[data-carousel-target-id="carousel-item-delegatedaccounts"][data-flexitour="highlight"]',
+    `#user-action-menu[data-flexitour="highlight"] #carousel-item-delegatedaccounts .items a:not(${FALLBACK_LINK})`,
+    '[data-flexitour="container"] button[data-role]',
+].join(', ');
+
+/**
+ * Stops the guided tour from being closed by clicking anywhere except the control the current step asks for,
+ * or by pressing Escape.
+ *
+ * The padding the tour leaves around the highlighted control, the dark area, the rest of the page, the other
+ * links of the user menu and the popover text are blocked.
+ *
+ * It only applies to the delegated-account tour: one of its controls must be highlighted and the delegated
+ * submenu must exist, which is the case only for people who hold an active delegation. The listeners run in
+ * the capture phase, before the tour and the user menu see the event.
+ */
+const keepTourOpen = () => {
+    const tourIsActive = () => document.querySelector(TOUR_TARGETS) !== null &&
+        document.querySelector(`#carousel-item-delegatedaccounts, ${SOURCE}`) !== null;
+
+    document.addEventListener('click', event => {
+        if (tourIsActive() && !event.target.closest(TOUR_CLICKABLE)) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, true);
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && tourIsActive()) {
+            event.stopPropagation();
+        }
+    }, true);
+};
+
 /**
  * Adds the prepared submenu to Moodle's existing user-menu carousel.
  */
 export const init = () => {
+    keepTourOpen();
+
     const source = document.querySelector(SOURCE);
     const carousel = document.querySelector('.usermenu #usermenu-carousel .carousel-inner');
     const main = document.querySelector('.usermenu #carousel-item-main');
