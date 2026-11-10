@@ -1551,14 +1551,14 @@
     min-height: 100%;
 }
 
-.lda .list-group-flush:not([role]) > .list-group-item.list-group-item-light,
-.lda .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover,
-.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light,
-.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover,
-.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light,
-.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover,
-#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light,
-#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover {
+.lda .list-group-flush:not([role]) > .list-group-item-light,
+.lda .list-group-flush:not([role]) > .list-group-item-light:hover,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:hover,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light:hover {
     position: sticky;
     top: 0;
     z-index: 1;
@@ -1578,14 +1578,14 @@
     text-transform: uppercase;
 }
 
-.lda .list-group-flush:not([role]) > .list-group-item.list-group-item-light::before,
-.lda .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover::before,
-.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light::before,
-.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover::before,
-.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light::before,
-.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover::before,
-#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light::before,
-#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover::before {
+.lda .list-group-flush:not([role]) > .list-group-item-light::before,
+.lda .list-group-flush:not([role]) > .list-group-item-light:hover::before,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light::before,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:hover::before,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light::before,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:hover::before,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light::before,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light:hover::before {
     content: "";
     flex: none;
     width: 3px;
@@ -1594,21 +1594,21 @@
     background-color: var(--dd-primary);
 }
 
-.lda .list-group-flush:not([role]) > .list-group-item.list-group-item-light:first-child,
-.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light:first-child,
-.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light:first-child,
-#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-light:first-child {
+.lda .list-group-flush:not([role]) > .list-group-item-light:first-child,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:first-child,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-light:first-child,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-light:first-child {
     border-top: 0;
 }
 
-.lda .list-group-flush:not([role]) > .list-group-item.list-group-item-primary,
-.lda .list-group-flush:not([role]) > .list-group-item.list-group-item-primary:hover,
-.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-primary,
-.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-primary:hover,
-.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-primary,
-.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-primary:hover,
-#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-primary,
-#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item.list-group-item-primary:hover {
+.lda .list-group-flush:not([role]) > .list-group-item-primary,
+.lda .list-group-flush:not([role]) > .list-group-item-primary:hover,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-primary,
+.path-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-primary:hover,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-primary,
+.path-admin-local-delegateaccount .modal .list-group-flush:not([role]) > .list-group-item-primary:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-primary,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-flush:not([role]) > .list-group-item-primary:hover {
     box-shadow: inset 3px 0 0 var(--dd-primary);
     background-color: var(--dd-primary-soft);
     color: var(--dd-ink);

@@ -133,8 +133,8 @@
 
     // The name of a component above its capabilities: a darker band, like the head of a category, kept in sight while the
     // box scrolls.
-    & .list-group-flush:not([role]) > .list-group-item.list-group-item-light,
-    & .list-group-flush:not([role]) > .list-group-item.list-group-item-light:hover {
+    & .list-group-flush:not([role]) > .list-group-item-light,
+    & .list-group-flush:not([role]) > .list-group-item-light:hover {
         position: sticky;
         top: 0;
         z-index: 1;
@@ -163,13 +163,13 @@
         }
     }
 
-    & .list-group-flush:not([role]) > .list-group-item.list-group-item-light:first-child {
+    & .list-group-flush:not([role]) > .list-group-item-light:first-child {
         border-top: 0;
     }
 
     // A capability changed and not saved yet.
-    & .list-group-flush:not([role]) > .list-group-item.list-group-item-primary,
-    & .list-group-flush:not([role]) > .list-group-item.list-group-item-primary:hover {
+    & .list-group-flush:not([role]) > .list-group-item-primary,
+    & .list-group-flush:not([role]) > .list-group-item-primary:hover {
         box-shadow: inset 3px 0 0 var(--dd-primary);
         background-color: var(--dd-primary-soft);
         color: var(--dd-ink);
