@@ -19,13 +19,21 @@ namespace local_delegateaccount;
 use core_external\external_api;
 use local_delegateaccount\external\create_delegation;
 use local_delegateaccount\external\create_delegations;
+use local_delegateaccount\external\get_activity_list;
 use local_delegateaccount\external\get_authorised_user_options;
 use local_delegateaccount\external\get_delegated_account_options;
 use local_delegateaccount\external\get_delegation_activity;
+use local_delegateaccount\external\get_delegation_ids;
+use local_delegateaccount\external\get_delegation_list;
 use local_delegateaccount\external\get_delegations;
+use local_delegateaccount\external\get_my_accounts;
+use local_delegateaccount\external\get_session_permissions;
 use local_delegateaccount\external\get_user_delegations;
+use local_delegateaccount\external\get_user_list;
 use local_delegateaccount\external\revoke_delegations;
+use local_delegateaccount\external\save_session_permissions;
 use local_delegateaccount\external\update_delegations;
+use local_delegateaccount\external\update_session_permissions;
 
 /**
  * Tests the granular delegated-account external API.
@@ -35,16 +43,16 @@ use local_delegateaccount\external\update_delegations;
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \local_delegateaccount\external\create_delegation
- * @covers     \local_delegateaccount\external\create_delegations
- * @covers     \local_delegateaccount\external\get_authorised_user_options
- * @covers     \local_delegateaccount\external\get_delegated_account_options
- * @covers     \local_delegateaccount\external\get_delegation_activity
- * @covers     \local_delegateaccount\external\get_delegations
- * @covers     \local_delegateaccount\external\get_user_delegations
- * @covers     \local_delegateaccount\external\revoke_delegations
- * @covers     \local_delegateaccount\external\update_delegations
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\create_delegation::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\create_delegations::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_authorised_user_options::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_delegated_account_options::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_delegation_activity::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_delegations::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_user_delegations::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\revoke_delegations::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\update_delegations::class)]
 final class delegation_api_test extends \advanced_testcase {
     /**
      * Verifies that every public function is backed by its own external class.
@@ -65,6 +73,14 @@ final class delegation_api_test extends \advanced_testcase {
             'local_delegateaccount_get_delegation_activity' => get_delegation_activity::class,
             'local_delegateaccount_get_delegated_account_options' => get_delegated_account_options::class,
             'local_delegateaccount_get_authorised_user_options' => get_authorised_user_options::class,
+            'local_delegateaccount_get_user_list' => get_user_list::class,
+            'local_delegateaccount_get_delegation_list' => get_delegation_list::class,
+            'local_delegateaccount_get_delegation_ids' => get_delegation_ids::class,
+            'local_delegateaccount_get_activity_list' => get_activity_list::class,
+            'local_delegateaccount_get_my_accounts' => get_my_accounts::class,
+            'local_delegateaccount_get_session_permissions' => get_session_permissions::class,
+            'local_delegateaccount_save_session_permissions' => save_session_permissions::class,
+            'local_delegateaccount_update_session_permissions' => update_session_permissions::class,
         ];
 
         $this->assertSame(array_keys($expectedclasses), array_keys($definitions));

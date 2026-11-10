@@ -17,6 +17,7 @@
 namespace local_delegateaccount\hook;
 
 use local_delegateaccount\manager;
+use local_delegateaccount\session_capabilities;
 
 /**
  * Ends delegated sessions whose delegation stopped being valid while they were open.
@@ -55,8 +56,13 @@ final class after_config {
             return;
         }
 
-        if ($ended && !AJAX_SCRIPT) {
-            redirect(new \moodle_url('/login/index.php', [self::ENDED_PARAM => 1]));
+        if ($ended) {
+            if (!AJAX_SCRIPT) {
+                redirect(new \moodle_url('/login/index.php', [self::ENDED_PARAM => 1]));
+            }
+            return;
         }
+
+        session_capabilities::apply();
     }
 }

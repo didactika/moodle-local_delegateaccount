@@ -1,0 +1,38 @@
+{
+  "ActivityList": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "BulkPermissions": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "CreateButton": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "DelegationActions": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "DelegationList": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "MyAccounts": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "PeopleList": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "PermissionEditor": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "UserMenu": {
+    "eject": "risky",
+    "wrap": "risky"
+  }
+}

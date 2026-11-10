@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,10 +12,10 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Reports activity performed through one delegated account relationship.
+ * What was done through one delegation, read from the site's log store.
  *
  * @package    local_delegateaccount
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
@@ -25,97 +25,60 @@
 
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/tablelib.php');
 
-use local_delegateaccount\form\activity_filter_form;
+use local_delegateaccount\manager;
+use local_delegateaccount\output\exporter;
 use local_delegateaccount\permission;
-use local_delegateaccount\table\delegated_activity_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 permission::require_action(permission::VIEWACTIVITY);
 
 $realuserid = required_param('realuserid', PARAM_INT);
 $delegationid = required_param('delegationid', PARAM_INT);
-$delegation = $DB->get_record('local_delegateaccount', [
-    'id' => $delegationid,
-    'realuserid' => $realuserid,
-], '*', MUST_EXIST);
+$delegation = $DB->get_record('local_delegateaccount', ['id' => $delegationid, 'realuserid' => $realuserid], '*', MUST_EXIST);
 $realuser = $DB->get_record('user', ['id' => $realuserid, 'deleted' => 0], '*', MUST_EXIST);
 $delegateduser = $DB->get_record('user', ['id' => $delegation->delegateduserid, 'deleted' => 0], '*', MUST_EXIST);
 
-$accessend = \local_delegateaccount\manager::get_delegation_access_end($delegation);
-$filterform = new activity_filter_form(new moodle_url('/local/delegateaccount/pages/activity.php'), [
-    'realuserid' => $realuserid,
-    'delegationid' => $delegationid,
-    'periodstart' => (int)$delegation->timestart,
-    'periodend' => $accessend > 0 ? $accessend : time(),
-]);
-$submittedfilters = $filterform->get_data();
-// A submitted form sends each date as day, month and year fields; pagination links send a timestamp.
-$formsubmitted = $filterform->is_submitted();
-$datefromparam = $formsubmitted ? 0 : optional_param('datefrom', 0, PARAM_INT);
-$datetoparam = $formsubmitted ? 0 : optional_param('dateto', 0, PARAM_INT);
-$filters = [
-    'datefrom' => $submittedfilters ? (int)$submittedfilters->datefrom : $datefromparam,
-    'dateto' => $submittedfilters ? (int)$submittedfilters->dateto : $datetoparam,
-    'component' => $submittedfilters ? trim($submittedfilters->component) : optional_param('component', '', PARAM_TEXT),
-    'action' => $submittedfilters ? trim($submittedfilters->action) : optional_param('action', '', PARAM_TEXT),
-];
-
-$title = get_string('delegated_activity_for', 'local_delegateaccount', (object)[
-    'authoriseduser' => fullname($realuser),
-    'delegateduser' => fullname($delegateduser),
-]);
-$url = new moodle_url('/local/delegateaccount/pages/activity.php', [
-    'realuserid' => $realuserid,
-    'delegationid' => $delegationid,
-]);
-foreach ($filters as $name => $value) {
-    if ($value !== '' && $value !== 0) {
-        $url->param($name, $value);
-    }
-}
-$periodend = $accessend > 0
-    ? userdate($accessend)
-    : get_string('delegation_no_end', 'local_delegateaccount');
-
+$params = ['realuserid' => $realuserid, 'delegationid' => $delegationid];
+$url = new moodle_url('/local/delegateaccount/pages/activity.php', $params);
+$names = (object)['authoriseduser' => fullname($realuser), 'delegateduser' => fullname($delegateduser)];
+$title = get_string('delegated_activity_for', 'local_delegateaccount', $names);
 $PAGE->set_url($url);
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
-$PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
+$PAGE->set_heading(get_string('view_delegated_activity', 'local_delegateaccount'));
+$manageurl = new moodle_url('/local/delegateaccount/pages/manage.php');
+$PAGE->navbar->add(get_string('manage_accounts', 'local_delegateaccount'), $manageurl);
+$PAGE->navbar->add(fullname($realuser), new moodle_url('/local/delegateaccount/pages/delegations.php', [
+    'realuserid' => $realuserid,
+]));
+$PAGE->navbar->add(
+    get_string('delegation_pair', 'local_delegateaccount', $names),
+    new moodle_url('/local/delegateaccount/pages/delegation.php', $params)
+);
+$PAGE->navbar->add(get_string('view_delegated_activity', 'local_delegateaccount'), $url);
+
+
+// The date fields only offer the days of the delegation.
+$accessend = manager::get_delegation_access_end($delegation);
+$timezone = core_date::get_user_timezone_object();
+$day = fn(int $time): string => (new DateTimeImmutable('@' . $time))->setTimezone($timezone)->format('Y-m-d');
 
 echo $OUTPUT->header();
-echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
-    'description' => get_string('delegated_activity_description', 'local_delegateaccount', (object)[
-        'authoriseduser' => fullname($realuser),
-        'delegateduser' => fullname($delegateduser),
+echo $OUTPUT->render_from_template('local_delegateaccount/activity/page', [
+    'id' => 'lda-activity',
+    'config' => json_encode(['delegationid' => $delegationid]),
+    'backurl' => (new moodle_url('/local/delegateaccount/pages/delegation.php', $params))->out(false),
+    'subtitle' => get_string('activity_subtitle', 'local_delegateaccount', $names),
+    'period' => get_string('activity_period', 'local_delegateaccount', (object)[
         'timestart' => userdate((int)$delegation->timestart),
-        'timeend' => $periodend,
+        'timeend' => $accessend > 0 ? userdate($accessend) : get_string('delegation_no_end', 'local_delegateaccount'),
+    ]),
+    'delegateduser' => exporter::user($delegateduser) + ['size' => 50],
+    'list' => \local_delegateaccount\output\page::render('ActivityList', [
+        'id' => 'lda-activity',
+        'delegationid' => $delegationid,
+        'mindate' => $day((int)$delegation->timestart),
+        'maxdate' => $day($accessend > 0 ? min($accessend, time()) : time()),
     ]),
 ]);
-if ($submittedfilters || array_filter($filters, static fn($value): bool => $value !== '' && $value !== 0)) {
-    $filterform->set_data($filters);
-}
-ob_start();
-$filterform->display();
-$filterformhtml = ob_get_clean();
-$hasfilters = array_filter($filters, static fn($value): bool => $value !== '' && $value !== 0) !== [];
-echo $OUTPUT->render_from_template('local_delegateaccount/report/activity_toolbar', [
-    'backurl' => (new moodle_url('/local/delegateaccount/pages/delegations.php', [
-        'realuserid' => $realuserid,
-    ]))->out(false),
-    'backlabel' => get_string('back'),
-    'filterid' => 'local-delegateaccount-activity-filters',
-    'filterlabel' => get_string('filters'),
-    'filterform' => $filterformhtml,
-    'hasfilters' => $hasfilters,
-    'reseturl' => (new moodle_url('/local/delegateaccount/pages/activity.php', [
-        'realuserid' => $realuserid,
-        'delegationid' => $delegationid,
-    ]))->out(false),
-    'resetlabel' => get_string('reset'),
-]);
-
-$table = new delegated_activity_table($url, $delegation, $filters);
-$table->out(25, true);
 echo $OUTPUT->footer();

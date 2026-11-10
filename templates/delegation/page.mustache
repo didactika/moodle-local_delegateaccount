@@ -1,0 +1,140 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_delegateaccount/delegation/page
+
+    One delegation in depth: who may open which account, its status and actions, and its sections as tabs: the summary,
+    with its details and its history, and the session permissions.
+
+    @copyright  2026 Didactika.org
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+    Example context (json):
+    {
+        "id": 3,
+        "backurl": "https://moodle.example/local/delegateaccount/pages/delegations.php?realuserid=7",
+        "label": "Jane Doe as John Smith",
+        "statuslabel": "Active",
+        "statustone": "success",
+        "realuser": {
+            "fullname": "Jane Doe",
+            "email": "jane@example.com",
+            "hasimage": false,
+            "initials": "JD"
+        },
+        "delegateduser": {
+            "fullname": "John Smith",
+            "email": "john@example.com",
+            "hasimage": false,
+            "initials": "JS"
+        },
+        "canupdate": true,
+        "canrevoke": true,
+        "activityurl": "https://moodle.example/local/delegateaccount/pages/activity.php?realuserid=7&delegationid=3",
+        "realuserid": 7,
+        "tabs": [
+            {
+                "label": "Summary",
+                "url": "https://moodle.example/x",
+                "active": true
+            },
+            {
+                "label": "Session permissions",
+                "url": "https://moodle.example/y",
+                "active": false,
+                "count": 2
+            }
+        ],
+        "summary": true,
+        "details": [
+            {
+                "label": "Access starts",
+                "value": "1 November 2026"
+            }
+        ],
+        "history": [
+            {
+                "title": "Created by Admin User",
+                "meta": "1 November 2026",
+                "tone": "success"
+            }
+        ],
+        "editor": "",
+        "actions": "<div></div>"
+    }
+}}
+<div class="lda" data-region="delegation" data-id="{{id}}" data-realuserid="{{realuserid}}">
+    <a class="btn btn-link px-0" href="{{backurl}}">{{#pix}}i/previous, core{{/pix}} {{#str}}back_to_delegations, local_delegateaccount{{/str}}</a>
+    <header class="dd-page-header">
+        <div class="dd-page-header-row">
+            <div class="dd-page-header-main">
+                {{#delegateduser}}{{> local_delegateaccount/shared/avatar }}{{/delegateduser}}
+                <div>
+                    <p class="dd-page-title">{{label}}</p>
+                    <p class="dd-page-subtitle"><span class="badge badge-soft badge-dot text-bg-{{statustone}}">{{statuslabel}}</span></p>
+                </div>
+            </div>
+            {{{actions}}}
+        </div>
+    </header>
+    <nav aria-label="{{label}}">
+        <ul class="nav nav-tabs">
+            {{#tabs}}
+                <li class="nav-item">
+                    <a class="nav-link{{#active}} active{{/active}}" href="{{url}}"{{#active}} aria-current="page"{{/active}}>{{label}}{{#count}} <span class="badge badge-soft text-bg-primary">{{count}}</span>{{/count}}</a>
+                </li>
+            {{/tabs}}
+        </ul>
+    </nav>
+    {{#summary}}
+        <div class="row">
+            <div class="col-lg-6 mb-3 mb-lg-0">
+            <section class="card h-100"><div class="card-body">
+                <h2 class="card-title">{{#str}}details{{/str}}</h2>
+                <dl class="dd-dl">
+                    {{#realuser}}
+                        <dt>{{#str}}authoriseduser, local_delegateaccount{{/str}}</dt>
+                        <dd>{{> local_delegateaccount/shared/person }}</dd>
+                    {{/realuser}}
+                    {{#delegateduser}}
+                        <dt>{{#str}}delegateduser, local_delegateaccount{{/str}}</dt>
+                        <dd>{{> local_delegateaccount/shared/person }}</dd>
+                    {{/delegateduser}}
+                    {{#details}}
+                        <dt>{{label}}</dt>
+                        <dd>{{value}}</dd>
+                    {{/details}}
+                </dl>
+            </div></section>
+            </div>
+            <div class="col-lg-6">
+            <section class="card h-100"><div class="card-body">
+                <h2 class="card-title">{{#str}}delegation_history, local_delegateaccount{{/str}}</h2>
+                <ol class="dd-timeline">
+                    {{#history}}
+                        <li class="dd-timeline-item{{#tone}} is-{{tone}}{{/tone}}">
+                            <span class="dd-timeline-title">{{title}}</span>
+                            <span class="dd-timeline-meta">{{meta}}</span>
+                        </li>
+                    {{/history}}
+                </ol>
+            </div></section>
+            </div>
+        </div>
+    {{/summary}}
+    {{{editor}}}
+</div>

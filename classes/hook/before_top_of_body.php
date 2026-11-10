@@ -28,14 +28,14 @@ use local_delegateaccount\manager;
  */
 final class before_top_of_body {
     /**
-     * Adds an inert template that AMD moves into Moodle's user-menu carousel.
+     * Adds the submenu, which a React component moves into Moodle's user-menu carousel.
      *
      * @param \core\hook\output\before_standard_top_of_body_html_generation $hook Output hook.
      */
     public static function execute(
         \core\hook\output\before_standard_top_of_body_html_generation $hook
     ): void {
-        global $PAGE, $USER;
+        global $USER;
 
         if (
             !isloggedin() ||
@@ -81,6 +81,7 @@ final class before_top_of_body {
             'viewalllabel' => get_string('view_all_delegated_accounts', 'local_delegateaccount'),
         ]);
         $hook->add_html('<template data-region="local-delegateaccount-usermenu-source">' . $html . '</template>');
-        $PAGE->requires->js_call_amd('local_delegateaccount/usermenu', 'init');
+        // The React component local_delegateaccount/UserMenu moves the submenu into the carousel of the user menu.
+        $hook->add_html($hook->renderer->render(new \local_delegateaccount\output\component('UserMenu', ['html' => $html], false)));
     }
 }

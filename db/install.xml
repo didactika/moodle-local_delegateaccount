@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/delegateaccount/db" VERSION="2026100800" COMMENT="XMLDB file for local_delegateaccount"
+<XMLDB PATH="local/delegateaccount/db" VERSION="2026110600" COMMENT="XMLDB file for local_delegateaccount"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -32,6 +32,24 @@
                 <INDEX NAME="realuser_active" UNIQUE="false" FIELDS="realuserid, activekey" COMMENT="Supports authorised-user delegation lists"/>
                 <INDEX NAME="delegated_active" UNIQUE="false" FIELDS="delegateduserid, activekey" COMMENT="Supports target-account delegation lists"/>
                 <INDEX NAME="lifecycle" UNIQUE="false" FIELDS="activekey, timestart, timeend" COMMENT="Supports lifecycle filtering"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="local_delegateaccount_caps" COMMENT="Permission overrides applied to the capabilities of delegated sessions">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="delegationid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The delegation the override belongs to, or zero for every delegated session of the site"/>
+                <FIELD NAME="capability" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The capability that is overridden"/>
+                <FIELD NAME="permission" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp when the override was last changed"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the user who last changed the override"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for local_delegateaccount_caps"/>
+                <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id" COMMENT="Foreign key referencing the user who changed the override"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="delegation_capability" UNIQUE="true" FIELDS="delegationid, capability" COMMENT="One override for each capability of a delegation"/>
+                <INDEX NAME="capability" UNIQUE="false" FIELDS="capability" COMMENT="Supports bulk changes of one capability"/>
             </INDEXES>
         </TABLE>
     </TABLES>

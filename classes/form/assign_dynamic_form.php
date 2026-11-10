@@ -66,7 +66,7 @@ final class assign_dynamic_form extends dynamic_form {
             [
                 'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
-                'ajax' => 'local_delegateaccount/form_user_selector',
+                'ajax' => 'core/esm!@moodle/lms/local_delegateaccount/userSelector',
                 'data-ws' => 'local_delegateaccount_get_authorised_user_options',
             ]
         );
@@ -87,7 +87,7 @@ final class assign_dynamic_form extends dynamic_form {
             [
                 'multiple' => true,
                 'placeholder' => get_string('search', 'core'),
-                'ajax' => 'local_delegateaccount/form_user_selector',
+                'ajax' => 'core/esm!@moodle/lms/local_delegateaccount/userSelector',
                 'data-realuserid' => $realuserid,
             ]
         );
@@ -166,7 +166,7 @@ final class assign_dynamic_form extends dynamic_form {
     /**
      * Creates the requested delegation matrix.
      *
-     * @return array Submission result consumed by AMD.
+     * @return array Submission result consumed by the screen that opened the form.
      */
     public function process_dynamic_submission(): array {
         $data = $this->get_data();
@@ -187,16 +187,22 @@ final class assign_dynamic_form extends dynamic_form {
                 ]
             );
 
+            // The screen that opened the form shows the result and refreshes its list, so nothing waits for the next page.
             if ($createdcount > 0) {
-                \core\notification::success(get_string('delegations_created_success', 'local_delegateaccount'));
-            } else {
-                \core\notification::warning(get_string('no_delegations_created', 'local_delegateaccount'));
+                return [
+                    'createdcount' => $createdcount,
+                    'type' => 'success',
+                    'message' => get_string('delegations_created_count', 'local_delegateaccount', $createdcount),
+                ];
             }
 
-            return ['createdcount' => $createdcount];
+            return [
+                'createdcount' => 0,
+                'type' => 'warning',
+                'message' => get_string('no_delegations_created', 'local_delegateaccount'),
+            ];
         } catch (\moodle_exception $e) {
-            \core\notification::error($e->getMessage());
-            return ['createdcount' => 0];
+            return ['createdcount' => 0, 'type' => 'danger', 'message' => $e->getMessage()];
         }
     }
 

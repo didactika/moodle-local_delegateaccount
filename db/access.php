@@ -87,4 +87,14 @@ $capabilities = [
             'manager' => CAP_ALLOW,
         ],
     ],
+
+    // Changing what a delegated session may do can give it capabilities its account does not have, so no role gets this by
+    // default and local/delegateaccount:manage does not include it.
+    'local/delegateaccount:managepermissions' => [
+        'riskbitmask' => RISK_CONFIG | RISK_PERSONAL | RISK_XSS | RISK_SPAM | RISK_DATALOSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+        ],
+    ],
 ];

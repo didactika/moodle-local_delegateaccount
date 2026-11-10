@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,13 +12,12 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Management dashboard for delegated accounts.
+ * Management page of delegated accounts: the people who may use them, the ones who lost the permission, and every delegation.
  *
  * @package    local_delegateaccount
- * @author     Miguel Rivas Morantes <miguelrivasmorantes@gmail.com>
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,92 +25,61 @@
 
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/tablelib.php');
 
-use local_delegateaccount\form\manage_filter_form;
+use local_delegateaccount\local\listing;
 use local_delegateaccount\manager;
+use local_delegateaccount\output\page;
 use local_delegateaccount\permission;
-use local_delegateaccount\table\delegated_users_table;
 
 admin_externalpage_setup('local_delegateaccount_manage');
 permission::require_action(permission::VIEW);
 
-$tab = optional_param('tab', 'authorised', PARAM_ALPHA);
-if (!in_array($tab, ['authorised', 'historical'], true)) {
-    $tab = 'authorised';
+$tab = optional_param('tab', listing::SCOPE_AUTHORISED, PARAM_ALPHA);
+if (!in_array($tab, [listing::SCOPE_AUTHORISED, listing::SCOPE_HISTORICAL, 'delegations'], true)) {
+    $tab = listing::SCOPE_AUTHORISED;
 }
-$filters = [
-    'search' => optional_param('search', '', PARAM_TEXT),
-    'delegationstatus' => optional_param('delegationstatus', '', PARAM_ALPHA),
-];
-if (
-    !in_array(
-        $filters['delegationstatus'],
-        [
-            '',
-            manager::STATUS_ACTIVE,
-            manager::STATUS_SCHEDULED,
-            manager::STATUS_EXPIRED,
-            manager::STATUS_REVOKED,
-            'none',
-        ],
-        true
-    )
-) {
-    $filters['delegationstatus'] = '';
-}
-$filterparams = array_filter($filters, static function (string $value): bool {
-    return $value !== '';
-});
-$dashboardurl = new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => $tab] + $filterparams);
 
-$PAGE->set_url($dashboardurl);
+$url = new moodle_url('/local/delegateaccount/pages/manage.php', $tab === listing::SCOPE_AUTHORISED ? [] : ['tab' => $tab]);
+$PAGE->set_url($url);
 $PAGE->set_title(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
-$PAGE->requires->js_call_amd('local_delegateaccount/filter_panel', 'init');
-$PAGE->requires->js_call_amd('local_delegateaccount/management_modals', 'init');
-echo $OUTPUT->header();
-echo $OUTPUT->render_from_template('local_delegateaccount/report/description', [
-    'description' => get_string('manage_' . $tab . '_users_description', 'local_delegateaccount'),
-]);
-if ($tab === 'authorised' && ($hint = manager::get_role_setup_hint()) !== null) {
-    echo $OUTPUT->notification($hint, \core\output\notification::NOTIFY_INFO, false);
+
+$tabs = [];
+foreach (
+    [
+        listing::SCOPE_AUTHORISED => 'manage_authorised_users',
+        listing::SCOPE_HISTORICAL => 'manage_historical_users',
+        'delegations' => 'manage_delegations_tab',
+    ] as $key => $label
+) {
+    $tabs[] = [
+        'key' => $key,
+        'label' => get_string($label, 'local_delegateaccount'),
+        'url' => (new moodle_url(
+            '/local/delegateaccount/pages/manage.php',
+            $key === listing::SCOPE_AUTHORISED ? [] : ['tab' => $key]
+        ))
+            ->out(false),
+        'active' => $key === $tab,
+    ];
 }
 
-$tabs = [
-    new tabobject(
-        'authorised',
-        new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => 'authorised'] + $filterparams),
-        get_string('manage_authorised_users', 'local_delegateaccount')
-    ),
-    new tabobject(
-        'historical',
-        new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => 'historical'] + $filterparams),
-        get_string('manage_historical_users', 'local_delegateaccount')
-    ),
+$context = [
+    'create' => permission::has(permission::CREATE) ? page::create_button(0) : '',
+    'settingsurl' => has_capability('moodle/site:config', context_system::instance())
+        ? (new moodle_url('/admin/settings.php', ['section' => 'local_delegateaccount_settings']))->out(false)
+        : '',
+    'hint' => $tab === listing::SCOPE_AUTHORISED ? (manager::get_role_setup_hint() ?? '') : '',
+    'tabs' => $tabs,
 ];
-echo $OUTPUT->tabtree($tabs, $tab);
+if ($tab === 'delegations') {
+    $context['description'] = get_string('all_delegations_description', 'local_delegateaccount');
+    $context['list'] = page::delegation_list(0, 'lda-delegations');
+} else {
+    $context['description'] = get_string('manage_' . $tab . '_users_description', 'local_delegateaccount');
+    $context['list'] = page::people_list($tab, 'lda-people');
+}
 
-$filterform = new manage_filter_form(
-    new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => $tab]),
-    ['tab' => $tab]
-);
-$filterform->set_data($filters);
-ob_start();
-$filterform->display();
-$filterformhtml = ob_get_clean();
-$cancreate = $tab === 'authorised' && permission::has(permission::CREATE);
-echo $OUTPUT->render_from_template('local_delegateaccount/manage/actions', [
-    'cancreate' => $cancreate,
-    'addlabel' => get_string('create_delegations', 'local_delegateaccount'),
-    'filterlabel' => get_string('filters'),
-    'filterid' => 'local-delegateaccount-manage-filters',
-    'filterform' => $filterformhtml,
-    'hasfilters' => !empty($filterparams),
-    'reseturl' => (new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => $tab]))->out(false),
-    'resetlabel' => get_string('reset'),
-]);
-
-$table = new delegated_users_table($dashboardurl, $tab === 'authorised', $filters);
-$table->out(25, true);
+echo $OUTPUT->header();
+echo $OUTPUT->render_from_template('local_delegateaccount/manage/page', $context);
 echo $OUTPUT->footer();

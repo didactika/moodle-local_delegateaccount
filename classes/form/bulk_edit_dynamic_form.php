@@ -86,7 +86,7 @@ final class bulk_edit_dynamic_form extends dynamic_form {
     /**
      * Applies the common lifecycle settings atomically.
      *
-     * @return array Submission result consumed by AMD.
+     * @return array Submission result consumed by the screen that opened the form.
      */
     public function process_dynamic_submission(): array {
         $data = $this->get_data();
@@ -104,12 +104,11 @@ final class bulk_edit_dynamic_form extends dynamic_form {
             $message = $updatedcount === 1
                 ? get_string('delegation_updated_success', 'local_delegateaccount')
                 : get_string('delegations_updated_success', 'local_delegateaccount', $updatedcount);
-            \core\notification::success($message);
 
-            return ['updatedcount' => $updatedcount];
+            // The screen that opened the form shows the result and refreshes its list.
+            return ['updatedcount' => $updatedcount, 'type' => 'success', 'message' => $message];
         } catch (\moodle_exception $e) {
-            \core\notification::error($e->getMessage());
-            return ['updatedcount' => 0];
+            return ['updatedcount' => 0, 'type' => 'danger', 'message' => $e->getMessage()];
         }
     }
 
@@ -123,11 +122,10 @@ final class bulk_edit_dynamic_form extends dynamic_form {
         $realuserid = $this->optional_param('realuserid', 0, PARAM_INT);
         $ids = array_filter(array_map('intval', explode(',', $delegationids)));
         $firstid = reset($ids) ?: 0;
-        $record = $DB->get_record('local_delegateaccount', [
-            'id' => $firstid,
-            'realuserid' => $realuserid,
-            'activekey' => 0,
-        ], '*', MUST_EXIST);
+        // Zero is a selection from the list of every delegation, which can belong to several people.
+        $conditions = ['id' => $firstid, 'activekey' => 0] + ($realuserid > 0 ? ['realuserid' => $realuserid] : []);
+        $record = $DB->get_record('local_delegateaccount', $conditions, '*', MUST_EXIST);
+        $record->realuserid = $realuserid;
         $record->delegationids = implode(',', $ids);
         $this->set_data($record);
     }
@@ -138,8 +136,11 @@ final class bulk_edit_dynamic_form extends dynamic_form {
      * @return moodle_url Delegation page URL.
      */
     protected function get_page_url_for_dynamic_submission(): moodle_url {
-        return new moodle_url('/local/delegateaccount/pages/delegations.php', [
-            'realuserid' => $this->optional_param('realuserid', 0, PARAM_INT),
-        ]);
+        $realuserid = $this->optional_param('realuserid', 0, PARAM_INT);
+        if ($realuserid === 0) {
+            return new moodle_url('/local/delegateaccount/pages/manage.php', ['tab' => 'delegations']);
+        }
+
+        return new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid]);
     }
 }

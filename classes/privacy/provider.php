@@ -57,6 +57,13 @@ class provider implements
             'userrevoked' => 'privacy:metadata:local_delegateaccount:userrevoked',
             'notificationmode' => 'privacy:metadata:local_delegateaccount:notificationmode',
         ], 'privacy:metadata:local_delegateaccount');
+        $collection->add_database_table('local_delegateaccount_caps', [
+            'delegationid' => 'privacy:metadata:local_delegateaccount_caps:delegationid',
+            'capability' => 'privacy:metadata:local_delegateaccount_caps:capability',
+            'permission' => 'privacy:metadata:local_delegateaccount_caps:permission',
+            'timemodified' => 'privacy:metadata:local_delegateaccount_caps:timemodified',
+            'usermodified' => 'privacy:metadata:local_delegateaccount_caps:usermodified',
+        ], 'privacy:metadata:local_delegateaccount_caps');
 
         return $collection;
     }
@@ -74,7 +81,7 @@ class provider implements
                FROM {context} ctx
               WHERE ctx.contextlevel = :contextlevel
                 AND ctx.instanceid = :userid
-                AND EXISTS (
+                AND (EXISTS (
                     SELECT 1
                       FROM {local_delegateaccount} da
                      WHERE da.realuserid = :realuserid
@@ -82,7 +89,11 @@ class provider implements
                         OR da.usercreated = :usercreated
                         OR da.usermodified = :usermodified
                         OR da.userrevoked = :userrevoked
-                )",
+                ) OR EXISTS (
+                    SELECT 1
+                      FROM {local_delegateaccount_caps} dc
+                     WHERE dc.usermodified = :capsusermodified
+                ))",
             [
                 'contextlevel' => CONTEXT_USER,
                 'userid' => $userid,
@@ -91,6 +102,7 @@ class provider implements
                 'usercreated' => $userid,
                 'usermodified' => $userid,
                 'userrevoked' => $userid,
+                'capsusermodified' => $userid,
             ]
         );
 
@@ -129,12 +141,17 @@ class provider implements
             SELECT userrevoked AS userid
               FROM {local_delegateaccount}
              WHERE userrevoked = :userrevoked
+            UNION
+            SELECT usermodified AS userid
+              FROM {local_delegateaccount_caps}
+             WHERE usermodified = :capsusermodified
         ", [
             'realuserid' => $userid,
             'delegateduserid' => $userid,
             'usercreated' => $userid,
             'usermodified' => $userid,
             'userrevoked' => $userid,
+            'capsusermodified' => $userid,
         ]);
     }
 
@@ -164,7 +181,8 @@ class provider implements
             'timecreated ASC'
         );
 
-        if (empty($records)) {
+        $overrides = $DB->get_records('local_delegateaccount_caps', ['usermodified' => $userid], 'timemodified ASC');
+        if (empty($records) && empty($overrides)) {
             return;
         }
 
@@ -204,10 +222,23 @@ class provider implements
                 ];
             }
 
-            writer::with_context($context)->export_data(
-                [get_string('privacy:path:delegations', 'local_delegateaccount')],
-                (object) ['delegations' => $delegations]
-            );
+            if ($delegations) {
+                writer::with_context($context)->export_data(
+                    [get_string('privacy:path:delegations', 'local_delegateaccount')],
+                    (object) ['delegations' => $delegations]
+                );
+            }
+            if ($overrides) {
+                writer::with_context($context)->export_data(
+                    [get_string('privacy:path:overrides', 'local_delegateaccount')],
+                    (object) ['overrides' => array_values(array_map(static fn(\stdClass $override): \stdClass => (object) [
+                        'delegationid' => (int) $override->delegationid,
+                        'capability' => $override->capability,
+                        'permission' => (int) $override->permission,
+                        'timemodified' => transform::datetime((int) $override->timemodified),
+                    ], $overrides))]
+                );
+            }
         }
     }
 
@@ -266,11 +297,13 @@ class provider implements
     private static function delete_user_data(int $userid): void {
         global $DB;
 
-        $DB->delete_records_select(
-            'local_delegateaccount',
-            'realuserid = :realuserid OR delegateduserid = :delegateduserid',
-            ['realuserid' => $userid, 'delegateduserid' => $userid]
+        $select = 'realuserid = :realuserid OR delegateduserid = :delegateduserid';
+        $params = ['realuserid' => $userid, 'delegateduserid' => $userid];
+        \local_delegateaccount\session_capabilities::delete_for_delegations(
+            $DB->get_fieldset_select('local_delegateaccount', 'id', $select, $params)
         );
+        $DB->delete_records_select('local_delegateaccount', $select, $params);
+        $DB->set_field('local_delegateaccount_caps', 'usermodified', 0, ['usermodified' => $userid]);
         $DB->set_field('local_delegateaccount', 'usercreated', 0, ['usercreated' => $userid]);
         $DB->set_field('local_delegateaccount', 'usermodified', 0, ['usermodified' => $userid]);
         $DB->set_field('local_delegateaccount', 'userrevoked', 0, ['userrevoked' => $userid]);
