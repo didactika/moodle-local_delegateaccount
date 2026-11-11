@@ -27,10 +27,10 @@ use local_delegateaccount\session_capabilities;
  * @category   test
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \local_delegateaccount\external\get_session_permissions
+ * @covers     \local_delegateaccount\external\save_session_permissions
+ * @covers     \local_delegateaccount\external\update_session_permissions
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\get_session_permissions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\save_session_permissions::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\local_delegateaccount\external\update_session_permissions::class)]
 final class session_permissions_test extends \advanced_testcase {
     /**
      * Creates delegations from the administrator to some new accounts.
@@ -140,8 +140,8 @@ final class session_permissions_test extends \advanced_testcase {
         [$id] = $this->create_delegations(1);
         $user = $this->create_permissions_manager();
         $roleid = (int)$this->getDataGenerator()->create_role();
-        assign_capability('moodle/user:update', CAP_ALLOW, $roleid, context_system::instance()->id);
-        role_assign($roleid, $user->id, context_system::instance()->id);
+        assign_capability('moodle/user:update', CAP_ALLOW, $roleid, \context_system::instance()->id);
+        role_assign($roleid, $user->id, \context_system::instance()->id);
         $this->setUser($user);
 
         try {
