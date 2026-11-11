@@ -73,9 +73,3 @@ Behaviour source of truth: [specification.puml](./specification.puml)
 ## Wireframes
 
 ![Wireframes](./wireframes.svg)
-
-## Pending
-
-| Question | Blocks |
-| --- | --- |
-| Should widening a capability (allow) need a second confirmation? See [Q-002](../../../quality/open-questions.md). | |

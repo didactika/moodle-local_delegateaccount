@@ -9,7 +9,7 @@ sourceOfTruth: code
 
 ## Propósito
 
-El **Acceder como** de Moodle deja a un usuario abrir cualquier cuenta que pueda ver, durante el tiempo que quiera. Delegate Account lo limita a pares explícitos de personas, cada uno con un periodo, y registra quién creó, cambió y revocó cada par. Este modelo nombra los conceptos que hay detrás de esa decisión. Todo lo que contiene se observó en el código (`observed`); lo que el código no permitió decidir está en las [preguntas abiertas](../quality/open-questions.md).
+El **Acceder como** de Moodle deja a un usuario abrir cualquier cuenta que pueda ver, durante el tiempo que quiera. Delegate Account lo limita a pares explícitos de personas, cada uno con un periodo, y registra quién creó, cambió y revocó cada par. Este modelo nombra los conceptos que hay detrás de esa decisión.
 
 ## Jerarquía de entidades
 

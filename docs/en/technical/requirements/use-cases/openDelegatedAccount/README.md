@@ -80,9 +80,3 @@ Behaviour source of truth: [specification.puml](./specification.puml)
 ## Wireframes
 
 ![Wireframes](./wireframes.svg)
-
-## Pending
-
-| Question | Blocks |
-| --- | --- |
-| None. | |

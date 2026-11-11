@@ -27,8 +27,8 @@ Diseño: [README](../../../design/use-cases/openDelegatedAccount/README.md)
 
 ## Pruebas
 
-| Prueba | Cubre | Ubicación | Resultado |
-| --- | --- | --- | --- |
-| El acceso se rechaza para destinos no disponibles, administradores e invitado | A2, A3, RN-003, RN-004 | `tests/delegated_session_test.php` | no ejecutada |
-| El menú de usuario ofrece las cuentas | flujo principal | `tests/extend_user_menu_test.php` | no ejecutada |
-| Recorrido Behat de una persona autorizada | flujo principal | `tests/behat/delegated_accounts.feature` | no ejecutada |
+| Prueba | Cubre | Ubicación |
+| --- | --- | --- |
+| El acceso se rechaza para destinos no disponibles, administradores e invitado | A2, A3, RN-003, RN-004 | `tests/delegated_session_test.php` |
+| El menú de usuario ofrece las cuentas | flujo principal | `tests/extend_user_menu_test.php` |
+| Recorrido Behat de una persona autorizada | flujo principal | `tests/behat/delegated_accounts.feature` |

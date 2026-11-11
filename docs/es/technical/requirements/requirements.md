@@ -7,19 +7,17 @@ sourceOfTruth: code
 
 # Catálogo de requisitos
 
-Estos requisitos se dedujeron del código y de sus pruebas (`observed`); ninguno lo ha confirmado todavía quien manda sobre el producto, así que todas las filas son `assumed` hasta que alguien las firme.
-
 ## Funcionales
 
-| ID | Requisito | Prioridad | Origen | Confirmado por | Casos de uso |
-| --- | --- | --- | --- | --- | --- |
-| RF-001 | Una administradora puede autorizar a uno o varios usuarios a abrir una o varias cuentas, con un inicio, un fin opcional y un modo de notificación. | Debe | `manager::create_delegations` | | UC-001 |
-| RF-002 | Una administradora puede revocar delegaciones; las revocadas quedan como historial. | Debe | `manager::revoke_delegations` | | UC-001 |
-| RF-003 | Una persona autorizada puede abrir una cuenta que se le ha delegado desde su menú de usuario, y salir de ella. | Debe | `pages/loginas.php`, `hook\extend_user_menu` | | UC-002 |
-| RF-004 | Una sesión delegada termina sola cuando su delegación deja de ser válida. | Debe | `hook\after_config` | | UC-002 |
-| RF-005 | Una administradora puede permitir, evitar o prohibir capacidades en las sesiones delegadas, para una delegación o para todas. | Debería | `session_capabilities` | | UC-003 |
-| RF-006 | La actividad hecha mediante una delegación se puede revisar con filtros. | Debería | `pages/activity.php`, `manager::get_delegation_activity_page` | | |
-| RF-007 | Las personas implicadas reciben una notificación al crear o revocar una delegación, en su idioma. | Podría | `notification_manager` | | UC-001 |
+| ID | Requisito | Prioridad | Origen | Casos de uso |
+| --- | --- | --- | --- | --- |
+| RF-001 | Una administradora puede autorizar a uno o varios usuarios a abrir una o varias cuentas, con un inicio, un fin opcional y un modo de notificación. | Debe | `manager::create_delegations` | UC-001 |
+| RF-002 | Una administradora puede revocar delegaciones; las revocadas quedan como historial. | Debe | `manager::revoke_delegations` | UC-001 |
+| RF-003 | Una persona autorizada puede abrir una cuenta que se le ha delegado desde su menú de usuario, y salir de ella. | Debe | `pages/loginas.php`, `hook\extend_user_menu` | UC-002 |
+| RF-004 | Una sesión delegada termina sola cuando su delegación deja de ser válida. | Debe | `hook\after_config` | UC-002 |
+| RF-005 | Una administradora puede permitir, evitar o prohibir capacidades en las sesiones delegadas, para una delegación o para todas. | Debería | `session_capabilities` | UC-003 |
+| RF-006 | La actividad hecha mediante una delegación se puede revisar con filtros. | Debería | `pages/activity.php`, `manager::get_delegation_activity_page` | |
+| RF-007 | Las personas implicadas reciben una notificación al crear o revocar una delegación, en su idioma. | Podría | `notification_manager` | UC-001 |
 
 ## No funcionales
 

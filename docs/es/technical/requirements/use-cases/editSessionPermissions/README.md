@@ -73,9 +73,3 @@ Fuente de verdad del comportamiento: [specification.puml](./specification.puml)
 ## Prototipos
 
 ![Prototipos](./wireframes.svg)
-
-## Pendiente
-
-| Pregunta | Bloquea |
-| --- | --- |
-| ¿Debería ampliar una capacidad (permitir) exigir una segunda confirmación? Véase [Q-002](../../../quality/open-questions.md). | |

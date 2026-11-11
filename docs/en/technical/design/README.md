@@ -9,7 +9,7 @@ sourceOfTruth: code
 
 ## Architecture
 
-Delegate Account is a Moodle local plugin with three layers, observed in the code:
+Delegate Account is a Moodle local plugin with three layers:
 
 - **Entry points**: web-service functions (`classes/external/`), pages (`pages/`), and two hooks (`after_config`, `extend_user_menu`).
 - **Services**: static classes in `classes/`. `manager` holds the rules of delegations, `session_capabilities` stores and applies overrides, `notification_manager` sends messages, `permission` maps actions to capabilities.

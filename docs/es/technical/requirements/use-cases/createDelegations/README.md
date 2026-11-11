@@ -59,7 +59,7 @@ Algunas personas necesitan trabajar dentro de la cuenta de otra: el soporte que 
 
 | ID | Empieza en el paso | Condición | Comportamiento | Termina |
 | --- | --- | --- | --- | --- |
-| A1 | 2 | El fin es anterior al inicio, el periodo supera el máximo o no se permite un fin abierto y no se dio ninguno. | Muestra el error y mantiene el diálogo abierto. | Paso 2 |
+| A1 | 2 | El fin es anterior al inicio o el periodo supera la duración máxima. | Muestra el error y mantiene el diálogo abierto. | Paso 2 |
 | A2 | 3 | Todos los pares ya tienen una delegación activa. | No crea nada y lo dice. | Fin |
 | A3 | 4 | La acción superaría el límite masivo o el de una persona. | Muestra el error; no se crea nada. | Paso 2 |
 
@@ -79,9 +79,3 @@ Fuente de verdad del comportamiento: [specification.puml](./specification.puml)
 ## Prototipos
 
 ![Prototipos](./wireframes.svg)
-
-## Pendiente
-
-| Pregunta | Bloquea |
-| --- | --- |
-| ¿Es obligatorio por política un fin, o solo por el ajuste `allowopenended`? Véase [Q-001](../../../quality/open-questions.md). | A1 |

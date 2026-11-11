@@ -9,4 +9,3 @@ How Delegate Account is built: what it models, what it must do, how it is analys
 | [Analysis](./analysis/README.md) | Analysis classes and how they collaborate in each use case. |
 | [Design](./design/README.md) | Design classes, data model, components and sequences. |
 | [Implementation](./implementation/README.md) | The code map and the code and tests of each use case. |
-| [Quality](./quality/README.md) | Open questions and traceability. |

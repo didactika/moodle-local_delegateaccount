@@ -59,7 +59,7 @@ Some people need to work inside another person's account: support fixing a profi
 
 | ID | Starts at step | Condition | Behaviour | Ends |
 | --- | --- | --- | --- | --- |
-| A1 | 2 | The end is before the start, the period is longer than the maximum, or no end is allowed and none was given. | Shows the error and keeps the dialog open. | Step 2 |
+| A1 | 2 | The end is before the start, or the period is longer than the maximum duration. | Shows the error and keeps the dialog open. | Step 2 |
 | A2 | 3 | Every pair already has an active delegation. | Creates nothing and says so. | End |
 | A3 | 4 | The action would exceed the bulk limit or the limit of a person. | Shows the error; nothing is created. | Step 2 |
 
@@ -79,9 +79,3 @@ Behaviour source of truth: [specification.puml](./specification.puml)
 ## Wireframes
 
 ![Wireframes](./wireframes.svg)
-
-## Pending
-
-| Question | Blocks |
-| --- | --- |
-| Is an end date mandatory by policy, or only by the `allowopenended` setting? See [Q-001](../../../quality/open-questions.md). | A1 |

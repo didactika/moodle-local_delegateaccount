@@ -25,7 +25,7 @@ Design: [README](../../../design/use-cases/editSessionPermissions/README.md)
 
 ## Tests
 
-| Test | Covers | Location | Result |
-| --- | --- | --- | --- |
-| Overrides are stored and applied | main flow, RN-007 | `tests/session_capabilities_test.php` | not run |
-| Web services | main flow, A1 | `tests/external/session_permissions_test.php` | not run |
+| Test | Covers | Location |
+| --- | --- | --- |
+| Overrides are stored and applied | main flow, RN-007 | `tests/session_capabilities_test.php` |
+| Web services | main flow, A1 | `tests/external/session_permissions_test.php` |

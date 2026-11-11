@@ -9,7 +9,6 @@ sourceOfTruth: code
 
 This folder links the model to the code. The [code map](./code-map.md) lists each model element and where it lives; each use case has a card with its code and its tests.
 
-The direction of work was **code to documentation**: the model describes the plugin as it is, and the code stays the source of truth. The test results in the cards say `not run` until someone runs them; they are not claims.
 
 | ID | Use case | Card |
 | --- | --- | --- |

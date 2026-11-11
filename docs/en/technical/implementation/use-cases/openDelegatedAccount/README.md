@@ -27,8 +27,8 @@ Design: [README](../../../design/use-cases/openDelegatedAccount/README.md)
 
 ## Tests
 
-| Test | Covers | Location | Result |
-| --- | --- | --- | --- |
-| Access is refused for unavailable, administrator and guest targets | A2, A3, RN-003, RN-004 | `tests/delegated_session_test.php` | not run |
-| The user menu offers the accounts | main flow | `tests/extend_user_menu_test.php` | not run |
-| Behat journey of an authorised user | main flow | `tests/behat/delegated_accounts.feature` | not run |
+| Test | Covers | Location |
+| --- | --- | --- |
+| Access is refused for unavailable, administrator and guest targets | A2, A3, RN-003, RN-004 | `tests/delegated_session_test.php` |
+| The user menu offers the accounts | main flow | `tests/extend_user_menu_test.php` |
+| Behat journey of an authorised user | main flow | `tests/behat/delegated_accounts.feature` |

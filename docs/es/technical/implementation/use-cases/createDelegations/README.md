@@ -26,7 +26,7 @@ Diseño: [README](../../../design/use-cases/createDelegations/README.md)
 
 ## Pruebas
 
-| Prueba | Cubre | Ubicación | Resultado |
-| --- | --- | --- | --- |
-| Crear delegaciones es idempotente y excluye la delegación de uno mismo | flujo principal, RN-002 | `tests/manager_test.php` | no ejecutada |
-| API de delegaciones | flujo principal | `tests/delegation_api_test.php` | no ejecutada |
+| Prueba | Cubre | Ubicación |
+| --- | --- | --- |
+| Crear delegaciones es idempotente y excluye la delegación de uno mismo | flujo principal, RN-002 | `tests/manager_test.php` |
+| API de delegaciones | flujo principal | `tests/delegation_api_test.php` |

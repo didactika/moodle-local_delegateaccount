@@ -80,9 +80,3 @@ Fuente de verdad del comportamiento: [specification.puml](./specification.puml)
 ## Prototipos
 
 ![Prototipos](./wireframes.svg)
-
-## Pendiente
-
-| Pregunta | Bloquea |
-| --- | --- |
-| Ninguna. | |

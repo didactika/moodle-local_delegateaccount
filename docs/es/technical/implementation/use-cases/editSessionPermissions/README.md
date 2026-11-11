@@ -25,7 +25,7 @@ Diseño: [README](../../../design/use-cases/editSessionPermissions/README.md)
 
 ## Pruebas
 
-| Prueba | Cubre | Ubicación | Resultado |
-| --- | --- | --- | --- |
-| Las sobrescrituras se guardan y se aplican | flujo principal, RN-007 | `tests/session_capabilities_test.php` | no ejecutada |
-| Servicios web | flujo principal, A1 | `tests/external/session_permissions_test.php` | no ejecutada |
+| Prueba | Cubre | Ubicación |
+| --- | --- | --- |
+| Las sobrescrituras se guardan y se aplican | flujo principal, RN-007 | `tests/session_capabilities_test.php` |
+| Servicios web | flujo principal, A1 | `tests/external/session_permissions_test.php` |

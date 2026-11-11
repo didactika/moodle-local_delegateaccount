@@ -26,7 +26,7 @@ Design: [README](../../../design/use-cases/createDelegations/README.md)
 
 ## Tests
 
-| Test | Covers | Location | Result |
-| --- | --- | --- | --- |
-| Creating delegations is idempotent and excludes self-delegation | main flow, RN-002 | `tests/manager_test.php` | not run |
-| Delegation API | main flow | `tests/delegation_api_test.php` | not run |
+| Test | Covers | Location |
+| --- | --- | --- |
+| Creating delegations is idempotent and excludes self-delegation | main flow, RN-002 | `tests/manager_test.php` |
+| Delegation API | main flow | `tests/delegation_api_test.php` |

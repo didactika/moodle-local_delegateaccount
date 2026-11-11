@@ -9,7 +9,7 @@ sourceOfTruth: code
 
 ## Purpose
 
-Moodle's **Log in as** lets a user open any account they can see, for as long as they like. Delegate Account narrows that to explicit pairs of people, each with a period, and records who created, changed and revoked each pair. This model names the concepts behind that decision. Everything in it was observed in the code (`observed`); what could not be settled from the code is in [open questions](../quality/open-questions.md).
+Moodle's **Log in as** lets a user open any account they can see, for as long as they like. Delegate Account narrows that to explicit pairs of people, each with a period, and records who created, changed and revoked each pair. This model names the concepts behind that decision.
 
 ## Hierarchy of entities
 
