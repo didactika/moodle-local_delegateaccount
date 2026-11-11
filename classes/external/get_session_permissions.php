@@ -87,7 +87,7 @@ final class get_session_permissions extends list_service {
                 'component' => $capability['component'],
                 'componentlabel' => get_component_string($capability['component'], (int)$capability['contextlevel']),
                 'risks' => $risks,
-                'canallow' => has_capability($capability['name'], $context),
+                'canallow' => is_siteadmin(),
             ];
         }
 

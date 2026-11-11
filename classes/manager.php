@@ -322,10 +322,45 @@ class manager {
         // existed before loginas() replaced it, so a value cached in this request would be lost.
         // It holds the delegation, whose permission overrides apply to the session.
         $SESSION->local_delegateaccount_delegated = $delegationid > 0 ? $delegationid : true;
+        if ($delegationid > 0) {
+            self::remember_session($delegationid, session_id());
+        }
         session_capabilities::apply();
         // Load the permissions of the delegated account now, so that the very first page is already restricted.
         load_all_capabilities();
         session_capabilities::apply();
+    }
+
+    /**
+     * Remembers that a session is open through a delegation.
+     *
+     * @param int $delegationid Delegation identifier.
+     * @param string $sid Identifier of the session.
+     */
+    private static function remember_session(int $delegationid, string $sid): void {
+        $cache = \cache::make('local_delegateaccount', 'sessions');
+        $sids = $cache->get($delegationid) ?: [];
+        $sids[$sid] = time();
+        $cache->set($delegationid, $sids);
+    }
+
+    /**
+     * Ends the sessions that are open through some delegations.
+     *
+     * A session that was not remembered (the cache was purged) still ends at its next request, because every request is checked.
+     *
+     * @param int[] $delegationids Delegation identifiers.
+     */
+    public static function end_sessions(array $delegationids): void {
+        $cache = \cache::make('local_delegateaccount', 'sessions');
+        foreach ($cache->get_many($delegationids) as $delegationid => $sids) {
+            foreach (array_keys($sids ?: []) as $sid) {
+                if ((string)$sid !== session_id()) {
+                    \core\session\manager::kill_session((string)$sid);
+                }
+            }
+            $cache->delete($delegationid);
+        }
     }
 
     /**
@@ -512,6 +547,9 @@ class manager {
             $revokeddelegations[] = $record;
         }
         $transaction->allow_commit();
+
+        // The sessions that are open through them end now, not at their next request.
+        self::end_sessions(array_map(fn(\stdClass $delegation): int => (int)$delegation->id, $revokeddelegations));
 
         foreach ($revokeddelegations as $delegation) {
             notification_manager::notify(
