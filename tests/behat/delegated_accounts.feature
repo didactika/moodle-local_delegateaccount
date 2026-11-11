@@ -79,7 +79,7 @@ Feature: Delegate access to an account
       | user | account |
       | ada  | tom     |
     And I reload the page
-    Then I should see "Your delegated session has ended"
+    Then I should not see "You are logged in as Tom Target"
     And "Log in" "button" should exist
 
   Scenario: An override of a delegation applies to the session it opens

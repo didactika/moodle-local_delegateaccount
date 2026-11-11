@@ -1,0 +1,23 @@
+---
+title: Notifications
+summary: Tell the people involved when access is granted or revoked, in their language.
+order: 35
+---
+
+The plugin can message the people involved when a delegation is created or revoked. You decide the policy for the site and, when the site allows it, the person who creates a delegation decides each time.
+
+<Screenshot src="asset:settings-notifications.webp" alt="The Notifications tab of the plugin settings" caption="The notification policy, the recipients and the messages." url="/admin/settings.php?section=local_delegateaccount_settings" />
+
+<Steps>
+1. Open **Site administration > Plugins > Local plugins > Delegated account settings** and go to the **Notifications** tab.
+2. Choose the **Notification policy**: let the person creating the delegation choose, always notify or never notify.
+3. Choose who receives it: the authorised user, the delegated account, or both, and whether revoking notifies too.
+4. In the **Messages** tab, write a subject and message for each installed language, or leave them empty to use the built-in text.
+</Steps>
+
+Each recipient gets the notification in their profile language, or in the site language when theirs is not installed. A custom message is sent unchanged to both recipients, so write it to read well for both. Empty fields use the built-in text, which is worded for each recipient.
+
+> [!TIP]
+> Use **Send yourself a test notification**, below these settings, to receive the saved subject and message for a language as both recipients would see them. Save your changes first.
+
+Messages use the **Delegated account notifications** provider, sent as web and email notifications by default; users and administrators can change that in the usual notification preferences. Every setting is described in the [settings reference](page:reference/settings).

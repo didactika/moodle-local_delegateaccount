@@ -1,0 +1,16 @@
+---
+title: Informe de actividad
+summary: Vea cada evento registrado mientras se usaba una cuenta mediante una delegación.
+order: 34
+---
+
+Cada delegación tiene un informe de lo que se hizo mediante ella. Ábralo con el icono de actividad al final de la fila de la delegación, o con **Ver actividad delegada** en la página de la delegación. Requiere `local/delegateaccount:viewactivity`.
+
+<Screenshot src="asset:activity-report.webp" alt="El informe de actividad de una delegación, con los eventos registrados con ambos nombres" caption="Lo que hizo Marta Ruiz como Carmen Vidal: hora, evento, dónde, usuario afectado y dirección IP." url="/local/delegateaccount/pages/activity.php" />
+
+El informe muestra, solo para el periodo de esa delegación, cada evento con su hora, el evento, dónde ocurrió, el usuario afectado y la dirección IP. Fíltrelo por fechas, por componente y por acción.
+
+> [!NOTE]
+> El plugin no guarda actividad propia: el informe lee el almacén de logs del sitio, de modo que sigue sus ajustes de retención de logs. Una delegación posterior entre las mismas dos personas es un periodo distinto y tiene su propio informe.
+
+Si el informe está vacío, vea la [solución de problemas](page:guides/troubleshooting).

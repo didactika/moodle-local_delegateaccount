@@ -161,17 +161,16 @@ abstract class list_service extends delegation_service {
     /**
      * Turns a list of changes into a map, and refuses to allow what the person may not allow.
      *
-     * An Allow override gives a capability to a session, so a person may only allow the capabilities they have themselves.
+     * An Allow override gives a capability to a session that its account may not have, so only site administrators may set one.
      *
      * @param array $changes Changes as change_structure() describes them.
      * @return int[] Permission by capability name.
      */
     protected static function changes_to_map(array $changes): array {
         $map = [];
-        $system = \context_system::instance();
         foreach ($changes as $change) {
             $permission = (int)$change['permission'];
-            if ($permission === CAP_ALLOW && !has_capability($change['capability'], $system)) {
+            if ($permission === CAP_ALLOW && !is_siteadmin()) {
                 throw new \moodle_exception('error_cannotallow', 'local_delegateaccount', '', s($change['capability']));
             }
             $map[$change['capability']] = $permission;

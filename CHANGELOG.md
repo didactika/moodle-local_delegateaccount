@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0-m405] - 2026-11-11
+
+Line for Moodle 4.5 to 5.2. The same delivery for Moodle 5.3 is 1.2.0-m503.
+
+### Changed
+
+- Only site administrators can set a session permission to Allow, because it gives a delegated session a capability that its account may not have. Copying permissions that include an Allow needs the same right. Preventing and prohibiting stay with whoever holds `local/delegateaccount:managepermissions`.
+- Revoking a delegation ends the sessions that are open through it at once, instead of at their next request.
+- Every list keeps the same height whatever it holds: with few rows there is empty space below them, with many it scrolls and the header stays in view.
+
+## [1.1.1-m405] - 2026-11-11
+
+Line for Moodle 4.5 to 5.2. The same delivery for Moodle 5.3 is 1.1.1-m503.
+
+### Changed
+
+- The notice that asks to create a role with the permission to use delegated accounts is no longer a banner on the management page and on the form to add authorised users. It is a help icon next to the description of the **Authorised users** tab, shown to those who can define roles until a role grants the permission.
+- The guided tours moved to the `tours` folder and their titles and texts are Moodle language strings instead of fixed English text, so they can be translated. Tours already imported by earlier versions are kept as they are.
+- On upgrade, the guided tours that an earlier version imported and nobody edited are moved to language strings where they are, so they keep their identifier, whether they are enabled and what each person has already seen of them. A tour that an administrator edited or deleted is left as it is.
+
 ## [1.1.0-m405] - 2026-11-06
 
 Line for Moodle 4.5 to 5.2. The same delivery for Moodle 5.3 is 1.1.0-m503.

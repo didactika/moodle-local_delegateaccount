@@ -1,6 +1,6 @@
 {
-  "name": "Delegate account: using a delegated account",
-  "description": "Shows people with delegated access where to find their accounts in the user menu.",
+  "name": "tour_use_name,local_delegateaccount",
+  "description": "tour_use_description,local_delegateaccount",
   "pathmatch": "/my/%",
   "enabled": "1",
   "sortorder": "0",
@@ -10,8 +10,8 @@
   "version": "2024100700",
   "steps": [
     {
-      "title": "You have access to other accounts",
-      "content": "<p>You have been given access to delegated accounts, which let you work in another person's account.</p><p>Select your user menu now to continue.</p>",
+      "title": "tour_use_step1_title,local_delegateaccount",
+      "content": "tour_use_step1_content,local_delegateaccount",
       "contentformat": "1",
       "targettype": "0",
       "targetvalue": "#user-menu-toggle",
@@ -19,8 +19,8 @@
       "sortorder": "0"
     },
     {
-      "title": "Delegated accounts",
-      "content": "<p>Select <strong>Delegated accounts</strong> to continue. It opens the list of accounts you may use.</p>",
+      "title": "tour_use_step2_title,local_delegateaccount",
+      "content": "tour_use_step2_content,local_delegateaccount",
       "contentformat": "1",
       "targettype": "0",
       "targetvalue": "#carousel-item-main a[data-carousel-target-id=\"carousel-item-delegatedaccounts\"]",
@@ -28,8 +28,8 @@
       "sortorder": "1"
     },
     {
-      "title": "Open a delegated account",
-      "content": "<p>Select the name of the account you want to use. Moodle then opens that account.</p><p>Everything you do while using it is recorded in the site log under both your name and the name of the account. To stop working as that account, log out.</p>",
+      "title": "tour_use_step3_title,local_delegateaccount",
+      "content": "tour_use_step3_content,local_delegateaccount",
       "contentformat": "1",
       "targettype": "0",
       "targetvalue": "#user-action-menu",

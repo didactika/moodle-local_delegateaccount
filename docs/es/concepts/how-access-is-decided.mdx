@@ -1,0 +1,40 @@
+---
+title: Cómo se decide el acceso
+summary: Las dos condiciones que deben cumplirse, la vida de una delegación y cuándo termina una sesión delegada.
+order: 20
+---
+
+Delegate Account no abre cuentas por sí mismo: decide si se puede usar **Acceder como** de Moodle para un par de usuarios concreto en un momento concreto.
+
+## Dos condiciones
+
+Para que alguien pueda abrir una cuenta deben cumplirse dos condiciones:
+
+<FeatureGrid columns={2}>
+  <Feature icon="key-rounded" title="Tiene el permiso">Tiene `local/delegateaccount:use` en el contexto del sistema, o es administrador del sitio.</Feature>
+  <Feature icon="swap-horiz-rounded" title="Existe una delegación">Un administrador creó una delegación de esa persona a esa cuenta y está activa en este momento.</Feature>
+</FeatureGrid>
+
+## La vida de una delegación
+
+Cada delegación pasa por cuatro estados, y el estado se calcula a partir de sus fechas, no se guarda.
+
+| Estado | Significado |
+|---|---|
+| <Badge text="Programada" variant="note" /> | Todavía no se ha llegado a la fecha de inicio |
+| <Badge text="Activa" variant="success" /> | La cuenta se puede abrir ahora |
+| <Badge text="Caducada" variant="caution" /> | Ha pasado la fecha de fin |
+| <Badge text="Revocada" variant="danger" /> | Un administrador la terminó. Las delegaciones revocadas se conservan como registro |
+
+Para dar acceso de nuevo cuando una delegación caduca, [edite la delegación caducada](page:guides/manage-delegations) en lugar de crear una nueva.
+
+## Cuándo termina una sesión delegada
+
+El acceso se comprueba al abrir la cuenta y de nuevo en cada página mientras dura la sesión delegada. Una delegación revocada cierra al instante sus sesiones abiertas. La sesión termina en la página siguiente si:
+
+- la delegación caduca;
+- la persona pierde el permiso;
+- la cuenta se suspende o se elimina;
+- la cuenta pasa a ser administrador del sitio mientras eso esté protegido (vea [el modelo de seguridad](page:concepts/security-model)).
+
+Nada depende de cron: las fechas de inicio y de fin se comprueban cada vez, de modo que las delegaciones empiezan y terminan a tiempo.

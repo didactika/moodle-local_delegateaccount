@@ -1,0 +1,16 @@
+---
+title: Activity report
+summary: See every event recorded while an account was used through a delegation.
+order: 34
+---
+
+Each delegation has a report of what was done through it. Open it with the activity icon at the end of the row of the delegation, or with **View delegated activity** on the page of the delegation. It needs `local/delegateaccount:viewactivity`.
+
+<Screenshot src="asset:activity-report.webp" alt="The activity report of a delegation, with the events recorded under both names" caption="What Marta Ruiz did as Carmen Vidal: time, event, where, affected user and IP address." url="/local/delegateaccount/pages/activity.php" />
+
+The report shows, for the period of that delegation only, each event with its time, the event, where it happened, the affected user and the IP address. Filter it by dates, by component and by action.
+
+> [!NOTE]
+> The plugin keeps no activity of its own: the report reads the site's log store, so it follows your log retention settings. A later delegation between the same two people is a different period and has its own report.
+
+If the report is empty, see [troubleshooting](page:guides/troubleshooting).

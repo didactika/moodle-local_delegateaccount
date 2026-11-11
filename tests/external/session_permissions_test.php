@@ -134,6 +134,29 @@ final class session_permissions_test extends \advanced_testcase {
     }
 
     /**
+     * Allowing gives a session a capability its account may not have, so only site administrators can do it.
+     */
+    public function test_only_administrators_can_allow(): void {
+        [$id] = $this->create_delegations(1);
+        $user = $this->create_permissions_manager();
+        $roleid = (int)$this->getDataGenerator()->create_role();
+        assign_capability('moodle/user:update', CAP_ALLOW, $roleid, \context_system::instance()->id);
+        role_assign($roleid, $user->id, \context_system::instance()->id);
+        $this->setUser($user);
+
+        try {
+            save_session_permissions::execute($id, [['capability' => 'moodle/user:update', 'permission' => CAP_ALLOW]]);
+            $this->fail('A person who is not a site administrator allowed a capability.');
+        } catch (\moodle_exception $exception) {
+            $this->assertStringContainsString('moodle/user:update', $exception->getMessage());
+        }
+
+        $this->setAdminUser();
+        save_session_permissions::execute($id, [['capability' => 'moodle/user:update', 'permission' => CAP_ALLOW]]);
+        $this->assertSame(['moodle/user:update' => CAP_ALLOW], session_capabilities::get_overrides($id));
+    }
+
+    /**
      * The site overrides are only for who configures the site.
      */
     public function test_site_requires_config(): void {

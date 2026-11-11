@@ -1,0 +1,19 @@
+---
+title: Events
+summary: The events the plugin triggers, so other plugins and the log can follow every change.
+order: 44
+---
+
+Every change triggers an event of Moodle, so it is in the site log and other plugins can observe it. All of them have the **other** educational level, and are written by the user who made the change.
+
+| Event | Class | Type | When |
+|---|---|---|---|
+| Account delegation created | `\local_delegateaccount\event\delegation_created` | Create | A delegation is created. Its related user is the authorised user, and `other['delegateduserid']` is the delegated account |
+| Account delegation updated | `\local_delegateaccount\event\delegation_updated` | Update | The period or the notification choice of a delegation changes |
+| Account delegation revoked | `\local_delegateaccount\event\delegation_revoked` | Delete | A delegation is revoked. It is revoked logically and its history is kept |
+| Session permissions changed | `\local_delegateaccount\event\session_permissions_updated` | Update | Permission overrides change, for the whole site, for one delegation or for many |
+
+All of them refer to the table `local_delegateaccount`. The event of session permissions carries how many overrides changed and, for a change of many delegations, how many delegations.
+
+> [!NOTE]
+> The events of what a person does *inside* a delegated account are the ordinary ones of Moodle. They carry the real user as well, which is what [the activity report](page:guides/activity-report) reads.

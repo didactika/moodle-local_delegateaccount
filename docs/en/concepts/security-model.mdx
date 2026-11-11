@@ -1,0 +1,32 @@
+---
+title: Security model
+summary: What the plugin never does, what protects the site and what to trust people with.
+order: 22
+---
+
+Delegating an account is a serious decision. These are the limits the plugin puts around it and the ones that remain yours.
+
+## What the plugin never does
+
+- It never stores passwords and never creates accounts.
+- It never opens an account by itself: it only decides whether Moodle's **Log in as** may be used.
+- It never lets a delegated account open another delegated account: the person must log out first.
+
+## What protects the site
+
+<FeatureGrid columns={2}>
+  <Feature icon="admin-panel-settings-rounded" title="Administrators are protected">While **Protect site administrator accounts** is on, administrators cannot be delegated, and a delegation stops working if its account becomes an administrator.</Feature>
+  <Feature icon="history-rounded" title="Everything is recorded">Each event is in the site log under both names, and each delegation keeps who created, changed and revoked it.</Feature>
+  <Feature icon="block-rounded" title="Limits you set">Maximum delegations per person, maximum duration, no end date allowed or not, and a maximum of records per bulk action.</Feature>
+  <Feature icon="lock-person-rounded" title="Access is re-checked">The permission and the delegation are checked on every page, so revoking is immediate.</Feature>
+</FeatureGrid>
+
+## What to trust people with
+
+> [!CAUTION]
+> Whoever can create delegations decides who may log in as whom. Give `local/delegateaccount:create` and `local/delegateaccount:manage` only to people you would trust with Moodle's own **Log in as**.
+
+> [!CAUTION]
+> With **Protect site administrator accounts** turned off, an authorised user with a delegation to an administrator can log in as that administrator and take full control of the site.
+
+[Session permissions](page:concepts/session-permissions) narrow what a session may do, and the [capabilities](page:reference/capabilities) say who may manage each part.
