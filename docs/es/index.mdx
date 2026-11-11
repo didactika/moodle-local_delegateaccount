@@ -14,12 +14,24 @@ Delegate Account (`local_delegateaccount`) es un plugin local de Moodle que da a
 > [!NOTE]
 > Delegate Account nunca guarda contraseñas ni crea cuentas. Solo decide si se puede usar **Acceder como** de Moodle para un par de usuarios concreto en un momento concreto.
 
-## Por dónde empezar
+## Encuentre su camino
+
+Elija la ruta que corresponde a lo que quiere hacer. Cada una lista las páginas que debe leer, en orden, con la utilidad de cada una.
+
+<div class="d-paths">
+<Path title="Administro el sitio" icon="admin-panel-settings-rounded" time="20 min" goal="Instale el plugin, dé el permiso y cree su primera delegación." pages={['getting-started/installation', 'getting-started/give-permission', 'getting-started/quick-start', 'guides/create-delegations', 'guides/manage-delegations']} />
+<Path title="Uso cuentas delegadas" icon="manage-accounts-rounded" time="10 min" goal="Abra una cuenta desde su menú de usuario, trabaje en ella y salga." pages={['guides/use-a-delegated-account', 'guides/guided-tours', 'guides/troubleshooting']} />
+<Path title="Lo amplío o lo reviso" icon="code-rounded" time="45 min" goal="Entienda cómo se decide el acceso y cómo está construido el plugin, y luego intégrelo." pages={['concepts/how-access-is-decided', 'concepts/security-model', 'technical/index', 'reference/webservices', 'reference/events']} />
+</div>
+
+## Cómo está organizada esta documentación
 
 <FeatureGrid>
-  <Feature icon="admin-panel-settings-rounded" title="Administro el sitio" href="page:getting-started/quick-start">Instale el plugin, dé el permiso y cree su primera delegación en pocos minutos.</Feature>
-  <Feature icon="manage-accounts-rounded" title="Uso cuentas delegadas" href="page:guides/use-a-delegated-account">Abra una cuenta desde su menú de usuario y deje de usarla.</Feature>
-  <Feature icon="api-rounded" title="Lo integro o lo amplío" href="page:reference/webservices">El servicio web, los eventos y las capacidades del plugin.</Feature>
+  <Feature icon="rocket-launch-rounded" title="Primeros pasos" href="page:getting-started/installation">Instale el plugin, dé el permiso y complete una primera tarea.</Feature>
+  <Feature icon="lightbulb-rounded" title="Conceptos" href="page:concepts/how-access-is-decided">Por qué funciona como funciona: el modelo, el ciclo de vida y los límites.</Feature>
+  <Feature icon="task-alt-rounded" title="Guías" href="page:guides/create-delegations">Una tarea por página, con las pantallas que verá.</Feature>
+  <Feature icon="menu-book-rounded" title="Referencia" href="page:reference/settings">Cada ajuste, capacidad, evento y función del servicio web.</Feature>
+  <Feature icon="schema-rounded" title="Documentación técnica" href="page:technical">El modelo de dominio, los casos de uso, el análisis, el diseño y un mapa hacia el código.</Feature>
 </FeatureGrid>
 
 ## Por qué existe
