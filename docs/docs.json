@@ -1,0 +1,11 @@
+{
+  "kind": "plugin",
+  "slug": "local-delegateaccount",
+  "title": { "en": "Delegate account", "es": "Cuenta delegada" },
+  "summary": {
+    "en": "Let chosen people log in as other accounts, only when and for as long as you allow it.",
+    "es": "Permite que personas elegidas accedan como otras cuentas, solo cuando y durante el tiempo que se permita."
+  },
+  "directory": { "published": "auto", "url": null },
+  "translations": { "source": "l10n" }
+}
