@@ -1,0 +1,22 @@
+---
+title: Give people permission
+summary: Create the role that lets people use delegations, and assign it.
+order: 11
+---
+
+The plugin adds a capability, `local/delegateaccount:use` (**Log in as a delegated account**). Nobody has it by default, so you give it through a role of your own.
+
+<Steps>
+1. Go to **Site administration > Users > Permissions > Define roles** and add a new role, for example *Delegated account user*.
+2. Select **System** as the only context type and allow `local/delegateaccount:use`.
+3. Go to **Site administration > Users > Permissions > Assign system roles**, open the role and give it to the people who should be able to use delegations.
+</Steps>
+
+<Screenshot src="asset:roles-assign.webp" alt="The Assign system roles page with three users in the role Delegated account user" caption="The role assigned to three people. They are now the authorised users the plugin lists." url="/admin/roles/assign.php" />
+
+Until a role grants the capability, the management page reminds you of these two steps with links to the two pages.
+
+> [!WARNING]
+> Do not grant `local/delegateaccount:use` to the **Authenticated user** role. Every user would then count as authorised.
+
+The people who hold the role are the **authorised users**: the ones you can create delegations for. [Create your first delegation](page:getting-started/quick-start).

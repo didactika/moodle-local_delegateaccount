@@ -1,0 +1,52 @@
+---
+title: Delegate account
+summary: Let chosen people log in as other accounts, only when and for as long as you allow it.
+order: 1
+---
+
+Delegate Account (`local_delegateaccount`) is a Moodle local plugin that gives specific people access to specific accounts. An administrator decides who may act as whom and for which period. The person then opens the account from their user menu through Moodle's own **Log in as**, and everything they do is recorded in the site log under both names.
+
+<Screenshot src="asset:manage-authorised.webp" alt="The Delegated accounts page, with the list of authorised users and the chips of each delegation status" caption="The management page: who may use delegations, and how many they have in each status." url="/local/delegateaccount/pages/manage.php" />
+
+> [!IMPORTANT]
+> **Only site administrators can use delegated accounts until you give the permission to someone else.** Create a role with the capability `local/delegateaccount:use` and assign it in the system context to the people who should be able to use delegations. See [Give people permission](page:getting-started/give-permission).
+
+> [!NOTE]
+> Delegate Account never stores passwords and never creates accounts. It only decides whether Moodle's **Log in as** may be used for a given pair of users at a given time.
+
+## Find your way
+
+Pick the route that matches what you want to do. Each one lists the pages to read, in order, with what each is for.
+
+<div class="d-paths">
+<Path title="I administer the site" icon="admin-panel-settings-rounded" time="20 min" goal="Install the plugin, give the permission and create your first delegation." pages={['getting-started/installation', 'getting-started/give-permission', 'getting-started/quick-start', 'guides/create-delegations', 'guides/manage-delegations']} />
+<Path title="I use delegated accounts" icon="manage-accounts-rounded" time="10 min" goal="Open an account from your user menu, work in it and leave it." pages={['guides/use-a-delegated-account', 'guides/guided-tours', 'guides/troubleshooting']} />
+<Path title="I build on it or review it" icon="code-rounded" time="45 min" goal="Understand how access is decided and how the plugin is built, then integrate it." pages={['concepts/how-access-is-decided', 'concepts/security-model', 'technical/index', 'reference/webservices', 'reference/events']} />
+</div>
+
+## How this documentation is organised
+
+<FeatureGrid>
+  <Feature icon="rocket-launch-rounded" title="Getting started" href="page:getting-started/installation">Install the plugin, give the permission and complete a first task.</Feature>
+  <Feature icon="lightbulb-rounded" title="Concepts" href="page:concepts/how-access-is-decided">Why it works the way it does: the model, the lifecycle and the limits.</Feature>
+  <Feature icon="task-alt-rounded" title="Guides" href="page:guides/create-delegations">One task per page, with the screens you will see.</Feature>
+  <Feature icon="menu-book-rounded" title="Reference" href="page:reference/settings">Every setting, capability, event and web-service function.</Feature>
+  <Feature icon="schema-rounded" title="Technical documentation" href="page:technical">The domain model, use cases, analysis, design and a map to the code.</Feature>
+</FeatureGrid>
+
+## Why it exists
+
+Some people need to work inside another person's account: a support team fixing a profile, an assistant managing a manager's calendar, a teacher covering for a colleague. Moodle's **Log in as** capability lets someone open *any* account they can see, with no time limit. Delegate Account narrows that down to explicit, time-bound pairs. [How access is decided](page:concepts/how-access-is-decided) explains the two conditions and the life of a delegation.
+
+## What it does
+
+<FeatureGrid>
+  <Feature icon="schedule-rounded" title="Time-bound delegations">A start date, an optional end date and explicit revocation, with a full history of who created, changed and revoked each one.</Feature>
+  <Feature icon="groups-rounded" title="Bulk management">Create delegations for several people and several accounts at once, and edit or revoke many together.</Feature>
+  <Feature icon="tune-rounded" title="Session permissions">Allow, prevent or prohibit any capability while someone works through a delegation, without creating roles.</Feature>
+  <Feature icon="history-rounded" title="Activity report">Every event recorded while an account was used through a delegation, with date, component and action filters.</Feature>
+  <Feature icon="shield-person-rounded" title="Site limits">Maximum delegations per person, maximum duration, maximum records per bulk action and protection of administrators.</Feature>
+  <Feature icon="notifications-rounded" title="Notifications">Optional messages when access is granted or revoked, in each recipient's language and customisable per language.</Feature>
+</FeatureGrid>
+
+Besides, people with delegations open them from **Delegated accounts** in their user menu, and the plugin offers events for every change, a restricted web service and support for the Privacy API.

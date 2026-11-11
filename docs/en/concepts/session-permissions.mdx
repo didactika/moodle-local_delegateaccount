@@ -1,0 +1,32 @@
+---
+title: Session permissions
+summary: What the four permissions mean, how they combine and what they leave alone.
+order: 21
+---
+
+A session opened through a delegation can be limited, or extended, without creating a single role. For every capability of the site you choose one of four permissions.
+
+## The four permissions
+
+| Permission | In the session |
+|---|---|
+| **Not set** | Nothing changes: the account keeps what its roles give it. Every capability starts here |
+| **Allow** | The capability is granted everywhere in the session, unless a role prohibits it |
+| **Prevent** | The capability is taken from the roles of the account on the whole site, as Prevent does in **Define roles**. An override of a role in a course or an activity still applies |
+| **Prohibit** | The capability is refused everywhere in the session, and nothing can grant it back |
+
+## Site and delegation
+
+The setting of a delegation wins over the one of the site, and a delegation set to Not set follows the site. So the site can forbid what no delegation should ever do, and one delegation can still be tighter or wider.
+
+## What they do not touch
+
+- They apply only to sessions opened through a delegation. No role is created or changed, and the owner of the account keeps every permission when logging in normally.
+- The access data of the session is rewritten on every request, so a change reaches open sessions from their next page.
+- Site administrator accounts have every capability whatever is set. This is one more reason to keep **Protect site administrator accounts** enabled.
+- Capabilities that Moodle checks with database queries instead of the session (for instance some lists of users or courses) are not affected.
+
+> [!WARNING]
+> Allow gives a capability to a session even when the account does not have it. Changing session permissions needs `local/delegateaccount:managepermissions`, which no role has by default, and only site administrators can allow a capability, because that is how a session receives something its account does not have.
+
+To set them, follow [the guide](page:guides/session-permissions).

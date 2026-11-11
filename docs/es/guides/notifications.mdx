@@ -1,0 +1,23 @@
+---
+title: Notificaciones
+summary: Avise a las personas implicadas cuando se concede o se revoca el acceso, en su idioma.
+order: 35
+---
+
+El plugin puede enviar un mensaje a las personas implicadas cuando se crea o se revoca una delegación. Usted decide la política del sitio y, cuando el sitio lo permite, la persona que crea la delegación decide cada vez.
+
+<Screenshot src="asset:settings-notifications.webp" alt="La pestaña Notificaciones de los ajustes del plugin" caption="La política de notificaciones, los destinatarios y los mensajes." url="/admin/settings.php?section=local_delegateaccount_settings" />
+
+<Steps>
+1. Abra **Administración del sitio > Extensiones > Plugins locales > Ajustes de Cuentas delegadas** y vaya a la pestaña **Notificaciones**.
+2. Elija la **Política de notificaciones**: que elija la persona que crea la delegación, notificar siempre o no notificar nunca.
+3. Elija quién la recibe: el usuario autorizado, la cuenta delegada, o ambos, y si revocar también notifica.
+4. En la pestaña **Mensajes**, escriba un asunto y un mensaje para cada idioma instalado, o déjelos vacíos para usar el texto incorporado.
+</Steps>
+
+Cada destinatario recibe la notificación en el idioma de su perfil, o en el idioma del sitio cuando el suyo no está instalado. Un mensaje personalizado se envía sin cambios a ambos destinatarios, así que escríbalo para que se lea bien en los dos casos. Los campos vacíos usan el texto incorporado, redactado para cada destinatario.
+
+> [!TIP]
+> Use **Enviarme una notificación de prueba**, debajo de estos ajustes, para recibir el asunto y el mensaje guardados de un idioma tal como los verían ambos destinatarios. Guarde antes los cambios.
+
+Los mensajes usan el proveedor **Notificaciones de cuentas delegadas**, enviado como notificaciones web y por correo por defecto; los usuarios y los administradores pueden cambiarlo en las preferencias de notificación habituales. Cada ajuste está descrito en la [referencia de ajustes](page:reference/settings).

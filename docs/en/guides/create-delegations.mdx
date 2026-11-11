@@ -1,0 +1,29 @@
+---
+title: Create delegations
+summary: Choose who may open which accounts, and when.
+order: 30
+---
+
+Go to **Site administration > Users > Accounts > Delegated accounts**. The **Authorised users** tab lists everyone who holds the permission, with their active and scheduled delegations. Search by name, username, email or ID number, and use the chips to see the people who have delegations in a status, or none.
+
+<Steps>
+1. Select **Create delegations** at the top of the page to choose several authorised users and several accounts at once, or the add icon on a user's row to create delegations for that user only.
+2. Choose the **authorised users** and the **delegated accounts**.
+3. Choose when access starts and, optionally, when it ends.
+4. When the site allows it, choose whether to notify the people involved, and save.
+</Steps>
+
+<Screenshot src="asset:create-dialog.webp" alt="The dialog to create delegations, with the authorised users, the delegated accounts and the period" caption="Create delegations for several people and several accounts at once." url="/local/delegateaccount/pages/manage.php" />
+
+Creating delegations for several people and several accounts creates every pair. A pair that already has a current delegation is left as it is, so repeating the action is safe.
+
+## What the account picker offers
+
+The account picker only offers active accounts. It leaves out:
+
+- the authorised user themselves;
+- accounts they already have a delegation for that has not been revoked;
+- the guest account;
+- site administrators, while they are protected.
+
+To give access again after a delegation expires, edit the expired delegation instead of creating a new one.

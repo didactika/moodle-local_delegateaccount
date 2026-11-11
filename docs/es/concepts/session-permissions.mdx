@@ -1,0 +1,32 @@
+---
+title: Permisos de sesión
+summary: Qué significan los cuatro permisos, cómo se combinan y qué dejan intacto.
+order: 21
+---
+
+Una sesión abierta mediante una delegación se puede limitar, o ampliar, sin crear un solo rol. Para cada capacidad del sitio se elige uno de cuatro permisos.
+
+## Los cuatro permisos
+
+| Permiso | En la sesión |
+|---|---|
+| **No establecido** | No cambia nada: la cuenta conserva lo que le dan sus roles. Todas las capacidades empiezan aquí |
+| **Permitir** | La capacidad se concede en toda la sesión, salvo que un rol la prohíba |
+| **Impedir** | La capacidad se quita de los roles de la cuenta en todo el sitio, como hace Impedir en **Definir roles**. Una sobrescritura de un rol en un curso o una actividad sigue aplicándose |
+| **Prohibir** | La capacidad se deniega en toda la sesión, y nada puede devolverla |
+
+## Sitio y delegación
+
+El ajuste de una delegación prevalece sobre el del sitio, y una delegación en No establecido sigue al sitio. Así el sitio puede prohibir lo que ninguna delegación debería hacer nunca, y una delegación concreta puede ser más estricta o más amplia.
+
+## Lo que no tocan
+
+- Se aplican solo a las sesiones abiertas mediante una delegación. No se crea ni se cambia ningún rol, y el titular de la cuenta conserva todos sus permisos al entrar con normalidad.
+- Los datos de acceso de la sesión se reescriben en cada petición, de modo que un cambio llega a las sesiones abiertas desde su página siguiente.
+- Las cuentas de administrador del sitio tienen todas las capacidades sea cual sea el ajuste. Es otra razón para mantener activado **Proteger las cuentas de administrador del sitio**.
+- Las capacidades que Moodle comprueba con consultas a la base de datos en lugar de con la sesión (por ejemplo, algunas listas de usuarios o de cursos) no se ven afectadas.
+
+> [!WARNING]
+> Permitir da una capacidad a una sesión aunque la cuenta no la tenga. Cambiar los permisos de sesión requiere `local/delegateaccount:managepermissions`, que ningún rol tiene por defecto, y solo las administradoras y los administradores del sitio pueden permitir una capacidad, porque así es como una sesión recibe algo que su cuenta no tiene.
+
+Para establecerlos, siga [la guía](page:guides/session-permissions).

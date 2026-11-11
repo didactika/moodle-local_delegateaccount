@@ -1,0 +1,23 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+state "editSessionPermissions" as editSessionPermissions {
+  state " " as Editor
+  state " " as Validating
+  state " " as Saved
+
+  [*] --> Editor : Administrator opens the permissions
+  Editor --> Validating : Administrator sets capabilities and saves
+  Validating --> Editor : System rejects an unknown capability or permission
+  Validating --> Saved : System writes the overrides and triggers the event
+  Saved --> [*]
+
+  note on link
+    Administrator: saves the overrides
+    System: validates, writes, triggers session_permissions_updated
+  end note
+}
+
+@enduml

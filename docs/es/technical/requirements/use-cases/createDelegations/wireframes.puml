@@ -1,0 +1,16 @@
+@startsalt
+{
+  {* Delegated accounts | Authorised users | Activity }
+  ==
+  Create delegations
+  --
+  {
+    Authorised users | "Search people...        "
+    Accounts | "Search people...        "
+    Start | "2026-11-11 09:00"
+    End | "2026-12-11 09:00"
+    Notify | ^Site default^
+  }
+  [ Create ] | [ Cancel ]
+}
+@endsalt

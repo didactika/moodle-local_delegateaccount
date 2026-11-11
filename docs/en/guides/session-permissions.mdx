@@ -1,0 +1,28 @@
+---
+title: Session permissions
+summary: Allow, prevent or prohibit capabilities in the sessions opened through a delegation.
+order: 33
+---
+
+This guide shows how to set them. What each permission means is in [the concept](page:concepts/session-permissions).
+
+## For one delegation
+
+Open the delegation and select its **Session permissions** tab. Find capabilities by name, technical name or component, narrow them with the chips (overridden, each permission, with risks) and save the changes from the bar at the foot of the window.
+
+<Screenshot src="asset:delegation-session-permissions.webp" alt="The Session permissions tab of a delegation, with the four permissions explained and the list of capabilities" caption="Each capability has Not set, Allow, Prevent and Prohibit. The site setting shows next to it." url="/local/delegateaccount/pages/delegation.php" />
+
+**Copy from another delegation** loads the overrides of another delegation to review before saving.
+
+## For every delegation of the site
+
+The **Session permissions** tab of the settings works the same way and sets what applies to every delegation. A delegation set to Not set follows it.
+
+<Screenshot src="asset:settings-session-permissions.webp" alt="The Session permissions tab of the plugin settings" caption="The same list, for the whole site." url="/admin/settings.php?section=local_delegateaccount_settings" />
+
+## For many delegations at once
+
+Select them in a list and choose **Session permissions** in the bar: pick the capabilities and the permission each gets (or **Remove the override**), or copy the overrides of one delegation, adding them to the ones there or replacing them. The selection can be every delegation that matches the list, and the change is written in batches, so it scales to any number of delegations.
+
+> [!WARNING]
+> Changing session permissions needs `local/delegateaccount:managepermissions`, which no role has by default, and only site administrators can allow a capability. Preventing and prohibiting are open to everyone who holds that capability.

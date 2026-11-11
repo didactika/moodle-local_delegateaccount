@@ -1,0 +1,22 @@
+---
+title: Dar permiso a las personas
+summary: Cree el rol que permite usar delegaciones y asígnelo.
+order: 11
+---
+
+El plugin añade una capacidad, `local/delegateaccount:use` (**Acceder como una cuenta delegada**). Nadie la tiene por defecto, así que se concede mediante un rol propio.
+
+<Steps>
+1. Vaya a **Administración del sitio > Usuarios > Permisos > Definir roles** y añada un rol nuevo, por ejemplo *Usuario de cuentas delegadas*.
+2. Seleccione **Sistema** como único tipo de contexto y permita `local/delegateaccount:use`.
+3. Vaya a **Administración del sitio > Usuarios > Permisos > Asignar roles de sistema**, abra el rol y asígnelo a las personas que deban poder usar delegaciones.
+</Steps>
+
+<Screenshot src="asset:roles-assign.webp" alt="La página Asignar roles de sistema con tres usuarios en el rol Usuario de cuentas delegadas" caption="El rol asignado a tres personas. Ya son los usuarios autorizados que lista el plugin." url="/admin/roles/assign.php" />
+
+Mientras ningún rol conceda la capacidad, la página de gestión recuerda estos dos pasos con enlaces a las dos páginas.
+
+> [!WARNING]
+> No conceda `local/delegateaccount:use` al rol **Usuario autenticado**. Todos los usuarios pasarían a contar como autorizados.
+
+Las personas que tienen el rol son los **usuarios autorizados**: aquellos para los que se pueden crear delegaciones. [Cree su primera delegación](page:getting-started/quick-start).

@@ -1,0 +1,19 @@
+---
+title: Eventos
+summary: Los eventos que dispara el plugin, para que otros plugins y el log puedan seguir cada cambio.
+order: 44
+---
+
+Cada cambio dispara un evento de Moodle, de modo que queda en el log del sitio y otros plugins pueden observarlo. Todos tienen el nivel educativo **otro** y los escribe el usuario que hizo el cambio.
+
+| Evento | Clase | Tipo | Cuándo |
+|---|---|---|---|
+| Delegación de cuenta creada | `\local_delegateaccount\event\delegation_created` | Crear | Se crea una delegación. Su usuario relacionado es el usuario autorizado, y `other['delegateduserid']` es la cuenta delegada |
+| Delegación de cuenta actualizada | `\local_delegateaccount\event\delegation_updated` | Actualizar | Cambia el periodo o la elección de notificación de una delegación |
+| Delegación de cuenta revocada | `\local_delegateaccount\event\delegation_revoked` | Eliminar | Se revoca una delegación. Se revoca de forma lógica y se conserva su historial |
+| Permisos de sesión cambiados | `\local_delegateaccount\event\session_permissions_updated` | Actualizar | Cambian sobrescrituras de permisos, para todo el sitio, para una delegación o para muchas |
+
+Todos se refieren a la tabla `local_delegateaccount`. El evento de permisos de sesión lleva cuántas sobrescrituras cambiaron y, en un cambio de muchas delegaciones, cuántas delegaciones.
+
+> [!NOTE]
+> Los eventos de lo que una persona hace *dentro* de una cuenta delegada son los habituales de Moodle. También llevan al usuario real, que es lo que lee [el informe de actividad](page:guides/activity-report).

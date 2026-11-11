@@ -1,0 +1,15 @@
+@startsalt
+{
+  {* Delegated accounts | Session permissions }
+  ==
+  Session permissions - Marta Ruiz as Carmen Vidal
+  --
+  {#
+    Capability | Role gives | This delegation
+    moodle/course:delete | Allow | ^Prevent^
+    moodle/user:update | Allow | ^Inherit^
+    mod/forum:post | Allow | ^Inherit^
+  }
+  [ Save ] | [ Cancel ]
+}
+@endsalt

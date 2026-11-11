@@ -1,0 +1,18 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Administrator" as user <<actor>>
+class "Permission editor" as screen <<boundary>>
+class "Session permissions" as permissions <<control>>
+class "Permission policy" as policy <<control>>
+class "Session permission" as override <<entity>>
+
+user --> screen : 1: sets capabilities
+screen --> policy : 2: may this user manage permissions?
+screen --> permissions : 3: update(delegation, changes)
+permissions --> override : 4: validates and writes
+
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+!theme plain
+hide circle
+skinparam linetype polyline
+top to bottom direction
+
+entity "user (Moodle)" as user {
+  * id : int <<PK>>
+}
+
+entity "local_delegateaccount" as delegation {
+  * id : int <<PK>>
+  --
+  * realuserid : int <<FK>>
+  * delegateduserid : int <<FK>>
+  * usercreated : int <<FK>>
+  timecreated : int
+  timestart : int
+  timeend : int
+  timemodified : int
+  usermodified : int
+  timerevoked : int
+  userrevoked : int
+  activekey : int
+  notificationmode : char(10)
+  timenotified : int
+}
+
+entity "local_delegateaccount_caps" as caps {
+  * id : int <<PK>>
+  --
+  delegationid : int
+  capability : char(255)
+  permission : int
+  timemodified : int
+  * usermodified : int <<FK>>
+}
+
+user ||--o{ delegation : realuserid
+user ||--o{ delegation : delegateduserid
+user ||--o{ delegation : usercreated
+user ||--o{ caps : usermodified
+delegation ||--o{ caps : delegationid (0 = the site)
+
+note bottom of delegation
+  Unique: realuserid, delegateduserid, activekey
+  (one active record per pair, revoked ones kept)
+end note
+
+@enduml

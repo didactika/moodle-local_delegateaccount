@@ -1,0 +1,32 @@
+---
+title: Modelo de seguridad
+summary: Lo que el plugin nunca hace, lo que protege el sitio y en quién confiar.
+order: 22
+---
+
+Delegar una cuenta es una decisión seria. Estos son los límites que el plugin pone a su alrededor y los que siguen siendo suyos.
+
+## Lo que el plugin nunca hace
+
+- Nunca guarda contraseñas y nunca crea cuentas.
+- Nunca abre una cuenta por sí mismo: solo decide si se puede usar **Acceder como** de Moodle.
+- Nunca deja que una cuenta delegada abra otra cuenta delegada: la persona debe cerrar sesión primero.
+
+## Lo que protege el sitio
+
+<FeatureGrid columns={2}>
+  <Feature icon="admin-panel-settings-rounded" title="Los administradores están protegidos">Mientras **Proteger las cuentas de administrador del sitio** esté activado, los administradores no se pueden delegar, y una delegación deja de funcionar si su cuenta pasa a ser administrador.</Feature>
+  <Feature icon="history-rounded" title="Todo queda registrado">Cada evento está en el log del sitio con ambos nombres, y cada delegación conserva quién la creó, cambió y revocó.</Feature>
+  <Feature icon="block-rounded" title="Límites que usted fija">Máximo de delegaciones por persona, duración máxima, permitir o no la ausencia de fecha de fin y un máximo de registros por acción en bloque.</Feature>
+  <Feature icon="lock-person-rounded" title="El acceso se vuelve a comprobar">El permiso y la delegación se comprueban en cada página, así que revocar es inmediato.</Feature>
+</FeatureGrid>
+
+## En quién confiar
+
+> [!CAUTION]
+> Quien puede crear delegaciones decide quién puede acceder como quién. Conceda `local/delegateaccount:create` y `local/delegateaccount:manage` solo a personas en las que confiaría para usar **Acceder como** de Moodle.
+
+> [!CAUTION]
+> Con **Proteger las cuentas de administrador del sitio** desactivado, un usuario autorizado con una delegación a un administrador puede acceder como ese administrador y tomar el control total del sitio.
+
+Los [permisos de sesión](page:concepts/session-permissions) acotan lo que puede hacer una sesión, y las [capacidades](page:reference/capabilities) dicen quién puede gestionar cada parte.
