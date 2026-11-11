@@ -1,7 +1,7 @@
 ---
 title: Capacidades
 summary: Todas las capacidades del plugin, quién las tiene por defecto y qué permiten.
-order: 31
+order: 41
 ---
 
 Todas las capacidades se aplican en el contexto del sistema.

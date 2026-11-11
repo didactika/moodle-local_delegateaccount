@@ -1,0 +1,40 @@
+---
+title: How access is decided
+summary: The two conditions that must hold, the life of a delegation and when a delegated session ends.
+order: 20
+---
+
+Delegate Account does not open accounts by itself: it decides whether Moodle's own **Log in as** may be used for a given pair of users at a given moment.
+
+## Two conditions
+
+Two things must be true for someone to open an account:
+
+<FeatureGrid columns={2}>
+  <Feature icon="key-rounded" title="They hold the permission">They have `local/delegateaccount:use` in the system context, or they are a site administrator.</Feature>
+  <Feature icon="swap-horiz-rounded" title="A delegation exists">An administrator created a delegation from them to that account, and it is currently active.</Feature>
+</FeatureGrid>
+
+## The life of a delegation
+
+Each delegation moves through four statuses, and the status is calculated from its dates, not stored.
+
+| Status | Meaning |
+|---|---|
+| <Badge text="Scheduled" variant="note" /> | The start date has not been reached yet |
+| <Badge text="Active" variant="success" /> | The account can be opened now |
+| <Badge text="Expired" variant="caution" /> | The end date has passed |
+| <Badge text="Revoked" variant="danger" /> | An administrator ended it. Revoked delegations are kept for the record |
+
+To give access again after a delegation expires, [edit the expired delegation](page:guides/manage-delegations) instead of creating a new one.
+
+## When a delegated session ends
+
+Access is checked when the account is opened and again on every page while the delegated session lasts. The session ends on the next page if:
+
+- the delegation is revoked or expires;
+- the person loses the permission;
+- the account is suspended or deleted;
+- the account becomes a site administrator while that is protected (see [the security model](page:concepts/security-model)).
+
+Nothing depends on cron: start and end dates are checked each time, so delegations start and stop on time.

@@ -1,0 +1,40 @@
+---
+title: Cuenta delegada
+summary: Permite que personas elegidas accedan como otras cuentas, solo cuando y durante el tiempo que usted permita.
+order: 1
+---
+
+Delegate Account (`local_delegateaccount`) es un plugin local de Moodle que da a personas concretas acceso a cuentas concretas. Un administrador decide quién puede actuar como quién y durante qué periodo. La persona abre entonces la cuenta desde su menú de usuario mediante la función **Acceder como** de Moodle, y todo lo que hace queda registrado en el log del sitio con ambos nombres.
+
+<Screenshot src="asset:manage-authorised.webp" alt="La página Cuentas delegadas, con la lista de usuarios autorizados y los chips de cada estado de delegación" caption="La página de gestión: quién puede usar delegaciones y cuántas tiene en cada estado." url="/local/delegateaccount/pages/manage.php" />
+
+> [!IMPORTANT]
+> **Solo los administradores del sitio pueden usar cuentas delegadas hasta que usted dé el permiso a otras personas.** Cree un rol con la capacidad `local/delegateaccount:use` y asígnelo en el contexto del sistema a quienes deban poder usar delegaciones. Consulte [Dar permiso a las personas](page:getting-started/give-permission).
+
+> [!NOTE]
+> Delegate Account nunca guarda contraseñas ni crea cuentas. Solo decide si se puede usar **Acceder como** de Moodle para un par de usuarios concreto en un momento concreto.
+
+## Por dónde empezar
+
+<FeatureGrid>
+  <Feature icon="admin-panel-settings-rounded" title="Administro el sitio" href="page:getting-started/quick-start">Instale el plugin, dé el permiso y cree su primera delegación en pocos minutos.</Feature>
+  <Feature icon="manage-accounts-rounded" title="Uso cuentas delegadas" href="page:guides/use-a-delegated-account">Abra una cuenta desde su menú de usuario y deje de usarla.</Feature>
+  <Feature icon="api-rounded" title="Lo integro o lo amplío" href="page:reference/webservices">El servicio web, los eventos y las capacidades del plugin.</Feature>
+</FeatureGrid>
+
+## Por qué existe
+
+Algunas personas necesitan trabajar dentro de la cuenta de otra: un equipo de soporte que corrige un perfil, un asistente que gestiona el calendario de una directora, un docente que sustituye a un colega. La capacidad **Acceder como** de Moodle permite abrir *cualquier* cuenta que se pueda ver, sin límite de tiempo. Delegate Account la reduce a pares explícitos y limitados en el tiempo. [Cómo se decide el acceso](page:concepts/how-access-is-decided) explica las dos condiciones y la vida de una delegación.
+
+## Qué hace
+
+<FeatureGrid>
+  <Feature icon="schedule-rounded" title="Delegaciones limitadas en el tiempo">Una fecha de inicio, una fecha de fin opcional y revocación explícita, con un historial completo de quién creó, cambió y revocó cada una.</Feature>
+  <Feature icon="groups-rounded" title="Gestión en bloque">Cree delegaciones para varias personas y varias cuentas a la vez, y edite o revoque muchas juntas.</Feature>
+  <Feature icon="tune-rounded" title="Permisos de sesión">Permita, impida o prohíba cualquier capacidad mientras alguien trabaja mediante una delegación, sin crear roles.</Feature>
+  <Feature icon="history-rounded" title="Informe de actividad">Cada evento registrado mientras se usaba una cuenta mediante una delegación, con filtros por fecha, componente y acción.</Feature>
+  <Feature icon="shield-person-rounded" title="Límites del sitio">Máximo de delegaciones por persona, duración máxima, máximo de registros por acción en bloque y protección de los administradores.</Feature>
+  <Feature icon="notifications-rounded" title="Notificaciones">Mensajes opcionales cuando se concede o se revoca el acceso, en el idioma de cada destinatario y personalizables por idioma.</Feature>
+</FeatureGrid>
+
+Además, las personas con delegaciones las abren desde **Cuentas delegadas** en su menú de usuario, y el plugin ofrece eventos para cada cambio, un servicio web restringido y compatibilidad con la API de privacidad.

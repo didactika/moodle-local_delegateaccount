@@ -1,7 +1,7 @@
 ---
 title: Solución de problemas
 summary: Qué comprobar cuando algo no funciona como se espera.
-order: 29
+order: 37
 ---
 
 | Problema | Causa posible |

@@ -1,7 +1,7 @@
 ---
 title: Capabilities
 summary: Every capability of the plugin, who has it by default and what it allows.
-order: 31
+order: 41
 ---
 
 All capabilities apply in the system context.

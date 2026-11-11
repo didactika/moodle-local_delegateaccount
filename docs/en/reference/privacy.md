@@ -1,7 +1,7 @@
 ---
 title: Scheduled tasks, privacy and backup
 summary: What the plugin stores, what it exports and what it leaves out of backups.
-order: 33
+order: 43
 ---
 
 ## Scheduled tasks

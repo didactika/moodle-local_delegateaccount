@@ -1,7 +1,7 @@
 ---
 title: Tareas programadas, privacidad y copias de seguridad
 summary: Qué guarda el plugin, qué exporta y qué deja fuera de las copias de seguridad.
-order: 33
+order: 43
 ---
 
 ## Tareas programadas

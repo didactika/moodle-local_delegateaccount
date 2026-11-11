@@ -1,7 +1,7 @@
 ---
 title: Web-service integration
 summary: The functions of the web service, the capability each needs, its limits and examples.
-order: 32
+order: 42
 ---
 
 `local_delegateaccount` registers the **Delegated account management** external

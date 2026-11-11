@@ -1,10 +1,12 @@
 ---
 title: Ajustes
 summary: "Los ajustes del plugin: controles de las delegaciones y notificaciones."
-order: 30
+order: 40
 ---
 
 Los ajustes están en **Administración del sitio > Extensiones > Plugins locales > Ajustes de Cuentas delegadas**, en cuatro pestañas: **Delegaciones**, **Notificaciones**, **Mensajes** y **Permisos de sesión**.
+
+<Screenshot src="asset:settings-delegations.webp" alt="La pestaña Delegaciones de los ajustes del plugin" caption="Los controles de las delegaciones." url="/admin/settings.php?section=local_delegateaccount_settings" />
 
 ## Controles de las delegaciones
 
@@ -29,7 +31,4 @@ Los ajustes están en **Administración del sitio > Extensiones > Plugins locale
 | Notificar cuando se revoca una delegación | Sí | Notifica también cuando se revoca el acceso |
 | Asunto y mensaje cuando se concede o se revoca el acceso | Vacío | Un asunto y un mensaje por acción para cada idioma instalado. Los campos vacíos usan el texto incorporado, redactado para cada destinatario. Un mensaje personalizado se envía sin cambios a ambos destinatarios, así que escríbalo para que se lea bien en los dos casos |
 
-> [!TIP]
-> Use **Enviarme una notificación de prueba**, debajo de estos ajustes, para recibir el asunto y el mensaje guardados de un idioma tal como los verían ambos destinatarios. Guarde antes los cambios.
-
-Cada destinatario recibe la notificación en el idioma de su perfil, o en el idioma del sitio cuando el suyo no está instalado. Los mensajes usan el proveedor **Notificaciones de cuentas delegadas**, enviado como notificaciones web y por correo por defecto; los usuarios y los administradores pueden cambiarlo en las preferencias de notificación habituales.
+El paso a paso está en [la guía de notificaciones](page:guides/notifications).

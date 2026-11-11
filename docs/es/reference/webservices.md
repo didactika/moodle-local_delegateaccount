@@ -1,7 +1,7 @@
 ---
 title: Integración con servicios web
 summary: Las funciones del servicio web, la capacidad que necesita cada una, sus límites y ejemplos.
-order: 32
+order: 42
 ---
 
 `local_delegateaccount` registra el servicio externo **Gestión de cuentas delegadas**. Está desactivado por defecto, restringido a usuarios autorizados explícitamente y no permite subir ni descargar archivos. Actívelo solo después de crear una cuenta de integración dedicada y de asignarle las capacidades mínimas que necesite esa integración.

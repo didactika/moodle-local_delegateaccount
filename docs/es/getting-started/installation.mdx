@@ -11,10 +11,11 @@ order: 10
 | 4.5 a 5.2 | `MOODLE_405_STABLE` | `X.Y.Z-m405` |
 | 5.3 | `main` | `X.Y.Z-m503` |
 
-**Desde una release:** descargue el ZIP de la última release, vaya a **Administración del sitio > Extensiones > Instalar plugins**, suba el archivo y siga las indicaciones.
-
-**Desde Git:**
-
+<Tabs>
+  <TabItem label="Desde una release">
+    Descargue el ZIP de la última release, vaya a **Administración del sitio > Extensiones > Instalar plugins**, suba el archivo y siga las indicaciones.
+  </TabItem>
+  <TabItem label="Desde Git">
 ```bash
 cd /path/to/moodle
 # Moodle 4.5 and 5.0
@@ -23,3 +24,7 @@ git clone -b MOODLE_405_STABLE https://github.com/didactika/moodle-local_delegat
 git clone -b MOODLE_405_STABLE https://github.com/didactika/moodle-local_delegateaccount.git public/local/delegateaccount
 php admin/cli/upgrade.php
 ```
+  </TabItem>
+</Tabs>
+
+Tras la instalación, solo los administradores del sitio pueden usar cuentas delegadas. El siguiente paso es [dar permiso a las personas](page:getting-started/give-permission).

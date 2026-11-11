@@ -1,7 +1,7 @@
 ---
 title: Troubleshooting
 summary: What to check when something does not work as expected.
-order: 29
+order: 37
 ---
 
 | Problem | Possible cause |

@@ -1,0 +1,28 @@
+---
+title: Permisos de sesión
+summary: Permita, impida o prohíba capacidades en las sesiones abiertas mediante una delegación.
+order: 33
+---
+
+Esta guía muestra cómo establecerlos. Lo que significa cada permiso está en [el concepto](page:concepts/session-permissions).
+
+## Para una delegación
+
+Abra la delegación y seleccione su pestaña **Permisos de sesión**. Busque capacidades por nombre, nombre técnico o componente, acótelas con los chips (sobrescritas, cada permiso, con riesgos) y guarde los cambios desde la barra al pie de la ventana.
+
+<Screenshot src="asset:delegation-session-permissions.webp" alt="La pestaña Permisos de sesión de una delegación, con los cuatro permisos explicados y la lista de capacidades" caption="Cada capacidad tiene No establecido, Permitir, Impedir y Prohibir. El ajuste del sitio aparece a su lado." url="/local/delegateaccount/pages/delegation.php" />
+
+**Copiar de otra delegación** carga las sobrescrituras de otra delegación para revisarlas antes de guardar.
+
+## Para todas las delegaciones del sitio
+
+La pestaña **Permisos de sesión** de los ajustes funciona igual y establece lo que se aplica a todas las delegaciones. Una delegación en No establecido la sigue.
+
+<Screenshot src="asset:settings-session-permissions.webp" alt="La pestaña Permisos de sesión de los ajustes del plugin" caption="La misma lista, para todo el sitio." url="/admin/settings.php?section=local_delegateaccount_settings" />
+
+## Para muchas delegaciones a la vez
+
+Selecciónelas en una lista y elija **Permisos de sesión** en la barra: elija las capacidades y el permiso que recibe cada una (o **Quitar la sobrescritura**), o copie las sobrescrituras de una delegación, añadiéndolas a las que ya hay o reemplazándolas. La selección puede ser todas las delegaciones que coinciden con la lista, y el cambio se escribe por lotes, de modo que escala a cualquier número de delegaciones.
+
+> [!WARNING]
+> Cambiar los permisos de sesión requiere `local/delegateaccount:managepermissions`, que ningún rol tiene por defecto, y una persona solo puede permitir las capacidades que ella misma tiene.

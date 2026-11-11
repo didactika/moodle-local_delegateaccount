@@ -1,10 +1,12 @@
 ---
 title: Settings
 summary: "The settings of the plugin: delegation controls and notifications."
-order: 30
+order: 40
 ---
 
 Settings are located at **Site administration > Plugins > Local plugins > Delegated account settings**, in four tabs: **Delegations**, **Notifications**, **Messages** and **Session permissions**.
+
+<Screenshot src="asset:settings-delegations.webp" alt="The Delegations tab of the plugin settings" caption="The controls of the delegations." url="/admin/settings.php?section=local_delegateaccount_settings" />
 
 ## Delegation controls
 
@@ -20,7 +22,6 @@ Settings are located at **Site administration > Plugins > Local plugins > Delega
 > [!CAUTION]
 > With **Protect site administrator accounts** turned off, an authorised user with a delegation to an administrator can log in as that administrator and take full control of the site.
 
-
 ## Notifications
 
 | Setting | Default | Description |
@@ -30,7 +31,4 @@ Settings are located at **Site administration > Plugins > Local plugins > Delega
 | Notify when a delegation is revoked | On | Also notify when access is revoked |
 | Subject and message when access is granted or revoked | Empty | One subject and one message per action for each installed language. Empty fields use the built-in text, which is worded for each recipient. A custom message is sent unchanged to both recipients, so write it to read well for both |
 
-> [!TIP]
-> Use **Send yourself a test notification**, below these settings, to receive the saved subject and message for a language as both recipients would see them. Save your changes first.
-
-Each recipient gets the notification in their profile language, or in the site language when theirs is not installed. Messages use the **Delegated account notifications** provider, sent as web and email notifications by default; users and administrators can change that in the usual notification preferences.
+The step by step is in [the notifications guide](page:guides/notifications).
