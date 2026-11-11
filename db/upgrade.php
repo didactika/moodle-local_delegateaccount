@@ -141,5 +141,13 @@ function xmldb_local_delegateaccount_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2026110600, 'local', 'delegateaccount');
     }
 
+    if ($oldversion < 2026110601) {
+        // The guided tours imported by earlier versions are fixed English text; the ones nobody edited move to language strings.
+        require_once(__DIR__ . '/../lib.php');
+        local_delegateaccount_update_tours();
+
+        upgrade_plugin_savepoint(true, 2026110601, 'local', 'delegateaccount');
+    }
+
     return true;
 }
