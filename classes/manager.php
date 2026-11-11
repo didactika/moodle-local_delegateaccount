@@ -129,25 +129,38 @@ class manager {
         return $authorisedusers;
     }
     /**
-     * Returns setup guidance when no role grants the use capability yet.
+     * Tells whether the role setup guidance is needed, which is until a role grants the use capability.
      *
      * Without such a role only site administrators can be chosen as authorised users.
-     * The guidance is only returned to users who can define roles.
+     * The guidance is only needed by users who can define roles.
      *
-     * @return string|null Guidance text with links to the role pages, or null when none is needed.
+     * @return bool True when the current user should be pointed to the role pages.
      */
-    public static function get_role_setup_hint(): ?string {
+    public static function needs_role_setup(): bool {
         $context = \context_system::instance();
         if (!has_capability('moodle/role:manage', $context)) {
-            return null;
-        }
-        if (\get_users_by_capability($context, 'local/delegateaccount:use', 'u.id', '', 0, 1)) {
-            return null;
+            return false;
         }
 
-        return get_string('setup_role_hint', 'local_delegateaccount', (object)[
-            'defineroles' => (new \moodle_url('/admin/roles/manage.php'))->out(),
-            'assignroles' => (new \moodle_url('/admin/roles/assign.php', ['contextid' => $context->id]))->out(),
+        return !\get_users_by_capability($context, 'local/delegateaccount:use', 'u.id', '', 0, 1);
+    }
+
+    /**
+     * Returns the help icon that explains how to give people the permission to use delegated accounts.
+     *
+     * @return string HTML of the help icon, or an empty string when no guidance is needed.
+     */
+    public static function get_role_setup_help_icon(): string {
+        global $OUTPUT;
+
+        if (!self::needs_role_setup()) {
+            return '';
+        }
+
+        return $OUTPUT->help_icon('manage_authorised_users_roles', 'local_delegateaccount', '', (object)[
+            'defineroles' => (new \moodle_url('/admin/roles/manage.php'))->out(false),
+            'assignroles' => (new \moodle_url('/admin/roles/assign.php', ['contextid' => \context_system::instance()->id]))
+                ->out(false),
         ]);
     }
 

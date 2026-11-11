@@ -23,10 +23,12 @@
  */
 
 /**
- * Imports the guided tours shipped in the plugin folder as `tour_*.json` into Moodle's User Tours.
+ * Imports the guided tours shipped in the plugin's tours folder into Moodle's User Tours.
  *
- * A tour whose name already exists is left untouched, so tours that administrators edited,
- * renamed or disabled are never overwritten and running this twice creates no duplicates.
+ * The texts of the tours are references to this plugin's language strings (`identifier,component`), which User Tours
+ * resolves in the language of each user. A tour is left untouched when one with the same name already exists, either as
+ * the reference or as the English text that earlier versions stored, so tours that administrators edited, renamed or
+ * disabled are never overwritten and running this twice creates no duplicates.
  *
  * @return int Number of tours imported.
  */
@@ -38,14 +40,23 @@ function local_delegateaccount_import_tours(): int {
     }
 
     $imported = 0;
-    foreach (glob(__DIR__ . '/tour_*.json') as $file) {
+    foreach (glob(__DIR__ . '/tours/*.json') as $file) {
         $json = file_get_contents($file);
         $tour = json_decode($json);
         if (!is_object($tour) || empty($tour->name) || empty($tour->steps)) {
             debugging('Skipping invalid tour file ' . basename($file), DEBUG_DEVELOPER);
             continue;
         }
-        if ($DB->record_exists('tool_usertours_tours', ['name' => $tour->name])) {
+
+        $names = [$tour->name];
+        if (
+            preg_match('/^([a-zA-Z][a-zA-Z0-9_]*),local_delegateaccount$/', $tour->name, $matches)
+            && get_string_manager()->string_exists($matches[1], 'local_delegateaccount')
+        ) {
+            $names[] = get_string_manager()->get_string($matches[1], 'local_delegateaccount', null, 'en');
+        }
+        [$insql, $params] = $DB->get_in_or_equal($names);
+        if ($DB->record_exists_select('tool_usertours_tours', 'name ' . $insql, $params)) {
             continue;
         }
 
