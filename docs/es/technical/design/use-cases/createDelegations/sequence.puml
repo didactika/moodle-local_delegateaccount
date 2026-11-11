@@ -1,0 +1,28 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Administrator" as actor
+participant "create.js" as js
+participant "external create_delegations" as service
+participant "manager" as manager
+database "local_delegateaccount" as table
+participant "notification_manager" as notifier
+
+actor -> js : submit the dialog
+js -> service : create_delegations(users, accounts, options)
+service -> manager : create_delegations(...)
+manager -> manager : validate period, users, bulk and person limits
+manager -> table : start transaction
+loop each new pair
+  manager -> table : insert record
+  manager -> manager : trigger delegation_created
+end
+manager -> table : commit
+manager -> notifier : notify(delegation, created)
+manager --> service : count
+service --> js : count
+js --> actor : confirmation
+
+@enduml

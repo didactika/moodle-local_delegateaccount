@@ -1,0 +1,20 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Administrator" as user <<actor>>
+class "Delegations page" as screen <<boundary>>
+class "Delegation manager" as manager <<control>>
+class "Permission policy" as policy <<control>>
+class "Notifier" as notifier <<control>>
+class "Delegation" as delegation <<entity>>
+
+user --> screen : 1: submits the dialog
+screen --> manager : 2: create(users, accounts, period, mode)
+manager --> policy : 3: may this user create?
+manager --> delegation : 4: validates, skips existing pairs, inserts
+manager --> notifier : 5: notifies
+
+@enduml

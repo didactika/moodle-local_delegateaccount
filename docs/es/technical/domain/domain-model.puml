@@ -1,0 +1,48 @@
+@startuml
+!theme plain
+hide empty members
+hide circle
+skinparam linetype polyline
+skinparam nodesep 60
+skinparam ranksep 70
+top to bottom direction
+
+package "Level 1 - Core" <<level1>> {
+  class Delegation {
+    realuserid
+    delegateduserid
+    timestart
+    timeend
+    timerevoked
+    notificationmode
+  }
+}
+
+package "Level 2 - Structural" <<level2>> {
+  class AuthorisedUser
+  class DelegatedAccount
+  class SessionPermission {
+    capability
+    permission
+  }
+}
+
+package "Level 3 - Detail" <<level3>> {
+  class DelegatedSession
+  class Notification
+}
+
+package "Level 4 - Support" <<level4>> {
+  class SiteLimits
+  class ActivityRecord
+}
+
+AuthorisedUser "1" -down- "0..*" Delegation : holds
+DelegatedAccount "1" -down- "0..*" Delegation : is opened through
+Delegation "1" o-down- "0..*" SessionPermission : narrows or widens
+Delegation "1" o-down- "0..*" DelegatedSession : is used in
+Delegation "1" o-down- "0..*" Notification : announces
+DelegatedSession "1" -down- "0..*" ActivityRecord : leaves
+SiteLimits ..> Delegation : bounds
+
+@enduml

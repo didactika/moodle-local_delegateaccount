@@ -1,0 +1,28 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Administrator" as actor
+participant "permission_editor.js" as js
+participant "external save_session_permissions" as service
+participant "session_capabilities" as caps
+database "local_delegateaccount_caps" as table
+
+actor -> js : set capabilities and save
+js -> service : save_session_permissions(delegation, changes)
+service -> service : require managepermissions
+service -> caps : update(delegation, changes)
+caps -> caps : validate_changes
+caps -> table : write overrides
+caps -> caps : trigger session_permissions_updated
+caps --> service : number changed
+service --> js : result
+js --> actor : saved
+
+note over caps
+  Sessions that are open read the overrides
+  again on their next request (apply()).
+end note
+
+@enduml

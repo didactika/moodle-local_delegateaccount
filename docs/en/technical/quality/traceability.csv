@@ -1,0 +1,4 @@
+requirement,use_case,name,analysis,design,code,test
+RF-001,UC-001,createDelegations,docs/en/technical/analysis/use-cases/createDelegations,docs/en/technical/design/use-cases/createDelegations,classes/manager.php:360,tests/manager_test.php
+RF-003,UC-002,openDelegatedAccount,docs/en/technical/analysis/use-cases/openDelegatedAccount,docs/en/technical/design/use-cases/openDelegatedAccount,classes/manager.php:278,tests/delegated_session_test.php
+RF-005,UC-003,editSessionPermissions,docs/en/technical/analysis/use-cases/editSessionPermissions,docs/en/technical/design/use-cases/editSessionPermissions,classes/session_capabilities.php:171,tests/session_capabilities_test.php

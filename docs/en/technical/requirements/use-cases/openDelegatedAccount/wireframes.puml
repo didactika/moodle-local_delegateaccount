@@ -1,0 +1,14 @@
+@startsalt
+{
+  {* Home | Dashboard | My courses }
+  ==
+  My delegated accounts
+  --
+  {
+    Marta Ruiz | "Carmen Vidal  (until 11 Dec 2026)" | [ Open account ]
+    Marta Ruiz | "Pablo Soler  (no end)" | [ Open account ]
+  }
+  --
+  <&info> Everything you do is recorded under both names.
+}
+@endsalt

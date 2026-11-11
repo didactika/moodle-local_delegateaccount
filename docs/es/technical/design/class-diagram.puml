@@ -1,0 +1,59 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+package "Entry points" {
+  class "external functions" as External
+  class "pages (php)" as Pages
+  class "hook after_config" as AfterConfig
+  class "hook extend_user_menu" as UserMenuHook
+}
+
+package "Services" {
+  class manager {
+    +create_delegations()
+    +revoke_delegations()
+    +update_delegations()
+    +get_delegated_access_error()
+    +start_delegated_session()
+    +end_invalid_delegated_session()
+    +get_delegation_status()
+  }
+  class session_capabilities {
+    +update()
+    +copy()
+    +apply()
+    +get_effective_permissions()
+  }
+  class notification_manager {
+    +notify()
+    +send_test()
+  }
+  class permission {
+    +has()
+    +require_action()
+  }
+  class listing
+}
+
+package "Persistence" {
+  class "local_delegateaccount" as TDelegation <<table>>
+  class "local_delegateaccount_caps" as TCaps <<table>>
+}
+
+External --> manager
+External --> session_capabilities
+Pages --> manager
+Pages --> permission
+AfterConfig --> manager
+UserMenuHook --> manager
+manager --> permission
+manager --> notification_manager
+manager --> TDelegation
+manager ..> session_capabilities
+session_capabilities --> TCaps
+listing --> TDelegation
+
+@enduml

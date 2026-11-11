@@ -7,3 +7,4 @@ amd/build/** linguist-generated=true
 .mustachelintignore export-ignore
 CHANGELOG.md export-ignore
 /docs export-ignore
+/rup.config.json export-ignore
