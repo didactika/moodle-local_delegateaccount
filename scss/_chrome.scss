@@ -196,6 +196,28 @@
         &[aria-busy="true"] {
             opacity: 0.6;
         }
+
+        // A list keeps the same height whatever it holds: with few rows there is empty space below them, with many it scrolls
+        // and the header stays in view.
+        &[data-region="tablewrap"] {
+            block-size: var(--dd-table-h);
+            overflow-y: auto;
+
+            & thead th {
+                position: sticky;
+                inset-block-start: 0;
+                z-index: 1;
+                background-color: var(--dd-surface);
+            }
+        }
+    }
+
+    // The empty and error states take the same height, so the page does not jump when a search finds nothing.
+    & [data-region="empty"]:not([hidden]),
+    & [data-region="error"]:not([hidden]) {
+        display: grid;
+        min-block-size: var(--dd-table-h);
+        place-content: center;
     }
 
     & .table {

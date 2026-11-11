@@ -24,6 +24,7 @@
     --dd-radius: 0.625rem;
     --dd-radius-sm: 0.5rem;
     --dd-radius-lg: 0.75rem;
+    --dd-table-h: 34rem;
     --dd-h: 2.25rem;
     --dd-h-sm: 1.75rem;
     --dd-ease: 140ms cubic-bezier(0.2, 0, 0, 1);
@@ -328,6 +329,25 @@
 
 .lda .table-responsive[aria-busy=true] {
     opacity: 0.6;
+}
+
+.lda .table-responsive[data-region=tablewrap] {
+    block-size: var(--dd-table-h);
+    overflow-y: auto;
+}
+
+.lda .table-responsive[data-region=tablewrap] thead th {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    background-color: var(--dd-surface);
+}
+
+.lda [data-region=empty]:not([hidden]),
+.lda [data-region=error]:not([hidden]) {
+    display: grid;
+    min-block-size: var(--dd-table-h);
+    place-content: center;
 }
 
 .lda .table {
