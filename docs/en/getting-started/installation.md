@@ -1,0 +1,25 @@
+---
+title: Installation
+summary: Requirements, and how to install the plugin from a release or from Git.
+order: 10
+---
+
+**Requirements:** Moodle 4.5 to 5.2, with the PHP version your Moodle release requires. For Moodle 5.3 and later, use the `main` branch and the `-m503` releases, which bring the same features built with React and TypeScript.
+
+| Moodle | Branch | Releases |
+|---|---|---|
+| 4.5 to 5.2 | `MOODLE_405_STABLE` | `X.Y.Z-m405` |
+| 5.3 | `main` | `X.Y.Z-m503` |
+
+**From a release:** download the latest release ZIP, go to **Site administration > Plugins > Install plugins**, upload the file and follow the prompts.
+
+**From Git:**
+
+```bash
+cd /path/to/moodle
+# Moodle 4.5 and 5.0
+git clone -b MOODLE_405_STABLE https://github.com/didactika/moodle-local_delegateaccount.git local/delegateaccount
+# Moodle 5.1 and 5.2
+git clone -b MOODLE_405_STABLE https://github.com/didactika/moodle-local_delegateaccount.git public/local/delegateaccount
+php admin/cli/upgrade.php
+```

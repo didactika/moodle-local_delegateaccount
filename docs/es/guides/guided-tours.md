@@ -1,0 +1,14 @@
+---
+title: Tours guiados
+summary: Los dos tours que enseñan a las personas con delegaciones a abrir una cuenta.
+order: 24
+---
+
+Dos tours guiados para los Tours de usuario de Moodle se importan automáticamente al instalar o actualizar el plugin. Están escritos para las personas que usan cuentas delegadas, no para los administradores. Cada tour se muestra solo a las personas que tienen en ese momento una delegación activa, porque depende de la entrada **Cuentas delegadas** del menú de usuario, y cada persona lo ve una vez, hasta que lo termina o lo omite.
+
+| Tour | Dónde aparece | Qué explica |
+| --- | --- | --- |
+| Usar una cuenta delegada | Área personal y Mis cursos | Dónde encontrar **Cuentas delegadas** en el menú de usuario y cómo abrir una cuenta. |
+| Mis cuentas delegadas | Página **Mis cuentas delegadas** | Las tarjetas de las cuentas, hasta cuándo se puede abrir cada una y el botón **Abrir cuenta**. |
+
+Un tour que ya existe, identificado por su nombre, nunca se sobrescribe, de modo que se conservan sus modificaciones. Los tours se pueden editar, traducir o desactivar en **Administración del sitio > Apariencia > Tours de usuario**. Si elimina un tour y quiere recuperarlo, seleccione **Importar tour** en esa página y elija el archivo de tour del plugin.

@@ -1,4 +1,8 @@
-# Web-service integration
+---
+title: Web-service integration
+summary: The functions of the web service, the capability each needs, its limits and examples.
+order: 32
+---
 
 `local_delegateaccount` registers the **Delegated account management** external
 service. It is disabled by default, restricted to explicitly authorised users,

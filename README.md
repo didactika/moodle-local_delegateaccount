@@ -200,7 +200,7 @@ All capabilities apply in the system context.
 
 ### Web services
 
-The plugin adds a **Delegated account management** service that is disabled by default. It covers reading, creating, updating and revoking delegations and reading their activity, with the same rules and capabilities as the pages. See [Web-service integration](docs/web-services.md) for the functions, limits and examples.
+The plugin adds a **Delegated account management** service that is disabled by default. It covers reading, creating, updating and revoking delegations and reading their activity, with the same rules and capabilities as the pages. See [Web-service integration](docs/en/reference/webservices.md) for the functions, limits and examples.
 
 ### Scheduled tasks
 
