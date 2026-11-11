@@ -147,7 +147,7 @@ final class session_permissions_test extends \advanced_testcase {
         try {
             save_session_permissions::execute($id, [['capability' => 'moodle/user:update', 'permission' => CAP_ALLOW]]);
             $this->fail('A person who is not a site administrator allowed a capability.');
-        } catch (moodle_exception $exception) {
+        } catch (\moodle_exception $exception) {
             $this->assertStringContainsString('moodle/user:update', $exception->getMessage());
         }
 
