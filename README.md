@@ -116,14 +116,14 @@ To stop working as the other account, log out. A delegated account cannot open a
 
 ### 5. Guided tours
 
-Two guided tours for Moodle's User Tours are shipped as `tour_*.json` files in the plugin folder. They are written for the people who use delegated accounts, not for administrators. Each tour is shown only to people who currently have an active delegation, because it depends on the **Delegated accounts** entry in the user menu, and each person sees it once, until they finish or skip it.
+Two guided tours for Moodle's User Tours are shipped as JSON files in the `tours` folder of the plugin. They are written for the people who use delegated accounts, not for administrators. Each tour is shown only to people who currently have an active delegation, because it depends on the **Delegated accounts** entry in the user menu, and each person sees it once, until they finish or skip it.
 
 | File | Where it appears | What it explains |
 | --- | --- | --- |
-| `tour_use_delegated_accounts.json` | Dashboard and My courses | Where to find **Delegated accounts** in the user menu and how to open an account. |
-| `tour_my_delegated_accounts.json` | **My delegated accounts** page | The cards of the accounts, until when each can be opened and the **Open account** button. |
+| `tours/use_delegated_accounts.json` | Dashboard and My courses | Where to find **Delegated accounts** in the user menu and how to open an account. |
+| `tours/my_delegated_accounts.json` | **My delegated accounts** page | The cards of the accounts, until when each can be opened and the **Open account** button. |
 
-The tours are imported automatically when the plugin is installed or upgraded. A tour that already exists, identified by its name, is never overwritten, so your edits are kept. Tours can be edited, translated or disabled under **Site administration > Appearance > User tours**. If you delete a tour and want it back, select **Import tour** on that page and choose the file.
+The tours are imported automatically when the plugin is installed or upgraded. A tour that already exists, identified by its name, is never overwritten, so your edits are kept. The texts of the tours are Moodle language strings (`tour_*` in `lang/en/local_delegateaccount.php`), so they are translated like the rest of the plugin, with a language pack or Moodle's language customisation. Tours can also be edited or disabled under **Site administration > Appearance > User tours**. If you delete a tour and want it back, select **Import tour** on that page and choose the file.
 
 ## Development
 
@@ -206,7 +206,7 @@ All capabilities apply in the system context.
 
 ### Web services
 
-The plugin adds a **Delegated account management** service that is disabled by default. It covers reading, creating, updating and revoking delegations and reading their activity, with the same rules and capabilities as the pages. See [Web-service integration](docs/web-services.md) for the functions, limits and examples.
+The plugin adds a **Delegated account management** service that is disabled by default. It covers reading, creating, updating and revoking delegations and reading their activity, with the same rules and capabilities as the pages. See [Web-service integration](docs/en/reference/webservices.md) for the functions, limits and examples.
 
 ### Scheduled tasks
 

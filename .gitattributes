@@ -6,3 +6,4 @@ amd/build/** linguist-generated=true
 /.phpunit.cache export-ignore
 .mustachelintignore export-ignore
 CHANGELOG.md export-ignore
+/docs export-ignore

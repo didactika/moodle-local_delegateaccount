@@ -1,0 +1,58 @@
+{
+  "name": "tour_my_name,local_delegateaccount",
+  "description": "tour_my_description,local_delegateaccount",
+  "pathmatch": "/local/delegateaccount/pages/accounts.php%",
+  "enabled": "1",
+  "sortorder": "0",
+  "endtourlabel": "",
+  "configdata": "{\"placement\": \"bottom\", \"orphan\": \"0\", \"backdrop\": \"1\", \"reflex\": \"0\", \"showtourwhen\": 1, \"filtervalues\": {\"accessdate\": {\"filter_accessdate\": \"tool_usertours_accountcreation\", \"filter_accessdate_range\": 0, \"filter_accessdate_enabled\": \"0\"}, \"category\": [], \"course\": [], \"courseformat\": [], \"role\": [], \"theme\": [], \"cssselector\": [\"template[data-region=\\\"local-delegateaccount-usermenu-source\\\"], #carousel-item-delegatedaccounts\"]}}",
+  "displaystepnumbers": true,
+  "version": "2024100700",
+  "steps": [
+    {
+      "title": "tour_my_step1_title,local_delegateaccount",
+      "content": "tour_my_step1_content,local_delegateaccount",
+      "contentformat": "1",
+      "targettype": "2",
+      "targetvalue": "",
+      "configdata": "{\"placement\": \"bottom\"}",
+      "sortorder": "0"
+    },
+    {
+      "title": "tour_my_step2_title,local_delegateaccount",
+      "content": "tour_my_step2_content,local_delegateaccount",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#lda-accounts li:first-child .card-body > .d-flex.align-items-center",
+      "configdata": "{\"placement\": \"bottom\"}",
+      "sortorder": "1"
+    },
+    {
+      "title": "tour_my_step3_title,local_delegateaccount",
+      "content": "tour_my_step3_content,local_delegateaccount",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#lda-accounts li:first-child .card-body > .d-flex.flex-column",
+      "configdata": "{\"placement\": \"bottom\"}",
+      "sortorder": "2"
+    },
+    {
+      "title": "tour_my_step4_title,local_delegateaccount",
+      "content": "tour_my_step4_content,local_delegateaccount",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#lda-accounts li:first-child .card-body > .btn",
+      "configdata": "{\"placement\": \"bottom\"}",
+      "sortorder": "3"
+    },
+    {
+      "title": "tour_my_step5_title,local_delegateaccount",
+      "content": "tour_my_step5_content,local_delegateaccount",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#user-menu-toggle",
+      "configdata": "{\"placement\": \"left\"}",
+      "sortorder": "4"
+    }
+  ]
+}

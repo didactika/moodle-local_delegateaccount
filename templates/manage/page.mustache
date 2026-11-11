@@ -27,7 +27,7 @@
     {
         "cancreate": true,
         "settingsurl": "https://moodle.example/admin/settings.php?section=local_delegateaccount_settings",
-        "hint": "",
+        "helpicon": "",
         "description": "All active users who currently have permission to use delegated accounts.",
         "tabs": [
             {
@@ -62,7 +62,6 @@
             </div>
         </div>
     </header>
-    {{#hint}}<div class="alert alert-info mb-0">{{{hint}}}</div>{{/hint}}
     <nav aria-label="{{#str}}manage_accounts, local_delegateaccount{{/str}}">
         <ul class="nav nav-tabs">
             {{#tabs}}
@@ -72,6 +71,6 @@
             {{/tabs}}
         </ul>
     </nav>
-    <p class="dd-page-subtitle mb-0">{{description}}</p>
+    <p class="dd-page-subtitle mb-0">{{description}} {{{helpicon}}}</p>
     {{{list}}}
 </div>

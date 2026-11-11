@@ -34,4 +34,10 @@ $definitions = [
         'staticacceleration' => true,
         'staticaccelerationsize' => 16,
     ],
+    // The identifiers of the sessions that are open through each delegation, so that revoking it can end them at once.
+    'sessions' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+    ],
 ];
