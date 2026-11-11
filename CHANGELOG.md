@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1-m503] - 2026-11-11
+
+Line for Moodle 5.3. The same delivery for Moodle 4.5 to 5.2 is 1.1.1-m405.
+
 ### Changed
 
 - The notice that asks to create a role with the permission to use delegated accounts is no longer a banner on the management page and on the form to add authorised users. It is a help icon next to the description of the **Authorised users** tab, shown to those who can define roles until a role grants the permission.
 - The guided tours moved to the `tours` folder and their titles and texts are Moodle language strings instead of fixed English text, so they can be translated. Tours already imported by earlier versions are kept as they are.
+- On upgrade, the guided tours that an earlier version imported and nobody edited are moved to language strings where they are, so they keep their identifier, whether they are enabled and what each person has already seen of them. A tour that an administrator edited or deleted is left as it is.
 
 ## [1.1.0-m503] - 2026-11-09
 
