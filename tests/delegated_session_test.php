@@ -167,6 +167,20 @@ final class delegated_session_test extends \advanced_testcase {
     }
 
     /**
+     * Revoking a delegation forgets the sessions that were open through it, after ending them.
+     */
+    public function test_revocation_ends_the_remembered_sessions(): void {
+        $this->start_session();
+        $id = manager::get_current_delegation_id((int)$this->realuser->id, (int)$this->target->id);
+        $cache = cache::make('local_delegateaccount', 'sessions');
+        $this->assertNotEmpty($cache->get($id));
+
+        $this->assertSame(1, manager::revoke_delegations([$id]));
+
+        $this->assertFalse($cache->get($id));
+    }
+
+    /**
      * Reaching the end date ends the session that is using the delegation.
      */
     public function test_delegated_session_ends_after_expiry(): void {

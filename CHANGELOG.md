@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0-m503] - 2026-11-11
+
+Line for Moodle 5.3. The same delivery for Moodle 4.5 to 5.2 is 1.2.0-m405.
+
+### Changed
+
+- Only site administrators can set a session permission to Allow, because it gives a delegated session a capability that its account may not have. Copying permissions that include an Allow needs the same right. Preventing and prohibiting stay with whoever holds `local/delegateaccount:managepermissions`.
+- Revoking a delegation ends the sessions that are open through it at once, instead of at their next request.
+- Every list keeps the same height whatever it holds: with few rows there is empty space below them, with many it scrolls and the header stays in view.
+
 ## [1.1.1-m503] - 2026-11-11
 
 Line for Moodle 5.3. The same delivery for Moodle 4.5 to 5.2 is 1.1.1-m405.
