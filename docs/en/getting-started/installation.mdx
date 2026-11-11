@@ -11,14 +11,19 @@ order: 10
 | 4.5 to 5.2 | `MOODLE_405_STABLE` | `X.Y.Z-m405` |
 | 5.3 | `main` | `X.Y.Z-m503` |
 
-**From a release:** download the latest release ZIP, go to **Site administration > Plugins > Install plugins**, upload the file and follow the prompts.
-
-**From Git:**
-
+<Tabs>
+  <TabItem label="From a release">
+    Download the latest release ZIP, go to **Site administration > Plugins > Install plugins**, upload the file and follow the prompts.
+  </TabItem>
+  <TabItem label="From Git">
 ```bash
 cd /path/to/moodle
 git clone https://github.com/didactika/moodle-local_delegateaccount.git public/local/delegateaccount
 php admin/cli/upgrade.php
 ```
+  </TabItem>
+</Tabs>
 
 Since Moodle 5.3 serves its code from the `public` folder, the plugin goes in `public/local/delegateaccount`.
+
+After installing, nobody but the site administrators can use delegated accounts yet. The next step is to [give people permission](page:getting-started/give-permission).
