@@ -1,6 +1,6 @@
 # Technical documentation
 
-How Delegate Account is built: what it models, what it must do, how it is analysed and designed, and where each part lives in the code. It was written with the `rup-flow` skill, in the RUP way, from the code; every diagram is a PlantUML source with its rendered SVG next to it, drawn with the colours of Didactika.
+How Delegate Account is built: what it models, what it must do, how it is analysed and designed, and where each part lives in the code. It follows the RUP method and was written from the code; every diagram is a PlantUML source with its rendered SVG next to it, drawn with the colours of Didactika.
 
 | Discipline | Purpose |
 | --- | --- |

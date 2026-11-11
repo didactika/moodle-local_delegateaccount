@@ -1,6 +1,6 @@
 # Documentación técnica
 
-Cómo está construido Delegate Account: qué modela, qué debe hacer, cómo se analiza y se diseña, y dónde vive cada parte en el código. Se escribió con la skill `rup-flow`, a la manera de RUP y a partir del código; cada diagrama es una fuente PlantUML con su SVG renderizado al lado, dibujado con los colores de Didactika. Los diagramas conservan sus rótulos en inglés, igual que los identificadores del código.
+Cómo está construido Delegate Account: qué modela, qué debe hacer, cómo se analiza y se diseña, y dónde vive cada parte en el código. Sigue el método RUP y se escribió a partir del código; cada diagrama es una fuente PlantUML con su SVG renderizado al lado, dibujado con los colores de Didactika. Los diagramas conservan sus rótulos en inglés, igual que los identificadores del código.
 
 | Disciplina | Para qué sirve |
 | --- | --- |
