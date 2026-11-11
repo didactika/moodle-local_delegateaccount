@@ -555,7 +555,7 @@ final class manager_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $this->assertTrue(manager::needs_role_setup());
-        $this->assertStringContainsString('help-icon', manager::get_role_setup_help_icon());
+        $this->assertStringContainsString('popover', manager::get_role_setup_help_icon());
         $this->assertStringContainsString('/admin/roles/manage.php', manager::get_role_setup_help_icon());
 
         $this->grant_delegated_account_use($this->getDataGenerator()->create_user());

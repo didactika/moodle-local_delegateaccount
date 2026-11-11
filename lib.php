@@ -86,7 +86,7 @@ function local_delegateaccount_legacy_tour_fingerprints(): array {
  *
  * @param string $name Name of the tour.
  * @param string $description Description of the tour.
- * @param array<int, array{0: string, 1: string}> $steps Title and content of each step, in the order of the tour.
+ * @param array $steps Title and content of each step, in the order of the tour, as [title, content].
  * @return string Fingerprint.
  */
 function local_delegateaccount_tour_fingerprint(string $name, string $description, array $steps): string {
