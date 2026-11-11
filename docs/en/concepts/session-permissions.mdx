@@ -27,6 +27,6 @@ The setting of a delegation wins over the one of the site, and a delegation set 
 - Capabilities that Moodle checks with database queries instead of the session (for instance some lists of users or courses) are not affected.
 
 > [!WARNING]
-> Allow gives a capability to a session even when the account does not have it. Changing session permissions needs `local/delegateaccount:managepermissions`, which no role has by default, and a person can only allow capabilities they hold themselves.
+> Allow gives a capability to a session even when the account does not have it. Changing session permissions needs `local/delegateaccount:managepermissions`, which no role has by default, and only site administrators can allow a capability, because that is how a session receives something its account does not have.
 
 To set them, follow [the guide](page:guides/session-permissions).

@@ -25,4 +25,4 @@ The **Session permissions** tab of the settings works the same way and sets what
 Select them in a list and choose **Session permissions** in the bar: pick the capabilities and the permission each gets (or **Remove the override**), or copy the overrides of one delegation, adding them to the ones there or replacing them. The selection can be every delegation that matches the list, and the change is written in batches, so it scales to any number of delegations.
 
 > [!WARNING]
-> Changing session permissions needs `local/delegateaccount:managepermissions`, which no role has by default, and a person can only allow capabilities they hold themselves.
+> Changing session permissions needs `local/delegateaccount:managepermissions`, which no role has by default, and only site administrators can allow a capability. Preventing and prohibiting are open to everyone who holds that capability.

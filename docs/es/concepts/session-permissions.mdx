@@ -27,6 +27,6 @@ El ajuste de una delegación prevalece sobre el del sitio, y una delegación en 
 - Las capacidades que Moodle comprueba con consultas a la base de datos en lugar de con la sesión (por ejemplo, algunas listas de usuarios o de cursos) no se ven afectadas.
 
 > [!WARNING]
-> Permitir da una capacidad a una sesión aunque la cuenta no la tenga. Cambiar los permisos de sesión requiere `local/delegateaccount:managepermissions`, que ningún rol tiene por defecto, y una persona solo puede permitir las capacidades que ella misma tiene.
+> Permitir da una capacidad a una sesión aunque la cuenta no la tenga. Cambiar los permisos de sesión requiere `local/delegateaccount:managepermissions`, que ningún rol tiene por defecto, y solo las administradoras y los administradores del sitio pueden permitir una capacidad, porque así es como una sesión recibe algo que su cuenta no tiene.
 
 Para establecerlos, siga [la guía](page:guides/session-permissions).

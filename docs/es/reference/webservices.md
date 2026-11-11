@@ -23,7 +23,7 @@ order: 42
 
 Las páginas del plugin llaman además a `local_delegateaccount_get_user_list`, `local_delegateaccount_get_delegation_list`, `local_delegateaccount_get_delegation_ids`, `local_delegateaccount_get_activity_list` y `local_delegateaccount_get_my_accounts`. Devuelven lo que dibujan las pantallas (textos en el idioma del usuario, direcciones, indicadores de lo que se puede hacer) y pueden cambiar con ellas; las integraciones deberían preferir las funciones anteriores.
 
-Una sobrescritura solo puede establecer `1` (Permitir), `-1` (Impedir) o `-1000` (Prohibir), los valores propios de Moodle. Permitir se rechaza para una capacidad que el usuario que llama no tiene, también cuando se copia de otra delegación. Los cambios en bloque se escriben en lotes de 500 delegaciones y no los limita **Máximo de registros por acción en bloque**, que sigue aplicándose a crear, editar y revocar.
+Una sobrescritura solo puede establecer `1` (Permitir), `-1` (Impedir) o `-1000` (Prohibir), los valores propios de Moodle. Permitir se rechaza salvo que el usuario que llama sea administrador del sitio, también cuando se copia de otra delegación. Los cambios en bloque se escriben en lotes de 500 delegaciones y no los limita **Máximo de registros por acción en bloque**, que sigue aplicándose a crear, editar y revocar.
 
 `local/delegateaccount:manage` concede todas las funciones anteriores salvo las de permisos de sesión, exactamente como hace en las páginas de gestión. Establecer una capacidad específica en **Impedir** o **Prohibir** en uno de los roles de sistema del usuario de la integración sigue denegando esa función, aunque el rol permita `local/delegateaccount:manage`. Para una integración de solo consulta, conceda `local/delegateaccount:view` en lugar de `local/delegateaccount:manage`.
 
@@ -37,7 +37,7 @@ Cada función registrada se corresponde con una clase dedicada en `classes/exter
 - Un par usuario-destino existente que no esté revocado devuelve `unchanged`; la operación no crea un duplicado.
 - El mismo usuario no puede ser a la vez el usuario autorizado y la cuenta de destino.
 - Las cuentas suspendidas, eliminadas, de invitado, no autorizadas y de administrador del sitio protegido se rechazan con las mismas reglas que la interfaz web.
-- La revocación requiere `confirm=true`, sigue siendo lógica y conserva el historial. Impide nuevas sesiones delegadas y termina una sesión delegada que ya esté abierta en su petición siguiente.
+- La revocación requiere `confirm=true`, sigue siendo lógica y conserva el historial. Impide nuevas sesiones delegadas y termina al instante las sesiones delegadas que ya estén abiertas.
 - Los resultados de actividad se limitan a los límites de inicio y de fin de la delegación seleccionada. Una delegación posterior entre los mismos usuarios es un periodo distinto.
 - Las reglas de notificación son idénticas a las de la interfaz de gestión. Las respuestas del servicio nunca contienen cuerpos de mensajes, tokens ni credenciales.
 

@@ -32,7 +32,7 @@ what the screens draw (texts in the language of the user, addresses, flags of wh
 may change with the screens; integrations should prefer the functions above.
 
 An override can only set `1` (Allow), `-1` (Prevent) or `-1000` (Prohibit), Moodle's own values.
-Allow is refused for a capability the calling user does not hold, also when it is copied from
+Allow is refused unless the calling user is a site administrator, also when it is copied from
 another delegation. Bulk changes are written in batches of 500 delegations and are not limited by
 **Maximum records per bulk action**, which still applies to creating, editing and revoking.
 
@@ -65,8 +65,8 @@ creation-result and serialisation helpers.
 - Suspended, deleted, guest, unauthorised and protected site administrator
   accounts are rejected using the same rules as the web interface.
 - Revocation requires `confirm=true`, remains logical and preserves history.
-  It prevents new delegated sessions and ends a delegated session that is
-  already open on its next request.
+  It prevents new delegated sessions and ends the delegated sessions that are
+  already open at once.
 - Activity results are clamped to the selected delegation's own start and end
   boundary. A later delegation between the same users is a different period.
 - Notification rules are identical to the management interface. Service
