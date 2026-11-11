@@ -548,26 +548,30 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Role setup guidance is shown until a role grants the use capability.
+     * Role setup guidance is offered, as a help icon, until a role grants the use capability.
      */
-    public function test_role_setup_hint_until_a_role_grants_use(): void {
+    public function test_role_setup_help_icon_until_a_role_grants_use(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $this->assertStringContainsString('/admin/roles/manage.php', manager::get_role_setup_hint());
+        $this->assertTrue(manager::needs_role_setup());
+        $this->assertStringContainsString('help-icon', manager::get_role_setup_help_icon());
+        $this->assertStringContainsString('/admin/roles/manage.php', manager::get_role_setup_help_icon());
 
         $this->grant_delegated_account_use($this->getDataGenerator()->create_user());
-        $this->assertNull(manager::get_role_setup_hint());
+        $this->assertFalse(manager::needs_role_setup());
+        $this->assertSame('', manager::get_role_setup_help_icon());
     }
 
     /**
-     * Role setup guidance is not shown to users who cannot define roles.
+     * Role setup guidance is not offered to users who cannot define roles.
      */
-    public function test_role_setup_hint_requires_role_management(): void {
+    public function test_role_setup_help_icon_requires_role_management(): void {
         $this->resetAfterTest();
         $this->setUser($this->getDataGenerator()->create_user());
 
-        $this->assertNull(manager::get_role_setup_hint());
+        $this->assertFalse(manager::needs_role_setup());
+        $this->assertSame('', manager::get_role_setup_help_icon());
     }
 
     /**

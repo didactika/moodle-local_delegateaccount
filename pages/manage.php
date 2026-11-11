@@ -69,7 +69,7 @@ $context = [
     'settingsurl' => has_capability('moodle/site:config', context_system::instance())
         ? (new moodle_url('/admin/settings.php', ['section' => 'local_delegateaccount_settings']))->out(false)
         : '',
-    'hint' => $tab === listing::SCOPE_AUTHORISED ? (manager::get_role_setup_hint() ?? '') : '',
+    'helpicon' => $tab === listing::SCOPE_AUTHORISED ? manager::get_role_setup_help_icon() : '',
     'tabs' => $tabs,
 ];
 if ($tab === 'delegations') {
