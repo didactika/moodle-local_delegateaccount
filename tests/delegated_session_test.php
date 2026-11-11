@@ -172,7 +172,7 @@ final class delegated_session_test extends \advanced_testcase {
     public function test_revocation_ends_the_remembered_sessions(): void {
         $this->start_session();
         $id = manager::get_current_delegation_id((int)$this->realuser->id, (int)$this->target->id);
-        $cache = cache::make('local_delegateaccount', 'sessions');
+        $cache = \cache::make('local_delegateaccount', 'sessions');
         $this->assertNotEmpty($cache->get($id));
 
         $this->assertSame(1, manager::revoke_delegations([$id]));

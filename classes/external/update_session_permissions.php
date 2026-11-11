@@ -79,7 +79,12 @@ final class update_session_permissions extends list_service {
             ));
             // Copying an Allow override is allowing it again, so it needs the same right.
             if (!is_siteadmin() && in_array(CAP_ALLOW, session_capabilities::get_overrides($params['copyfrom']), true)) {
-                throw new \moodle_exception('error_cannotallow', 'local_delegateaccount', '', get_string('permissionallow', 'local_delegateaccount'));
+                throw new \moodle_exception(
+                    'error_cannotallow',
+                    'local_delegateaccount',
+                    '',
+                    get_string('permissionallow', 'local_delegateaccount')
+                );
             }
             $count = session_capabilities::copy($params['copyfrom'], $delegationids, $params['replace']);
         } else {

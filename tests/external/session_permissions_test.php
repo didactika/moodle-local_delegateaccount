@@ -140,8 +140,8 @@ final class session_permissions_test extends \advanced_testcase {
         [$id] = $this->create_delegations(1);
         $user = $this->create_permissions_manager();
         $roleid = (int)$this->getDataGenerator()->create_role();
-        assign_capability('moodle/user:update', CAP_ALLOW, $roleid, context_system::instance()->id);
-        role_assign($roleid, $user->id, context_system::instance()->id);
+        assign_capability('moodle/user:update', CAP_ALLOW, $roleid, \context_system::instance()->id);
+        role_assign($roleid, $user->id, \context_system::instance()->id);
         $this->setUser($user);
 
         try {
