@@ -30,3 +30,5 @@ Stereotypes: `<<boundary>>` interface, `<<control>>` coordination, `<<entity>>` 
 | UC-001 | [Create delegations](./use-cases/createDelegations/README.md) | [collaboration](./use-cases/createDelegations/collaboration.svg) |
 | UC-002 | [Open a delegated account](./use-cases/openDelegatedAccount/README.md) | [collaboration](./use-cases/openDelegatedAccount/collaboration.svg) |
 | UC-003 | [Edit session permissions](./use-cases/editSessionPermissions/README.md) | [collaboration](./use-cases/editSessionPermissions/collaboration.svg) |
+| UC-004 | [Revoke delegations](./use-cases/revokeDelegations/README.md) | [collaboration](./use-cases/revokeDelegations/collaboration.svg) |
+| UC-005 | [Review delegated activity](./use-cases/reviewActivity/README.md) | [collaboration](./use-cases/reviewActivity/collaboration.svg) |

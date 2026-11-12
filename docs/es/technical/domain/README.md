@@ -52,6 +52,9 @@ La posición vertical de una entidad expresa su importancia para el objetivo del
 | RN-005 | Una persona autorizada no puede tener más delegaciones activas que el límite del sitio, y una acción no puede crear más registros que el límite masivo. | Delegation, SiteLimits | `manager::get_delegation_limit_error`, `get_bulk_operation_error` |
 | RN-006 | Una sesión delegada que deja de ser válida se cierra en su siguiente petición. | DelegatedSession | `hook\after_config`, `manager::end_invalid_delegated_session` |
 | RN-007 | Los permisos de sesión se aplican a las sesiones abiertas desde su página siguiente y se vuelven a aplicar en cada petición. | SessionPermission, DelegatedSession | `session_capabilities::apply` |
+| RN-010 | Una delegación revocada queda como historial y no puede volver a usarse; el mismo par puede delegarse de nuevo. | Delegation | `manager::revoke_delegations` |
+| RN-011 | Revocar termina al instante las sesiones que están abiertas por la delegación. | DelegatedSession | `manager::end_sessions` |
+| RN-012 | La actividad de una delegación se limita a su inicio y a su fin. | ActivityRecord | `manager::get_delegation_activity_page` |
 
 ## Ciclos de vida
 

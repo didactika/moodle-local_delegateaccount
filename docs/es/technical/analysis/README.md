@@ -30,3 +30,5 @@ Estereotipos: `<<boundary>>` interfaz, `<<control>>` coordinación, `<<entity>>`
 | UC-001 | [Crear delegaciones](./use-cases/createDelegations/README.md) | [colaboración](./use-cases/createDelegations/collaboration.svg) |
 | UC-002 | [Abrir una cuenta delegada](./use-cases/openDelegatedAccount/README.md) | [colaboración](./use-cases/openDelegatedAccount/collaboration.svg) |
 | UC-003 | [Editar los permisos de sesión](./use-cases/editSessionPermissions/README.md) | [colaboración](./use-cases/editSessionPermissions/collaboration.svg) |
+| UC-004 | [Revocar delegaciones](./use-cases/revokeDelegations/README.md) | [colaboración](./use-cases/revokeDelegations/collaboration.svg) |
+| UC-005 | [Revisar la actividad delegada](./use-cases/reviewActivity/README.md) | [colaboración](./use-cases/reviewActivity/collaboration.svg) |

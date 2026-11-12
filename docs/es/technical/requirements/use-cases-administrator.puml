@@ -9,13 +9,19 @@ actor "Administrator" as A_Administrator
 rectangle "local_delegateaccount" {
   package "Delegations" {
     usecase "Create delegations" as UC_createDelegations
+    usecase "Revoke delegations" as UC_revokeDelegations
   }
   package "Sessions" {
     usecase "Edit session permissions" as UC_editSessionPermissions
+  }
+  package "Audit" {
+    usecase "Review delegated activity" as UC_reviewActivity
   }
 }
 
 A_Administrator --> UC_createDelegations
 A_Administrator --> UC_editSessionPermissions
+A_Administrator --> UC_revokeDelegations
+A_Administrator --> UC_reviewActivity
 
 @enduml

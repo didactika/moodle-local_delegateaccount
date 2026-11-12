@@ -1,0 +1,18 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Administrator" as user <<actor>>
+class "Activity page" as screen <<boundary>>
+class "Delegation manager" as manager <<control>>
+class "Delegation" as delegation <<entity>>
+class "Moodle log" as log <<entity>>
+
+user --> screen : 1: sets the filters
+screen --> manager : 2: activity(delegation, filters)
+manager --> delegation : 3: its period and its accounts
+manager --> log : 4: the events of the account, inside the period
+
+@enduml
