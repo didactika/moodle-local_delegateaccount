@@ -1,0 +1,17 @@
+@startsalt
+{
+  {* Delegated accounts | Authorised users | Activity }
+  ==
+  Activity - Marta Ruiz as Carmen Vidal
+  --
+  {
+    From | "2026-11-01" | To | "2026-11-30"
+    Component | ^All^ | Action | ^All^
+  }
+  {#
+    Time | Component | Action
+    11 Nov 09:12 | Course | viewed
+    11 Nov 09:14 | User | updated
+  }
+}
+@endsalt

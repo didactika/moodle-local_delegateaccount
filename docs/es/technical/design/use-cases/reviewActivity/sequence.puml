@@ -1,0 +1,26 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Administrator" as actor
+participant "activity.js" as js
+participant "get_delegation_activity" as service
+participant "manager" as manager
+participant "Moodle log reader" as log
+
+actor -> js : filters
+js -> service : delegation, dates, component, action, page
+service -> manager : get_delegation_activity_page(...)
+manager -> manager : get_log_reader()
+alt no SQL log store
+  manager --> service : no log
+  service --> actor : explains that there is nothing to read
+else
+  manager -> log : events of the account inside the period of the delegation
+  log --> manager : rows
+  manager --> service : page of events
+  service --> actor : the report
+end
+
+@enduml

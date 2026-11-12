@@ -1,0 +1,14 @@
+@startsalt
+{
+  {* Delegated accounts | Authorised users | Activity }
+  ==
+  All delegations
+  --
+  {#
+    [X] | Authorised user | Account | Status
+    [X] | Marta Ruiz | Carmen Vidal | Active
+    [X] | Marta Ruiz | Pablo Soler | Active
+  }
+  [ Revoke ] | [ Edit ] | [ Cancel ]
+}
+@endsalt

@@ -12,11 +12,11 @@ sourceOfTruth: code
 | ID | Requirement | Priority | Origin | Use cases |
 | --- | --- | --- | --- | --- |
 | RF-001 | An administrator can authorise one or many users to open one or many accounts, with a start, an optional end and a notification mode. | Must | `manager::create_delegations` | UC-001 |
-| RF-002 | An administrator can revoke delegations; revoked ones stay as history. | Must | `manager::revoke_delegations` | UC-001 |
+| RF-002 | An administrator can revoke delegations; revoked ones stay as history. | Must | `manager::revoke_delegations` | UC-004 |
 | RF-003 | An authorised user can open an account they are delegated from their user menu, and leave it. | Must | `pages/loginas.php`, `hook\extend_user_menu` | UC-002 |
 | RF-004 | A delegated session ends by itself when its delegation stops being valid. | Must | `hook\after_config` | UC-002 |
 | RF-005 | An administrator can allow, prevent or prohibit capabilities for delegated sessions, for one delegation or for all. | Should | `session_capabilities` | UC-003 |
-| RF-006 | The activity done through a delegation can be reviewed with filters. | Should | `pages/activity.php`, `manager::get_delegation_activity_page` | |
+| RF-006 | The activity done through a delegation can be reviewed with filters. | Should | `pages/activity.php`, `manager::get_delegation_activity_page` | UC-005 |
 | RF-007 | The people involved are notified when a delegation is created or revoked, in their language. | Could | `notification_manager` | UC-001 |
 
 ## Non-functional

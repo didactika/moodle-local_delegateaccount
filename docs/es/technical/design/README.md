@@ -38,3 +38,5 @@ El plugin se apoya en cinco partes de Moodle: el acceso como otro usuario, el si
 | UC-001 | [Crear delegaciones](./use-cases/createDelegations/README.md) | [secuencia](./use-cases/createDelegations/sequence.svg) |
 | UC-002 | [Abrir una cuenta delegada](./use-cases/openDelegatedAccount/README.md) | [secuencia](./use-cases/openDelegatedAccount/sequence.svg) |
 | UC-003 | [Editar los permisos de sesión](./use-cases/editSessionPermissions/README.md) | [secuencia](./use-cases/editSessionPermissions/sequence.svg) |
+| UC-004 | [Revocar delegaciones](./use-cases/revokeDelegations/README.md) | [secuencia](./use-cases/revokeDelegations/sequence.svg) |
+| UC-005 | [Revisar la actividad delegada](./use-cases/reviewActivity/README.md) | [secuencia](./use-cases/reviewActivity/sequence.svg) |

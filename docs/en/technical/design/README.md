@@ -38,3 +38,5 @@ The plugin sits on five parts of Moodle: login-as, the capability system, the ev
 | UC-001 | [Create delegations](./use-cases/createDelegations/README.md) | [sequence](./use-cases/createDelegations/sequence.svg) |
 | UC-002 | [Open a delegated account](./use-cases/openDelegatedAccount/README.md) | [sequence](./use-cases/openDelegatedAccount/sequence.svg) |
 | UC-003 | [Edit session permissions](./use-cases/editSessionPermissions/README.md) | [sequence](./use-cases/editSessionPermissions/sequence.svg) |
+| UC-004 | [Revoke delegations](./use-cases/revokeDelegations/README.md) | [sequence](./use-cases/revokeDelegations/sequence.svg) |
+| UC-005 | [Review delegated activity](./use-cases/reviewActivity/README.md) | [sequence](./use-cases/reviewActivity/sequence.svg) |

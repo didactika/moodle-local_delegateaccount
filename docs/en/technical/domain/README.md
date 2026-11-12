@@ -52,6 +52,9 @@ The vertical position of an entity expresses its importance to the project objec
 | RN-005 | An authorised user cannot hold more active delegations than the site limit, and one action cannot create more records than the bulk limit. | Delegation, SiteLimits | `manager::get_delegation_limit_error`, `get_bulk_operation_error` |
 | RN-006 | A delegated session that stops being valid is ended on its next request. | DelegatedSession | `hook\after_config`, `manager::end_invalid_delegated_session` |
 | RN-007 | Session permissions apply to the open sessions from their next page, and are re-applied on every request. | SessionPermission, DelegatedSession | `session_capabilities::apply` |
+| RN-010 | A revoked delegation stays as history and can never be used again; the same pair can be delegated again. | Delegation | `manager::revoke_delegations` |
+| RN-011 | Revoking ends the sessions that are open through the delegation at once. | DelegatedSession | `manager::end_sessions` |
+| RN-012 | The activity of a delegation is limited to its start and its end. | ActivityRecord | `manager::get_delegation_activity_page` |
 
 ## Lifecycles
 

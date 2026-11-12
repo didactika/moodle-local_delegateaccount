@@ -1,0 +1,20 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Administrator" as user <<actor>>
+class "Delegations page" as screen <<boundary>>
+class "Delegation manager" as manager <<control>>
+class "Session guard" as guard <<control>>
+class "Notifier" as notifier <<control>>
+class "Delegation" as delegation <<entity>>
+
+user --> screen : 1: confirms the revocation
+screen --> manager : 2: revoke(delegations)
+manager --> delegation : 3: marks them revoked, in one transaction
+manager --> guard : 4: ends the sessions open through them
+manager --> notifier : 5: notifies
+
+@enduml
