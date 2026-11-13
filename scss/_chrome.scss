@@ -202,6 +202,9 @@
         &[data-region="tablewrap"] {
             block-size: var(--dd-table-h);
             overflow-y: auto;
+            overscroll-behavior: contain;
+            // The room of the scrollbar is kept while there is none, so the columns do not move when the rows outgrow the box.
+            scrollbar-gutter: stable;
 
             & thead th {
                 position: sticky;
