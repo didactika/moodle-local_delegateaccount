@@ -197,6 +197,29 @@ export default class List {
      * @param {Object} response What the web service returned.
      * @returns {Promise<void>}
      */
+    /**
+     * Keeps the columns of the table still: the first time the table has rows, the width the browser gives each column is measured,
+     * and every table drawn after it takes the same widths, so a filter, a sort or another page never moves them. They are
+     * measured again when the box of the table has changed width.
+     */
+    keepColumns() {
+        const box = this.region('tablewrap');
+        const table = box?.querySelector('table');
+        const heads = Array.from(table?.tHead?.rows[0]?.cells ?? []);
+        if (!table || heads.length === 0) {
+            return;
+        }
+        const same = this.columns && this.columns.widths.length === heads.length
+            && Math.abs(this.columns.box - box.clientWidth) <= 1;
+        if (!same) {
+            this.columns = {box: box.clientWidth, widths: heads.map((head) => head.getBoundingClientRect().width)};
+        }
+        heads.forEach((head, index) => {
+            head.style.width = `${this.columns.widths[index]}px`;
+        });
+        table.style.tableLayout = 'fixed';
+    }
+
     async render(response) {
         this.region('tablewrap')?.removeAttribute('aria-busy');
         this.total = response.total;
@@ -214,6 +237,9 @@ export default class List {
         this.region('error').hidden = true;
         const empty = response.total === 0;
         this.region('tablewrap').hidden = empty;
+        if (!empty) {
+            this.keepColumns();
+        }
         this.region('foot').hidden = empty;
         await this.renderEmpty(empty);
         this.renderCounts(response.counts || {});

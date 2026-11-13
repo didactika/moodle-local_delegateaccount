@@ -117,7 +117,6 @@
         overscroll-behavior: contain;
         border-top: 1px solid var(--dd-hairline);
         border-bottom: 1px solid var(--dd-hairline);
-        scrollbar-gutter: stable;
 
         & > [data-region="empty"]:not([hidden]) {
             display: grid;

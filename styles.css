@@ -334,6 +334,7 @@
 .lda .table-responsive[data-region=tablewrap] {
     block-size: var(--dd-table-h);
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .lda .table-responsive[data-region=tablewrap] thead th {
@@ -378,16 +379,17 @@
     font-weight: 600;
 }
 
-.lda .table tbody tr:last-child > * {
-    border-bottom: 0;
-}
-
 .lda .table tbody tr:hover > * {
     background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
 }
 
+.lda .table tbody tr:last-child > * {
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
 .lda .table tbody tr.table-active > * {
     background-color: var(--dd-primary-soft);
+    box-shadow: none;
 }
 
 .lda .table .table-select {
@@ -597,6 +599,71 @@
     }
 }
 
+@media (max-width: 767.98px) {
+
+    .lda {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lda .table-responsive .table th,
+    .lda .table-responsive .table td {
+        white-space: nowrap;
+    }
+
+    .lda .table-responsive .table th:first-child,
+    .lda .table-responsive .table td:first-child {
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 1;
+        background-color: var(--dd-surface);
+        box-shadow: inset -1px 0 0 var(--dd-hairline, rgba(0, 0, 0, 0.08));
+    }
+
+    .lda .table-responsive .table thead th:first-child {
+        z-index: 2;
+    }
+
+    .lda .nav-tabs,
+    .lda .dd-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .lda .nav-tabs .nav-link,
+    .lda .dd-chip {
+        flex: none;
+        white-space: nowrap;
+    }
+
+    .lda .nav-tabs.nav-tabs {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-bottom: 1px solid var(--dd-hairline);
+        background-color: transparent;
+    }
+
+    .lda .nav-tabs.nav-tabs .nav-item {
+        flex: none;
+    }
+
+    .lda .nav-tabs.nav-tabs .nav-link {
+        margin: 0 0 -1px;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background-color: transparent;
+        color: var(--dd-muted);
+    }
+
+    .lda .nav-tabs.nav-tabs .nav-link.nav-link.active:not(:disabled):not(.disabled) {
+        border-color: transparent;
+        border-bottom-color: var(--dd-primary);
+        background-color: var(--dd-primary-soft);
+        box-shadow: none;
+        color: var(--dd-primary-ink);
+    }
+}
+
 .lda .dd-searchbox,
 .path-local-delegateaccount .modal .dd-searchbox,
 .path-admin-local-delegateaccount .modal .dd-searchbox,
@@ -678,6 +745,80 @@
     background-color: var(--dd-primary-soft);
     color: var(--dd-primary-ink);
     font-weight: 600;
+}
+
+.lda .dd-select.dd-select-set,
+.path-local-delegateaccount .modal .dd-select.dd-select-set,
+.path-admin-local-delegateaccount .modal .dd-select.dd-select-set,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select.dd-select-set {
+    padding-right: 2.5rem;
+    background-image: none;
+}
+
+.lda .dd-select:is(button),
+.path-local-delegateaccount .modal .dd-select:is(button),
+.path-admin-local-delegateaccount .modal .dd-select:is(button),
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select:is(button) {
+    display: block;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lda .dd-select-filter,
+.path-local-delegateaccount .modal .dd-select-filter,
+.path-admin-local-delegateaccount .modal .dd-select-filter,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-filter {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+}
+
+.lda .dd-select-clear,
+.path-local-delegateaccount .modal .dd-select-clear,
+.path-admin-local-delegateaccount .modal .dd-select-clear,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--dd-primary-ink);
+    transform: translateY(-50%);
+    transition: background-color var(--dd-ease);
+}
+
+.lda .dd-select-clear .icon,
+.path-local-delegateaccount .modal .dd-select-clear .icon,
+.path-admin-local-delegateaccount .modal .dd-select-clear .icon,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear .icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.lda .dd-select-clear:hover,
+.path-local-delegateaccount .modal .dd-select-clear:hover,
+.path-admin-local-delegateaccount .modal .dd-select-clear:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear:hover {
+    background-color: color-mix(in srgb, var(--dd-primary) 14%, transparent);
+}
+
+.lda .dd-select-clear:focus-visible,
+.path-local-delegateaccount .modal .dd-select-clear:focus-visible,
+.path-admin-local-delegateaccount .modal .dd-select-clear:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
 }
 
 .lda .btn-icon,
@@ -1551,7 +1692,6 @@
     overscroll-behavior: contain;
     border-top: 1px solid var(--dd-hairline);
     border-bottom: 1px solid var(--dd-hairline);
-    scrollbar-gutter: stable;
 }
 
 .lda [data-region=capabilities] > [data-region=empty]:not([hidden]),

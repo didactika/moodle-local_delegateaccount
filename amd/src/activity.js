@@ -24,6 +24,7 @@
 import {getString} from 'core/str';
 import List from 'local_delegateaccount/local/list';
 import {debounce} from 'local_delegateaccount/local/ui';
+import {init as fitTables} from 'local_delegateaccount/fit_tables';
 
 /** Filters of the report, as they are named in the address and in the web service. */
 const FILTERS = ['datefrom', 'dateto', 'component', 'action'];
@@ -35,6 +36,8 @@ const FILTERS = ['datefrom', 'dateto', 'component', 'action'];
  * @returns {Promise<List>}
  */
 export const init = async(selector) => {
+    // The box of the table takes the height the window leaves it.
+    fitTables();
     const root = document.querySelector(selector);
     const config = JSON.parse(root.dataset.config);
     const form = root.querySelector('[data-region="filters"]');
