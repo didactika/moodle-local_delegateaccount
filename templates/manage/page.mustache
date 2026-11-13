@@ -50,7 +50,7 @@
         }
     }
 }}
-<div class="lda">
+<div class="lda" data-region="lda-manage">
     <header class="dd-page-header">
         <div class="dd-page-header-row">
             <div class="dd-page-header-main">
@@ -68,15 +68,27 @@
         </div>
     </header>
     <nav aria-label="{{#str}}manage_accounts, local_delegateaccount{{/str}}">
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs" role="tablist">
             {{#tabs}}
-                <li class="nav-item">
-                    <a class="nav-link{{#active}} active{{/active}}" href="{{url}}"{{#active}} aria-current="page"{{/active}}>{{label}}</a>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link{{#active}} active{{/active}}" href="{{url}}" role="tab" data-tab="{{key}}" aria-controls="lda-tabpanel"
+                        aria-selected="{{#active}}true{{/active}}{{^active}}false{{/active}}">{{label}}</a>
                 </li>
             {{/tabs}}
         </ul>
     </nav>
-    <p class="dd-page-subtitle mb-0">{{description}} {{{helpicon}}}</p>
-    {{#people}}{{> local_delegateaccount/list/people }}{{/people}}
-    {{#delegations}}{{> local_delegateaccount/list/delegations }}{{/delegations}}
+    <div id="lda-tabpanel" class="lda" role="tabpanel" data-region="tabpanel">
+        {{#tabs}}{{#active}}
+            <p class="dd-page-subtitle mb-0">{{description}} {{{helpicon}}}</p>
+            {{#people}}{{> local_delegateaccount/list/people }}{{/people}}
+            {{#delegations}}{{> local_delegateaccount/list/delegations }}{{/delegations}}
+        {{/active}}{{/tabs}}
+    </div>
+    {{#tabs}}
+        <template data-tab-panel="{{key}}">
+            <p class="dd-page-subtitle mb-0">{{description}} {{{helpicon}}}</p>
+            {{#people}}{{> local_delegateaccount/list/people }}{{/people}}
+            {{#delegations}}{{> local_delegateaccount/list/delegations }}{{/delegations}}
+        </template>
+    {{/tabs}}
 </div>

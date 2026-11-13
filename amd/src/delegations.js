@@ -193,7 +193,8 @@ export const init = async(selector) => {
     });
 
     // A delegation created from the header of the page appears at once.
-    document.addEventListener('local_delegateaccount:created', () => list.load());
+    // A list that the tabs took off the page is not read again.
+    document.addEventListener('local_delegateaccount:created', () => root.isConnected && list.load());
     await list.init();
     return list;
 };
