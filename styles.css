@@ -599,6 +599,43 @@
     }
 }
 
+@media (max-width: 767.98px) {
+
+    .lda {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lda .table-responsive .table th,
+    .lda .table-responsive .table td {
+        white-space: nowrap;
+    }
+
+    .lda .table-responsive .table th:first-child,
+    .lda .table-responsive .table td:first-child {
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 1;
+        background-color: var(--dd-surface);
+        box-shadow: inset -1px 0 0 var(--dd-hairline, rgba(0, 0, 0, 0.08));
+    }
+
+    .lda .table-responsive .table thead th:first-child {
+        z-index: 2;
+    }
+
+    .lda .nav-tabs,
+    .lda .dd-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .lda .nav-tabs .nav-link,
+    .lda .dd-chip {
+        flex: none;
+        white-space: nowrap;
+    }
+}
+
 .lda .dd-searchbox,
 .path-local-delegateaccount .modal .dd-searchbox,
 .path-admin-local-delegateaccount .modal .dd-searchbox,
