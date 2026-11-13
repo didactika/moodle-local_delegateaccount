@@ -250,10 +250,6 @@
             font-weight: 600;
         }
 
-        & tbody tr:last-child > * {
-            border-bottom: 0;
-        }
-
         & tbody tr:hover > * {
             background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
         }
@@ -512,6 +508,37 @@
         & .dd-chip {
             flex: none;
             white-space: nowrap;
+        }
+
+        // Moodle draws the tabs of a narrow screen as blocks on a grey band, with a rule that comes after these; they keep the
+        // look they have on a wide screen, so the selector is repeated to weigh more than that rule.
+        & .nav-tabs.nav-tabs {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            border-bottom: 1px solid var(--dd-hairline);
+            background-color: transparent;
+
+            & .nav-item {
+                flex: none;
+            }
+
+            & .nav-link {
+                margin: 0 0 -1px;
+                border: 0;
+                border-bottom: 2px solid transparent;
+                background-color: transparent;
+                color: var(--dd-muted);
+            }
+
+            // Moodle 4.x paints the open tab as a pressed button, with a selector that weighs even more.
+            & .nav-link.nav-link.active:not(:disabled):not(.disabled) {
+                border-color: transparent;
+                border-bottom-color: var(--dd-primary);
+                background-color: var(--dd-primary-soft);
+                box-shadow: none;
+                color: var(--dd-primary-ink);
+            }
         }
     }
 }

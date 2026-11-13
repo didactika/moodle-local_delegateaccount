@@ -380,10 +380,6 @@
     font-weight: 600;
 }
 
-.lda .table tbody tr:last-child > * {
-    border-bottom: 0;
-}
-
 .lda .table tbody tr:hover > * {
     background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
 }
@@ -633,6 +629,34 @@
     .lda .dd-chip {
         flex: none;
         white-space: nowrap;
+    }
+
+    .lda .nav-tabs.nav-tabs {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-bottom: 1px solid var(--dd-hairline);
+        background-color: transparent;
+    }
+
+    .lda .nav-tabs.nav-tabs .nav-item {
+        flex: none;
+    }
+
+    .lda .nav-tabs.nav-tabs .nav-link {
+        margin: 0 0 -1px;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background-color: transparent;
+        color: var(--dd-muted);
+    }
+
+    .lda .nav-tabs.nav-tabs .nav-link.nav-link.active:not(:disabled):not(.disabled) {
+        border-color: transparent;
+        border-bottom-color: var(--dd-primary);
+        background-color: var(--dd-primary-soft);
+        box-shadow: none;
+        color: var(--dd-primary-ink);
     }
 }
 
