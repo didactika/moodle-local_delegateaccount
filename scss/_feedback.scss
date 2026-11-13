@@ -67,6 +67,62 @@
             color: var(--dd-primary-ink);
             font-weight: 600;
         }
+
+        // A filter that is set has no arrow: the cross that clears it takes its place.
+        &.dd-select-set {
+            padding-right: 2.5rem;
+            background-image: none;
+        }
+
+        // A menu drawn as a button cuts a long value with an ellipsis where its text ends, so it never runs under the cross.
+        &:is(button) {
+            display: block;
+            overflow: hidden;
+            text-align: start;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    // A select that filters a list, and the cross that takes it back to its base state.
+    & .dd-select-filter {
+        position: relative;
+        display: inline-flex;
+        max-width: 100%;
+    }
+
+    & .dd-select-clear {
+        position: absolute;
+        top: 50%;
+        right: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background-color: transparent;
+        color: var(--dd-primary-ink);
+        transform: translateY(-50%);
+        transition: background-color var(--dd-ease);
+
+        & .icon {
+            width: 0.875rem;
+            height: 0.875rem;
+            margin: 0;
+            font-size: 0.875rem;
+        }
+
+        &:hover {
+            background-color: color-mix(in srgb, var(--dd-primary) 14%, transparent);
+        }
+
+        &:focus-visible {
+            outline: 0;
+            box-shadow: 0 0 0 3px var(--dd-ring);
+        }
     }
 
     // A button that holds only an icon is a circle as wide as it is tall.

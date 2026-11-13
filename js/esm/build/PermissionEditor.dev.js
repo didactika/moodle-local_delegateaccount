@@ -273,10 +273,12 @@ function PermissionEditor({ strings, delegationid, site }) {
           /* @__PURE__ */ jsxDEV(
             SelectMenu,
             {
+              clearable: true,
+              text,
+              strings,
               label: text("perm_component_all"),
               value: component,
               options: componentoptions,
-              className: component ? "border-primary" : "",
               onChange: (value) => reset(() => setComponent(value))
             },
             void 0,

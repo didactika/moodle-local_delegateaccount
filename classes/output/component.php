@@ -34,7 +34,7 @@ class component implements react_component_renderable, \renderable {
     /** Core texts the components use. */
     private const CORE = [
         'actions' => 'moodle', 'all' => 'moodle', 'cancel' => 'moodle', 'savechanges' => 'moodle',
-        'time' => 'moodle', 'filters' => 'moodle',
+        'time' => 'moodle', 'filters' => 'moodle', 'clear' => 'moodle',
         'riskmanagetrustshort' => 'admin', 'riskconfigshort' => 'admin', 'riskxssshort' => 'admin',
         'riskpersonalshort' => 'admin', 'riskspamshort' => 'admin', 'riskdatalossshort' => 'admin',
     ];
