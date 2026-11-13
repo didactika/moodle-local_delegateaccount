@@ -203,8 +203,6 @@
             block-size: var(--dd-table-h);
             overflow-y: auto;
             overscroll-behavior: contain;
-            // The room of the scrollbar is kept while there is none, so the columns do not move when the rows outgrow the box.
-            scrollbar-gutter: stable;
 
             & thead th {
                 position: sticky;
@@ -254,8 +252,15 @@
             background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
         }
 
+        // The last row keeps its line under it, also with Bootstrap 4, which draws the line of a cell above the cell.
+        & tbody tr:last-child > * {
+            border-bottom: 1px solid var(--dd-hairline);
+        }
+
         & tbody tr.table-active > * {
             background-color: var(--dd-primary-soft);
+            // Bootstrap 5 paints an active row with a grey inset shadow over its background; the tint is the one colour.
+            box-shadow: none;
         }
 
         & .table-select {
