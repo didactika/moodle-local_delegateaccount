@@ -490,7 +490,7 @@
                 inset-inline-start: 0;
                 z-index: 1;
                 background-color: var(--dd-surface);
-                box-shadow: inset -1px 0 0 var(--dd-hairline, rgb(0 0 0 / 8%));
+                box-shadow: inset -1px 0 0 var(--dd-hairline, rgba(0, 0, 0, 0.08));
             }
 
             & thead th:first-child {
