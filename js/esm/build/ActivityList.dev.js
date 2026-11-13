@@ -14,7 +14,7 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import { useEffect, useId, useRef, useState } from "react";
-import { Empty, ListBody, Pager, SkeletonRows, useStableColumns } from "./components/ui";
+import { Empty, ListBody, Pager, SkeletonRows, useFitHeight, useStableColumns } from "./components/ui";
 import { useList, useDebounced } from "./hooks/useList";
 import { useText } from "./engine/text";
 import { DEFAULT_PAGE_SIZE } from "./engine/paging";
@@ -37,6 +37,8 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
   );
   const { state, page } = list;
   const table = useRef(null);
+  const fitbox = useRef(null);
+  useFitHeight(fitbox);
   useStableColumns(table, Boolean(page && page.rows.length > 0));
   const [fields, setFields] = useState(
     () => Object.fromEntries(FILTERS.map((name) => [name, String(state[name])]))
@@ -67,7 +69,7 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
     false,
     {
       fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-      lineNumber: 63,
+      lineNumber: 65,
       columnNumber: 19
     },
     this
@@ -83,7 +85,7 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
         children: FILTERS.map((name) => /* @__PURE__ */ jsxDEV("div", { children: [
           /* @__PURE__ */ jsxDEV("label", { htmlFor: `${id}-${name}`, children: text(labels[name]) }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-            lineNumber: 70,
+            lineNumber: 72,
             columnNumber: 17
           }, this),
           /* @__PURE__ */ jsxDEV(
@@ -102,14 +104,14 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
             false,
             {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 71,
+              lineNumber: 73,
               columnNumber: 17
             },
             this
           )
         ] }, name, true, {
           fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-          lineNumber: 69,
+          lineNumber: 71,
           columnNumber: 36
         }, this))
       },
@@ -117,7 +119,7 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-        lineNumber: 67,
+        lineNumber: 69,
         columnNumber: 9
       },
       this
@@ -130,61 +132,61 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
         text,
         empty,
         isEmpty: Boolean(page && page.total === 0 && !list.skeleton),
-        children: /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "data-region": "tablewrap", "aria-busy": list.busy || void 0, children: /* @__PURE__ */ jsxDEV("table", { className: "table", ref: table, children: [
+        children: /* @__PURE__ */ jsxDEV("div", { ref: fitbox, className: "table-responsive", "data-region": "tablewrap", "aria-busy": list.busy || void 0, children: /* @__PURE__ */ jsxDEV("table", { className: "table", ref: table, children: [
           /* @__PURE__ */ jsxDEV("caption", { className: "visually-hidden", children: text("list_caption_activity") }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-            lineNumber: 80,
+            lineNumber: 82,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ jsxDEV("thead", { children: /* @__PURE__ */ jsxDEV("tr", { children: [
             /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("core:time") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 83,
+              lineNumber: 85,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("activity_event") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 84,
+              lineNumber: 86,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("activity_context") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 85,
+              lineNumber: 87,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("activity_related") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 86,
+              lineNumber: 88,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("activity_ip") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 87,
+              lineNumber: 89,
               columnNumber: 33
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-            lineNumber: 82,
+            lineNumber: 84,
             columnNumber: 29
           }, this) }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-            lineNumber: 81,
+            lineNumber: 83,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ jsxDEV("tbody", { children: list.skeleton || !page ? /* @__PURE__ */ jsxDEV(SkeletonRows, { columns: 5 }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-            lineNumber: 91,
+            lineNumber: 93,
             columnNumber: 55
           }, this) : page.rows.map((row) => /* @__PURE__ */ jsxDEV("tr", { children: [
             /* @__PURE__ */ jsxDEV("td", { className: "text-nowrap", children: row.time }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 92,
+              lineNumber: 94,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("th", { scope: "row", children: /* @__PURE__ */ jsxDEV("span", { className: "d-flex flex-column", children: [
               row.eventurl ? /* @__PURE__ */ jsxDEV("a", { href: row.eventurl, children: row.eventname }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-                lineNumber: 95,
+                lineNumber: 97,
                 columnNumber: 57
               }, this) : row.eventname,
               /* @__PURE__ */ jsxDEV("span", { className: "small text-muted text-truncate", title: row.description, children: [
@@ -193,53 +195,53 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
                 row.description
               ] }, void 0, true, {
                 fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-                lineNumber: 96,
+                lineNumber: 98,
                 columnNumber: 41
               }, this)
             ] }, void 0, true, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 94,
+              lineNumber: 96,
               columnNumber: 37
             }, this) }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 93,
+              lineNumber: 95,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("td", { children: row.contexturl ? /* @__PURE__ */ jsxDEV("a", { href: row.contexturl, children: row.contextname }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 101,
+              lineNumber: 103,
               columnNumber: 55
             }, this) : row.contextname }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 101,
+              lineNumber: 103,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("td", { children: row.relateduser || "-" }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 102,
+              lineNumber: 104,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("td", { className: "text-nowrap", children: row.ip || "-" }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-              lineNumber: 103,
+              lineNumber: 105,
               columnNumber: 33
             }, this)
           ] }, row.id, true, {
             fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-            lineNumber: 91,
+            lineNumber: 93,
             columnNumber: 109
           }, this)) }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-            lineNumber: 90,
+            lineNumber: 92,
             columnNumber: 25
           }, this)
         ] }, void 0, true, {
           fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-          lineNumber: 79,
+          lineNumber: 81,
           columnNumber: 21
         }, this) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-          lineNumber: 78,
+          lineNumber: 80,
           columnNumber: 17
         }, this)
       },
@@ -247,7 +249,7 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-        lineNumber: 76,
+        lineNumber: 78,
         columnNumber: 9
       },
       this
@@ -266,14 +268,14 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-        lineNumber: 109,
+        lineNumber: 111,
         columnNumber: 51
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
-    lineNumber: 66,
+    lineNumber: 68,
     columnNumber: 12
   }, this);
 }

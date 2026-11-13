@@ -335,7 +335,6 @@
     block-size: var(--dd-table-h);
     overflow-y: auto;
     overscroll-behavior: contain;
-    scrollbar-gutter: stable;
 }
 
 .lda .table-responsive[data-region=tablewrap] thead th {
@@ -384,8 +383,13 @@
     background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
 }
 
+.lda .table tbody tr:last-child > * {
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
 .lda .table tbody tr.table-active > * {
     background-color: var(--dd-primary-soft);
+    box-shadow: none;
 }
 
 .lda .table .table-select {
@@ -749,6 +753,17 @@
 #page-admin-setting-local_delegateaccount_settings .modal .dd-select.dd-select-set {
     padding-right: 2.5rem;
     background-image: none;
+}
+
+.lda .dd-select:is(button),
+.path-local-delegateaccount .modal .dd-select:is(button),
+.path-admin-local-delegateaccount .modal .dd-select:is(button),
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select:is(button) {
+    display: block;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .lda .dd-select-filter,
@@ -1677,7 +1692,6 @@
     overscroll-behavior: contain;
     border-top: 1px solid var(--dd-hairline);
     border-bottom: 1px solid var(--dd-hairline);
-    scrollbar-gutter: stable;
 }
 
 .lda [data-region=capabilities] > [data-region=empty]:not([hidden]),

@@ -73,6 +73,15 @@
             padding-right: 2.5rem;
             background-image: none;
         }
+
+        // A menu drawn as a button cuts a long value with an ellipsis where its text ends, so it never runs under the cross.
+        &:is(button) {
+            display: block;
+            overflow: hidden;
+            text-align: start;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     // A select that filters a list, and the cross that takes it back to its base state.

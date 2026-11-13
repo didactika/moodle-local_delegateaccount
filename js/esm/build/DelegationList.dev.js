@@ -27,6 +27,7 @@ import {
   SearchBox,
   SkeletonRows,
   SortHeader,
+  useFitHeight,
   useStableColumns
 } from "./components/ui";
 import { BulkPermissions } from "./BulkPermissions";
@@ -253,11 +254,13 @@ function Row({ row, checked, canbulk, showuser, onToggle, onEdit, onRevoke, text
 __name(Row, "Row");
 function Table({ list, rows, selectable, pagefull, canbulk, showuser, onSort, onEdit, onRevoke, text, strings }) {
   const table = useRef(null);
+  const fitbox = useRef(null);
+  useFitHeight(fitbox);
   useStableColumns(table, rows.length > 0);
-  return /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "data-region": "tablewrap", "aria-busy": list.busy || void 0, children: /* @__PURE__ */ jsxDEV("table", { className: "table", ref: table, children: [
+  return /* @__PURE__ */ jsxDEV("div", { ref: fitbox, className: "table-responsive", "data-region": "tablewrap", "aria-busy": list.busy || void 0, children: /* @__PURE__ */ jsxDEV("table", { className: "table", ref: table, children: [
     /* @__PURE__ */ jsxDEV("caption", { className: "visually-hidden", children: text("list_caption_delegations") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-      lineNumber: 112,
+      lineNumber: 114,
       columnNumber: 13
     }, this),
     /* @__PURE__ */ jsxDEV("thead", { children: /* @__PURE__ */ jsxDEV("tr", { children: [
@@ -282,13 +285,13 @@ function Table({ list, rows, selectable, pagefull, canbulk, showuser, onSort, on
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-          lineNumber: 116,
+          lineNumber: 118,
           columnNumber: 25
         },
         this
       ) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 115,
+        lineNumber: 117,
         columnNumber: 33
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -304,7 +307,7 @@ function Table({ list, rows, selectable, pagefull, canbulk, showuser, onSort, on
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-          lineNumber: 128,
+          lineNumber: 130,
           columnNumber: 21
         },
         this
@@ -322,14 +325,14 @@ function Table({ list, rows, selectable, pagefull, canbulk, showuser, onSort, on
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-          lineNumber: 130,
+          lineNumber: 132,
           columnNumber: 34
         },
         this
       ),
       /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("delegation_status") }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 132,
+        lineNumber: 134,
         columnNumber: 21
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -345,42 +348,42 @@ function Table({ list, rows, selectable, pagefull, canbulk, showuser, onSort, on
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-          lineNumber: 133,
+          lineNumber: 135,
           columnNumber: 21
         },
         this
       ),
       /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("last_access") }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 135,
+        lineNumber: 137,
         columnNumber: 21
       }, this),
       /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("session_permissions") }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 136,
+        lineNumber: 138,
         columnNumber: 21
       }, this),
       /* @__PURE__ */ jsxDEV("th", { scope: "col", className: "table-actions", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: text("core:actions") }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 138,
+        lineNumber: 140,
         columnNumber: 25
       }, this) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 137,
+        lineNumber: 139,
         columnNumber: 21
       }, this)
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-      lineNumber: 114,
+      lineNumber: 116,
       columnNumber: 17
     }, this) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-      lineNumber: 113,
+      lineNumber: 115,
       columnNumber: 13
     }, this),
     /* @__PURE__ */ jsxDEV("tbody", { children: list.skeleton || !list.page ? /* @__PURE__ */ jsxDEV(SkeletonRows, { columns: 6 + (showuser ? 1 : 0) + (canbulk ? 1 : 0) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-      lineNumber: 144,
+      lineNumber: 146,
       columnNumber: 23
     }, this) : rows.map((row) => /* @__PURE__ */ jsxDEV(
       Row,
@@ -399,22 +402,22 @@ function Table({ list, rows, selectable, pagefull, canbulk, showuser, onSort, on
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 145,
+        lineNumber: 147,
         columnNumber: 41
       },
       this
     )) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-      lineNumber: 142,
+      lineNumber: 144,
       columnNumber: 13
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-    lineNumber: 111,
+    lineNumber: 113,
     columnNumber: 9
   }, this) }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-    lineNumber: 110,
+    lineNumber: 112,
     columnNumber: 12
   }, this);
 }
@@ -430,7 +433,7 @@ function BulkActions({ canupdate, canpermissions, canrevoke, onEdit, onPermissio
         children: [
           /* @__PURE__ */ jsxDEV(Icon, { name: "t/edit", strings }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-            lineNumber: 174,
+            lineNumber: 176,
             columnNumber: 13
           }, this),
           " ",
@@ -441,7 +444,7 @@ function BulkActions({ canupdate, canpermissions, canrevoke, onEdit, onPermissio
       true,
       {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 172,
+        lineNumber: 174,
         columnNumber: 23
       },
       this
@@ -449,32 +452,32 @@ function BulkActions({ canupdate, canpermissions, canrevoke, onEdit, onPermissio
     canpermissions && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-secondary btn-tonal btn-sm", onClick: onPermissions, children: [
       /* @__PURE__ */ jsxDEV(Icon, { name: "i/permissions", strings }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 177,
+        lineNumber: 179,
         columnNumber: 13
       }, this),
       " ",
       text("session_permissions")
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-      lineNumber: 176,
+      lineNumber: 178,
       columnNumber: 28
     }, this),
     canrevoke && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-danger btn-tonal btn-sm", onClick: onRevoke, children: [
       /* @__PURE__ */ jsxDEV(Icon, { name: "t/delete", strings }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 180,
+        lineNumber: 182,
         columnNumber: 13
       }, this),
       " ",
       text("revoke")
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-      lineNumber: 179,
+      lineNumber: 181,
       columnNumber: 23
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-    lineNumber: 171,
+    lineNumber: 173,
     columnNumber: 12
   }, this);
 }
@@ -575,7 +578,7 @@ function DelegationList(props) {
     false,
     {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-      lineNumber: 282,
+      lineNumber: 284,
       columnNumber: 19
     },
     this
@@ -595,7 +598,7 @@ function DelegationList(props) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 291,
+        lineNumber: 293,
         columnNumber: 9
       },
       this
@@ -613,17 +616,17 @@ function DelegationList(props) {
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-          lineNumber: 297,
+          lineNumber: 299,
           columnNumber: 21
         },
         this
       ) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 296,
+        lineNumber: 298,
         columnNumber: 17
       }, this) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 295,
+        lineNumber: 297,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -653,7 +656,7 @@ function DelegationList(props) {
             false,
             {
               fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-              lineNumber: 303,
+              lineNumber: 305,
               columnNumber: 17
             },
             this
@@ -663,7 +666,7 @@ function DelegationList(props) {
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-          lineNumber: 301,
+          lineNumber: 303,
           columnNumber: 13
         },
         this
@@ -682,14 +685,14 @@ function DelegationList(props) {
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-          lineNumber: 307,
+          lineNumber: 309,
           columnNumber: 42
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-      lineNumber: 294,
+      lineNumber: 296,
       columnNumber: 9
     }, this),
     canbulk && /* @__PURE__ */ jsxDEV(
@@ -718,7 +721,7 @@ function DelegationList(props) {
           false,
           {
             fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-            lineNumber: 313,
+            lineNumber: 315,
             columnNumber: 13
           },
           this
@@ -728,7 +731,7 @@ function DelegationList(props) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 310,
+        lineNumber: 312,
         columnNumber: 21
       },
       this
@@ -752,7 +755,7 @@ function DelegationList(props) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 317,
+        lineNumber: 319,
         columnNumber: 22
       },
       this
@@ -770,14 +773,14 @@ function DelegationList(props) {
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-        lineNumber: 326,
+        lineNumber: 328,
         columnNumber: 18
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
-    lineNumber: 290,
+    lineNumber: 292,
     columnNumber: 12
   }, this);
 }

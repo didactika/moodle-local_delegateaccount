@@ -829,6 +829,37 @@ function ConfirmDialog({ title, message, button, onConfirm, onClose, text, strin
   }, this);
 }
 __name(ConfirmDialog, "ConfirmDialog");
+const TABLE_MIN = 288;
+const TABLE_ROOM = 24;
+function useFitHeight(box) {
+  useLayoutEffect(() => {
+    const fit = /* @__PURE__ */ __name(() => {
+      const element = box.current;
+      if (!element) {
+        return;
+      }
+      const rect = element.getBoundingClientRect();
+      const top = rect.top + window.scrollY;
+      const card2 = element.closest(".card")?.getBoundingClientRect();
+      const below = card2 ? Math.max(0, card2.bottom - rect.bottom) : 0;
+      const height = Math.max(TABLE_MIN, window.innerHeight - top - below - TABLE_ROOM);
+      (element.closest(".card") ?? element).style.setProperty("--dd-table-h", height + "px");
+    }, "fit");
+    fit();
+    const observer = new ResizeObserver(() => fit());
+    observer.observe(document.body);
+    const card = box.current?.closest(".card");
+    if (card) {
+      observer.observe(card);
+    }
+    window.addEventListener("resize", fit);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", fit);
+    };
+  }, []);
+}
+__name(useFitHeight, "useFitHeight");
 function useStableColumns(table, ready) {
   useLayoutEffect(() => {
     const element = table.current;
@@ -878,6 +909,7 @@ export {
   SelectMenu,
   SkeletonRows,
   SortHeader,
+  useFitHeight,
   useStableColumns
 };
 //# sourceMappingURL=ui.dev.js.map
