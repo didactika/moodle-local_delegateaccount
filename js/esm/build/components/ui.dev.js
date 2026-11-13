@@ -829,6 +829,38 @@ function ConfirmDialog({ title, message, button, onConfirm, onClose, text, strin
   }, this);
 }
 __name(ConfirmDialog, "ConfirmDialog");
+function useStableColumns(table, ready) {
+  useLayoutEffect(() => {
+    const element = table.current;
+    const box = element?.parentElement;
+    if (!element || !box || !ready) {
+      return void 0;
+    }
+    const freeze = /* @__PURE__ */ __name(() => {
+      const heads = Array.from(element.tHead?.rows[0]?.cells ?? []);
+      element.style.tableLayout = "";
+      heads.forEach((head) => {
+        head.style.width = "";
+      });
+      const widths = heads.map((head) => head.getBoundingClientRect().width);
+      heads.forEach((head, index) => {
+        head.style.width = `${widths[index]}px`;
+      });
+      element.style.tableLayout = "fixed";
+    }, "freeze");
+    freeze();
+    let width = box.clientWidth;
+    const observer = new ResizeObserver(() => {
+      if (Math.abs(box.clientWidth - width) > 1) {
+        width = box.clientWidth;
+        freeze();
+      }
+    });
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [ready]);
+}
+__name(useStableColumns, "useStableColumns");
 export {
   Avatar,
   Chips,
@@ -845,6 +877,7 @@ export {
   Segmented,
   SelectMenu,
   SkeletonRows,
-  SortHeader
+  SortHeader,
+  useStableColumns
 };
 //# sourceMappingURL=ui.dev.js.map

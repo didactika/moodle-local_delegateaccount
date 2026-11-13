@@ -11,8 +11,8 @@
  * @copyright  2026 Didactika.org
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {useEffect, useState} from 'react';
-import {Chips, Empty, Icon, ListBody, Pager, Person, SearchBox, SkeletonRows, SortHeader} from './components/ui';
+import {useEffect, useRef, useState} from 'react';
+import {Chips, Empty, Icon, ListBody, Pager, Person, SearchBox, SkeletonRows, SortHeader, useStableColumns} from './components/ui';
 import {useList, useDebounced} from './hooks/useList';
 import {useText} from './engine/text';
 import {DEFAULT_PAGE_SIZE} from './engine/paging';
@@ -49,6 +49,8 @@ export default function PeopleList({strings, scope, initial}: PeopleListProps) {
         initial,
     );
     const {state, page} = list;
+    const table = useRef<HTMLTableElement>(null);
+    useStableColumns(table, Boolean(page && page.rows.length > 0));
     const [search, setSearch] = useState(String(state.search));
     const typed = useDebounced(search.trim(), 300);
     useEffect(() => {
@@ -82,7 +84,7 @@ export default function PeopleList({strings, scope, initial}: PeopleListProps) {
             <ListBody error={list.error} onRetry={list.refresh} text={text} empty={empty}
                 isEmpty={Boolean(page && page.total === 0 && !list.skeleton)}>
                 <div className="table-responsive" data-region="tablewrap" aria-busy={list.busy || undefined}>
-                    <table className="table">
+                    <table className="table" ref={table}>
                         <caption className="visually-hidden">{text('list_caption_people')}</caption>
                         <thead>
                             <tr>

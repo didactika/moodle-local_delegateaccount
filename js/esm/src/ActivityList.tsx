@@ -10,8 +10,8 @@
  * @copyright  2026 Didactika.org
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {useEffect, useId, useState} from 'react';
-import {Empty, ListBody, Pager, SkeletonRows} from './components/ui';
+import {useEffect, useId, useRef, useState} from 'react';
+import {Empty, ListBody, Pager, SkeletonRows, useStableColumns} from './components/ui';
 import {useList, useDebounced} from './hooks/useList';
 import {useText} from './engine/text';
 import {DEFAULT_PAGE_SIZE} from './engine/paging';
@@ -43,6 +43,8 @@ export default function ActivityList({strings, delegationid, mindate, maxdate}: 
         }),
     );
     const {state, page} = list;
+    const table = useRef<HTMLTableElement>(null);
+    useStableColumns(table, Boolean(page && page.rows.length > 0));
     const [fields, setFields] = useState<Record<string, string>>(
         () => Object.fromEntries(FILTERS.map((name) => [name, String(state[name])])),
     );
@@ -74,7 +76,7 @@ export default function ActivityList({strings, delegationid, mindate, maxdate}: 
         <ListBody error={list.error} onRetry={list.refresh} text={text} empty={empty}
             isEmpty={Boolean(page && page.total === 0 && !list.skeleton)}>
                 <div className="table-responsive" data-region="tablewrap" aria-busy={list.busy || undefined}>
-                    <table className="table">
+                    <table className="table" ref={table}>
                         <caption className="visually-hidden">{text('list_caption_activity')}</caption>
                         <thead>
                             <tr>
