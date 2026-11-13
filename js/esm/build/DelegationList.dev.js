@@ -239,7 +239,7 @@ function Row({ row, checked, canbulk, showuser, onToggle, onEdit, onRevoke, text
 }
 __name(Row, "Row");
 function Table({ list, rows, selectable, pagefull, canbulk, showuser, onSort, onEdit, onRevoke, text, strings }) {
-  return /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "aria-busy": list.busy || void 0, children: /* @__PURE__ */ jsxDEV("table", { className: "table", children: [
+  return /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "data-region": "tablewrap", "aria-busy": list.busy || void 0, children: /* @__PURE__ */ jsxDEV("table", { className: "table", children: [
     /* @__PURE__ */ jsxDEV("caption", { className: "visually-hidden", children: text("list_caption_delegations") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/DelegationList.tsx",
       lineNumber: 109,

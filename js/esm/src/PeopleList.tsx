@@ -81,7 +81,7 @@ export default function PeopleList({strings, scope, initial}: PeopleListProps) {
             </div>
             <ListBody error={list.error} onRetry={list.refresh} text={text} empty={empty}
                 isEmpty={Boolean(page && page.total === 0 && !list.skeleton)}>
-                <div className="table-responsive" aria-busy={list.busy || undefined}>
+                <div className="table-responsive" data-region="tablewrap" aria-busy={list.busy || undefined}>
                     <table className="table">
                         <caption className="visually-hidden">{text('list_caption_people')}</caption>
                         <thead>

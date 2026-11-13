@@ -112,17 +112,26 @@ export interface Option {
  * Keyboard: Enter, Space and the arrows open it; the arrows, Home and End move, Enter chooses, a letter jumps to the next
  * option that starts with it, Escape and Tab close it.
  *
- * @param props The options, the value, what to do when it changes, the label and the classes.
+ * A select that filters a list (clearable) does not offer its base state, the option with the empty value, as one more
+ * choice: the select says it while nothing is chosen, and once something is, its arrow becomes a cross that goes back to it.
+ *
+ * @param props The options, the value, what to do when it changes, the label, the classes and whether it filters.
  * @returns The select.
  */
-export function SelectMenu({options, value, onChange, label, className = '', small = false}: {
+export function SelectMenu({options: all, value, onChange, label, className = '', small = false, clearable = false, text,
+    strings}: {
     options: Option[];
     value: string;
     onChange: (value: string) => void;
     label: string;
     className?: string;
     small?: boolean;
+    clearable?: boolean;
+    text?: Text;
+    strings?: Strings;
 }) {
+    const options = clearable ? all.filter((option) => option.value !== '') : all;
+    const set = clearable && value !== '';
     const select = useRef<HTMLSelectElement>(null);
     const menu = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState(false);
@@ -219,8 +228,10 @@ export function SelectMenu({options, value, onChange, label, className = '', sma
     const position = place
         ? {top: place.top, left: place.left, minWidth: place.width, maxHeight: place.height}
         : {visibility: 'hidden' as const};
-    return <>
-        <select ref={select} className={`form-select dd-select${small ? ' form-select-sm' : ''} ${className}`} value={value}
+    const classes = ['form-select dd-select', small ? 'form-select-sm' : '', set ? 'dd-select-set border-primary' : '', className]
+        .filter(Boolean).join(' ');
+    const control = <>
+        <select ref={select} className={classes} value={value}
             aria-label={label} aria-expanded={open || undefined} aria-controls={open ? id : undefined}
             onChange={(event) => onChange(event.target.value)}
             onMouseDown={(event) => {
@@ -234,7 +245,7 @@ export function SelectMenu({options, value, onChange, label, className = '', sma
                     setOpen(true);
                 }
             }}>
-            {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            {all.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
         {open && createPortal(<div ref={menu} id={id} className="dropdown-menu show dd-select-menu" role="listbox" tabIndex={-1}
             onKeyDown={keys} style={position}>
@@ -243,6 +254,19 @@ export function SelectMenu({options, value, onChange, label, className = '', sma
                 onClick={() => choose(index)}>{option.label}</button>)}
         </div>, scope)}
     </>;
+    if (!clearable) {
+        return control;
+    }
+    const clear = text ? `${text('core:clear')}: ${label}` : label;
+    return <span className="dd-select-filter">
+        {control}
+        {set && <button type="button" className="dd-select-clear" title={clear} aria-label={clear} onClick={() => {
+            onChange('');
+            select.current?.focus();
+        }}>
+            {strings && <Icon name="e/cancel" strings={strings} />}
+        </button>}
+    </span>;
 }
 
 /**
@@ -302,7 +326,7 @@ export function Empty({filtered, icon, title, message, onClear, text, strings}: 
     text: Text;
     strings: Strings;
 }) {
-    return <div className="dd-empty">
+    return <div className="dd-empty" data-region="empty">
         <span className="dd-tile dd-tile-lg"><Icon name={filtered ? 'a/search' : icon} strings={strings} /></span>
         <p className="dd-empty-title">{filtered ? text('empty_search_title') : title}</p>
         <p className="dd-empty-text">{filtered ? text('empty_search_text') : message}</p>

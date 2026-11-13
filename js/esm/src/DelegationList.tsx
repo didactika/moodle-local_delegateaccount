@@ -104,7 +104,7 @@ function Table({list, rows, selectable, pagefull, canbulk, showuser, onSort, onE
     text: Text;
     strings: Strings;
 }) {
-    return <div className="table-responsive" aria-busy={list.busy || undefined}>
+    return <div className="table-responsive" data-region="tablewrap" aria-busy={list.busy || undefined}>
         <table className="table">
             <caption className="visually-hidden">{text('list_caption_delegations')}</caption>
             <thead>

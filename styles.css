@@ -334,6 +334,8 @@
 .lda .table-responsive[data-region=tablewrap] {
     block-size: var(--dd-table-h);
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
 }
 
 .lda .table-responsive[data-region=tablewrap] thead th {
@@ -678,6 +680,69 @@
     background-color: var(--dd-primary-soft);
     color: var(--dd-primary-ink);
     font-weight: 600;
+}
+
+.lda .dd-select.dd-select-set,
+.path-local-delegateaccount .modal .dd-select.dd-select-set,
+.path-admin-local-delegateaccount .modal .dd-select.dd-select-set,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select.dd-select-set {
+    padding-right: 2.5rem;
+    background-image: none;
+}
+
+.lda .dd-select-filter,
+.path-local-delegateaccount .modal .dd-select-filter,
+.path-admin-local-delegateaccount .modal .dd-select-filter,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-filter {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+}
+
+.lda .dd-select-clear,
+.path-local-delegateaccount .modal .dd-select-clear,
+.path-admin-local-delegateaccount .modal .dd-select-clear,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--dd-primary-ink);
+    transform: translateY(-50%);
+    transition: background-color var(--dd-ease);
+}
+
+.lda .dd-select-clear .icon,
+.path-local-delegateaccount .modal .dd-select-clear .icon,
+.path-admin-local-delegateaccount .modal .dd-select-clear .icon,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear .icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.lda .dd-select-clear:hover,
+.path-local-delegateaccount .modal .dd-select-clear:hover,
+.path-admin-local-delegateaccount .modal .dd-select-clear:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear:hover {
+    background-color: color-mix(in srgb, var(--dd-primary) 14%, transparent);
+}
+
+.lda .dd-select-clear:focus-visible,
+.path-local-delegateaccount .modal .dd-select-clear:focus-visible,
+.path-admin-local-delegateaccount .modal .dd-select-clear:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
 }
 
 .lda .btn-icon,

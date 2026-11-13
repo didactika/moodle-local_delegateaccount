@@ -128,7 +128,7 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
         text,
         empty,
         isEmpty: Boolean(page && page.total === 0 && !list.skeleton),
-        children: /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "aria-busy": list.busy || void 0, children: /* @__PURE__ */ jsxDEV("table", { className: "table", children: [
+        children: /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "data-region": "tablewrap", "aria-busy": list.busy || void 0, children: /* @__PURE__ */ jsxDEV("table", { className: "table", children: [
           /* @__PURE__ */ jsxDEV("caption", { className: "visually-hidden", children: text("list_caption_activity") }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
             lineNumber: 78,
