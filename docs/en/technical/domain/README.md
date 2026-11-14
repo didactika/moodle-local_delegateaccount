@@ -55,6 +55,7 @@ The vertical position of an entity expresses its importance to the project objec
 | RN-010 | A revoked delegation stays as history and can never be used again; the same pair can be delegated again. | Delegation | `manager::revoke_delegations` |
 | RN-011 | Revoking ends the sessions that are open through the delegation at once. | DelegatedSession | `manager::end_sessions` |
 | RN-012 | The activity of a delegation is limited to its start and its end. | ActivityRecord | `manager::get_delegation_activity_page` |
+| RN-013 | The activity of a delegation is searched by words, each in the component, the action or the name of the event, and limited to a period inside the delegation whose two days never go the wrong way round. | ActivityRecord | `manager::get_delegation_activity_page`, `amd/src/activity.js` |
 
 ## Lifecycles
 

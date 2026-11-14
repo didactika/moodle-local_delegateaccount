@@ -48,8 +48,8 @@ Quien permite un acceso tiene que poder ver cómo se usó. El informe lista los 
 
 | Paso | Actor | Sistema |
 | --- | --- | --- |
-| 1 | Abre la **Actividad** de una delegación. | Muestra los filtros y el periodo de la delegación. |
-| 2 | Fija fechas, componente y acción. | Lee los eventos de la cuenta dentro del periodo. |
+| 1 | Abre la **Actividad** de una delegación. | Muestra la búsqueda, el menú de la fecha y el periodo de la delegación. |
+| 2 | Escribe palabras, o elige un periodo en el menú de la fecha. | Lee los eventos de la cuenta dentro del periodo cuyo componente, acción o evento tienen todas las palabras. |
 | 3 |  | Los lista por páginas, de más reciente a más antiguo. |
 
 ## Flujos alternativos
@@ -64,6 +64,7 @@ Quien permite un acceso tiene que poder ver cómo se usó. El informe lista los 
 | ID | Regla |
 | --- | --- |
 | RN-012 | Los resultados se limitan al inicio y al fin de la delegación. |
+| RN-013 | Los periodos del menú de la fecha quedan dentro de la delegación, y sus dos días nunca quedan al revés: un día que pasa al otro mueve el otro hasta él. |
 
 ## Especificación
 

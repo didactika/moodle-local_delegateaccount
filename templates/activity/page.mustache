@@ -17,7 +17,7 @@
 {{!
     @template local_delegateaccount/activity/page
 
-    What was done through one delegation: its period, the filters and the events. The rows are loaded by
+    What was done through one delegation: its period, the search, the menu of the date and the events. The rows are loaded by
     local_delegateaccount/activity.
 
     @copyright  2026 Didactika.org
@@ -55,24 +55,49 @@
     </header>
     <section id="{{id}}" data-region="list" data-config="{{config}}">
         <div class="card">
-            <form class="card-body d-flex flex-wrap align-items-end border-bottom" data-region="filters" aria-label="{{#str}}filters{{/str}}">
-                <div>
-                    <label for="{{id}}-from">{{#str}}activity_filter_datefrom, local_delegateaccount{{/str}}</label>
-                    <input class="form-control" type="date" id="{{id}}-from" name="datefrom" min="{{mindate}}" max="{{maxdate}}">
+            <div class="table-toolbar" data-region="filters">
+                <div class="table-toolbar-start">
+                    <div class="dd-searchbox" role="search">
+                        {{#pix}}a/search, core{{/pix}}
+                        <label class="sr-only visually-hidden" for="{{id}}-search">{{#str}}activity_search, local_delegateaccount{{/str}}</label>
+                        <input class="form-control" type="search" id="{{id}}-search" name="search" autocomplete="off"
+                            placeholder="{{#str}}activity_search, local_delegateaccount{{/str}}">
+                    </div>
+                    <div data-region="filter-menus">
+                        <div class="dd-menu dd-select-filter" data-menu="date" data-min="{{mindate}}" data-max="{{maxdate}}">
+                            <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+                                aria-label="{{#str}}activity_filter_date, local_delegateaccount{{/str}}"><span data-region="menu-label"
+                                data-label="{{#str}}activity_filter_date, local_delegateaccount{{/str}}">{{#str}}activity_filter_date, local_delegateaccount{{/str}}</span></button>
+                            <button type="button" class="dd-select-clear" data-menu-clear hidden
+                                title="{{#str}}clear{{/str}}: {{#str}}activity_filter_date, local_delegateaccount{{/str}}"
+                                aria-label="{{#str}}clear{{/str}}: {{#str}}activity_filter_date, local_delegateaccount{{/str}}">{{#pix}}e/cancel, core{{/pix}}</button>
+                            <div class="dd-select-menu" role="group" aria-label="{{#str}}activity_filter_date, local_delegateaccount{{/str}}" hidden>
+                                <button type="button" class="dropdown-item" data-preset="today">{{#str}}filter_date_today, local_delegateaccount{{/str}}</button>
+                                <button type="button" class="dropdown-item" data-preset="week">{{#str}}filter_date_week, local_delegateaccount{{/str}}</button>
+                                <button type="button" class="dropdown-item" data-preset="month">{{#str}}filter_date_month, local_delegateaccount{{/str}}</button>
+                                <button type="button" class="dropdown-item" data-preset="last30">{{#str}}filter_date_last30, local_delegateaccount{{/str}}</button>
+                                <hr>
+                                <div class="dd-menu-form">
+                                    <div class="dd-menu-dates">
+                                        <div>
+                                            <label class="form-label small mb-1" for="{{id}}-from">{{#str}}activity_filter_datefrom, local_delegateaccount{{/str}}</label>
+                                            <input class="form-control form-control-sm" type="date" id="{{id}}-from" name="datefrom" min="{{mindate}}" max="{{maxdate}}">
+                                        </div>
+                                        <div>
+                                            <label class="form-label small mb-1" for="{{id}}-to">{{#str}}activity_filter_dateto, local_delegateaccount{{/str}}</label>
+                                            <input class="form-control form-control-sm" type="date" id="{{id}}-to" name="dateto" min="{{mindate}}" max="{{maxdate}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label for="{{id}}-to">{{#str}}activity_filter_dateto, local_delegateaccount{{/str}}</label>
-                    <input class="form-control" type="date" id="{{id}}-to" name="dateto" min="{{mindate}}" max="{{maxdate}}">
+                <div class="table-toolbar-end">
+                    <button type="button" class="btn btn-link btn-icon" data-action="reset-filters" disabled
+                        title="{{#str}}clear_filters, local_delegateaccount{{/str}}" aria-label="{{#str}}clear_filters, local_delegateaccount{{/str}}">{{#pix}}i/reload, core{{/pix}}</button>
                 </div>
-                <div>
-                    <label for="{{id}}-component">{{#str}}activity_filter_component, local_delegateaccount{{/str}}</label>
-                    <input class="form-control" type="search" id="{{id}}-component" name="component" autocomplete="off">
-                </div>
-                <div>
-                    <label for="{{id}}-action">{{#str}}activity_filter_action, local_delegateaccount{{/str}}</label>
-                    <input class="form-control" type="search" id="{{id}}-action" name="action" autocomplete="off">
-                </div>
-            </form>
+            </div>
             <div class="table-responsive" data-region="tablewrap" aria-busy="true">
                 <table class="table">
                     <caption class="sr-only visually-hidden">{{#str}}list_caption_activity, local_delegateaccount{{/str}}</caption>
