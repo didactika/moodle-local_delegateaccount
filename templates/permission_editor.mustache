@@ -50,9 +50,14 @@
                         placeholder="{{#str}}perm_search_placeholder, local_delegateaccount{{/str}}">
                 </div>
                 <label class="sr-only visually-hidden" for="{{id}}-component">{{#str}}perm_component_all, local_delegateaccount{{/str}}</label>
-                <select class="custom-select form-select dd-select" id="{{id}}-component" data-region="component">
-                    <option value="">{{#str}}perm_component_all, local_delegateaccount{{/str}}</option>
-                </select>
+                <span class="dd-select-filter">
+                    <select class="custom-select form-select dd-select" id="{{id}}-component" data-region="component">
+                        <option value="" hidden>{{#str}}perm_component_all, local_delegateaccount{{/str}}</option>
+                    </select>
+                    <button type="button" class="dd-select-clear" data-action="clearcomponent" hidden
+                        title="{{#str}}clear{{/str}}: {{#str}}perm_component_all, local_delegateaccount{{/str}}"
+                        aria-label="{{#str}}clear{{/str}}: {{#str}}perm_component_all, local_delegateaccount{{/str}}">{{#pix}}e/cancel, core{{/pix}}</button>
+                </span>
             </div>
             <div class="table-toolbar-end">
                 {{^site}}

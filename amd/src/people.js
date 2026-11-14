@@ -25,6 +25,7 @@
 import {getString} from 'core/str';
 import List from 'local_delegateaccount/local/list';
 import {openCreate} from 'local_delegateaccount/create';
+import {init as fitTables} from 'local_delegateaccount/fit_tables';
 
 /**
  * Starts the list of people.
@@ -33,6 +34,8 @@ import {openCreate} from 'local_delegateaccount/create';
  * @returns {Promise<List>}
  */
 export const init = async(selector) => {
+    // The box of the table takes the height the window leaves it.
+    fitTables();
     const root = document.querySelector(selector);
     const config = JSON.parse(root.dataset.config);
     const prefix = config.scope === 'historical' ? 'empty_historical_' : 'empty_authorised_';
@@ -61,7 +64,8 @@ export const init = async(selector) => {
             openCreate(Number(button.dataset.id), button);
         }
     });
-    document.addEventListener('local_delegateaccount:created', () => list.load());
+    // A list that the tabs took off the page is not read again.
+    document.addEventListener('local_delegateaccount:created', () => root.isConnected && list.load());
     await list.init();
     return list;
 };

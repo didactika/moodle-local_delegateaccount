@@ -27,6 +27,17 @@ Two decisions shape the design. First, access is **re-evaluated on every request
 
 The plugin sits on five parts of Moodle: login-as, the capability system, the event log, messaging and the database. It adds no table to them and no change to core.
 
+## Lists
+
+Every list (the authorised users, the delegations, the accounts of a person and the activity of a delegation) is drawn the same way, as the Didactika design system asks:
+
+| What | How | Code |
+| --- | --- | --- |
+| Height | The box of the table takes the height the window leaves it under the search and the filters, less the pager, and at least 18rem; it is measured again when the window or what is above the box changes. | `amd/src/fit_tables.js` |
+| Lines | No room is kept for a scrollbar that is not there, so the line of every row reaches the end of the box, and the last row keeps its line. | `styles.css` |
+| Columns | The width of each column is measured the first time the table has rows and kept, so a search, a filter or another page never moves them. | `amd/src/local/list.js` |
+| Pager | Rows per page offers the sizes smaller than the list, and All. | `templates/list/pager.mustache` |
+
 ## Data model
 
 ![Data model](./data-model/data-model.svg)

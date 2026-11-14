@@ -147,6 +147,20 @@ class Editor {
     }
 
     /**
+     * Narrows the list to one component, or to none: the select shows it, and its arrow becomes the cross that clears it.
+     *
+     * @param {string} value The component, empty for all of them.
+     */
+    setComponent(value) {
+        const select = this.region('component');
+        this.component = value;
+        select.value = value;
+        select.classList.toggle('border-primary', value !== '');
+        select.classList.toggle('dd-select-set', value !== '');
+        this.root.querySelector('[data-action="clearcomponent"]').hidden = value === '';
+    }
+
+    /**
      * Wires the controls.
      */
     bind() {
@@ -157,8 +171,7 @@ class Editor {
             this.render();
         }, 200));
         this.region('component').addEventListener('change', (event) => {
-            this.component = event.target.value;
-            event.target.classList.toggle('border-primary', this.component !== '');
+            this.setComponent(event.target.value);
             this.page = 0;
             this.render();
         });
@@ -372,8 +385,13 @@ class Editor {
                 this.search = '';
                 this.page = 0;
                 this.region('search').value = '';
-                this.region('component').value = '';
-                this.region('component').classList.remove('border-primary');
+                this.setComponent('');
+                await this.render();
+                break;
+            case 'clearcomponent':
+                this.setComponent('');
+                this.page = 0;
+                this.region('component').focus();
                 await this.render();
                 break;
             case 'discard':

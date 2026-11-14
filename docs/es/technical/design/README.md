@@ -27,6 +27,17 @@ Dos decisiones dan forma al diseño. La primera: el acceso se **reevalúa en cad
 
 El plugin se apoya en cinco partes de Moodle: el acceso como otro usuario, el sistema de capacidades, el registro de eventos, la mensajería y la base de datos. No añade ninguna tabla a ellas ni cambia el núcleo.
 
+## Listas
+
+Cada lista (los usuarios autorizados, las delegaciones, las cuentas de una persona y la actividad de una delegación) se dibuja igual, como pide el sistema de diseño de Didactika:
+
+| Qué | Cómo | Código |
+| --- | --- | --- |
+| Altura | La caja de la tabla toma la altura que le deja la ventana bajo la búsqueda y los filtros, menos el paginador, y al menos 18rem; se mide de nuevo cuando cambia la ventana o lo que hay encima de la caja. | `amd/src/fit_tables.js` |
+| Líneas | No se reserva espacio para una barra de desplazamiento que no está, de modo que la línea de cada fila llega al final de la caja, y la última fila conserva su línea. | `styles.css` |
+| Columnas | El ancho de cada columna se mide la primera vez que la tabla tiene filas y se conserva, de modo que una búsqueda, un filtro u otra página nunca las mueven. | `amd/src/local/list.js` |
+| Paginador | Filas por página ofrece los tamaños menores que la lista, y Todos. | `templates/list/pager.mustache` |
+
 ## Modelo de datos
 
 ![Modelo de datos](./data-model/data-model.svg)

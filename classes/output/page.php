@@ -35,12 +35,15 @@ final class page {
      *
      * @param string $scope authorised or historical.
      * @param string $id Identifier of the element of the list.
+     * @param bool $start Whether the page starts the list; the tabs of the management page start the list of the open tab.
      * @return array Context of local_delegateaccount/list/people.
      */
-    public static function people_list(string $scope, string $id): array {
+    public static function people_list(string $scope, string $id, bool $start = true): array {
         global $PAGE;
 
-        $PAGE->requires->js_call_amd('local_delegateaccount/people', 'init', ['#' . $id]);
+        if ($start) {
+            $PAGE->requires->js_call_amd('local_delegateaccount/people', 'init', ['#' . $id]);
+        }
 
         return [
             'id' => $id,
@@ -55,16 +58,19 @@ final class page {
      *
      * @param int $realuserid The authorised user, or zero for everyone.
      * @param string $id Identifier of the element of the list.
+     * @param bool $start Whether the page starts the list; the tabs of the management page start the list of the open tab.
      * @return array Context of local_delegateaccount/list/delegations.
      */
-    public static function delegation_list(int $realuserid, string $id): array {
+    public static function delegation_list(int $realuserid, string $id, bool $start = true): array {
         global $PAGE;
 
         $canupdate = permission::has(permission::UPDATE);
         $canrevoke = permission::has(permission::REVOKE);
         $canpermissions = has_capability(list_service::MANAGE_PERMISSIONS, \context_system::instance());
         $canbulk = $canupdate || $canrevoke || $canpermissions;
-        $PAGE->requires->js_call_amd('local_delegateaccount/delegations', 'init', ['#' . $id]);
+        if ($start) {
+            $PAGE->requires->js_call_amd('local_delegateaccount/delegations', 'init', ['#' . $id]);
+        }
 
         return [
             'id' => $id,

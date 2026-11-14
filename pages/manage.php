@@ -31,7 +31,9 @@ use local_delegateaccount\manager;
 use local_delegateaccount\output\page;
 use local_delegateaccount\permission;
 
-admin_externalpage_setup('local_delegateaccount_manage');
+// The page is the same node of the administration tree whatever tab a link opens, so the breadcrumb is always there.
+navigation_node::override_active_url(new moodle_url('/local/delegateaccount/pages/manage.php'));
+admin_externalpage_setup('local_delegateaccount_manage', '', null, new moodle_url('/local/delegateaccount/pages/manage.php'));
 permission::require_action(permission::VIEW);
 
 $tab = optional_param('tab', listing::SCOPE_AUTHORISED, PARAM_ALPHA);
@@ -39,8 +41,9 @@ if (!in_array($tab, [listing::SCOPE_AUTHORISED, listing::SCOPE_HISTORICAL, 'dele
     $tab = listing::SCOPE_AUTHORISED;
 }
 
-$url = new moodle_url('/local/delegateaccount/pages/manage.php', $tab === listing::SCOPE_AUTHORISED ? [] : ['tab' => $tab]);
-$PAGE->set_url($url);
+// The page keeps the address of the administration tree whatever tab is open, so the breadcrumb is always the same; the tab
+// only chooses which one is open first, and the tabs change the list without loading the page again.
+$PAGE->set_url(new moodle_url('/local/delegateaccount/pages/manage.php'));
 $PAGE->set_title(get_string('manage_accounts', 'local_delegateaccount'));
 $PAGE->set_heading(get_string('manage_accounts', 'local_delegateaccount'));
 
@@ -61,6 +64,12 @@ foreach (
         ))
             ->out(false),
         'active' => $key === $tab,
+        'description' => $key === 'delegations'
+            ? get_string('all_delegations_description', 'local_delegateaccount')
+            : get_string('manage_' . $key . '_users_description', 'local_delegateaccount'),
+        'helpicon' => $key === listing::SCOPE_AUTHORISED ? manager::get_role_setup_help_icon() : '',
+        'people' => $key === 'delegations' ? null : page::people_list($key, 'lda-people', false),
+        'delegations' => $key === 'delegations' ? page::delegation_list(0, 'lda-delegations', false) : null,
     ];
 }
 
@@ -69,17 +78,11 @@ $context = [
     'settingsurl' => has_capability('moodle/site:config', context_system::instance())
         ? (new moodle_url('/admin/settings.php', ['section' => 'local_delegateaccount_settings']))->out(false)
         : '',
-    'helpicon' => $tab === listing::SCOPE_AUTHORISED ? manager::get_role_setup_help_icon() : '',
     'tabs' => $tabs,
 ];
-if ($tab === 'delegations') {
-    $context['description'] = get_string('all_delegations_description', 'local_delegateaccount');
-    $context['delegations'] = page::delegation_list(0, 'lda-delegations');
-} else {
-    $context['description'] = get_string('manage_' . $tab . '_users_description', 'local_delegateaccount');
-    $context['people'] = page::people_list($tab, 'lda-people');
-}
 page::require_create();
+
+$PAGE->requires->js_call_amd('local_delegateaccount/manage_tabs', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/manage/page', $context);

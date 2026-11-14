@@ -55,6 +55,7 @@ La posición vertical de una entidad expresa su importancia para el objetivo del
 | RN-010 | Una delegación revocada queda como historial y no puede volver a usarse; el mismo par puede delegarse de nuevo. | Delegation | `manager::revoke_delegations` |
 | RN-011 | Revocar termina al instante las sesiones que están abiertas por la delegación. | DelegatedSession | `manager::end_sessions` |
 | RN-012 | La actividad de una delegación se limita a su inicio y a su fin. | ActivityRecord | `manager::get_delegation_activity_page` |
+| RN-013 | La actividad de una delegación se busca por palabras, cada una en el componente, la acción o el nombre del evento, y se limita a un periodo dentro de la delegación cuyos dos días nunca quedan al revés. | ActivityRecord | `manager::get_delegation_activity_page`, `amd/src/activity.js` |
 
 ## Ciclos de vida
 
