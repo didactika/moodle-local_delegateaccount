@@ -2,7 +2,8 @@
  * This file is part of Moodle - https://moodle.org/
  * Moodle is free software under the GNU General Public License, version 3 or later.
  *
- * What was done through one delegation, newest first, narrowed by days, component and action as they are typed.
+ * What was done through one delegation, newest first, narrowed by a search (words of the component, the action or the event)
+ * and by a menu of the date, as every list of the design system.
  *
  * Mounted by core/react_autoinit from the data-react-component that the page writes.
  *
@@ -10,8 +11,9 @@
  * @copyright  2026 Didactika.org
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {useEffect, useId, useRef, useState} from 'react';
-import {Empty, ListBody, Pager, SkeletonRows, useFitHeight, useStableColumns} from './components/ui';
+import {useEffect, useRef, useState} from 'react';
+import {Empty, Icon, ListBody, Pager, SearchBox, SkeletonRows, useFitHeight, useStableColumns} from './components/ui';
+import DateMenu from './components/DateMenu';
 import {useList, useDebounced} from './hooks/useList';
 import {useText} from './engine/text';
 import {DEFAULT_PAGE_SIZE} from './engine/paging';
@@ -19,7 +21,7 @@ import {getActivityList} from './services/api';
 import type {ActivityListProps, ActivityRow} from './types';
 
 /** Filters of the report, as they are named in the address and in the web service. */
-const FILTERS = ['datefrom', 'dateto', 'component', 'action'] as const;
+const FILTERS = ['datefrom', 'dateto', 'search'] as const;
 
 /**
  * The report.
@@ -29,15 +31,13 @@ const FILTERS = ['datefrom', 'dateto', 'component', 'action'] as const;
  */
 export default function ActivityList({strings, delegationid, mindate, maxdate}: ActivityListProps) {
     const text = useText(strings);
-    const id = useId();
     const list = useList<ActivityRow>(
-        {datefrom: '', dateto: '', component: '', action: '', page: 0, perpage: DEFAULT_PAGE_SIZE},
+        {datefrom: '', dateto: '', search: '', page: 0, perpage: DEFAULT_PAGE_SIZE},
         (state) => getActivityList({
             delegationid,
             datefrom: String(state.datefrom),
             dateto: String(state.dateto),
-            component: String(state.component),
-            action: String(state.action),
+            search: String(state.search),
             page: Number(state.page),
             perpage: Number(state.perpage),
         }),
@@ -47,34 +47,34 @@ export default function ActivityList({strings, delegationid, mindate, maxdate}: 
     const fitbox = useRef<HTMLDivElement>(null);
     useFitHeight(fitbox);
     useStableColumns(table, Boolean(page && page.rows.length > 0));
-    const [fields, setFields] = useState<Record<string, string>>(
-        () => Object.fromEntries(FILTERS.map((name) => [name, String(state[name])])),
-    );
-    const typed = useDebounced(fields, 300);
+    // The search answers as it is typed; the date answers at once.
+    const [search, setSearch] = useState(String(state.search));
+    const typed = useDebounced(search, 300);
     useEffect(() => {
-        list.update(Object.fromEntries(FILTERS.map((name) => [name, typed[name].trim()])));
+        list.update({search: typed.trim()});
     }, [typed]);
-
-    const labels: Record<string, string> = {
-        datefrom: 'activity_filter_datefrom',
-        dateto: 'activity_filter_dateto',
-        component: 'activity_filter_component',
-        action: 'activity_filter_action',
+    const reset = (): void => {
+        setSearch('');
+        list.update({search: '', datefrom: '', dateto: ''});
     };
     const filtered = FILTERS.some((name) => state[name] !== '');
     const empty = <Empty filtered={filtered} icon="i/log" title={text('activity_empty_title')} text={text} strings={strings}
         message={page?.haslog === false ? text('activity_nolog') : text('activity_empty_text')}
-        onClear={() => setFields(Object.fromEntries(FILTERS.map((name) => [name, ''])))} />;
+        onClear={reset} />;
     return <div className="card">
-        <form className="card-body d-flex flex-wrap align-items-end border-bottom" data-region="filters"
-            aria-label={text('core:filters')} onSubmit={(event) => event.preventDefault()}>
-            {FILTERS.map((name) => <div key={name}>
-                <label htmlFor={`${id}-${name}`}>{text(labels[name])}</label>
-                <input className="form-control" id={`${id}-${name}`} autoComplete="off" value={fields[name]}
-                    type={name.startsWith('date') ? 'date' : 'search'} min={mindate} max={maxdate}
-                    onChange={(event) => setFields((before) => ({...before, [name]: event.target.value}))} />
-            </div>)}
-        </form>
+        <div className="table-toolbar" data-region="filters">
+            <div className="table-toolbar-start">
+                <SearchBox strings={strings} value={search} onChange={setSearch} label={text('activity_search')} />
+                <div data-region="filter-menus">
+                    <DateMenu label={text('activity_filter_date')} from={String(state.datefrom)} to={String(state.dateto)} min={mindate}
+                        max={maxdate} text={text} strings={strings} onChange={(datefrom, dateto) => list.update({datefrom, dateto})} />
+                </div>
+            </div>
+            <div className="table-toolbar-end">
+                <button type="button" className="btn btn-link btn-icon" disabled={!filtered} title={text('clear_filters')}
+                    aria-label={text('clear_filters')} onClick={reset}><Icon name="i/reload" strings={strings} /></button>
+            </div>
+        </div>
         <ListBody error={list.error} onRetry={list.refresh} text={text} empty={empty}
             isEmpty={Boolean(page && page.total === 0 && !list.skeleton)}>
                 <div ref={fitbox} className="table-responsive" data-region="tablewrap" aria-busy={list.busy || undefined}>

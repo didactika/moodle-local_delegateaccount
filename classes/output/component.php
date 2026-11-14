@@ -29,7 +29,7 @@ use core\output\react_component_renderable;
 class component implements react_component_renderable, \renderable {
     /** Icons of Moodle the components draw, by their id. */
     private const ICONS = ['a/search', 'i/previous', 'i/next', 't/edit', 't/add', 't/delete', 'i/permissions', 'i/log',
-        'i/users', 'i/switch', 'e/cancel', 't/copy'];
+        'i/users', 'i/switch', 'e/cancel', 't/copy', 'i/reload'];
 
     /** Core texts the components use. */
     private const CORE = [
