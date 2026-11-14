@@ -28,26 +28,30 @@
         "cancreate": true,
         "settingsurl": "https://moodle.example/admin/settings.php?section=local_delegateaccount_settings",
         "helpicon": "",
-        "description": "All active users who currently have permission to use delegated accounts.",
         "tabs": [
             {
                 "key": "authorised",
                 "label": "Authorised users",
                 "url": "https://moodle.example/local/delegateaccount/pages/manage.php",
-                "active": true
+                "active": true,
+                "description": "All active users who currently have permission to use delegated accounts.",
+                "helpicon": "",
+                "list": "<div></div>"
             },
             {
                 "key": "delegations",
                 "label": "All delegations",
                 "url": "https://moodle.example/local/delegateaccount/pages/manage.php?tab=delegations",
-                "active": false
+                "active": false,
+                "description": "Every delegation of the site.",
+                "helpicon": "",
+                "list": "<div></div>"
             }
         ],
-        "create": "<button type=\"button\" class=\"btn btn-primary\">Create</button>",
-        "list": "<div></div>"
+        "create": "<button type=\"button\" class=\"btn btn-primary\">Create</button>"
     }
 }}
-<div class="lda">
+<div class="lda" data-region="lda-manage">
     <header class="dd-page-header">
         <div class="dd-page-header-row">
             <div class="dd-page-header-main">
@@ -63,14 +67,59 @@
         </div>
     </header>
     <nav aria-label="{{#str}}manage_accounts, local_delegateaccount{{/str}}">
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs" role="tablist">
             {{#tabs}}
-                <li class="nav-item">
-                    <a class="nav-link{{#active}} active{{/active}}" href="{{url}}"{{#active}} aria-current="page"{{/active}}>{{label}}</a>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link{{#active}} active{{/active}}" href="{{url}}" role="tab" data-tab="{{key}}" aria-controls="lda-tabpanel"
+                        aria-selected="{{#active}}true{{/active}}{{^active}}false{{/active}}">{{label}}</a>
                 </li>
             {{/tabs}}
         </ul>
     </nav>
-    <p class="dd-page-subtitle mb-0">{{description}} {{{helpicon}}}</p>
-    {{{list}}}
+    <div id="lda-tabpanel" class="lda" role="tabpanel" data-region="tabpanel">
+        {{#tabs}}{{#active}}
+            <p class="dd-page-subtitle mb-0">{{description}} {{{helpicon}}}</p>
+            {{{list}}}
+        {{/active}}{{/tabs}}
+    </div>
+    {{#tabs}}
+        <template data-tab-panel="{{key}}">
+            <p class="dd-page-subtitle mb-0">{{description}} {{{helpicon}}}</p>
+            {{{list}}}
+        </template>
+    {{/tabs}}
 </div>
+{{#js}}
+(function() {
+    var root = document.querySelector('[data-region="lda-manage"]');
+    var panel = root.querySelector('[data-region="tabpanel"]');
+    // What the lists keep in the address: the list of the tab that is left takes them with it.
+    var keys = ['search', 'status', 'sort', 'direction', 'page', 'perpage', 'datefrom', 'dateto', 'component', 'action'];
+    root.querySelectorAll('[data-tab]').forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            if (link.getAttribute('aria-selected') === 'true') {
+                return;
+            }
+            var key = link.getAttribute('data-tab');
+            var template = root.querySelector('template[data-tab-panel="' + key + '"]');
+            root.querySelectorAll('[data-tab]').forEach(function(other) {
+                var on = other === link;
+                other.classList.toggle('active', on);
+                other.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+            panel.replaceChildren(template.content.cloneNode(true));
+            var url = new URL(window.location.href);
+            keys.forEach(function(name) {
+                url.searchParams.delete(name);
+            });
+            if (key === 'authorised') {
+                url.searchParams.delete('tab');
+            } else {
+                url.searchParams.set('tab', key);
+            }
+            window.history.replaceState(window.history.state, '', url);
+        });
+    });
+})();
+{{/js}}

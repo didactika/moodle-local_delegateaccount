@@ -334,6 +334,7 @@
 .lda .table-responsive[data-region=tablewrap] {
     block-size: var(--dd-table-h);
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .lda .table-responsive[data-region=tablewrap] thead th {
@@ -378,16 +379,17 @@
     font-weight: 600;
 }
 
-.lda .table tbody tr:last-child > * {
-    border-bottom: 0;
-}
-
 .lda .table tbody tr:hover > * {
     background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
 }
 
+.lda .table tbody tr:last-child > * {
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
 .lda .table tbody tr.table-active > * {
     background-color: var(--dd-primary-soft);
+    box-shadow: none;
 }
 
 .lda .table .table-select {
@@ -597,6 +599,71 @@
     }
 }
 
+@media (max-width: 767.98px) {
+
+    .lda {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lda .table-responsive .table th,
+    .lda .table-responsive .table td {
+        white-space: nowrap;
+    }
+
+    .lda .table-responsive .table th:first-child,
+    .lda .table-responsive .table td:first-child {
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 1;
+        background-color: var(--dd-surface);
+        box-shadow: inset -1px 0 0 var(--dd-hairline, rgba(0, 0, 0, 0.08));
+    }
+
+    .lda .table-responsive .table thead th:first-child {
+        z-index: 2;
+    }
+
+    .lda .nav-tabs,
+    .lda .dd-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .lda .nav-tabs .nav-link,
+    .lda .dd-chip {
+        flex: none;
+        white-space: nowrap;
+    }
+
+    .lda .nav-tabs.nav-tabs {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-bottom: 1px solid var(--dd-hairline);
+        background-color: transparent;
+    }
+
+    .lda .nav-tabs.nav-tabs .nav-item {
+        flex: none;
+    }
+
+    .lda .nav-tabs.nav-tabs .nav-link {
+        margin: 0 0 -1px;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background-color: transparent;
+        color: var(--dd-muted);
+    }
+
+    .lda .nav-tabs.nav-tabs .nav-link.nav-link.active:not(:disabled):not(.disabled) {
+        border-color: transparent;
+        border-bottom-color: var(--dd-primary);
+        background-color: var(--dd-primary-soft);
+        box-shadow: none;
+        color: var(--dd-primary-ink);
+    }
+}
+
 .lda .dd-searchbox,
 .path-local-delegateaccount .modal .dd-searchbox,
 .path-admin-local-delegateaccount .modal .dd-searchbox,
@@ -678,6 +745,80 @@
     background-color: var(--dd-primary-soft);
     color: var(--dd-primary-ink);
     font-weight: 600;
+}
+
+.lda .dd-select.dd-select-set,
+.path-local-delegateaccount .modal .dd-select.dd-select-set,
+.path-admin-local-delegateaccount .modal .dd-select.dd-select-set,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select.dd-select-set {
+    padding-right: 2.5rem;
+    background-image: none;
+}
+
+.lda .dd-select:is(button),
+.path-local-delegateaccount .modal .dd-select:is(button),
+.path-admin-local-delegateaccount .modal .dd-select:is(button),
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select:is(button) {
+    display: block;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lda .dd-select-filter,
+.path-local-delegateaccount .modal .dd-select-filter,
+.path-admin-local-delegateaccount .modal .dd-select-filter,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-filter {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+}
+
+.lda .dd-select-clear,
+.path-local-delegateaccount .modal .dd-select-clear,
+.path-admin-local-delegateaccount .modal .dd-select-clear,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--dd-primary-ink);
+    transform: translateY(-50%);
+    transition: background-color var(--dd-ease);
+}
+
+.lda .dd-select-clear .icon,
+.path-local-delegateaccount .modal .dd-select-clear .icon,
+.path-admin-local-delegateaccount .modal .dd-select-clear .icon,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear .icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.lda .dd-select-clear:hover,
+.path-local-delegateaccount .modal .dd-select-clear:hover,
+.path-admin-local-delegateaccount .modal .dd-select-clear:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear:hover {
+    background-color: color-mix(in srgb, var(--dd-primary) 14%, transparent);
+}
+
+.lda .dd-select-clear:focus-visible,
+.path-local-delegateaccount .modal .dd-select-clear:focus-visible,
+.path-admin-local-delegateaccount .modal .dd-select-clear:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .dd-select-clear:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
 }
 
 .lda .btn-icon,
@@ -1551,7 +1692,6 @@
     overscroll-behavior: contain;
     border-top: 1px solid var(--dd-hairline);
     border-bottom: 1px solid var(--dd-hairline);
-    scrollbar-gutter: stable;
 }
 
 .lda [data-region=capabilities] > [data-region=empty]:not([hidden]),
@@ -1849,6 +1989,161 @@
         justify-content: center;
         border-radius: var(--dd-radius-lg);
     }
+}
+
+.lda .dd-menu > .dd-select-menu {
+    position: fixed;
+    z-index: 1060;
+    display: block;
+    min-width: 10rem;
+    margin: 0;
+    padding: 0.375rem;
+    overflow-y: auto;
+    border: 1px solid var(--dd-hairline);
+    border-radius: var(--dd-radius);
+    background-color: var(--dd-surface);
+    box-shadow: var(--dd-shadow-md);
+    color: var(--dd-ink);
+    font-size: 0.9375rem;
+    animation: lda-pop 140ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.lda .dd-menu > .dd-select-menu .dropdown-header {
+    padding: 0.5rem 0.75rem 0.25rem;
+    color: var(--dd-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.lda .dd-menu > .dd-select-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.625rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: none;
+    color: var(--dd-ink);
+    line-height: 1.5;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--dd-ease), color var(--dd-ease);
+}
+
+.lda .dd-menu > .dd-select-menu .dropdown-item + .dropdown-item {
+    margin-top: 2px;
+}
+
+.lda .dd-menu > .dd-select-menu .dropdown-item:hover,
+.lda .dd-menu > .dd-select-menu .dropdown-item:focus,
+.lda .dd-menu > .dd-select-menu .dropdown-item.active {
+    outline: 0;
+    background-color: var(--dd-surface-2);
+    color: var(--dd-ink);
+}
+
+.lda .dd-menu > .dd-select-menu .dropdown-item[aria-selected=true] {
+    background-color: var(--dd-primary-soft);
+    color: var(--dd-primary-ink);
+    font-weight: 600;
+}
+
+.lda .dd-menu > .dd-select-menu .dropdown-item[aria-selected=true]::after {
+    content: "";
+    flex: none;
+    width: 0.3rem;
+    height: 0.6rem;
+    margin-right: 0.25rem;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translateY(-1px);
+}
+
+.lda .dd-menu > .dd-select-menu .dropdown-item[aria-selected=true]:focus,
+.lda .dd-menu > .dd-select-menu .dropdown-item[aria-selected=true].active {
+    background-color: var(--dd-primary-soft-2);
+}
+
+.lda .dd-menu > .dd-select-menu .dropdown-item[aria-selected=true]::before {
+    content: none;
+    display: none;
+}
+
+.lda .dd-menu > .dd-select-menu .dropdown-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lda .dd-menu {
+    position: relative;
+    display: inline-flex;
+}
+
+.lda button.dd-select {
+    display: block;
+    min-width: 0;
+    max-width: 18rem;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lda button.dd-select .dd-chip-count {
+    margin-left: 0.5rem;
+}
+
+.lda .dd-menu > .dd-select-menu {
+    position: absolute;
+    inset: calc(100% + 2px) auto auto 0;
+    width: max-content;
+    min-width: 100%;
+    max-width: 22rem;
+    max-height: 20rem;
+}
+
+.lda .dd-menu-end > .dd-select-menu {
+    inset: calc(100% + 2px) 0 auto auto;
+}
+
+.lda .dd-menu-up > .dd-select-menu {
+    inset: auto auto calc(100% + 2px) 0;
+}
+
+.lda .dd-select-menu label.dropdown-item {
+    margin: 0;
+    font-weight: 400;
+}
+
+.lda .dd-select-menu .dropdown-item .form-check-input {
+    position: static;
+    flex: none;
+    margin: 0;
+}
+
+.lda .dd-select-menu .dropdown-item > span:first-of-type {
+    flex: 1 1 auto;
+}
+
+.lda .dd-select-menu .dd-menu-form {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem 0.75rem;
+}
+
+.lda .dd-select-menu .dd-menu-dates {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.lda .dd-select-menu hr {
+    margin: 0.375rem 0;
+    border-color: var(--dd-hairline);
 }
 
 .path-local-delegateaccount .modal .modal-dialog.modal-lg,

@@ -956,6 +956,7 @@ class manager {
      * @param int $timeuntil Optional exclusive timestamp filter.
      * @param string $component Optional component fragment.
      * @param string $action Optional action fragment.
+     * @param string $search Optional words, each found in the component, the action or the name of the event.
      * @return array{total: int, events: array} Activity page and total count.
      */
     public static function get_delegation_activity_page(
@@ -965,7 +966,8 @@ class manager {
         int $timefrom = 0,
         int $timeuntil = 0,
         string $component = '',
-        string $action = ''
+        string $action = '',
+        string $search = ''
     ): array {
         global $DB;
 
@@ -991,6 +993,16 @@ class manager {
         if ($action !== '') {
             $where .= ' AND ' . $DB->sql_like('action', ':action', false);
             $params['action'] = '%' . $DB->sql_like_escape($action) . '%';
+        }
+        // Every word of the search is in the component, the action or the name of the event.
+        foreach (array_values(array_filter(preg_split('/\s+/', trim($search)))) as $index => $word) {
+            $like = '%' . $DB->sql_like_escape($word) . '%';
+            $where .= ' AND (' . $DB->sql_like('component', ":searchc{$index}", false) . ' OR '
+                . $DB->sql_like('action', ":searcha{$index}", false) . ' OR '
+                . $DB->sql_like('eventname', ":searche{$index}", false) . ')';
+            $params["searchc{$index}"] = $like;
+            $params["searcha{$index}"] = $like;
+            $params["searche{$index}"] = $like;
         }
 
         $total = $reader->get_events_select_count($where, $params);

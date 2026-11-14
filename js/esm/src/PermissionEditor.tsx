@@ -206,8 +206,8 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
                 <div className="table-toolbar-start">
                     <SearchBox strings={strings} value={search} label={text('perm_search')}
                         placeholder={text('perm_search_placeholder')} onChange={(value) => reset(() => setSearch(value))} />
-                    <SelectMenu label={text('perm_component_all')} value={component} options={componentoptions}
-                        className={component ? 'border-primary' : ''} onChange={(value) => reset(() => setComponent(value))} />
+                    <SelectMenu clearable text={text} strings={strings} label={text('perm_component_all')} value={component}
+                        options={componentoptions} onChange={(value) => reset(() => setComponent(value))} />
                 </div>
                 {!site && canedit && <div className="table-toolbar-end">
                     <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setCopying(true)}>

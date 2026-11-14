@@ -11,9 +11,10 @@
  * @copyright  2026 Didactika.org
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {useEffect, useState} from 'react';
-import {Chips, ConfirmDialog, Empty, FloatBar, Icon, ListBody, Pager, Person, SearchBox, SkeletonRows, SortHeader}
-    from './components/ui';
+import {useEffect, useRef, useState} from 'react';
+import {
+    Chips, ConfirmDialog, Empty, FloatBar, Icon, ListBody, Pager, Person, SearchBox, SkeletonRows, SortHeader, useFitHeight, useStableColumns,
+} from './components/ui';
 import {BulkPermissions} from './BulkPermissions';
 import {useList, useDebounced} from './hooks/useList';
 import {useText} from './engine/text';
@@ -104,8 +105,12 @@ function Table({list, rows, selectable, pagefull, canbulk, showuser, onSort, onE
     text: Text;
     strings: Strings;
 }) {
-    return <div className="table-responsive" aria-busy={list.busy || undefined}>
-        <table className="table">
+    const table = useRef<HTMLTableElement>(null);
+    const fitbox = useRef<HTMLDivElement>(null);
+    useFitHeight(fitbox);
+    useStableColumns(table, rows.length > 0);
+    return <div ref={fitbox} className="table-responsive" data-region="tablewrap" aria-busy={list.busy || undefined}>
+        <table className="table" ref={table}>
             <caption className="visually-hidden">{text('list_caption_delegations')}</caption>
             <thead>
                 <tr>

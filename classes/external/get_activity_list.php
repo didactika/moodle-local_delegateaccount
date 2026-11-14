@@ -45,6 +45,7 @@ final class get_activity_list extends list_service {
             'dateto' => new external_value(PARAM_ALPHANUMEXT, 'Last day, as YYYY-MM-DD, or empty.', VALUE_DEFAULT, ''),
             'component' => new external_value(PARAM_TEXT, 'Component fragment.', VALUE_DEFAULT, ''),
             'action' => new external_value(PARAM_TEXT, 'Action fragment.', VALUE_DEFAULT, ''),
+            'search' => new external_value(PARAM_TEXT, 'Words of the component, action or event.', VALUE_DEFAULT, ''),
             'page' => new external_value(PARAM_INT, 'Zero-based page.', VALUE_DEFAULT, 0),
             'perpage' => new external_value(PARAM_INT, 'Rows per page, from 1 to 100, or 0 for all.', VALUE_DEFAULT, 12),
         ]);
@@ -58,6 +59,7 @@ final class get_activity_list extends list_service {
      * @param string $dateto Last day.
      * @param string $component Component fragment.
      * @param string $action Action fragment.
+     * @param string $search Words, each found in the component, the action or the name of the event.
      * @param int $page Zero-based page.
      * @param int $perpage Rows per page, 0 for all.
      * @return array The page.
@@ -68,6 +70,7 @@ final class get_activity_list extends list_service {
         string $dateto = '',
         string $component = '',
         string $action = '',
+        string $search = '',
         int $page = 0,
         int $perpage = 12
     ): array {
@@ -77,6 +80,7 @@ final class get_activity_list extends list_service {
             'dateto',
             'component',
             'action',
+            'search',
             'page',
             'perpage'
         ));
@@ -93,7 +97,8 @@ final class get_activity_list extends list_service {
             $from ? $from->getTimestamp() : 0,
             $until ? $until->modify('+1 day')->getTimestamp() : 0,
             trim($params['component']),
-            trim($params['action'])
+            trim($params['action']),
+            trim($params['search'])
         );
 
         return [
