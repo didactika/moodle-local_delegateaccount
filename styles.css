@@ -172,6 +172,10 @@
     min-width: 0;
 }
 
+.lda .d-grid {
+    grid-template-columns: minmax(0, 1fr);
+}
+
 .lda > [data-region=cards].row {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -190,6 +194,34 @@
 
     .lda > [data-region=cards].row {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.lda [data-region=account-cards].row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    margin: 0;
+}
+
+.lda [data-region=account-cards].row > li {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 576px) {
+
+    .lda [data-region=account-cards].row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1200px) {
+
+    .lda [data-region=account-cards].row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 

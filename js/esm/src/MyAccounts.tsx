@@ -49,8 +49,8 @@ export default function MyAccounts({strings, id, initial}: MyAccountsProps) {
             empty={<div className="card"><Empty filtered={Boolean(state.search)} icon="i/switch" text={text}
                 strings={strings} title={text('empty_mine_title')} message={text('empty_mine_text')}
                 onClear={() => setSearch('')} /></div>}>
-                <ul className="row list-unstyled mb-0" aria-busy={list.busy || undefined}>
-                    {(page?.rows ?? []).map((row) => <li key={row.delegationid} className="col-sm-6 col-xl-4 mb-3">
+                <ul className="row list-unstyled mb-0" data-region="account-cards" aria-busy={list.busy || undefined}>
+                    {(page?.rows ?? []).map((row) => <li key={row.delegationid} className="col-sm-6 col-xl-4">
                         <div className="card h-100"><div className="card-body d-flex flex-column">
                             <div className="d-flex align-items-center mb-3">
                                 <Avatar user={row.user} size={50} />

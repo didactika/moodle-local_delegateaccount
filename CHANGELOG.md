@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A long name ends with an ellipsis in the user menu, in the cards of the accounts and in the fixed column of a list on a narrow screen, so nothing scrolls sideways.
 - An empty list keeps the height of the list and its pager, and the two people of a delegation show their pictures at the same size.
 - The dates of the dialogs keep even gaps on a narrow screen, and a clicked button, checkbox or switch shows no halo.
+- The cards of "My delegated accounts" stay inside a narrow screen, whatever the length of an email, with even gaps between them.
 
 ## [1.2.0-m503] - 2026-11-11
 

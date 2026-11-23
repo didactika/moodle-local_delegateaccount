@@ -12,6 +12,12 @@
     gap: 1.25rem;
     min-width: 0;
 
+    // A stack of the page (d-grid) is one column as wide as its box: a long name or email that ends with an ellipsis never makes it
+    // wider than the screen.
+    & .d-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     // The cards of a details page: side by side from 992 px, one under the other below. The row of Bootstrap takes its gutters
     // from negative margins that go past the column of a narrow page; a grid with a gap keeps the cards inside it.
     & > [data-region="cards"].row {
@@ -30,6 +36,30 @@
 
         @media (min-width: 992px) {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    // The cards of the accounts a person may open: one column on a phone, two from 576 px and three from 1200 px, in a grid with a
+    // gap, so no negative margin of the row of Bootstrap goes past the page.
+    & [data-region="account-cards"].row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+        margin: 0;
+
+        & > li {
+            width: auto;
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        @media (min-width: 576px) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (min-width: 1200px) {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
     }
 

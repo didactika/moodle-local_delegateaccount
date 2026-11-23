@@ -78,7 +78,7 @@ function MyAccounts({ strings, id, initial }) {
           lineNumber: 49,
           columnNumber: 20
         }, this),
-        children: /* @__PURE__ */ jsxDEV("ul", { className: "row list-unstyled mb-0", "aria-busy": list.busy || void 0, children: (page?.rows ?? []).map((row) => /* @__PURE__ */ jsxDEV("li", { className: "col-sm-6 col-xl-4 mb-3", children: /* @__PURE__ */ jsxDEV("div", { className: "card h-100", children: /* @__PURE__ */ jsxDEV("div", { className: "card-body d-flex flex-column", children: [
+        children: /* @__PURE__ */ jsxDEV("ul", { className: "row list-unstyled mb-0", "data-region": "account-cards", "aria-busy": list.busy || void 0, children: (page?.rows ?? []).map((row) => /* @__PURE__ */ jsxDEV("li", { className: "col-sm-6 col-xl-4", children: /* @__PURE__ */ jsxDEV("div", { className: "card h-100", children: /* @__PURE__ */ jsxDEV("div", { className: "card-body d-flex flex-column", children: [
           /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center mb-3", children: [
             /* @__PURE__ */ jsxDEV(Avatar, { user: row.user, size: 50 }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
