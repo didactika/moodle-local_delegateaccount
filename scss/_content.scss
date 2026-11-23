@@ -52,8 +52,12 @@
         }
 
         & .form-control {
-            min-width: 10rem;
             border-color: var(--dd-line);
+        }
+
+        // The search field gives up its width with its box, so the menus beside it never cover it; it is left out.
+        & .form-control:not([type="search"]) {
+            min-width: 10rem;
         }
     }
 

@@ -187,9 +187,12 @@
         gap: 0.5rem;
         padding: 0.5rem;
 
+        // Every menu of the group as wide as the group, whatever it says; the element in the selector weighs as much as the
+        // width that the menus of the row take.
         & .dropdown,
-        & :is(.form-select, .custom-select) {
+        & :is(button, select):is(.form-select, .custom-select) {
             width: 100%;
+            min-width: 0;
             max-width: none;
         }
     }

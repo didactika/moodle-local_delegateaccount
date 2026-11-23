@@ -69,13 +69,33 @@ export function SearchBox({value, onChange, label, placeholder, strings, wide = 
     wide?: boolean;
 }) {
     const id = useId();
+    const field = useRef<HTMLInputElement>(null);
     return <div className={`position-relative d-flex align-items-center${wide ? ' mw-100' : ''}`} role="search">
         <Icon name="a/search" strings={strings} />
         <label className="visually-hidden" htmlFor={id}>{label}</label>
-        <input className="form-control" type="search" id={id} value={value} placeholder={placeholder ?? label} autoComplete="off"
-            onChange={(event) => onChange(event.target.value)}
+        <input ref={field} className="form-control" type="search" id={id} value={value} placeholder={placeholder ?? label}
+            autoComplete="off" onChange={(event) => onChange(event.target.value)}
             onKeyDown={(event) => event.key === 'Enter' && event.preventDefault()} />
+        {value !== '' && <ClearSearch strings={strings} onClear={() => {
+            onChange('');
+            field.current?.focus();
+        }} />}
     </div>;
+}
+
+/**
+ * The button that empties a search field: a round icon button, as the actions of a row, and not the cross the browser draws,
+ * which neither looks like a button nor follows the theme.
+ *
+ * @param props The texts of the page and what to do.
+ * @returns The button.
+ */
+export function ClearSearch({strings, onClear}: {strings: Strings; onClear: () => void}) {
+    const label = strings['core:clear'] ?? '';
+    return <button type="button" className="btn btn-link btn-icon btn-sm" data-action="clear-search" title={label}
+        aria-label={label} onClick={onClear}>
+        <Icon name="e/cancel" strings={strings} />
+    </button>;
 }
 
 /**
@@ -130,7 +150,7 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
     const menu = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState(false);
     const [active, setActive] = useState(0);
-    const [place, setPlace] = useState<{top: number; left: number; width: number; height: number} | null>(null);
+    const [place, setPlace] = useState<{top: number; bottom: number | null; left: number; width: number; height: number} | null>(null);
     const id = useId();
 
     useLayoutEffect(() => {
@@ -143,9 +163,10 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
         const height = menu.current.scrollHeight;
         const up = height > below && above > below;
         const max = Math.max(120, Math.min(272, up ? above : below));
-        const shown = Math.min(height, max);
+        // A menu that opens above is held by its foot, next to the select, so it stays there when a search makes it shorter.
         setPlace({
-            top: up ? box.top - shown - 2 : box.bottom + 2,
+            top: box.bottom + 2,
+            bottom: up ? window.innerHeight - box.top + 2 : null,
             left: Math.max(8, Math.min(box.left, window.innerWidth - Math.max(box.width, 160) - 8)),
             width: box.width,
             height: max,
@@ -160,7 +181,7 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
         }
         (menu.current.querySelector<HTMLElement>('input')
             ?? menu.current.querySelector<HTMLElement>('[aria-selected="true"]')
-            ?? menu.current.querySelector<HTMLElement>('button'))?.focus({preventScroll: true});
+            ?? menu.current.querySelector<HTMLElement>('[role="option"]'))?.focus({preventScroll: true});
     }, [open, place]);
 
     // Each time the menu opens it shows every option again.
@@ -178,7 +199,8 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
         // The select opens and closes the menu by itself; the press that opened it reaches the document too, and is not a press
         // outside the menu.
         const close = (event: Event): void => {
-            const target = event.target as Node;
+            // A resize or a scroll of the page comes from the window, which is no node and is never inside the menu.
+            const target = event.target instanceof Node ? event.target : null;
             if (!menu.current?.contains(target) && !select.current?.contains(target)) {
                 setOpen(false);
             }
@@ -217,11 +239,12 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
     const focus = (index: number): void => {
         const at = (index + options.length) % options.length;
         setActive(at);
-        menu.current?.querySelectorAll<HTMLElement>('button')[at]?.focus();
+        menu.current?.querySelectorAll<HTMLElement>('[role="option"]')[at]?.focus();
     };
 
     const keys = (event: ReactKeyboardEvent): void => {
-        const at = Array.from(menu.current?.querySelectorAll('button') ?? []).indexOf(document.activeElement as HTMLButtonElement);
+        const entries = Array.from(menu.current?.querySelectorAll('[role="option"]') ?? []);
+        const at = entries.indexOf(document.activeElement as HTMLButtonElement);
         // In the search field the keys write; the arrow down goes to the options and Enter chooses the first one.
         if (event.target instanceof HTMLInputElement && !['ArrowDown', 'Escape', 'Tab', 'Enter'].includes(event.key)) {
             return;
@@ -269,7 +292,8 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
 
     const scope = select.current?.closest('.lda, .modal') ?? document.body;
     const position = place
-        ? {top: place.top, left: place.left, minWidth: place.width, maxHeight: place.height}
+        ? {...(place.bottom === null ? {top: place.top} : {top: 'auto', bottom: place.bottom}), left: place.left, minWidth: place.width,
+            maxHeight: place.height}
         : {visibility: 'hidden' as const};
     const classes = ['form-select', small ? 'form-select-sm' : '', set ? 'border-primary' : '', className]
         .filter(Boolean).join(' ');
@@ -300,6 +324,11 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
                         setQuery(event.target.value);
                         setActive(0);
                     }} />
+                {query !== '' && strings && <ClearSearch strings={strings} onClear={() => {
+                    setQuery('');
+                    setActive(0);
+                    menu.current?.querySelector<HTMLElement>('input')?.focus();
+                }} />}
             </div>}
             {options.map((option, index) => <button key={option.value} type="button" role="option"
                 className={`dropdown-item${index === active ? ' active' : ''}`} aria-selected={option.value === value}
