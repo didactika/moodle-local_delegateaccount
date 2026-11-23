@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The pages of a delegation no longer repeat the breadcrumb with a link back to the page above.
 - The menu of the components of the permission editor lists them in alphabetical order and opens with a search field that keeps the components holding every word typed, whatever their case and accents.
 - A search field empties with a small button of its own, which shows the pointer and a soft tint under it, instead of the cross the browser draws.
+- The mark of a session opened through a delegation lives in the user of the session, as the login-as data of Moodle does, instead of the session itself; the sessions that are open when the plugin is updated end, and their people open their accounts again.
+- The count of each status of a list is read in one query, and the guided tours are updated with two queries for all of them, so a list costs the same whatever the number of statuses.
+- The open tab of a row of tabs is brought to the middle of the row by the plugin's own script instead of a script written in the page, and the icons that scripts add come through the templates of Moodle.
 
 ### Fixed
 

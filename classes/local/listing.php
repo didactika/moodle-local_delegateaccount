@@ -75,14 +75,11 @@ final class listing {
 
         $now = time();
         [$basewhere, $baseparams] = self::user_scope_sql($scope, $search);
-        $counts = ['all' => $DB->count_records_sql("SELECT COUNT(1) FROM {user} u WHERE $basewhere", $baseparams)];
+        $conditions = [];
         foreach (array_merge(self::STATUSES, ['none']) as $chip) {
-            [$statussql, $statusparams] = self::user_status_sql($chip, $now);
-            $counts[$chip] = $DB->count_records_sql(
-                "SELECT COUNT(1) FROM {user} u WHERE $basewhere AND $statussql",
-                $baseparams + $statusparams
-            );
+            $conditions[$chip] = self::user_status_sql($chip, $now);
         }
+        $counts = self::counts('{user} u', $basewhere, $baseparams, $conditions);
 
         $statussql = '1 = 1';
         $statusparams = [];
@@ -175,11 +172,11 @@ final class listing {
         $now = time();
         $base = ['status' => ''] + $filters;
         [$from, $where, $params] = self::delegation_sql($base, $now);
-        $counts = ['all' => $DB->count_records_sql("SELECT COUNT(1) FROM $from WHERE $where", $params)];
+        $conditions = [];
         foreach (self::STATUSES as $status) {
-            [$from, $where, $params] = self::delegation_sql(['status' => $status] + $filters, $now);
-            $counts[$status] = $DB->count_records_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
+            $conditions[$status] = self::status_sql('da', $status, $now, 'count' . $status);
         }
+        $counts = self::counts($from, $where, $params, $conditions);
 
         [$from, $where, $params] = self::delegation_sql($filters, $now);
         $total = $DB->count_records_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
@@ -207,6 +204,35 @@ final class listing {
         );
 
         return ['total' => $total, 'counts' => $counts, 'rows' => array_values($rows)];
+    }
+
+    /**
+     * How many rows match each condition, in one query: all the rows of the list and, for each condition, the ones that meet it.
+     *
+     * @param string $from FROM clause.
+     * @param string $where Condition every row meets.
+     * @param array $params Parameters of the condition.
+     * @param array $conditions SQL condition and its parameters, by the name it is counted under.
+     * @return int[] Count of all the rows (key all) and of each condition.
+     */
+    private static function counts(string $from, string $where, array $params, array $conditions): array {
+        global $DB;
+
+        $columns = ['COUNT(1) AS countall'];
+        $names = [];
+        foreach (array_keys($conditions) as $index => $name) {
+            [$sql, $conditionparams] = $conditions[$name];
+            $columns[] = "SUM(CASE WHEN $sql THEN 1 ELSE 0 END) AS count$index";
+            $names[$index] = $name;
+            $params += $conditionparams;
+        }
+        $row = $DB->get_record_sql("SELECT " . implode(', ', $columns) . " FROM $from WHERE $where", $params);
+        $counts = ['all' => (int)$row->countall];
+        foreach ($names as $index => $name) {
+            $counts[$name] = (int)$row->{"count$index"};
+        }
+
+        return $counts;
     }
 
     /**

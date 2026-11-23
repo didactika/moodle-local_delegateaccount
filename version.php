@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026111103;
+$plugin->version = 2026111104;
 $plugin->requires = 2026100500; // Moodle 5.3.
 $plugin->component = 'local_delegateaccount';
 $plugin->release   = '1.3.0-m503';

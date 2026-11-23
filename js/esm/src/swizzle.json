@@ -31,6 +31,10 @@
     "eject": "risky",
     "wrap": "risky"
   },
+  "TabScroll": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
   "UserMenu": {
     "eject": "risky",
     "wrap": "risky"

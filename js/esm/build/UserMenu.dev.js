@@ -36,9 +36,7 @@ function UserMenu({ html }) {
     if (!carousel || !trigger || carousel.querySelector(PANEL)) {
       return void 0;
     }
-    const template = document.createElement("template");
-    template.innerHTML = html;
-    carousel.append(template.content.cloneNode(true));
+    carousel.append(document.createRange().createContextualFragment(html));
     trigger.href = "#";
     trigger.classList.add("carousel-navigation-link");
     trigger.dataset.carouselTargetId = "carousel-item-delegatedaccounts";

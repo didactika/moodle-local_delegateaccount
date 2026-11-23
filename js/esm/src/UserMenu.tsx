@@ -53,9 +53,7 @@ export default function UserMenu({html}: UserMenuProps) {
         if (!carousel || !trigger || carousel.querySelector(PANEL)) {
             return undefined;
         }
-        const template = document.createElement('template');
-        template.innerHTML = html;
-        carousel.append(template.content.cloneNode(true));
+        carousel.append(document.createRange().createContextualFragment(html));
         trigger.href = '#';
         trigger.classList.add('carousel-navigation-link');
         trigger.dataset.carouselTargetId = 'carousel-item-delegatedaccounts';

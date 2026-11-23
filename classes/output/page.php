@@ -100,6 +100,17 @@ final class page {
     }
 
     /**
+     * Brings the open tab of a row of tabs to the middle of the row when the row scrolls sideways, on a narrow screen.
+     *
+     * @return string HTML.
+     */
+    public static function tab_scroll(): string {
+        global $OUTPUT;
+
+        return $OUTPUT->render(new component('TabScroll', [], false));
+    }
+
+    /**
      * Draws one React component of the plugin.
      *
      * @param string $name Name of the component.
