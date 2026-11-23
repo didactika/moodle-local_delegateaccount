@@ -5,7 +5,7 @@ All notable changes to this plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.0-m405] - 2026-11-23
 
 ### Changed
 
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every piece of the screens is a class of Bootstrap or of Moodle, restyled inside the plugin, so a theme restyles it with Bootstrap.
 - The pages of a delegation no longer repeat the breadcrumb with a link back to the page above.
 - The menu of the components of the permission editor lists them in alphabetical order and opens with a search field that keeps the components holding every word typed, whatever their case and accents.
+- A search field empties with a small button of its own, which shows the pointer and a soft tint under it, instead of the cross the browser draws.
 
 ### Fixed
 
@@ -23,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The dates of the dialogs keep even gaps on a narrow screen, and a clicked button, checkbox or switch shows no halo.
 - The cards of "My delegated accounts" stay inside a narrow screen, whatever the length of an email, with even gaps between them.
 - The list of the dialog that copies the permissions of another delegation takes the room of the dialog, with no empty space under it.
+- A menu that opens above its select stays next to it when its search makes it shorter.
+- The menus grouped in Filters on a narrow screen take the same width, and the search field beside them gives up its width instead of running under them.
 
 ## [1.2.0-m405] - 2026-11-11
 
@@ -76,7 +79,6 @@ Line for Moodle 4.5 to 5.2. The same delivery for Moodle 5.3 is 1.1.0-m503.
 - The permission editor scrolls inside a box of fixed height, with the name of each component as the head of its group.
 - The dialogs of the plugin are drawn with the design system.
 - The management page is called "Delegated accounts" in the administration.
-
 - New "Delegated session capabilities" tab in the plugin settings, next to the existing settings. Administrators set Allow, Prohibit or Not set for each capability in delegated sessions and can add any capability. Editing the own profile is prohibited by default. The rules apply only to sessions opened through a delegation and change no role.
 - Two guided tours for Moodle's User Tours, imported automatically on install and upgrade from the `tour_*.json` files. They are shown once, only to people who have an active delegation, and explain the "Delegated accounts" user menu entry and the "My delegated accounts" page.
 

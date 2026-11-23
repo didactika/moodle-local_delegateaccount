@@ -129,8 +129,14 @@ const place = (select, menu) => {
     const height = menu.scrollHeight;
     const up = height > below && above > below;
     menu.style.maxHeight = `${Math.max(120, Math.min(17 * 16, up ? above : below))}px`;
-    const top = up ? box.top - Math.min(height, menu.offsetHeight) - 2 : box.bottom + 2;
-    menu.style.top = `${Math.max(MARGIN, top)}px`;
+    // A menu that opens above is held by its foot, next to the select, so it stays there when a search makes it shorter.
+    if (up) {
+        menu.style.top = 'auto';
+        menu.style.bottom = `${window.innerHeight - box.top + 2}px`;
+    } else {
+        menu.style.top = `${box.bottom + 2}px`;
+        menu.style.bottom = 'auto';
+    }
     menu.style.left = `${Math.max(MARGIN, Math.min(box.left, window.innerWidth - menu.offsetWidth - MARGIN))}px`;
 };
 
@@ -318,7 +324,7 @@ export const init = () => {
     });
     window.addEventListener('resize', () => close());
     window.addEventListener('scroll', (event) => {
-        if (current && !current.menu.contains(event.target)) {
+        if (current && !(event.target instanceof Node && current.menu.contains(event.target))) {
             close();
         }
     }, {capture: true, passive: true});
