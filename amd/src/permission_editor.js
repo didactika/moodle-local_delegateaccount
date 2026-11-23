@@ -134,17 +134,12 @@ class Editor {
     }
 
     /**
-     * Offers the components that define capabilities, in the order Moodle lists them.
+     * Offers the components that define capabilities, in alphabetical order, so the menu reads like an index.
      */
     fillComponents() {
         const select = this.region('component');
-        const seen = new Set();
-        this.capabilities.forEach((capability) => {
-            if (!seen.has(capability.componentlabel)) {
-                seen.add(capability.componentlabel);
-                select.append(new Option(capability.componentlabel, capability.componentlabel));
-            }
-        });
+        const names = Array.from(new Set(this.capabilities.map((capability) => capability.componentlabel)));
+        names.sort((a, b) => a.localeCompare(b)).forEach((name) => select.append(new Option(name, name)));
     }
 
     /**

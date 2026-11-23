@@ -22,6 +22,10 @@
  * Keyboard: Enter, Space and the arrows open it; the arrows, Home and End move, Enter and Space choose, a letter jumps to the
  * next option that starts with it, Escape and Tab close it.
  *
+ * A select with many options (data-searchable) opens with a search field at the top of its menu, which keeps the options that
+ * hold every word typed, whatever their case and accents. Its label and the text shown when nothing matches come from the
+ * select (data-search-label, data-noresults). The arrow down goes from the field to the options, Enter chooses the first one.
+ *
  * @module     local_delegateaccount/local/select_menu
  * @copyright  2026 Didactika.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,6 +33,14 @@
 
 /** The selects that open the menu: single selects of the screens and dialogs of the plugin. */
 const SELECTOR = ':is(.lda, .modal) select:is(.form-select, .custom-select)';
+
+/**
+ * A text as the search of a menu compares it: in small letters and without accents.
+ *
+ * @param {string} value The text.
+ * @returns {string}
+ */
+const fold = (value) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
 /** Room kept between the menu and the edge of the window. */
 const MARGIN = 8;
@@ -93,7 +105,7 @@ const activate = (index) => {
     for (let step = 0; step < count; step++) {
         const at = (index + step * (index >= 0 ? 1 : -1) + count * 2) % count;
         const entry = entries[at];
-        if (entry && !entry.option.disabled) {
+        if (entry && !entry.option.disabled && !entry.button.hidden) {
             entries.forEach((other) => other.button.classList.toggle('active', other === entry));
             entry.button.focus();
             entry.button.scrollIntoView({block: 'nearest'});
@@ -164,6 +176,40 @@ const open = (select) => {
             add(child, menu);
         }
     });
+    let field = null;
+    if (select.dataset.searchable !== undefined) {
+        const box = document.createElement('div');
+        box.className = 'position-relative d-flex align-items-center p-1';
+        box.setAttribute('role', 'search');
+        // The magnifier of the search fields of the page, drawn by the theme, so the field looks like them.
+        const icon = scope.querySelector('[role="search"] .icon');
+        if (icon) {
+            box.append(icon.cloneNode(true));
+        }
+        field = document.createElement('input');
+        field.type = 'search';
+        field.className = 'form-control form-control-sm';
+        field.autocomplete = 'off';
+        field.placeholder = select.dataset.searchLabel || '';
+        field.setAttribute('aria-label', field.placeholder);
+        box.append(field);
+        menu.prepend(box);
+        const none = document.createElement('p');
+        none.className = 'text-muted small px-3 py-2 mb-0';
+        none.setAttribute('role', 'status');
+        none.textContent = select.dataset.noresults || '';
+        none.hidden = true;
+        menu.append(none);
+        field.addEventListener('input', () => {
+            const words = fold(field.value).split(/\s+/).filter(Boolean);
+            let shown = 0;
+            entries.forEach((entry) => {
+                entry.button.hidden = !words.every((word) => fold(entry.button.textContent).includes(word));
+                shown += entry.button.hidden ? 0 : 1;
+            });
+            none.hidden = shown > 0;
+        });
+    }
     scope.append(menu);
     place(select, menu);
     select.setAttribute('aria-expanded', 'true');
@@ -178,6 +224,28 @@ const open = (select) => {
     });
     menu.addEventListener('keydown', (event) => {
         const at = entries.findIndex((entry) => entry.button === document.activeElement);
+        // In the search field the keys write; the arrow down goes to the options and Enter chooses the first one shown.
+        if (field && event.target === field) {
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                activate(0);
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                choose(entries.findIndex((entry) => !entry.button.hidden && !entry.option.disabled));
+            } else if (event.key === 'Escape') {
+                event.preventDefault();
+                event.stopPropagation();
+                close(true);
+            } else if (event.key === 'Tab') {
+                close();
+            }
+            return;
+        }
+        if (field && event.key === 'ArrowUp' && at === entries.findIndex((entry) => !entry.button.hidden)) {
+            event.preventDefault();
+            field.focus();
+            return;
+        }
         if (event.key === 'ArrowDown') {
             event.preventDefault();
             activate(at + 1);
@@ -208,6 +276,7 @@ const open = (select) => {
     });
     const selected = entries.findIndex((entry) => entry.option.selected);
     activate(selected >= 0 ? selected : 0);
+    field?.focus({preventScroll: true});
 };
 
 /**

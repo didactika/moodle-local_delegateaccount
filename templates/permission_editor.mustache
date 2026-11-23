@@ -57,7 +57,8 @@
                 <div data-region="filter-menus">
                     <label class="sr-only visually-hidden" for="{{id}}-component">{{#str}}perm_component_all, local_delegateaccount{{/str}}</label>
                     <span class="dropdown d-inline-flex">
-                        <select class="custom-select form-select" id="{{id}}-component" data-region="component">
+                        <select class="custom-select form-select" id="{{id}}-component" data-region="component" data-searchable
+                            data-search-label="{{#str}}search{{/str}}" data-noresults="{{#str}}noresults{{/str}}">
                             <option value="" hidden>{{#str}}perm_component_all, local_delegateaccount{{/str}}</option>
                         </select>
                         <button type="button" class="btn btn-link p-0" data-menu-clear data-action="clearcomponent" hidden

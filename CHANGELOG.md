@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The tabs of the pages and of the settings look like the secondary navigation of Moodle: the open one in the primary colour with a line under it, and no frame when a tab is clicked, pressed or reached with the keyboard.
 - Every piece of the screens is a class of Bootstrap or of Moodle, restyled inside the plugin, so a theme restyles it with Bootstrap.
 - The pages of a delegation no longer repeat the breadcrumb with a link back to the page above.
+- The menu of the components of the permission editor lists them in alphabetical order and opens with a search field that keeps the components holding every word typed, whatever their case and accents.
 
 ### Fixed
 
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - An empty list keeps the height of the list and its pager, and the two people of a delegation show their pictures at the same size.
 - The dates of the dialogs keep even gaps on a narrow screen, and a clicked button, checkbox or switch shows no halo.
 - The cards of "My delegated accounts" stay inside a narrow screen, whatever the length of an email, with even gaps between them.
+- The list of the dialog that copies the permissions of another delegation takes the room of the dialog, with no empty space under it.
 
 ## [1.2.0-m405] - 2026-11-11
 

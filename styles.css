@@ -1766,6 +1766,40 @@
     border: 0;
 }
 
+.path-local-delegateaccount .modal .modal-body:has([data-region=bulk]),
+.path-admin-local-delegateaccount .modal .modal-body:has([data-region=bulk]),
+#page-admin-setting-local_delegateaccount_settings .modal .modal-body:has([data-region=bulk]) {
+    display: flex;
+    flex-direction: column;
+}
+
+.path-local-delegateaccount .modal [data-region=bulk],
+.path-admin-local-delegateaccount .modal [data-region=bulk],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+.path-local-delegateaccount .modal [data-region=bulk] > [data-region=copy],
+.path-local-delegateaccount .modal [data-region=copy] > :first-child,
+.path-admin-local-delegateaccount .modal [data-region=bulk] > [data-region=copy],
+.path-admin-local-delegateaccount .modal [data-region=copy] > :first-child,
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] > [data-region=copy],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=copy] > :first-child {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+.path-local-delegateaccount .modal [data-region=copy] .list-group[role=listbox],
+.path-admin-local-delegateaccount .modal [data-region=copy] .list-group[role=listbox],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=copy] .list-group[role=listbox] {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 12.5rem;
+}
+
 .path-local-delegateaccount .modal label.card,
 .path-admin-local-delegateaccount .modal label.card,
 #page-admin-setting-local_delegateaccount_settings .modal label.card {
