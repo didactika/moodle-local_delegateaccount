@@ -105,7 +105,9 @@ export function CopyFromDialog({exclude, onChoose, onClose, strings}: {
             onClose();
         }}>{text('bulk_mode_copy')}</button>
     </>}>
-        <SourcePicker chosen={chosen?.id ?? 0} onChoose={setChosen} exclude={exclude} strings={strings} />
+        <div data-region="bulk"><div data-region="copy">
+            <SourcePicker chosen={chosen?.id ?? 0} onChoose={setChosen} exclude={exclude} strings={strings} />
+        </div></div>
     </Dialog>;
 }
 

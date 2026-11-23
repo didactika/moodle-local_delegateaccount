@@ -78,6 +78,14 @@ export function SearchBox({value, onChange, label, placeholder, strings, wide = 
     </div>;
 }
 
+/**
+ * A text as the search of a menu compares it: in small letters and without accents.
+ *
+ * @param value The text.
+ * @returns The text to compare.
+ */
+const fold = (value: string): string => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
 /** An option of a select. */
 export interface Option {
     value: string;
@@ -94,11 +102,14 @@ export interface Option {
  * A select that filters a list (clearable) does not offer its base state, the option with the empty value, as one more
  * choice: the select says it while nothing is chosen, and once something is, its arrow becomes a cross that goes back to it.
  *
+ * A select with many options (searchable) opens with a search field at the top of its menu, which keeps the options that hold
+ * every word typed, whatever their case and accents; the arrow down goes from the field to the options.
+ *
  * @param props The options, the value, what to do when it changes, the label, the classes and whether it filters.
  * @returns The select.
  */
-export function SelectMenu({options: all, value, onChange, label, className = '', small = false, clearable = false, text,
-    strings}: {
+export function SelectMenu({options: all, value, onChange, label, className = '', small = false, clearable = false,
+    searchable = false, text, strings}: {
     options: Option[];
     value: string;
     onChange: (value: string) => void;
@@ -106,10 +117,14 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
     className?: string;
     small?: boolean;
     clearable?: boolean;
+    searchable?: boolean;
     text?: Text;
     strings?: Strings;
 }) {
-    const options = clearable ? all.filter((option) => option.value !== '') : all;
+    const [query, setQuery] = useState('');
+    const words = fold(query).split(/\s+/).filter(Boolean);
+    const options = (clearable ? all.filter((option) => option.value !== '') : all)
+        .filter((option) => words.every((word) => fold(option.label).includes(word)));
     const set = clearable && value !== '';
     const select = useRef<HTMLSelectElement>(null);
     const menu = useRef<HTMLDivElement>(null);
@@ -135,23 +150,56 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
             width: box.width,
             height: max,
         });
-        (menu.current.querySelector<HTMLElement>('[aria-selected="true"]') ?? menu.current.querySelector<HTMLElement>('button'))
-            ?.focus();
+    }, [open]);
+
+    // Once the menu is in its place, the focus goes to its search field or to the chosen option, without scrolling the page:
+    // a scroll closes the menu.
+    useEffect(() => {
+        if (!open || !place || !menu.current) {
+            return;
+        }
+        (menu.current.querySelector<HTMLElement>('input')
+            ?? menu.current.querySelector<HTMLElement>('[aria-selected="true"]')
+            ?? menu.current.querySelector<HTMLElement>('button'))?.focus({preventScroll: true});
+    }, [open, place]);
+
+    // Each time the menu opens it shows every option again.
+    useEffect(() => {
+        if (!open) {
+            setQuery('');
+            setActive(0);
+        }
     }, [open]);
 
     useEffect(() => {
         if (!open) {
             return undefined;
         }
+        // The select opens and closes the menu by itself; the press that opened it reaches the document too, and is not a press
+        // outside the menu.
         const close = (event: Event): void => {
-            if (!menu.current?.contains(event.target as Node)) {
+            const target = event.target as Node;
+            if (!menu.current?.contains(target) && !select.current?.contains(target)) {
                 setOpen(false);
             }
         };
+        // Escape in the menu closes it here, on the window and before anything else: Bootstrap listens to the keys of every
+        // dropdown menu on the document, before the menu, takes this one for a dropdown of its own and fails to find its button.
+        const node = menu.current;
+        const escape = (event: KeyboardEvent): void => {
+            if (event.key === 'Escape' && node && event.composedPath().includes(node)) {
+                event.preventDefault();
+                event.stopPropagation();
+                setOpen(false);
+                select.current?.focus();
+            }
+        };
+        window.addEventListener('keydown', escape, true);
         window.addEventListener('resize', close);
         window.addEventListener('scroll', close, {capture: true, passive: true});
         document.addEventListener('mousedown', close);
         return () => {
+            window.removeEventListener('keydown', escape, true);
             window.removeEventListener('resize', close);
             window.removeEventListener('scroll', close, {capture: true});
             document.removeEventListener('mousedown', close);
@@ -174,6 +222,22 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
 
     const keys = (event: ReactKeyboardEvent): void => {
         const at = Array.from(menu.current?.querySelectorAll('button') ?? []).indexOf(document.activeElement as HTMLButtonElement);
+        // In the search field the keys write; the arrow down goes to the options and Enter chooses the first one.
+        if (event.target instanceof HTMLInputElement && !['ArrowDown', 'Escape', 'Tab', 'Enter'].includes(event.key)) {
+            return;
+        }
+        if (event.target instanceof HTMLInputElement && event.key === 'Enter') {
+            event.preventDefault();
+            if (options.length > 0) {
+                choose(0);
+            }
+            return;
+        }
+        if (event.key === 'ArrowUp' && at === 0 && searchable) {
+            event.preventDefault();
+            menu.current?.querySelector<HTMLElement>('input')?.focus();
+            return;
+        }
         if (event.key === 'ArrowDown') {
             event.preventDefault();
             focus(at + 1);
@@ -228,9 +292,21 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
         </select>
         {open && createPortal(<div ref={menu} id={id} className="dropdown-menu show" role="listbox" tabIndex={-1}
             onKeyDown={keys} style={position}>
+            {searchable && <div className="position-relative d-flex align-items-center p-1" role="search">
+                {strings && <Icon name="a/search" strings={strings} />}
+                <input className="form-control form-control-sm" type="search" value={query} autoComplete="off"
+                    aria-label={text ? `${text('core:search')}: ${label}` : label} placeholder={text ? text('core:search') : label}
+                    onChange={(event) => {
+                        setQuery(event.target.value);
+                        setActive(0);
+                    }} />
+            </div>}
             {options.map((option, index) => <button key={option.value} type="button" role="option"
                 className={`dropdown-item${index === active ? ' active' : ''}`} aria-selected={option.value === value}
                 onClick={() => choose(index)}>{option.label}</button>)}
+            {searchable && options.length === 0 && <p className="text-muted small px-3 py-2 mb-0" role="status">
+                {text ? text('core:noresults') : ''}
+            </p>}
         </div>, scope)}
     </>;
     if (!clearable) {

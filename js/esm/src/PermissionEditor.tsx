@@ -97,7 +97,9 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
     }, []);
 
     const names = useMemo(() => Object.fromEntries(PERMISSIONS.map(({value, key}) => [value, text(key)])), [text]);
-    const components = useMemo(() => Array.from(new Set((capabilities ?? []).map((capability) => capability.componentlabel))),
+    // The components in alphabetical order, so the menu reads like an index.
+    const components = useMemo(() => Array.from(new Set((capabilities ?? []).map((capability) => capability.componentlabel)))
+        .sort((a, b) => a.localeCompare(b)),
         [capabilities]);
     const visible = (chip: string): Capability[] => (capabilities ?? []).filter((capability) => {
         if (component && capability.componentlabel !== component) {
@@ -213,7 +215,7 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
                     <SearchBox strings={strings} value={search} label={text('perm_search')}
                         placeholder={text('perm_search_placeholder')} onChange={(value) => reset(() => setSearch(value))} />
                     <FilterGroup count={(component ? 1 : 0) + (filter ? 1 : 0)} text={text} strings={strings}>
-                        <SelectMenu clearable text={text} strings={strings} label={text('perm_component_all')} value={component}
+                        <SelectMenu clearable searchable text={text} strings={strings} label={text('perm_component_all')} value={component}
                             options={componentoptions} onChange={(value) => reset(() => setComponent(value))} />
                         <StatusMenu single name="permission" label={text('perm_filter')} chosen={filter ? [filter] : []} text={text}
                             strings={strings} onChange={(chosen) => reset(() => setFilter(chosen[0] ?? ''))}

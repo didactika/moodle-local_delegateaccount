@@ -257,6 +257,31 @@
         }
     }
 
+    // The list of the delegations to copy from takes the room the dialog leaves it, so a tall dialog has no empty space under it.
+    & .modal-body:has([data-region="bulk"]) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    & [data-region="bulk"] {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+    }
+
+    & [data-region="bulk"] > [data-region="copy"],
+    & [data-region="copy"] > :first-child {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+    }
+
+    & [data-region="copy"] .list-group[role="listbox"] {
+        flex: 1 1 auto;
+        height: auto;
+        min-height: 12.5rem;
+    }
+
     // Options shown as cards: the whole card is the choice, and the focus rings the card, not the small circle.
     & label.card {
         cursor: pointer;
