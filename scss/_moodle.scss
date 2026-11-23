@@ -11,16 +11,23 @@
         max-width: 56rem;
     }
 
+    // Moodle writes a no-break space between the selects of a date, and in a row that wraps each one takes room of its own, so
+    // the gaps came out uneven on a narrow dialog. The spaces are given no size and the row no column gap, which would count
+    // them as items; a margin after each select separates them, and the box that turns the date on takes a row of its own.
     & .fdate_time_selector,
     & .fdate_selector {
         align-items: center;
-        column-gap: 0.5rem;
+        column-gap: 0;
         row-gap: 0.5rem;
+        font-size: 0;
 
         & > .fitem {
-            margin-right: 0;
-            margin-bottom: 0;
-            margin-left: 0;
+            margin: 0 0.5rem 0 0;
+            font-size: 0.9375rem;
+        }
+
+        & > .fitem:has(input[type="checkbox"]) {
+            flex-basis: 100%;
         }
 
         & select {
@@ -146,5 +153,17 @@ body:has(#carousel-item-delegatedaccounts, template[data-region="local-delegatea
         &.show .modal-dialog {
             animation: none;
         }
+    }
+}
+
+// The accounts of the user menu, which Moodle draws: a long name ends with an ellipsis and the whole name stays in the title of
+// its link, so the menu never scrolls sideways.
+#carousel-item-delegatedaccounts .items {
+    overflow-x: hidden;
+
+    & > .dropdown-item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }

@@ -84,6 +84,16 @@ page::require_create();
 
 $PAGE->requires->js_call_amd('local_delegateaccount/manage_tabs', 'init');
 
+// On a narrow screen the row of tabs scrolls sideways; the open tab is brought to the middle of it.
+$PAGE->requires->js_amd_inline("document.querySelectorAll('.lda .nav-tabs').forEach(function(row) {
+    var tab = row.querySelector('.nav-link.active');
+    if (tab) {
+        var a = row.getBoundingClientRect();
+        var b = tab.getBoundingClientRect();
+        row.scrollLeft += b.left - a.left - (a.width - b.width) / 2;
+    }
+});");
+
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/manage/page', $context);
 echo $OUTPUT->footer();

@@ -9,15 +9,15 @@ actor "Authorised user" as A_Authorised_user
 
 rectangle "local_delegateaccount" {
   package "Delegations" {
-    usecase "Create delegations" as UC_createDelegations
-    usecase "Revoke delegations" as UC_revokeDelegations
+    usecase "Crear delegaciones" as UC_createDelegations
+    usecase "Revocar delegaciones" as UC_revokeDelegations
   }
   package "Sessions" {
-    usecase "Open a delegated account" as UC_openDelegatedAccount
-    usecase "Edit session permissions" as UC_editSessionPermissions
+    usecase "Abrir una cuenta delegada" as UC_openDelegatedAccount
+    usecase "Editar los permisos de sesión" as UC_editSessionPermissions
   }
   package "Audit" {
-    usecase "Review delegated activity" as UC_reviewActivity
+    usecase "Revisar la actividad delegada" as UC_reviewActivity
   }
 }
 

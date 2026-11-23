@@ -18,6 +18,7 @@ sourceOfTruth: code
 | RF-005 | An administrator can allow, prevent or prohibit capabilities for delegated sessions, for one delegation or for all. | Should | `session_capabilities` | UC-003 |
 | RF-006 | The activity done through a delegation can be reviewed with filters. | Should | `pages/activity.php`, `manager::get_delegation_activity_page` | UC-005 |
 | RF-007 | The people involved are notified when a delegation is created or revoked, in their language. | Could | `notification_manager` | UC-001 |
+| RF-008 | The management page lists the authorised users with the accounts each one is using and the next change of their delegations (the nearest end of one in use or start of one scheduled), and every list of people or delegations can be narrowed to one or several statuses at once. | Should | `locallisting::users`, `externalget_user_list`, `externallist_service` | UC-001, UC-004 |
 
 ## Non-functional
 

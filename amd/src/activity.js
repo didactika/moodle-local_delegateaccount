@@ -95,7 +95,7 @@ export const init = async(selector) => {
     const search = toolbar.querySelector('input[name="search"]');
     const menu = toolbar.querySelector('[data-menu="date"]');
     const toggle = menu.querySelector('[data-menu-toggle]');
-    const panel = menu.querySelector('.dd-select-menu');
+    const panel = menu.querySelector('.dropdown-menu');
     const from = menu.querySelector('input[name="datefrom"]');
     const to = menu.querySelector('input[name="dateto"]');
     const reset = toolbar.querySelector('[data-action="reset-filters"]');
@@ -156,7 +156,6 @@ export const init = async(selector) => {
         const active = Boolean(state.datefrom || state.dateto);
         label.textContent = text;
         toggle.classList.toggle('border-primary', active);
-        toggle.classList.toggle('dd-select-set', active);
         menu.querySelector('[data-menu-clear]').hidden = !active;
         from.value = state.datefrom || '';
         to.value = state.dateto || '';

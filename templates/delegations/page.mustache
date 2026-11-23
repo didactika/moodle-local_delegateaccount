@@ -24,7 +24,6 @@
 
     Example context (json):
     {
-        "backurl": "https://moodle.example/local/delegateaccount/pages/manage.php",
         "user": {
             "fullname": "Jane Doe",
             "email": "jane@example.com",
@@ -43,17 +42,16 @@
     }
 }}
 <div class="lda">
-    <a class="btn btn-link px-0" href="{{backurl}}">{{#pix}}i/previous, core{{/pix}} {{#str}}back_to_manage, local_delegateaccount{{/str}}</a>
-    <header class="dd-page-header">
-        <div class="dd-page-header-row">
-            <div class="dd-page-header-main">
+    <header class="d-grid gap-3 pb-3 border-bottom">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
                 {{#user}}{{> local_delegateaccount/shared/avatar }}{{/user}}
                 <div>
-                    <p class="dd-page-title">{{user.fullname}}</p>
-                    <p class="dd-page-subtitle">{{user.email}}</p>
+                    <p class="h5 fw-bold mb-0">{{user.fullname}}</p>
+                    <p class="text-muted mb-0">{{user.email}}</p>
                 </div>
             </div>
-            <div class="dd-page-actions">
+            <div class="d-flex flex-wrap align-items-center gap-2">
                 {{#cancreate}}
                     <button type="button" class="btn btn-primary" data-action="local-delegateaccount-create" data-realuserid="{{realuserid}}">{{#pix}}t/add, core{{/pix}} {{#str}}create_delegations, local_delegateaccount{{/str}}</button>
                 {{/cancreate}}

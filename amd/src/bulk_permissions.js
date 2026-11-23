@@ -236,15 +236,14 @@ export const openBulkPermissions = async({selection, count, trigger, onApplied})
             const meta = element('span', 'small text-muted');
             meta.append(element('span', 'mr-2 me-2', capability.name));
             text.append(element('span', 'font-weight-bold fw-bold', capability.label), meta);
-            const group = element('span', 'dd-segmented');
+            const group = element('span', 'btn-group btn-group-sm');
             group.setAttribute('role', 'radiogroup');
             group.setAttribute('aria-label', capability.label);
-            PERMISSIONS.filter(({value}) => value !== INHERIT).concat([{value: INHERIT, tone: 'notset', remove: true}])
+            PERMISSIONS.filter(({value}) => value !== INHERIT).concat([{value: INHERIT, tone: 'light', remove: true}])
                 .forEach(({value, tone, remove}) => {
-                    const option = element('button', '', remove ? removelabel : names[value]);
+                    const option = element('button', `btn btn-${tone}`, remove ? removelabel : names[value]);
                     option.type = 'button';
                     option.dataset.permission = value;
-                    option.dataset.tone = tone;
                     option.setAttribute('role', 'radio');
                     option.setAttribute('aria-checked', String(value === permission));
                     option.disabled = value === ALLOW && !capability.canallow;

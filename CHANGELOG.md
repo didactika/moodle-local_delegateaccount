@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The list of authorised users shows the accounts each person is using now and the next change of their delegations (the end of one in use or the start of one scheduled, and how long is left), and sorts by both.
+- The lists are narrowed by a Status menu beside the search, where several statuses can be chosen with the count of each, and a button at the end of the row clears every filter; the session permissions are narrowed by a Permission menu, and on a narrow screen the menus are grouped in one, Filters.
+- The tabs of the pages and of the settings look like the secondary navigation of Moodle: the open one in the primary colour with a line under it, and no frame when a tab is clicked, pressed or reached with the keyboard.
+- Every piece of the screens is a class of Bootstrap or of Moodle, restyled inside the plugin, so a theme restyles it with Bootstrap.
+- The pages of a delegation no longer repeat the breadcrumb with a link back to the page above.
+
+### Fixed
+
+- A long name ends with an ellipsis in the user menu, in the cards of the accounts and in the fixed column of a list on a narrow screen, so nothing scrolls sideways.
+- An empty list keeps the height of the list and its pager, and the two people of a delegation show their pictures at the same size.
+- The dates of the dialogs keep even gaps on a narrow screen, and a clicked button, checkbox or switch shows no halo.
+
 ## [1.2.0-m405] - 2026-11-11
 
 Line for Moodle 4.5 to 5.2. The same delivery for Moodle 5.3 is 1.2.0-m503.

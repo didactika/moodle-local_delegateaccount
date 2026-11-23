@@ -1,14 +1,13 @@
 @startsalt
 {
-  {* Delegated accounts | Authorised users | Activity }
+  {* Usuarios autorizados | Usuarios sin permiso | Todas las delegaciones }
   ==
-  All delegations
-  --
+  { "Buscar personas y cuentas" | ^Activa^ }
   {#
-    [X] | Authorised user | Account | Status
-    [X] | Marta Ruiz | Carmen Vidal | Active
-    [X] | Marta Ruiz | Pablo Soler | Active
+    [X] | Cuenta delegada | Usuario autorizado | Estado
+    [X] | Carmen Vidal | Marta Ruiz | Activa
+    [X] | Pablo Soler | Marta Ruiz | Activa
   }
-  [ Revoke ] | [ Edit ] | [ Cancel ]
+  2 seleccionadas | [ Editar periodo ] | [ Permisos de sesión ] | [ Revocar ]
 }
 @endsalt

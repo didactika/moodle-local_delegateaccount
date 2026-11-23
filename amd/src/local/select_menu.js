@@ -131,7 +131,7 @@ const open = (select) => {
     close();
     const scope = select.closest('.lda, .modal');
     const menu = document.createElement('div');
-    menu.className = 'dropdown-menu show dd-select-menu';
+    menu.className = 'dropdown-menu show';
     menu.setAttribute('role', 'listbox');
     menu.tabIndex = -1;
     const entries = [];

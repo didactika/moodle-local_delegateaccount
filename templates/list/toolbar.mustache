@@ -17,7 +17,8 @@
 {{!
     @template local_delegateaccount/list/toolbar
 
-    The toolbar of a list: the search and the number of results, announced as it changes.
+    The toolbar of a list: the search and, when the list has statuses, the menu that narrows it to some of them, with the rows
+    of each, and the button that clears every filter. It keeps one row.
 
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,15 +26,43 @@
     Example context (json):
     {
         "id": "lda-list",
-        "searchlabel": "Search people"
+        "searchlabel": "Search people",
+        "hasstatuses": true,
+        "statuses": [
+            {"key": "active", "label": "Active"},
+            {"key": "scheduled", "label": "Scheduled"}
+        ]
     }
 }}
-<div class="table-toolbar">
-    <div class="table-toolbar-start">
-        <form class="dd-searchbox" role="search" data-region="searchform" aria-label="{{searchlabel}}">
+<div class="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom" data-region="filters">
+    <div class="d-flex align-items-center gap-2 flex-grow-1">
+        <form class="position-relative d-flex align-items-center" role="search" data-region="searchform" aria-label="{{searchlabel}}">
             {{#pix}}a/search, core{{/pix}}
             <label class="sr-only visually-hidden" for="{{id}}-search">{{searchlabel}}</label>
             <input class="form-control" type="search" id="{{id}}-search" data-region="search" placeholder="{{searchlabel}}" autocomplete="off">
         </form>
+        {{#hasstatuses}}
+            <span class="dropdown d-inline-flex" data-menu="status">
+                <button type="button" class="custom-select form-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+                    aria-label="{{#str}}status{{/str}}"><span data-region="menu-label" data-label="{{#str}}status{{/str}}">{{#str}}status{{/str}}</span></button>
+                <button type="button" class="btn btn-link p-0" data-menu-clear hidden title="{{#str}}clear{{/str}}: {{#str}}status{{/str}}"
+                    aria-label="{{#str}}clear{{/str}}: {{#str}}status{{/str}}">{{#pix}}e/cancel, core{{/pix}}</button>
+                <span class="dropdown-menu show" role="group" aria-label="{{#str}}status{{/str}}" hidden>
+                    {{#statuses}}
+                        <label class="dropdown-item" for="{{id}}-status-{{key}}">
+                            <input type="checkbox" class="form-check-input" id="{{id}}-status-{{key}}" data-status="{{key}}">
+                            <span>{{label}}</span>
+                            <span class="badge text-bg-secondary ms-auto" data-status-count="{{key}}"></span>
+                        </label>
+                    {{/statuses}}
+                </span>
+            </span>
+        {{/hasstatuses}}
     </div>
+    {{#hasstatuses}}
+        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <button type="button" class="btn btn-link btn-icon" data-action="clearfilters" disabled
+                title="{{#str}}clear_filters, local_delegateaccount{{/str}}" aria-label="{{#str}}clear_filters, local_delegateaccount{{/str}}">{{#pix}}i/reload, core{{/pix}}</button>
+        </div>
+    {{/hasstatuses}}
 </div>

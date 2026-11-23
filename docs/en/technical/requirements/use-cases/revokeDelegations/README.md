@@ -7,7 +7,7 @@ package: Delegations
 status: draft
 origin: code
 sourceOfTruth: code
-requirement: RF-002
+requirement: RF-002, RF-008
 includes: 
 extends: 
 ---

@@ -8,7 +8,7 @@ actor "Authorised user" as A_Authorised_user
 
 rectangle "local_delegateaccount" {
   package "Sessions" {
-    usecase "Open a delegated account" as UC_openDelegatedAccount
+    usecase "Abrir una cuenta delegada" as UC_openDelegatedAccount
   }
 }
 
