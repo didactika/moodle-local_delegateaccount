@@ -52,7 +52,6 @@ $list = page::delegation_list($realuserid, 'lda-delegations');
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/delegations/page', [
-    'backurl' => (new moodle_url('/local/delegateaccount/pages/manage.php'))->out(false),
     'user' => exporter::user($realuser) + ['size' => 50],
     'authorised' => $authorised,
     'cancreate' => $authorised && permission::has(permission::CREATE),

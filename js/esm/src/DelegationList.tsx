@@ -13,7 +13,7 @@
  */
 import {useEffect, useRef, useState} from 'react';
 import {
-    Chips, ConfirmDialog, Empty, FloatBar, Icon, ListBody, Pager, Person, SearchBox, SkeletonRows, SortHeader, useFitHeight, useStableColumns,
+    ConfirmDialog, Empty, FloatBar, Icon, ListBody, Pager, Person, SearchBox, SkeletonRows, SortHeader, useFitHeight, useStableColumns,
 } from './components/ui';
 import {BulkPermissions} from './BulkPermissions';
 import {useList, useDebounced} from './hooks/useList';
@@ -21,10 +21,11 @@ import {useText} from './engine/text';
 import {DEFAULT_PAGE_SIZE} from './engine/paging';
 import {describeError, openForm, toast} from './engine/moodle';
 import {getDelegationIds, getDelegationList, revokeDelegations} from './services/api';
+import StatusMenu from './components/StatusMenu';
 import type {DelegationListProps, DelegationRow, Filters, Strings, Text} from './types';
 
-/** The statuses a delegation can be filtered by, in the order of their chips. */
-const STATUSES = ['', 'active', 'scheduled', 'expired', 'revoked'];
+/** The statuses a delegation can be filtered by, in the order of their menu. */
+const STATUSES = ['active', 'scheduled', 'expired', 'revoked'];
 
 /**
  * One delegation of the list.
@@ -44,22 +45,22 @@ function Row({row, checked, canbulk, showuser, onToggle, onEdit, onRevoke, text,
     strings: Strings;
 }) {
     const overrides = row.overrides
-        ? <a className="badge badge-outline text-bg-primary" href={row.permissionsurl}>{row.overrideslabel}</a>
+        ? <a className="badge border text-bg-primary" href={row.permissionsurl}>{row.overrideslabel}</a>
         : <span className="small text-muted">{text('overrides_none')}</span>;
     return <tr className={checked ? 'table-active' : undefined}>
-        {canbulk && <td className="table-select">
+        {canbulk && <td className="align-middle" data-column="select">
             {row.selectable && <input type="checkbox" className="form-check-input" checked={checked}
                 aria-label={text('select_row', row.label)} onChange={(event) => onToggle(event.target.checked)} />}
         </td>}
         <th scope="row"><Person user={row.delegateduser} /></th>
         {showuser && <td><Person user={row.realuser} /></td>}
         <td>
-            <span className={`badge badge-soft badge-dot rounded-pill text-bg-${row.statustone}`}>{row.statuslabel}</span>
+            <span className={`badge rounded-pill text-bg-${row.statustone}`}>{row.statuslabel}</span>
         </td>
-        <td><span className="d-flex flex-column">{row.start}<small className="text-muted">{row.end}</small></span></td>
-        <td><small className="text-muted">{row.lastaccess}</small></td>
+        <td className="text-nowrap"><span className="d-flex flex-column">{row.start}<small className="text-muted">{row.end}</small></span></td>
+        <td className="text-nowrap"><small className="text-muted">{row.lastaccess}</small></td>
         <td>{overrides}</td>
-        <td className="table-actions">
+        <td className="text-end text-nowrap" data-column="actions">
             <button type="button" className="btn btn-link btn-icon btn-sm text-primary" disabled={!row.canupdate}
                 title={text('edit_period_of', row.label)} aria-label={text('edit_period_of', row.label)}
                 onClick={(event) => onEdit(event.currentTarget)}>
@@ -114,7 +115,7 @@ function Table({list, rows, selectable, pagefull, canbulk, showuser, onSort, onE
             <caption className="visually-hidden">{text('list_caption_delegations')}</caption>
             <thead>
                 <tr>
-                    {canbulk && <th scope="col" className="table-select">
+                    {canbulk && <th scope="col" className="align-middle" data-column="select">
                         <input type="checkbox" className="form-check-input" aria-label={text('select_page')}
                             data-region="selectpage"
                             checked={selectable.length > 0 && (list.all || pagefull)}
@@ -136,7 +137,7 @@ function Table({list, rows, selectable, pagefull, canbulk, showuser, onSort, onE
                         direction={String(list.state.direction)} onSort={onSort} />
                     <th scope="col">{text('last_access')}</th>
                     <th scope="col">{text('session_permissions')}</th>
-                    <th scope="col" className="table-actions">
+                    <th scope="col" className="text-end text-nowrap" data-column="actions">
                         <span className="visually-hidden">{text('core:actions')}</span>
                     </th>
                 </tr>
@@ -171,14 +172,14 @@ function BulkActions({canupdate, canpermissions, canrevoke, onEdit, onPermission
     strings: Strings;
 }) {
     return <>
-        {canupdate && <button type="button" className="btn btn-secondary btn-tonal btn-sm"
+        {canupdate && <button type="button" className="btn btn-outline-secondary btn-sm"
             onClick={(event) => onEdit(event.currentTarget)}>
             <Icon name="t/edit" strings={strings} /> {text('edit_period')}
         </button>}
-        {canpermissions && <button type="button" className="btn btn-secondary btn-tonal btn-sm" onClick={onPermissions}>
+        {canpermissions && <button type="button" className="btn btn-outline-secondary btn-sm" onClick={onPermissions}>
             <Icon name="i/permissions" strings={strings} /> {text('session_permissions')}
         </button>}
-        {canrevoke && <button type="button" className="btn btn-danger btn-tonal btn-sm" onClick={onRevoke}>
+        {canrevoke && <button type="button" className="btn btn-outline-danger btn-sm" onClick={onRevoke}>
             <Icon name="t/delete" strings={strings} /> {text('revoke')}
         </button>}
     </>;
@@ -280,24 +281,29 @@ export default function DelegationList(props: DelegationListProps) {
     };
 
     const sort = (column: string, direction: string): void => list.update({sort: column, direction, page: 0});
-    const filtered = Boolean(state.search) || Boolean(state.status);
+    const chosen = String(state.status).split(',').filter(Boolean);
+    const filtered = Boolean(state.search) || chosen.length > 0;
+    const reset = (): void => {
+        setSearch('');
+        list.update({search: '', status: ''});
+    };
     const empty = <Empty filtered={filtered} icon="i/users" title={text('empty_delegations_title')}
-        message={text('empty_delegations_text')} text={text} strings={strings}
-        onClear={() => {
-            setSearch('');
-            list.update({search: '', status: ''});
-        }} />;
+        message={text('empty_delegations_text')} text={text} strings={strings} onClear={reset} />;
     const one = revoking?.length === 1;
 
     return <div className="d-grid gap-3" style={count ? {paddingBottom: '5.5rem'} : undefined}>
-        <Chips label={text('filter_by_status')} value={String(state.status)} counts={page?.counts}
-            chips={STATUSES.map((key) => ({key, label: text(key ? `delegation_status_${key}` : 'perm_filter_all')}))}
-            onChange={(status) => list.update({status})} />
         <div className="card">
-            <div className="table-toolbar">
-                <div className="table-toolbar-start">
+            <div className="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom" data-region="filters">
+                <div className="d-flex align-items-center gap-2 flex-grow-1">
                     <SearchBox strings={strings} value={search} onChange={setSearch}
                         label={text(realuserid ? 'search_accounts' : 'search_delegations')} />
+                    <StatusMenu label={text('core:status')} chosen={chosen} text={text} strings={strings}
+                        options={STATUSES.map((key) => ({key, label: text(`delegation_status_${key}`), count: page?.counts?.[key]}))}
+                        onChange={(statuses) => list.update({status: statuses.join(','), page: 0})} />
+                </div>
+                <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                    <button type="button" className="btn btn-link btn-icon" disabled={!filtered} title={text('clear_filters')}
+                        aria-label={text('clear_filters')} onClick={reset}><Icon name="i/reload" strings={strings} /></button>
                 </div>
             </div>
             <ListBody error={list.error} onRetry={list.refresh} text={text} empty={empty}

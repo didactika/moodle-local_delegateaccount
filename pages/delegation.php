@@ -121,16 +121,26 @@ $tones = [
 
 $editor = $tab === 'permissions' ? $OUTPUT->render(new permission_editor($delegationid)) : '';
 
+// On a narrow screen the row of tabs scrolls sideways; the open tab is brought to the middle of it.
+$PAGE->requires->js_amd_inline("document.querySelectorAll('.lda .nav-tabs').forEach(function(row) {
+    var tab = row.querySelector('.nav-link.active');
+    if (tab) {
+        var a = row.getBoundingClientRect();
+        var b = tab.getBoundingClientRect();
+        row.scrollLeft += b.left - a.left - (a.width - b.width) / 2;
+    }
+});");
+
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/delegation/page', [
     'id' => $delegationid,
     'realuserid' => $realuserid,
-    'backurl' => (new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid]))->out(false),
     'label' => $label,
     'statuslabel' => get_string('delegation_status_' . $status, 'local_delegateaccount'),
     'statustone' => $tones[$status],
     'realuser' => $real,
-    'delegateduser' => $delegated + ['size' => 50],
+    'headuser' => $delegated + ['size' => 50],
+    'delegateduser' => $delegated,
     'canupdate' => $open && permission::has(permission::UPDATE),
     'canrevoke' => $open && permission::has(permission::REVOKE),
     'activityurl' => permission::has(permission::VIEWACTIVITY)

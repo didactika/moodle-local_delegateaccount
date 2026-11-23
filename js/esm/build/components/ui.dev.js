@@ -70,50 +70,17 @@ function Person({ user }) {
   }, this);
 }
 __name(Person, "Person");
-function Chips({ chips, value, counts, label, onChange }) {
-  return /* @__PURE__ */ jsxDEV("div", { className: "dd-chips", role: "group", "aria-label": label, children: chips.map((chip) => /* @__PURE__ */ jsxDEV(
-    "button",
-    {
-      type: "button",
-      className: "dd-chip",
-      "aria-pressed": chip.key === value,
-      onClick: () => onChange(chip.key),
-      children: [
-        chip.label,
-        " ",
-        /* @__PURE__ */ jsxDEV("span", { className: "dd-chip-count", children: counts?.[chip.key || "all"] ?? "\xA0" }, void 0, false, {
-          fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-          lineNumber: 73,
-          columnNumber: 26
-        }, this)
-      ]
-    },
-    chip.key,
-    true,
-    {
-      fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 71,
-      columnNumber: 30
-    },
-    this
-  )) }, void 0, false, {
-    fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 70,
-    columnNumber: 12
-  }, this);
-}
-__name(Chips, "Chips");
 function SearchBox({ value, onChange, label, placeholder, strings, wide = false }) {
   const id = useId();
-  return /* @__PURE__ */ jsxDEV("div", { className: `dd-searchbox${wide ? " mw-100" : ""}`, role: "search", children: [
+  return /* @__PURE__ */ jsxDEV("div", { className: `position-relative d-flex align-items-center${wide ? " mw-100" : ""}`, role: "search", children: [
     /* @__PURE__ */ jsxDEV(Icon, { name: "a/search", strings }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 94,
+      lineNumber: 73,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("label", { className: "visually-hidden", htmlFor: id, children: label }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 95,
+      lineNumber: 74,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(
@@ -132,14 +99,14 @@ function SearchBox({ value, onChange, label, placeholder, strings, wide = false 
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 96,
+        lineNumber: 75,
         columnNumber: 9
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 93,
+    lineNumber: 72,
     columnNumber: 12
   }, this);
 }
@@ -244,7 +211,7 @@ function SelectMenu({
   }, "keys");
   const scope = select.current?.closest(".lda, .modal") ?? document.body;
   const position = place ? { top: place.top, left: place.left, minWidth: place.width, maxHeight: place.height } : { visibility: "hidden" };
-  const classes = ["form-select dd-select", small ? "form-select-sm" : "", set ? "dd-select-set border-primary" : "", className].filter(Boolean).join(" ");
+  const classes = ["form-select", small ? "form-select-sm" : "", set ? "border-primary" : "", className].filter(Boolean).join(" ");
   const control = /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV(
       "select",
@@ -269,7 +236,7 @@ function SelectMenu({
         },
         children: all.map((option) => /* @__PURE__ */ jsxDEV("option", { value: option.value, children: option.label }, option.value, false, {
           fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-          lineNumber: 248,
+          lineNumber: 227,
           columnNumber: 34
         }, this))
       },
@@ -277,7 +244,7 @@ function SelectMenu({
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 234,
+        lineNumber: 213,
         columnNumber: 9
       },
       this
@@ -287,7 +254,7 @@ function SelectMenu({
       {
         ref: menu,
         id,
-        className: "dropdown-menu show dd-select-menu",
+        className: "dropdown-menu show",
         role: "listbox",
         tabIndex: -1,
         onKeyDown: keys,
@@ -306,7 +273,7 @@ function SelectMenu({
           false,
           {
             fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-            lineNumber: 252,
+            lineNumber: 231,
             columnNumber: 45
           },
           this
@@ -316,37 +283,37 @@ function SelectMenu({
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 250,
+        lineNumber: 229,
         columnNumber: 31
       },
       this
     ), scope)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 233,
+    lineNumber: 212,
     columnNumber: 21
   }, this);
   if (!clearable) {
     return control;
   }
   const clear = text ? `${text("core:clear")}: ${label}` : label;
-  return /* @__PURE__ */ jsxDEV("span", { className: "dd-select-filter", children: [
+  return /* @__PURE__ */ jsxDEV("span", { className: "dropdown d-inline-flex", children: [
     control,
-    set && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "dd-select-clear", title: clear, "aria-label": clear, onClick: () => {
+    set && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-link p-0", "data-menu-clear": true, title: clear, "aria-label": clear, onClick: () => {
       onChange("");
       select.current?.focus();
     }, children: strings && /* @__PURE__ */ jsxDEV(Icon, { name: "e/cancel", strings }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 267,
+      lineNumber: 246,
       columnNumber: 25
     }, this) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 263,
+      lineNumber: 242,
       columnNumber: 17
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 261,
+    lineNumber: 240,
     columnNumber: 12
   }, this);
 }
@@ -354,11 +321,11 @@ __name(SelectMenu, "SelectMenu");
 function Pager({ page, perpage, total, onChange, text, strings }) {
   const { from, to } = pageRange(page, perpage, total);
   const { sizes, shown } = fitPageSizes(perpage, total);
-  return /* @__PURE__ */ jsxDEV("div", { className: "table-foot", children: /* @__PURE__ */ jsxDEV("div", { className: "dd-pager", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-size", children: [
+  return /* @__PURE__ */ jsxDEV("div", { className: "px-3 py-2 border-top", "data-region": "foot", children: /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap align-items-center justify-content-between gap-3 small text-muted", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "d-none d-sm-flex align-items-center gap-2", children: [
       /* @__PURE__ */ jsxDEV("span", { children: text("rows_per_page") }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 292,
+        lineNumber: 271,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -374,23 +341,23 @@ function Pager({ page, perpage, total, onChange, text, strings }) {
         false,
         {
           fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-          lineNumber: 293,
+          lineNumber: 272,
           columnNumber: 17
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 291,
+      lineNumber: 270,
       columnNumber: 13
     }, this),
-    /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-end", children: [
-      /* @__PURE__ */ jsxDEV("span", { className: "dd-pager-range", role: "status", children: text("pager_range", { from, to, total }) }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap align-items-center gap-3 ms-auto", children: [
+      /* @__PURE__ */ jsxDEV("span", { className: "text-body text-nowrap", role: "status", children: text("pager_range", { from, to, total }) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 298,
+        lineNumber: 277,
         columnNumber: 17
       }, this),
-      /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-arrows", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "d-flex gap-1", children: [
         /* @__PURE__ */ jsxDEV(
           "button",
           {
@@ -402,7 +369,7 @@ function Pager({ page, perpage, total, onChange, text, strings }) {
             onClick: () => onChange({ page: page - 1 }),
             children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/previous", strings }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-              lineNumber: 302,
+              lineNumber: 281,
               columnNumber: 25
             }, this)
           },
@@ -410,7 +377,7 @@ function Pager({ page, perpage, total, onChange, text, strings }) {
           false,
           {
             fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-            lineNumber: 300,
+            lineNumber: 279,
             columnNumber: 21
           },
           this
@@ -426,7 +393,7 @@ function Pager({ page, perpage, total, onChange, text, strings }) {
             onClick: () => onChange({ page: page + 1 }),
             children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/next", strings }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-              lineNumber: 306,
+              lineNumber: 285,
               columnNumber: 25
             }, this)
           },
@@ -434,61 +401,61 @@ function Pager({ page, perpage, total, onChange, text, strings }) {
           false,
           {
             fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-            lineNumber: 304,
+            lineNumber: 283,
             columnNumber: 21
           },
           this
         )
       ] }, void 0, true, {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 299,
+        lineNumber: 278,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 297,
+      lineNumber: 276,
       columnNumber: 13
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 290,
+    lineNumber: 269,
     columnNumber: 9
   }, this) }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 289,
+    lineNumber: 268,
     columnNumber: 12
   }, this);
 }
 __name(Pager, "Pager");
 function Empty({ filtered, icon, title, message, onClear, text, strings }) {
-  return /* @__PURE__ */ jsxDEV("div", { className: "dd-empty", "data-region": "empty", children: [
-    /* @__PURE__ */ jsxDEV("span", { className: "dd-tile dd-tile-lg", children: /* @__PURE__ */ jsxDEV(Icon, { name: filtered ? "a/search" : icon, strings }, void 0, false, {
+  return /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-column align-items-center gap-2 px-4 py-5 text-center", "data-region": "empty", children: [
+    /* @__PURE__ */ jsxDEV("span", { className: "icon-box", children: /* @__PURE__ */ jsxDEV(Icon, { name: filtered ? "a/search" : icon, strings }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 330,
-      columnNumber: 46
+      lineNumber: 309,
+      columnNumber: 36
     }, this) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 330,
+      lineNumber: 309,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("p", { className: "dd-empty-title", children: filtered ? text("empty_search_title") : title }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("p", { className: "fw-bold mb-0", children: filtered ? text("empty_search_title") : title }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 331,
+      lineNumber: 310,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("p", { className: "dd-empty-text", children: filtered ? text("empty_search_text") : message }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("p", { className: "text-muted mb-0", children: filtered ? text("empty_search_text") : message }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 332,
+      lineNumber: 311,
       columnNumber: 9
     }, this),
     filtered && onClear && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-outline-secondary", onClick: onClear, children: text("clear_filters") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 333,
+      lineNumber: 312,
       columnNumber: 33
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 329,
+    lineNumber: 308,
     columnNumber: 12
   }, this);
 }
@@ -497,17 +464,17 @@ function ListError({ message, onRetry, text }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "alert alert-danger d-flex flex-wrap align-items-center justify-content-between", role: "status", children: [
     /* @__PURE__ */ jsxDEV("span", { children: text("error_loading", message) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 347,
+      lineNumber: 326,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-outline-danger btn-sm", onClick: onRetry, children: text("try_again") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 348,
+      lineNumber: 327,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 346,
+    lineNumber: 325,
     columnNumber: 12
   }, this);
 }
@@ -517,13 +484,13 @@ function ListBody({ error, empty, isEmpty, onRetry, text, children }) {
     const message = error instanceof Error ? error.message : String(error?.message ?? error);
     return /* @__PURE__ */ jsxDEV(ListError, { message, onRetry, text }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 368,
+      lineNumber: 347,
       columnNumber: 16
     }, this);
   }
   return /* @__PURE__ */ jsxDEV(Fragment, { children: isEmpty ? empty : children }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 370,
+    lineNumber: 349,
     columnNumber: 12
   }, this);
 }
@@ -535,7 +502,7 @@ function SortHeader({ column, label, sort, direction, onSort, numeric = false })
     "button",
     {
       type: "button",
-      className: "table-sort",
+      className: "btn btn-link",
       onClick: () => onSort(column, sorted && direction === "asc" ? "desc" : "asc"),
       children: label
     },
@@ -543,33 +510,33 @@ function SortHeader({ column, label, sort, direction, onSort, numeric = false })
     false,
     {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 390,
+      lineNumber: 369,
       columnNumber: 9
     },
     this
   ) }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 389,
+    lineNumber: 368,
     columnNumber: 12
   }, this);
 }
 __name(SortHeader, "SortHeader");
 function SkeletonRows({ columns, rows = 5 }) {
-  return /* @__PURE__ */ jsxDEV(Fragment, { children: Array.from({ length: rows }, (_, row) => /* @__PURE__ */ jsxDEV("tr", { "aria-hidden": "true", children: Array.from({ length: columns }, (__, cell) => /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: "dd-skeleton" }, void 0, false, {
+  return /* @__PURE__ */ jsxDEV(Fragment, { children: Array.from({ length: rows }, (_, row) => /* @__PURE__ */ jsxDEV("tr", { "aria-hidden": "true", children: Array.from({ length: columns }, (__, cell) => /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: "placeholder" }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 403,
+    lineNumber: 382,
     columnNumber: 69
   }, this) }, cell, false, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 403,
+    lineNumber: 382,
     columnNumber: 54
   }, this)) }, row, false, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 402,
+    lineNumber: 381,
     columnNumber: 54
   }, this)) }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 402,
+    lineNumber: 381,
     columnNumber: 12
   }, this);
 }
@@ -588,13 +555,13 @@ function Segmented({ options, value, onChange, label }) {
     onChange(next.value);
     window.requestAnimationFrame(() => group.current?.querySelector('[aria-checked="true"]')?.focus());
   }, "keys");
-  return /* @__PURE__ */ jsxDEV("span", { ref: group, className: "dd-segmented", role: "radiogroup", "aria-label": label, onKeyDown: keys, children: options.map((option) => /* @__PURE__ */ jsxDEV(
+  return /* @__PURE__ */ jsxDEV("span", { ref: group, className: "btn-group btn-group-sm", role: "radiogroup", "aria-label": label, onKeyDown: keys, children: options.map((option) => /* @__PURE__ */ jsxDEV(
     "button",
     {
       type: "button",
       role: "radio",
+      className: `btn btn-${option.tone ?? "light"}`,
       "data-permission": option.value,
-      "data-tone": option.tone,
       "aria-checked": option.value === value,
       tabIndex: option.value === value ? 0 : -1,
       disabled: option.disabled,
@@ -606,13 +573,13 @@ function Segmented({ options, value, onChange, label }) {
     false,
     {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 433,
+      lineNumber: 412,
       columnNumber: 34
     },
     this
   )) }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 432,
+    lineNumber: 411,
     columnNumber: 12
   }, this);
 }
@@ -621,27 +588,27 @@ function FloatBar({ count, offerAll, total, onAll, onClear, label, children, tex
   if (count === 0) {
     return null;
   }
-  return /* @__PURE__ */ jsxDEV("div", { className: "dd-floatbar", role: "region", "aria-label": label, "data-region": "floatbar", children: [
-    /* @__PURE__ */ jsxDEV("span", { className: "dd-floatbar-count", role: "status", children: text("selected_count", count) }, void 0, false, {
+  return /* @__PURE__ */ jsxDEV("div", { className: "card", role: "region", "aria-label": label, "data-region": "floatbar", children: [
+    /* @__PURE__ */ jsxDEV("span", { className: "fw-bold text-nowrap", role: "status", children: text("selected_count", count) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 461,
+      lineNumber: 441,
       columnNumber: 9
     }, this),
-    offerAll && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-link dd-floatbar-all", onClick: onAll, children: text("select_all_matching", total) }, void 0, false, {
+    offerAll && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-link btn-sm fw-bold text-nowrap p-0", onClick: onAll, children: text("select_all_matching", total) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 462,
+      lineNumber: 442,
       columnNumber: 22
     }, this),
-    /* @__PURE__ */ jsxDEV("div", { className: "dd-floatbar-actions", children }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap gap-2", children }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 465,
+      lineNumber: 445,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(
       "button",
       {
         type: "button",
-        className: "dd-floatbar-clear",
+        className: "btn-close",
         title: text("clear_selection"),
         "aria-label": text("clear_selection"),
         onClick: onClear
@@ -650,14 +617,14 @@ function FloatBar({ count, offerAll, total, onAll, onClear, label, children, tex
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 466,
+        lineNumber: 446,
         columnNumber: 9
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 460,
+    lineNumber: 440,
     columnNumber: 12
   }, this);
 }
@@ -713,36 +680,36 @@ function Dialog({ title, children, footer, onClose, size = "lg", initialFocus })
           /* @__PURE__ */ jsxDEV("div", { className: "modal-header", children: [
             /* @__PURE__ */ jsxDEV("h5", { className: "modal-title", id: titleid, children: title }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-              lineNumber: 527,
+              lineNumber: 507,
               columnNumber: 25
             }, this),
             /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn-close", "aria-label": "\xD7", onClick: onClose }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-              lineNumber: 528,
+              lineNumber: 508,
               columnNumber: 25
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-            lineNumber: 526,
+            lineNumber: 506,
             columnNumber: 21
           }, this),
           /* @__PURE__ */ jsxDEV("div", { className: "modal-body", children }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-            lineNumber: 530,
+            lineNumber: 510,
             columnNumber: 21
           }, this),
           /* @__PURE__ */ jsxDEV("div", { className: "modal-footer", children: footer }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-            lineNumber: 531,
+            lineNumber: 511,
             columnNumber: 21
           }, this)
         ] }, void 0, true, {
           fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-          lineNumber: 525,
+          lineNumber: 505,
           columnNumber: 17
         }, this) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-          lineNumber: 524,
+          lineNumber: 504,
           columnNumber: 13
         }, this)
       },
@@ -750,19 +717,19 @@ function Dialog({ title, children, footer, onClose, size = "lg", initialFocus })
       false,
       {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 522,
+        lineNumber: 502,
         columnNumber: 9
       },
       this
     ),
     /* @__PURE__ */ jsxDEV("div", { className: "modal-backdrop show" }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 535,
+      lineNumber: 515,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 521,
+    lineNumber: 501,
     columnNumber: 25
   }, this), document.body);
 }
@@ -784,47 +751,47 @@ function ConfirmDialog({ title, message, button, onConfirm, onClose, text, strin
   return /* @__PURE__ */ jsxDEV(Dialog, { title, size: "md", onClose, initialFocus: "[data-action='cancel']", footer: /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-secondary", "data-action": "cancel", onClick: onClose, children: text("core:cancel") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 569,
+      lineNumber: 549,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-danger", disabled: working, onClick: confirm, children: button }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 570,
+      lineNumber: 550,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 568,
+    lineNumber: 548,
     columnNumber: 108
   }, this), children: [
     /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-start", children: [
-      /* @__PURE__ */ jsxDEV("span", { className: "dd-tile dd-tile-danger me-3", children: /* @__PURE__ */ jsxDEV(Icon, { name: "t/delete", strings }, void 0, false, {
+      /* @__PURE__ */ jsxDEV("span", { className: "icon-box text-danger me-3", children: /* @__PURE__ */ jsxDEV(Icon, { name: "t/delete", strings }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 573,
-        columnNumber: 59
+        lineNumber: 553,
+        columnNumber: 57
       }, this) }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 573,
+        lineNumber: 553,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("p", { className: "mb-0", children: message }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-        lineNumber: 574,
+        lineNumber: 554,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 572,
+      lineNumber: 552,
       columnNumber: 9
     }, this),
     error && /* @__PURE__ */ jsxDEV("div", { className: "alert alert-danger mt-3 mb-0", role: "alert", children: error }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-      lineNumber: 576,
+      lineNumber: 556,
       columnNumber: 19
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/components/ui.tsx",
-    lineNumber: 568,
+    lineNumber: 548,
     columnNumber: 12
   }, this);
 }
@@ -843,7 +810,9 @@ function useFitHeight(box) {
       const card2 = element.closest(".card")?.getBoundingClientRect();
       const below = card2 ? Math.max(0, card2.bottom - rect.bottom) : 0;
       const height = Math.max(TABLE_MIN, window.innerHeight - top - below - TABLE_ROOM);
-      (element.closest(".card") ?? element).style.setProperty("--dd-table-h", height + "px");
+      const holder = element.closest(".card") ?? element;
+      holder.style.setProperty("--dd-table-h", height + "px");
+      holder.style.setProperty("--dd-foot-h", below + "px");
     }, "fit");
     fit();
     const observer = new ResizeObserver(() => fit());
@@ -894,7 +863,6 @@ function useStableColumns(table, ready) {
 __name(useStableColumns, "useStableColumns");
 export {
   Avatar,
-  Chips,
   ConfirmDialog,
   Dialog,
   Empty,

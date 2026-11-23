@@ -15,10 +15,10 @@ const ALLOW = 1;
 const PREVENT = -1;
 const PROHIBIT = -1e3;
 const PERMISSIONS = [
-  { value: INHERIT, key: "perm_notset", tone: "notset" },
-  { value: ALLOW, key: "permissionallow", tone: "allow" },
-  { value: PREVENT, key: "perm_prevent", tone: "prevent" },
-  { value: PROHIBIT, key: "permissionprohibit", tone: "prohibit" }
+  { value: INHERIT, key: "perm_notset", tone: "light" },
+  { value: ALLOW, key: "permissionallow", tone: "success" },
+  { value: PREVENT, key: "perm_prevent", tone: "warning" },
+  { value: PROHIBIT, key: "permissionprohibit", tone: "danger" }
 ];
 const words = /* @__PURE__ */ __name((text) => text.toLowerCase().split(/\s+/).filter(Boolean), "words");
 const haystacks = /* @__PURE__ */ new WeakMap();

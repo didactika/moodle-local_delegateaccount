@@ -31,6 +31,9 @@ use local_delegateaccount\permission;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class exporter {
+    /** The accounts of a person shown as pictures before the rest are counted. */
+    private const STACK = 3;
+
     /** Colour of the badge of each status. */
     private const STATUS_TONES = [
         manager::STATUS_ACTIVE => 'success',
@@ -85,10 +88,49 @@ final class exporter {
             'user' => $user,
             'activecount' => (int)$row->activecount,
             'scheduledcount' => (int)$row->scheduledcount,
+            'accounts' => array_map(
+                fn(\stdClass $account): array => self::user($account) + ['size' => 30],
+                array_slice($row->accounts ?? [], 0, self::STACK)
+            ),
+            'moreaccounts' => max(0, count($row->accounts ?? []) - self::STACK),
+            'accountnames' => implode(', ', array_map(fn(\stdClass $account): string => fullname($account), $row->accounts ?? [])),
+            'next' => self::next_change($row),
             'url' => (new \moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $user['id']]))->out(false),
             'cancreate' => $cancreate,
             'openlabel' => get_string('manage_user_delegations_for', 'local_delegateaccount', $user['fullname']),
             'addlabel' => get_string('add_delegation_for', 'local_delegateaccount', $user['fullname']),
+        ];
+    }
+
+    /**
+     * The next change of the delegations of a person: the nearest end of a delegation in use, or the nearest start of one that
+     * is scheduled, with how long is left; an end within a week is a warning.
+     *
+     * @param \stdClass $row Row of listing::users().
+     * @return array{kind: string, label: string, relative: string, tone: string} The change; kind is empty when none is planned.
+     */
+    public static function next_change(\stdClass $row): array {
+        $time = (int)($row->nexttime ?? listing::NO_CHANGE);
+        if ($time >= listing::NO_CHANGE) {
+            $none = get_string('next_change_none', 'local_delegateaccount');
+            return ['kind' => '', 'label' => $none, 'relative' => '', 'tone' => ''];
+        }
+        $kind = (int)($row->nextstart ?? 0) === $time ? 'starts' : 'ends';
+        $left = max(0, $time - time());
+        if ($left >= DAYSECS) {
+            $amount = get_string('numdays', 'moodle', (int)floor($left / DAYSECS));
+        } else if ($left >= HOURSECS) {
+            $amount = get_string('numhours', 'moodle', (int)floor($left / HOURSECS));
+        } else {
+            $amount = get_string('numminutes', 'moodle', max(1, (int)floor($left / MINSECS)));
+        }
+
+        $day = userdate($time, get_string('strftimedate', 'core_langconfig'));
+        return [
+            'kind' => $kind,
+            'label' => get_string('next_change_' . $kind, 'local_delegateaccount', $day),
+            'relative' => get_string('time_in', 'local_delegateaccount', $amount),
+            'tone' => $kind === 'starts' ? 'info' : ($left < WEEKSECS ? 'warning' : 'secondary'),
         ];
     }
 
@@ -132,7 +174,7 @@ final class exporter {
             'start' => self::date((int)$row->timestart),
             'timeend' => $end,
             'end' => $end > 0 ? self::date($end) : get_string('delegation_no_end', 'local_delegateaccount'),
-            'lastaccess' => $lastaccess > 0 ? self::date($lastaccess) : get_string('no_delegated_access', 'local_delegateaccount'),
+            'lastaccess' => $lastaccess > 0 ? self::date($lastaccess) : get_string('last_access_never', 'local_delegateaccount'),
             'hasaccess' => $lastaccess > 0,
             'overrides' => $overrides,
             'overrideslabel' => get_string('overridecount', 'local_delegateaccount', $overrides),

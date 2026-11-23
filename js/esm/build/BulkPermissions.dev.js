@@ -378,13 +378,13 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
                 options: [
                   {
                     value: ALLOW,
-                    tone: "allow",
+                    tone: "success",
                     label: text("permissionallow"),
                     disabled: !capability?.canallow,
                     title: capability?.canallow ? void 0 : text("cannotallow_hint")
                   },
-                  { value: PREVENT, tone: "prevent", label: text("perm_prevent") },
-                  { value: PROHIBIT, tone: "prohibit", label: text("permissionprohibit") },
+                  { value: PREVENT, tone: "warning", label: text("perm_prevent") },
+                  { value: PROHIBIT, tone: "danger", label: text("permissionprohibit") },
                   { value: INHERIT, label: text("bulk_remove") }
                 ]
               },

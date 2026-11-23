@@ -55,27 +55,6 @@ export function Person({user}: {user: PersonData}) {
 }
 
 /**
- * The filter chips of a list, with the rows each one leaves.
- *
- * @param props The chips, the one pressed, the counts and what to do when one is pressed.
- * @returns The chips.
- */
-export function Chips({chips, value, counts, label, onChange}: {
-    chips: Array<{key: string; label: string}>;
-    value: string;
-    counts?: Counts;
-    label: string;
-    onChange: (key: string) => void;
-}) {
-    return <div className="dd-chips" role="group" aria-label={label}>
-        {chips.map((chip) => <button key={chip.key} type="button" className="dd-chip" aria-pressed={chip.key === value}
-            onClick={() => onChange(chip.key)}>
-            {chip.label} <span className="dd-chip-count">{counts?.[chip.key || 'all'] ?? ' '}</span>
-        </button>)}
-    </div>;
-}
-
-/**
  * The search of a list: the magnifier inside the field.
  *
  * @param props The text, what to do as it changes, the label and the texts of the page.
@@ -90,7 +69,7 @@ export function SearchBox({value, onChange, label, placeholder, strings, wide = 
     wide?: boolean;
 }) {
     const id = useId();
-    return <div className={`dd-searchbox${wide ? ' mw-100' : ''}`} role="search">
+    return <div className={`position-relative d-flex align-items-center${wide ? ' mw-100' : ''}`} role="search">
         <Icon name="a/search" strings={strings} />
         <label className="visually-hidden" htmlFor={id}>{label}</label>
         <input className="form-control" type="search" id={id} value={value} placeholder={placeholder ?? label} autoComplete="off"
@@ -228,7 +207,7 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
     const position = place
         ? {top: place.top, left: place.left, minWidth: place.width, maxHeight: place.height}
         : {visibility: 'hidden' as const};
-    const classes = ['form-select dd-select', small ? 'form-select-sm' : '', set ? 'dd-select-set border-primary' : '', className]
+    const classes = ['form-select', small ? 'form-select-sm' : '', set ? 'border-primary' : '', className]
         .filter(Boolean).join(' ');
     const control = <>
         <select ref={select} className={classes} value={value}
@@ -247,7 +226,7 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
             }}>
             {all.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
-        {open && createPortal(<div ref={menu} id={id} className="dropdown-menu show dd-select-menu" role="listbox" tabIndex={-1}
+        {open && createPortal(<div ref={menu} id={id} className="dropdown-menu show" role="listbox" tabIndex={-1}
             onKeyDown={keys} style={position}>
             {options.map((option, index) => <button key={option.value} type="button" role="option"
                 className={`dropdown-item${index === active ? ' active' : ''}`} aria-selected={option.value === value}
@@ -258,9 +237,9 @@ export function SelectMenu({options: all, value, onChange, label, className = ''
         return control;
     }
     const clear = text ? `${text('core:clear')}: ${label}` : label;
-    return <span className="dd-select-filter">
+    return <span className="dropdown d-inline-flex">
         {control}
-        {set && <button type="button" className="dd-select-clear" title={clear} aria-label={clear} onClick={() => {
+        {set && <button type="button" className="btn btn-link p-0" data-menu-clear title={clear} aria-label={clear} onClick={() => {
             onChange('');
             select.current?.focus();
         }}>
@@ -286,17 +265,17 @@ export function Pager({page, perpage, total, onChange, text, strings}: {
     const {from, to} = pageRange(page, perpage, total);
     // Only the sizes smaller than the list are offered, besides all of it, and the select always shows one of them.
     const {sizes, shown} = fitPageSizes(perpage, total);
-    return <div className="table-foot">
-        <div className="dd-pager">
-            <div className="dd-pager-size">
+    return <div className="px-3 py-2 border-top" data-region="foot">
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 small text-muted">
+            <div className="d-none d-sm-flex align-items-center gap-2">
                 <span>{text('rows_per_page')}</span>
                 <SelectMenu small label={text('rows_per_page')} value={String(shown)}
                     options={sizes.map((size) => ({value: String(size), label: size ? String(size) : text('core:all')}))}
                     onChange={(size) => onChange({perpage: Number(size), page: 0})} />
             </div>
-            <div className="dd-pager-end">
-                <span className="dd-pager-range" role="status">{text('pager_range', {from, to, total})}</span>
-                <div className="dd-pager-arrows">
+            <div className="d-flex flex-wrap align-items-center gap-3 ms-auto">
+                <span className="text-body text-nowrap" role="status">{text('pager_range', {from, to, total})}</span>
+                <div className="d-flex gap-1">
                     <button type="button" className="btn btn-outline-secondary btn-sm btn-icon" disabled={page === 0}
                         title={text('previous_page')} aria-label={text('previous_page')} onClick={() => onChange({page: page - 1})}>
                         <Icon name="i/previous" strings={strings} />
@@ -326,10 +305,10 @@ export function Empty({filtered, icon, title, message, onClear, text, strings}: 
     text: Text;
     strings: Strings;
 }) {
-    return <div className="dd-empty" data-region="empty">
-        <span className="dd-tile dd-tile-lg"><Icon name={filtered ? 'a/search' : icon} strings={strings} /></span>
-        <p className="dd-empty-title">{filtered ? text('empty_search_title') : title}</p>
-        <p className="dd-empty-text">{filtered ? text('empty_search_text') : message}</p>
+    return <div className="d-flex flex-column align-items-center gap-2 px-4 py-5 text-center" data-region="empty">
+        <span className="icon-box"><Icon name={filtered ? 'a/search' : icon} strings={strings} /></span>
+        <p className="fw-bold mb-0">{filtered ? text('empty_search_title') : title}</p>
+        <p className="text-muted mb-0">{filtered ? text('empty_search_text') : message}</p>
         {filtered && onClear && <button type="button" className="btn btn-outline-secondary" onClick={onClear}>
             {text('clear_filters')}
         </button>}
@@ -387,7 +366,7 @@ export function SortHeader({column, label, sort, direction, onSort, numeric = fa
     const sorted = sort === column;
     const ariasort = direction === 'desc' ? 'descending' : 'ascending';
     return <th scope="col" className={numeric ? 'text-end' : undefined} aria-sort={sorted ? ariasort : undefined}>
-        <button type="button" className="table-sort"
+        <button type="button" className="btn btn-link"
             onClick={() => onSort(column, sorted && direction === 'asc' ? 'desc' : 'asc')}>{label}</button>
     </th>;
 }
@@ -400,7 +379,7 @@ export function SortHeader({column, label, sort, direction, onSort, numeric = fa
  */
 export function SkeletonRows({columns, rows = 5}: {columns: number; rows?: number}) {
     return <>{Array.from({length: rows}, (_, row) => <tr key={row} aria-hidden="true">
-        {Array.from({length: columns}, (__, cell) => <td key={cell}><span className="dd-skeleton" /></td>)}
+        {Array.from({length: columns}, (__, cell) => <td key={cell}><span className="placeholder" /></td>)}
     </tr>)}</>;
 }
 
@@ -429,9 +408,10 @@ export function Segmented<T extends string | number>({options, value, onChange, 
         onChange(next.value);
         window.requestAnimationFrame(() => group.current?.querySelector<HTMLElement>('[aria-checked="true"]')?.focus());
     };
-    return <span ref={group} className="dd-segmented" role="radiogroup" aria-label={label} onKeyDown={keys}>
+    return <span ref={group} className="btn-group btn-group-sm" role="radiogroup" aria-label={label} onKeyDown={keys}>
         {options.map((option) => <button key={String(option.value)} type="button" role="radio"
-            data-permission={option.value} data-tone={option.tone}
+            className={`btn btn-${option.tone ?? 'light'}`}
+            data-permission={option.value}
             aria-checked={option.value === value} tabIndex={option.value === value ? 0 : -1} disabled={option.disabled}
             title={option.title} onClick={() => onChange(option.value)}>{option.label}</button>)}
     </span>;
@@ -457,13 +437,13 @@ export function FloatBar({count, offerAll, total, onAll, onClear, label, childre
     if (count === 0) {
         return null;
     }
-    return <div className="dd-floatbar" role="region" aria-label={label} data-region="floatbar">
-        <span className="dd-floatbar-count" role="status">{text('selected_count', count)}</span>
-        {offerAll && <button type="button" className="btn btn-link dd-floatbar-all" onClick={onAll}>
+    return <div className="card" role="region" aria-label={label} data-region="floatbar">
+        <span className="fw-bold text-nowrap" role="status">{text('selected_count', count)}</span>
+        {offerAll && <button type="button" className="btn btn-link btn-sm fw-bold text-nowrap p-0" onClick={onAll}>
             {text('select_all_matching', total)}
         </button>}
-        <div className="dd-floatbar-actions">{children}</div>
-        <button type="button" className="dd-floatbar-clear" title={text('clear_selection')} aria-label={text('clear_selection')}
+        <div className="d-flex flex-wrap gap-2">{children}</div>
+        <button type="button" className="btn-close" title={text('clear_selection')} aria-label={text('clear_selection')}
             onClick={onClear} />
     </div>;
 }
@@ -570,7 +550,7 @@ export function ConfirmDialog({title, message, button, onConfirm, onClose, text,
         <button type="button" className="btn btn-danger" disabled={working} onClick={confirm}>{button}</button>
     </>}>
         <div className="d-flex align-items-start">
-            <span className="dd-tile dd-tile-danger me-3"><Icon name="t/delete" strings={strings} /></span>
+            <span className="icon-box text-danger me-3"><Icon name="t/delete" strings={strings} /></span>
             <p className="mb-0">{message}</p>
         </div>
         {error && <div className="alert alert-danger mt-3 mb-0" role="alert">{error}</div>}
@@ -603,8 +583,10 @@ export function useFitHeight(box: RefObject<HTMLElement | null>): void {
             const card = element.closest('.card')?.getBoundingClientRect();
             const below = card ? Math.max(0, card.bottom - rect.bottom) : 0;
             const height = Math.max(TABLE_MIN, window.innerHeight - top - below - TABLE_ROOM);
-            // On the card, so the empty state that may take the place of the table has the same height.
-            ((element.closest('.card') as HTMLElement | null) ?? element).style.setProperty('--dd-table-h', height + 'px');
+            // On the card, so the empty state that may take the place of the table and of its pager has the same height.
+            const holder = (element.closest('.card') as HTMLElement | null) ?? element;
+            holder.style.setProperty('--dd-table-h', height + 'px');
+            holder.style.setProperty('--dd-foot-h', below + 'px');
         };
         fit();
         // Measured again when the window changes size, or when what is above the box finishes drawing and moves it.

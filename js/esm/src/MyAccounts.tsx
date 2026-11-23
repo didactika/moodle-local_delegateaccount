@@ -40,8 +40,8 @@ export default function MyAccounts({strings, id, initial}: MyAccountsProps) {
     }, [typed]);
 
     return <section id={id} className="d-grid gap-3">
-        <div className="table-toolbar px-0 border-0">
-            <div className="table-toolbar-start">
+        <div className="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom px-0 border-0">
+            <div className="d-flex align-items-center gap-2 flex-grow-1">
                 <SearchBox strings={strings} value={search} onChange={setSearch} label={text('search_accounts')} />
             </div>
         </div>
@@ -54,15 +54,15 @@ export default function MyAccounts({strings, id, initial}: MyAccountsProps) {
                         <div className="card h-100"><div className="card-body d-flex flex-column">
                             <div className="d-flex align-items-center mb-3">
                                 <Avatar user={row.user} size={50} />
-                                <div className="d-flex flex-column">
-                                    <p className="card-title mb-0 text-truncate">{row.user.fullname}</p>
-                                    <span className="small text-muted text-truncate">{row.user.email}</span>
+                                <div className="d-flex flex-column overflow-hidden">
+                                    <p className="card-title mb-0 text-truncate" title={row.user.fullname}>{row.user.fullname}</p>
+                                    <span className="small text-muted text-truncate" title={row.user.email}>{row.user.email}</span>
                                 </div>
                             </div>
                             <span className="d-flex flex-column mb-3">
                                 <small className="text-muted">{text('delegation_end')}</small>{row.end}
                             </span>
-                            <a className="btn btn-primary btn-tonal mt-auto align-self-start" href={row.loginurl}
+                            <a className="btn btn-outline-primary mt-auto align-self-start" href={row.loginurl}
                                 title={row.loginlabel}>
                                 <Icon name="i/switch" strings={strings} /> {text('open_account')}
                             </a>

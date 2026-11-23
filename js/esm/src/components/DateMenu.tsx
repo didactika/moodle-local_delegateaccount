@@ -116,29 +116,29 @@ export default function DateMenu({label, from, to, min, max, text, strings, onCh
     }, [open]);
 
     const clear = `${text('core:clear')}: ${label}`;
-    return <span className="dd-menu dd-select-filter" data-menu="date" ref={root}>
+    return <span className="dropdown d-inline-flex" data-menu="date" ref={root}>
         <button ref={toggle} type="button" aria-label={label} aria-haspopup="true" aria-expanded={open} aria-controls={open ? id : undefined}
-            className={`form-select dd-select${active ? ' border-primary dd-select-set' : ''}`} onClick={() => setOpen(!open)}>{button}</button>
-        {active && <button type="button" className="dd-select-clear" title={clear} aria-label={clear} onClick={() => {
+            className={`form-select${active ? ' border-primary' : ''}`} onClick={() => setOpen(!open)}>{button}</button>
+        {active && <button type="button" className="btn btn-link p-0" data-menu-clear title={clear} aria-label={clear} onClick={() => {
             setOpen(false);
             onChange('', '');
             toggle.current?.focus();
         }}><Icon name="e/cancel" strings={strings} /></button>}
-        {open && <div id={id} className="dd-select-menu" role="group" aria-label={label}>
+        {open && <div id={id} className="dropdown-menu show" role="group" aria-label={label}>
             {list.map((period) => <button key={period.key} type="button" role="option" className="dropdown-item"
                 aria-selected={preset?.key === period.key} onClick={() => {
                     setOpen(false);
                     onChange(period.from, period.to);
                 }}>{text(`filter_date_${period.key}`)}</button>)}
             <hr />
-            <div className="dd-menu-form">
-                <div className="dd-menu-dates">
-                    <div>
+            <div className="d-grid gap-2 px-3 pt-2 pb-3">
+                <div className="d-flex gap-2">
+                    <div className="flex-fill">
                         <label className="form-label small mb-1" htmlFor={`${id}-from`}>{text('activity_filter_datefrom')}</label>
                         <input id={`${id}-from`} type="date" className="form-control form-control-sm" value={from} min={min || undefined}
                             max={to || max || undefined} onChange={(event) => onChange(...orderedDays(event.target.value, to, 'from'))} />
                     </div>
-                    <div>
+                    <div className="flex-fill">
                         <label className="form-label small mb-1" htmlFor={`${id}-to`}>{text('activity_filter_dateto')}</label>
                         <input id={`${id}-to`} type="date" className="form-control form-control-sm" value={to} min={from || min || undefined}
                             max={max || undefined} onChange={(event) => onChange(...orderedDays(from, event.target.value, 'to'))} />

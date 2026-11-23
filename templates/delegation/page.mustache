@@ -26,7 +26,6 @@
     Example context (json):
     {
         "id": 3,
-        "backurl": "https://moodle.example/local/delegateaccount/pages/delegations.php?realuserid=7",
         "label": "Jane Doe as John Smith",
         "statuslabel": "Active",
         "statustone": "success",
@@ -78,14 +77,13 @@
     }
 }}
 <div class="lda" data-region="delegation" data-id="{{id}}" data-realuserid="{{realuserid}}">
-    <a class="btn btn-link px-0" href="{{backurl}}">{{#pix}}i/previous, core{{/pix}} {{#str}}back_to_delegations, local_delegateaccount{{/str}}</a>
-    <header class="dd-page-header">
-        <div class="dd-page-header-row">
-            <div class="dd-page-header-main">
-                {{#delegateduser}}{{> local_delegateaccount/shared/avatar }}{{/delegateduser}}
+    <header class="d-grid gap-3 pb-3 border-bottom">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                {{#headuser}}{{> local_delegateaccount/shared/avatar }}{{/headuser}}
                 <div>
-                    <p class="dd-page-title">{{label}}</p>
-                    <p class="dd-page-subtitle"><span class="badge badge-soft badge-dot text-bg-{{statustone}}">{{statuslabel}}</span></p>
+                    <p class="h5 fw-bold mb-0">{{label}}</p>
+                    <p class="text-muted mb-0"><span class="badge text-bg-{{statustone}}">{{statuslabel}}</span></p>
                 </div>
             </div>
             {{{actions}}}
@@ -95,28 +93,28 @@
         <ul class="nav nav-tabs">
             {{#tabs}}
                 <li class="nav-item">
-                    <a class="nav-link{{#active}} active{{/active}}" href="{{url}}"{{#active}} aria-current="page"{{/active}}>{{label}}{{#count}} <span class="badge badge-soft text-bg-primary">{{count}}</span>{{/count}}</a>
+                    <a class="nav-link{{#active}} active{{/active}}" href="{{url}}"{{#active}} aria-current="page"{{/active}}>{{label}}{{#count}} <span class="badge text-bg-primary">{{count}}</span>{{/count}}</a>
                 </li>
             {{/tabs}}
         </ul>
     </nav>
     {{#summary}}
-        <div class="row">
-            <div class="col-lg-6 mb-3 mb-lg-0">
+        <div class="row" data-region="cards">
+            <div class="col-lg-6">
             <section class="card h-100"><div class="card-body">
                 <h2 class="card-title">{{#str}}details{{/str}}</h2>
-                <dl class="dd-dl">
+                <dl class="row mx-0 mb-0">
                     {{#realuser}}
-                        <dt>{{#str}}authoriseduser, local_delegateaccount{{/str}}</dt>
-                        <dd>{{> local_delegateaccount/shared/person }}</dd>
+                        <dt class="col-sm-4 fw-normal text-muted px-0 py-2 mb-0 border-bottom">{{#str}}authoriseduser, local_delegateaccount{{/str}}</dt>
+                        <dd class="col-sm-8 px-0 py-2 mb-0 border-bottom">{{> local_delegateaccount/shared/person }}</dd>
                     {{/realuser}}
                     {{#delegateduser}}
-                        <dt>{{#str}}delegateduser, local_delegateaccount{{/str}}</dt>
-                        <dd>{{> local_delegateaccount/shared/person }}</dd>
+                        <dt class="col-sm-4 fw-normal text-muted px-0 py-2 mb-0 border-bottom">{{#str}}delegateduser, local_delegateaccount{{/str}}</dt>
+                        <dd class="col-sm-8 px-0 py-2 mb-0 border-bottom">{{> local_delegateaccount/shared/person }}</dd>
                     {{/delegateduser}}
                     {{#details}}
-                        <dt>{{label}}</dt>
-                        <dd>{{value}}</dd>
+                        <dt class="col-sm-4 fw-normal text-muted px-0 py-2 mb-0 border-bottom">{{label}}</dt>
+                        <dd class="col-sm-8 px-0 py-2 mb-0 border-bottom">{{value}}</dd>
                     {{/details}}
                 </dl>
             </div></section>
@@ -124,11 +122,14 @@
             <div class="col-lg-6">
             <section class="card h-100"><div class="card-body">
                 <h2 class="card-title">{{#str}}delegation_history, local_delegateaccount{{/str}}</h2>
-                <ol class="dd-timeline">
+                <ol class="list-unstyled d-grid gap-3 mb-0">
                     {{#history}}
-                        <li class="dd-timeline-item{{#tone}} is-{{tone}}{{/tone}}">
-                            <span class="dd-timeline-title">{{title}}</span>
-                            <span class="dd-timeline-meta">{{meta}}</span>
+                        <li class="d-flex gap-2">
+                            <span class="{{#tone}}text-{{tone}}{{/tone}}{{^tone}}text-primary{{/tone}}" aria-hidden="true">&#9679;</span>
+                            <span class="d-flex flex-column">
+                                <span class="fw-bold">{{title}}</span>
+                                <span class="small text-muted">{{meta}}</span>
+                            </span>
                         </li>
                     {{/history}}
                 </ol>

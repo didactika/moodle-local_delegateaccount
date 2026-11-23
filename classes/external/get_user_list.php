@@ -42,8 +42,8 @@ final class get_user_list extends list_service {
         return new external_function_parameters([
             'scope' => new external_value(PARAM_ALPHA, 'authorised or historical.', VALUE_DEFAULT, listing::SCOPE_AUTHORISED),
             'search' => new external_value(PARAM_TEXT, 'Identity fragment.', VALUE_DEFAULT, ''),
-            'status' => new external_value(PARAM_ALPHA, 'Status, none, or empty for everyone.', VALUE_DEFAULT, ''),
-            'sort' => new external_value(PARAM_ALPHA, 'name, email, active or scheduled.', VALUE_DEFAULT, 'name'),
+            'status' => new external_value(PARAM_TEXT, 'Statuses or none, separated by commas, or empty.', VALUE_DEFAULT, ''),
+            'sort' => new external_value(PARAM_ALPHA, 'name, email, accounts, scheduled or next.', VALUE_DEFAULT, 'name'),
             'direction' => new external_value(PARAM_ALPHA, 'asc or desc.', VALUE_DEFAULT, 'asc'),
             'page' => new external_value(PARAM_INT, 'Zero-based page.', VALUE_DEFAULT, 0),
             'perpage' => new external_value(PARAM_INT, 'Rows per page, from 1 to 100, or 0 for all.', VALUE_DEFAULT, 12),
@@ -85,8 +85,10 @@ final class get_user_list extends list_service {
         if (!in_array($params['scope'], [listing::SCOPE_AUTHORISED, listing::SCOPE_HISTORICAL], true)) {
             throw new \invalid_parameter_exception('Unsupported scope.');
         }
-        if ($params['status'] !== '' && !in_array($params['status'], array_merge(listing::STATUSES, ['none']), true)) {
-            throw new \invalid_parameter_exception('Unsupported delegation status.');
+        foreach (array_filter(explode(',', $params['status'])) as $status) {
+            if (!in_array($status, array_merge(listing::STATUSES, ['none']), true)) {
+                throw new \invalid_parameter_exception('Unsupported delegation status.');
+            }
         }
 
         $result = listing::users(
@@ -120,6 +122,17 @@ final class get_user_list extends list_service {
                 'user' => self::user_structure(),
                 'activecount' => new external_value(PARAM_INT, 'Active delegations.'),
                 'scheduledcount' => new external_value(PARAM_INT, 'Scheduled delegations.'),
+                'accounts' => new external_multiple_structure(new external_single_structure(self::user_structure()->keys + [
+                    'size' => new external_value(PARAM_INT, 'Size of the picture.'),
+                ]), 'First accounts in use now.'),
+                'moreaccounts' => new external_value(PARAM_INT, 'Accounts in use now that are not among the first.'),
+                'accountnames' => new external_value(PARAM_TEXT, 'Names of every account in use now.'),
+                'next' => new external_single_structure([
+                    'kind' => new external_value(PARAM_ALPHA, 'starts, ends, or empty when nothing is planned.'),
+                    'label' => new external_value(PARAM_TEXT, 'What changes and when.'),
+                    'relative' => new external_value(PARAM_TEXT, 'How long until it changes.'),
+                    'tone' => new external_value(PARAM_ALPHA, 'Colour of the change.'),
+                ]),
                 'url' => new external_value(PARAM_URL, 'Page of the delegations of the person.'),
                 'cancreate' => new external_value(PARAM_BOOL, 'Whether delegations can be created for the person.'),
                 'openlabel' => new external_value(PARAM_TEXT, 'Label of the link to the delegations.'),

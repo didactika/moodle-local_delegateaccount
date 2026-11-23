@@ -62,15 +62,15 @@ export default function ActivityList({strings, delegationid, mindate, maxdate}: 
         message={page?.haslog === false ? text('activity_nolog') : text('activity_empty_text')}
         onClear={reset} />;
     return <div className="card">
-        <div className="table-toolbar" data-region="filters">
-            <div className="table-toolbar-start">
+        <div className="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom" data-region="filters">
+            <div className="d-flex align-items-center gap-2 flex-grow-1">
                 <SearchBox strings={strings} value={search} onChange={setSearch} label={text('activity_search')} />
                 <div data-region="filter-menus">
                     <DateMenu label={text('activity_filter_date')} from={String(state.datefrom)} to={String(state.dateto)} min={mindate}
                         max={maxdate} text={text} strings={strings} onChange={(datefrom, dateto) => list.update({datefrom, dateto})} />
                 </div>
             </div>
-            <div className="table-toolbar-end">
+            <div className="d-flex align-items-center gap-2 flex-shrink-0">
                 <button type="button" className="btn btn-link btn-icon" disabled={!filtered} title={text('clear_filters')}
                     aria-label={text('clear_filters')} onClick={reset}><Icon name="i/reload" strings={strings} /></button>
             </div>

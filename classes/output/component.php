@@ -29,12 +29,12 @@ use core\output\react_component_renderable;
 class component implements react_component_renderable, \renderable {
     /** Icons of Moodle the components draw, by their id. */
     private const ICONS = ['a/search', 'i/previous', 'i/next', 't/edit', 't/add', 't/delete', 'i/permissions', 'i/log',
-        'i/users', 'i/switch', 'e/cancel', 't/copy', 'i/reload'];
+        'i/users', 'i/switch', 'e/cancel', 't/copy', 'i/reload', 'i/filter'];
 
     /** Core texts the components use. */
     private const CORE = [
         'actions' => 'moodle', 'all' => 'moodle', 'cancel' => 'moodle', 'savechanges' => 'moodle',
-        'time' => 'moodle', 'filters' => 'moodle', 'clear' => 'moodle',
+        'time' => 'moodle', 'filters' => 'moodle', 'clear' => 'moodle', 'status' => 'moodle',
         'riskmanagetrustshort' => 'admin', 'riskconfigshort' => 'admin', 'riskxssshort' => 'admin',
         'riskpersonalshort' => 'admin', 'riskspamshort' => 'admin', 'riskdatalossshort' => 'admin',
     ];

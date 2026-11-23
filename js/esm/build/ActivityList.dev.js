@@ -71,8 +71,8 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
     this
   );
   return /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar", "data-region": "filters", children: [
-      /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom", "data-region": "filters", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center gap-2 flex-grow-1", children: [
         /* @__PURE__ */ jsxDEV(SearchBox, { strings, value: search, onChange: setSearch, label: text("activity_search") }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/ActivityList.tsx",
           lineNumber: 67,
@@ -108,7 +108,7 @@ function ActivityList({ strings, delegationid, mindate, maxdate }) {
         lineNumber: 66,
         columnNumber: 13
       }, this),
-      /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-end", children: /* @__PURE__ */ jsxDEV(
+      /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center gap-2 flex-shrink-0", children: /* @__PURE__ */ jsxDEV(
         "button",
         {
           type: "button",

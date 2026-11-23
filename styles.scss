@@ -9,7 +9,10 @@
 // The dialogs of the plugin: Moodle puts them at the end of the page, outside the screen, so they are reached by the classes
 // Moodle gives the body of the pages of the plugin and of its settings.
 $lda-modal: ".path-local-delegateaccount .modal, .path-admin-local-delegateaccount .modal, #page-admin-setting-local_delegateaccount_settings .modal";
+// The settings page of the plugin, whose tabs Moodle draws.
+$lda-settings: "#page-admin-setting-local_delegateaccount_settings #region-main";
 
+@import 'scss/tabs';
 @import 'scss/tokens';
 @import 'scss/chrome';
 @import 'scss/feedback';
@@ -17,3 +20,14 @@ $lda-modal: ".path-local-delegateaccount .modal, .path-admin-local-delegateaccou
 @import 'scss/permissions';
 @import 'scss/menus';
 @import 'scss/moodle';
+@import 'scss/states';
+
+.lda,
+#{$lda-modal} {
+    @include dd-states;
+}
+
+#{$lda-settings} {
+    @include dd-tabs;
+    @include dd-states;
+}

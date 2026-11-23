@@ -92,7 +92,7 @@ abstract class list_service extends delegation_service {
     protected static function filters_structure(): external_single_structure {
         return new external_single_structure([
             'realuserid' => new external_value(PARAM_INT, 'Authorised user, or zero for everyone.', VALUE_DEFAULT, 0),
-            'status' => new external_value(PARAM_ALPHA, 'Status, or empty for any.', VALUE_DEFAULT, ''),
+            'status' => new external_value(PARAM_TEXT, 'Statuses separated by commas, or empty for any.', VALUE_DEFAULT, ''),
             'search' => new external_value(PARAM_TEXT, 'Name, username, email or ID number fragment.', VALUE_DEFAULT, ''),
         ]);
     }
@@ -107,8 +107,10 @@ abstract class list_service extends delegation_service {
         $filters['search'] = trim((string)($filters['search'] ?? ''));
         $filters['status'] = (string)($filters['status'] ?? '');
         $filters['realuserid'] = (int)($filters['realuserid'] ?? 0);
-        if ($filters['status'] !== '' && !in_array($filters['status'], listing::STATUSES, true)) {
-            throw new \invalid_parameter_exception('Unsupported delegation status.');
+        foreach (array_filter(explode(',', $filters['status'])) as $status) {
+            if (!in_array($status, listing::STATUSES, true)) {
+                throw new \invalid_parameter_exception('Unsupported delegation status.');
+            }
         }
 
         return $filters;

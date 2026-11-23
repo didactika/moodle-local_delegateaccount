@@ -78,7 +78,7 @@ function DateMenu({ label, from, to, min, max, text, strings, onChange }) {
     };
   }, [open]);
   const clear = `${text("core:clear")}: ${label}`;
-  return /* @__PURE__ */ jsxDEV("span", { className: "dd-menu dd-select-filter", "data-menu": "date", ref: root, children: [
+  return /* @__PURE__ */ jsxDEV("span", { className: "dropdown d-inline-flex", "data-menu": "date", ref: root, children: [
     /* @__PURE__ */ jsxDEV(
       "button",
       {
@@ -88,7 +88,7 @@ function DateMenu({ label, from, to, min, max, text, strings, onChange }) {
         "aria-haspopup": "true",
         "aria-expanded": open,
         "aria-controls": open ? id : void 0,
-        className: `form-select dd-select${active ? " border-primary dd-select-set" : ""}`,
+        className: `form-select${active ? " border-primary" : ""}`,
         onClick: () => setOpen(!open),
         children: button
       },
@@ -101,7 +101,7 @@ function DateMenu({ label, from, to, min, max, text, strings, onChange }) {
       },
       this
     ),
-    active && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "dd-select-clear", title: clear, "aria-label": clear, onClick: () => {
+    active && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-link p-0", "data-menu-clear": true, title: clear, "aria-label": clear, onClick: () => {
       setOpen(false);
       onChange("", "");
       toggle.current?.focus();
@@ -114,7 +114,7 @@ function DateMenu({ label, from, to, min, max, text, strings, onChange }) {
       lineNumber: 122,
       columnNumber: 20
     }, this),
-    open && /* @__PURE__ */ jsxDEV("div", { id, className: "dd-select-menu", role: "group", "aria-label": label, children: [
+    open && /* @__PURE__ */ jsxDEV("div", { id, className: "dropdown-menu show", role: "group", "aria-label": label, children: [
       list.map((period) => /* @__PURE__ */ jsxDEV(
         "button",
         {
@@ -142,8 +142,8 @@ function DateMenu({ label, from, to, min, max, text, strings, onChange }) {
         lineNumber: 133,
         columnNumber: 13
       }, this),
-      /* @__PURE__ */ jsxDEV("div", { className: "dd-menu-form", children: /* @__PURE__ */ jsxDEV("div", { className: "dd-menu-dates", children: [
-        /* @__PURE__ */ jsxDEV("div", { children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "d-grid gap-2 px-3 pt-2 pb-3", children: /* @__PURE__ */ jsxDEV("div", { className: "d-flex gap-2", children: [
+        /* @__PURE__ */ jsxDEV("div", { className: "flex-fill", children: [
           /* @__PURE__ */ jsxDEV("label", { className: "form-label small mb-1", htmlFor: `${id}-from`, children: text("activity_filter_datefrom") }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/components/DateMenu.tsx",
             lineNumber: 137,
@@ -174,7 +174,7 @@ function DateMenu({ label, from, to, min, max, text, strings, onChange }) {
           lineNumber: 136,
           columnNumber: 21
         }, this),
-        /* @__PURE__ */ jsxDEV("div", { children: [
+        /* @__PURE__ */ jsxDEV("div", { className: "flex-fill", children: [
           /* @__PURE__ */ jsxDEV("label", { className: "form-label small mb-1", htmlFor: `${id}-to`, children: text("activity_filter_dateto") }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/components/DateMenu.tsx",
             lineNumber: 142,
