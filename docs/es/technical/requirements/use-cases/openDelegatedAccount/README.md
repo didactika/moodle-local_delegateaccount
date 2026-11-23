@@ -50,7 +50,7 @@ La persona autorizada necesita ver o hacer algo como otra persona. El plugin se 
 | --- | --- | --- |
 | 1 | Abre **Cuentas delegadas** en el menú de usuario. | Lista las cuentas que puede abrir, a partir de sus delegaciones activas. |
 | 2 | Elige una cuenta. | Vuelve a comprobar el derecho de uso, la delegación, el estado de la cuenta y la protección de administradores. |
-| 3 | | Inicia el acceso como otro usuario de Moodle, marca `$SESSION` con el id de la delegación y aplica los permisos de sesión. |
+| 3 | | Inicia el acceso como otro usuario de Moodle, marca el usuario de la sesión (`$USER`) con el id de la delegación y aplica los permisos de sesión. |
 | 4 | Trabaja en la cuenta. | En cada petición verifica la delegación y vuelve a aplicar los permisos. |
 | 5 | Elige **Volver a mi cuenta**. | Termina la sesión de acceso como otro usuario. |
 

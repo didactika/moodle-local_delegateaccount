@@ -257,9 +257,9 @@ export const openBulkPermissions = async({selection, count, trigger, onApplied})
             discard.type = 'button';
             discard.title = `${removelabel}: ${capability.label}`;
             discard.setAttribute('aria-label', discard.title);
-            discard.innerHTML = cancelicon;
             discard.addEventListener('click', () => toggle(capability));
             row.append(text, group, discard);
+            Templates.replaceNodeContents(discard, cancelicon, '');
             list.append(row);
         });
         refresh();

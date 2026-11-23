@@ -313,15 +313,15 @@ class manager {
      * @param int $targetuserid Target account identifier, already checked with get_delegated_access_error().
      */
     public static function start_delegated_session(int $targetuserid): void {
-        global $SESSION, $USER;
+        global $USER;
 
         $delegationid = self::get_current_delegation_id((int)$USER->id, $targetuserid);
         \core\session\manager::loginas($targetuserid, \context_system::instance());
-        // The login-as session has a fresh $SESSION, so the marker only exists inside the delegated session.
-        // A session cache cannot hold it: Moodle keeps session caches in $SESSION, bound to the object that
-        // existed before loginas() replaced it, so a value cached in this request would be lost.
+        // The login-as session has a fresh user object, so the marker only exists inside the delegated session, as the
+        // loginascontext of Moodle does. A session cache cannot hold it: Moodle keeps session caches in the session
+        // object that existed before loginas() replaced it, so a value cached in this request would be lost.
         // It holds the delegation, whose permission overrides apply to the session.
-        $SESSION->local_delegateaccount_delegated = $delegationid > 0 ? $delegationid : true;
+        $USER->local_delegateaccount_delegated = $delegationid > 0 ? $delegationid : true;
         if ($delegationid > 0) {
             self::remember_session($delegationid, session_id());
         }
@@ -369,13 +369,13 @@ class manager {
      * @return bool Whether the current session was ended.
      */
     public static function end_invalid_delegated_session(): bool {
-        global $SESSION, $USER;
+        global $USER;
 
-        if (empty($SESSION->local_delegateaccount_delegated)) {
+        if (empty($USER->local_delegateaccount_delegated)) {
             return false;
         }
         if (!\core\session\manager::is_loggedinas()) {
-            unset($SESSION->local_delegateaccount_delegated);
+            unset($USER->local_delegateaccount_delegated);
             return false;
         }
 

@@ -110,7 +110,9 @@ function local_delegateaccount_update_tours(): int {
     }
 
     $legacy = local_delegateaccount_legacy_tour_fingerprints();
-    $updated = 0;
+
+    // The tours of the plugin that earlier versions imported, by the English name they were given.
+    $shipped = [];
     foreach (glob(__DIR__ . '/tours/*.json') as $file) {
         $tour = json_decode(file_get_contents($file));
         if (
@@ -123,28 +125,45 @@ function local_delegateaccount_update_tours(): int {
         $english = get_string_manager()->get_string($matches[1], 'local_delegateaccount', null, 'en');
         $steps = $tour->steps;
         usort($steps, fn(\stdClass $a, \stdClass $b): int => (int)$a->sortorder <=> (int)$b->sortorder);
+        $shipped[$english] = ['key' => $matches[1], 'tour' => $tour, 'steps' => $steps];
+    }
+    if (!$shipped) {
+        return 0;
+    }
 
-        foreach ($DB->get_records('tool_usertours_tours', ['name' => $english]) as $record) {
-            $stored = array_values($DB->get_records('tool_usertours_steps', ['tourid' => $record->id], 'sortorder ASC, id ASC'));
-            $fingerprint = local_delegateaccount_tour_fingerprint(
-                $record->name,
-                $record->description,
-                array_map(fn(\stdClass $step): array => [$step->title, $step->content], $stored)
-            );
-            if (count($stored) !== count($steps) || $fingerprint !== $legacy[$matches[1]]) {
-                continue;
-            }
-
-            $current = \tool_usertours\tour::instance($record->id);
-            $current->set_name($tour->name)->set_description($tour->description)->persist();
-            foreach ($stored as $index => $step) {
-                \tool_usertours\step::instance($step->id)
-                    ->set_title($steps[$index]->title)
-                    ->set_content($steps[$index]->content, (int)$steps[$index]->contentformat)
-                    ->persist();
-            }
-            $updated++;
+    // The tours and the steps that may be one of them, in two queries for all of them.
+    $records = $DB->get_records_list('tool_usertours_tours', 'name', array_keys($shipped), 'id ASC');
+    $stored = [];
+    if ($records) {
+        $steprecords = $DB->get_records_list('tool_usertours_steps', 'tourid', array_keys($records), 'sortorder ASC, id ASC');
+        foreach ($steprecords as $step) {
+            $stored[$step->tourid][] = $step;
         }
+    }
+
+    $updated = 0;
+    foreach ($records as $record) {
+        $ship = $shipped[$record->name];
+        $tour = $ship['tour'];
+        $steps = $ship['steps'];
+        $current = $stored[$record->id] ?? [];
+        $fingerprint = local_delegateaccount_tour_fingerprint(
+            $record->name,
+            $record->description,
+            array_map(fn(\stdClass $step): array => [$step->title, $step->content], $current)
+        );
+        if (count($current) !== count($steps) || $fingerprint !== $legacy[$ship['key']]) {
+            continue;
+        }
+
+        \tool_usertours\tour::instance($record->id)->set_name($tour->name)->set_description($tour->description)->persist();
+        foreach ($current as $index => $step) {
+            \tool_usertours\step::instance($step->id)
+                ->set_title($steps[$index]->title)
+                ->set_content($steps[$index]->content, (int)$steps[$index]->contentformat)
+                ->persist();
+        }
+        $updated++;
     }
 
     return $updated;

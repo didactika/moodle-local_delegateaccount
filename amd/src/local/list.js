@@ -271,13 +271,24 @@ export default class List {
     showSkeleton() {
         const wrap = this.region('tablewrap');
         const columns = wrap.querySelectorAll('thead th').length || 4;
-        const cells = '<td><span class="placeholder"></span></td>'.repeat(columns);
-        const body = `<tr aria-hidden="true">${cells}</tr>`.repeat(Math.min(this.state.perpage || 6, 6));
+        const rows = Array.from({length: Math.min(this.state.perpage || 6, 6)}, () => {
+            const row = document.createElement('tr');
+            row.setAttribute('aria-hidden', 'true');
+            for (let column = 0; column < columns; column++) {
+                const placeholder = document.createElement('span');
+                placeholder.className = 'placeholder';
+                row.insertCell().append(placeholder);
+            }
+            return row;
+        });
         const table = wrap.querySelector('table');
         if (table && table.tBodies[0]) {
-            table.tBodies[0].innerHTML = body;
+            table.tBodies[0].replaceChildren(...rows);
         } else {
-            wrap.innerHTML = `<table class="table"><tbody>${body}</tbody></table>`;
+            const skeleton = document.createElement('table');
+            skeleton.className = 'table';
+            skeleton.createTBody().append(...rows);
+            wrap.replaceChildren(skeleton);
         }
         wrap.hidden = false;
         this.region('empty').hidden = true;
@@ -293,7 +304,7 @@ export default class List {
         const region = this.region('empty');
         region.hidden = !empty;
         if (!empty) {
-            region.innerHTML = '';
+            region.replaceChildren();
             return;
         }
         const filtered = this.options.isFiltered

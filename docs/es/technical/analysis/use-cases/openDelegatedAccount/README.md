@@ -31,4 +31,4 @@ Requisitos: [README](../../../requirements/use-cases/openDelegatedAccount/README
 
 ## Notas
 
-La marca de una sesión delegada vive en `$SESSION` y no en una caché, porque Moodle sustituye `$SESSION` al iniciar el acceso como otro usuario. Las mismas comprobaciones se hacen al iniciar la sesión y en cada petición posterior.
+La marca de una sesión delegada vive en el usuario de la sesión (`$USER`), como los datos del acceso como otro usuario de Moodle, y no en una caché de sesión, porque Moodle sustituye la sesión al iniciar el acceso como otro usuario. Las mismas comprobaciones se hacen al iniciar la sesión y en cada petición posterior.

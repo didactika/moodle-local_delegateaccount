@@ -121,15 +121,7 @@ $tones = [
 $PAGE->requires->js_call_amd('local_delegateaccount/delegation', 'init', ['[data-region="delegation"]']);
 $editor = $tab === 'permissions' ? $OUTPUT->render(new permission_editor($delegationid)) : '';
 
-// On a narrow screen the row of tabs scrolls sideways; the open tab is brought to the middle of it.
-$PAGE->requires->js_amd_inline("document.querySelectorAll('.lda .nav-tabs').forEach(function(row) {
-    var tab = row.querySelector('.nav-link.active');
-    if (tab) {
-        var a = row.getBoundingClientRect();
-        var b = tab.getBoundingClientRect();
-        row.scrollLeft += b.left - a.left - (a.width - b.width) / 2;
-    }
-});");
+$PAGE->requires->js_call_amd('local_delegateaccount/tab_scroll', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/delegation/page', [

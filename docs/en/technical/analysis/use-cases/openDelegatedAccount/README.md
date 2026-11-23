@@ -31,4 +31,4 @@ Requirements: [README](../../../requirements/use-cases/openDelegatedAccount/READ
 
 ## Notes
 
-The marker of a delegated session lives in `$SESSION` and not in a cache, because Moodle replaces `$SESSION` when login-as starts. The same checks run when the session starts and on every later request.
+The marker of a delegated session lives in the user of the session (`$USER`), as the data of Moodle's own login-as does, and not in a session cache, because Moodle replaces the session when login-as starts. The same checks run when the session starts and on every later request.
