@@ -53,10 +53,13 @@
             // No frame around a tab, clicked, pressed or reached with the keyboard: the one with the focus takes the line of a tab
             // under the pointer, and the open one keeps its own line. Moodle paints a halo around a tab that is pressed with rules as
             // heavy as these, loaded after the plugin, and the row clips it to two lines at its sides; so the line and the outline
-            // of a tab are said with !important, and no state of the theme can draw a frame.
+            // of a tab are said with !important, and no state of the theme can draw a frame. On a narrow screen Moodle fills the open
+            // tab with the primary colour; its background and its colour are said with !important too.
             &:is(:focus, :focus-visible, :active, .focus):not(.active) {
                 /* stylelint-disable-next-line declaration-no-important */
                 outline: 0 !important;
+                /* stylelint-disable-next-line declaration-no-important */
+                background: none !important;
                 /* stylelint-disable-next-line declaration-no-important */
                 box-shadow: inset 0 -2px 0 var(--dd-line) !important;
                 color: var(--dd-ink);
@@ -64,13 +67,16 @@
 
             &.active,
             &.active:is(:hover, :focus, :focus-visible, :active, .focus) {
-                border: 0;
+                /* stylelint-disable-next-line declaration-no-important */
+                border: 0 !important;
                 /* stylelint-disable-next-line declaration-no-important */
                 outline: 0 !important;
-                background: none;
+                /* stylelint-disable-next-line declaration-no-important */
+                background: none !important;
                 /* stylelint-disable-next-line declaration-no-important */
                 box-shadow: inset 0 -3px 0 var(--dd-primary) !important;
-                color: var(--dd-primary-ink);
+                /* stylelint-disable-next-line declaration-no-important */
+                color: var(--dd-primary-ink) !important;
             }
         }
     }
