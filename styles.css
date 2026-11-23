@@ -2,7 +2,7 @@
 /* Moodle 4.0 and later cores disagree on decimal formatting; use the current leading-zero style. */
 /* stylelint-disable number-leading-zero */
 
-/* stylelint-disable declaration-no-important */
+/* stylelint-disable max-line-length *//* stylelint-disable declaration-no-important */
 
 .lda .gap-1,
 .path-local-delegateaccount .modal .gap-1,
@@ -2039,8 +2039,6 @@
 #page-admin-setting-local_delegateaccount_settings .modal .fdate_selector select {
     min-width: 0;
 }
-
-/* stylelint-disable max-line-length */
 
 body:has(#carousel-item-delegatedaccounts, template[data-region=local-delegateaccount-usermenu-source]):has(#user-menu-toggle[data-flexitour=highlight],
 a[data-carousel-target-id=carousel-item-delegatedaccounts][data-flexitour=highlight],
