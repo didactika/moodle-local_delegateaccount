@@ -115,7 +115,8 @@ Feature: Delegate access to an account
     Then I should see "Session permissions saved."
     And I reload the page
     And I click on "Session permissions" "link" in the "region-main" "region"
-    And I click on "Overridden" "button" in the "region-main" "region"
+    And I click on "Permission" "button" in the "region-main" "region"
+    And I click on "Overridden" "button" in the "[data-menu=permission]" "css_element"
     And I should see "moodle/user:editownprofile"
 
   Scenario: An administrator changes the session permissions of several delegations at once

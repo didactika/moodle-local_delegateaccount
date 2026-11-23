@@ -39,7 +39,6 @@
 // The guided tour of delegated accounts is shown only to people who have the submenu. Its popover has no arrow, and the
 // steps that wait for a click on the user menu have no Next or End button, so the tour cannot be skipped from the popover.
 // The selectors name the controls of Moodle's user menu one by one, so their lines are longer than the rest.
-/* stylelint-disable max-line-length */
 body:has(#carousel-item-delegatedaccounts, template[data-region="local-delegateaccount-usermenu-source"]):has(
     #user-menu-toggle[data-flexitour="highlight"],
     a[data-carousel-target-id="carousel-item-delegatedaccounts"][data-flexitour="highlight"],
