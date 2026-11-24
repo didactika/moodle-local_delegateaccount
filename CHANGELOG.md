@@ -5,7 +5,34 @@ All notable changes to this plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.0-m503] - 2026-11-23
+
+### Changed
+
+- The list of authorised users shows the accounts each person is using now and the next change of their delegations (the end of one in use or the start of one scheduled, and how long is left), and sorts by both.
+- The lists are narrowed by a Status menu beside the search, where several statuses can be chosen with the count of each, and a button at the end of the row clears every filter; the session permissions are narrowed by a Permission menu, and on a narrow screen the menus are grouped in one, Filters.
+- The tabs of the pages and of the settings look like the secondary navigation of Moodle: the open one in the primary colour with a line under it, and no frame when a tab is clicked, pressed or reached with the keyboard.
+- Every piece of the screens is a class of Bootstrap or of Moodle, restyled inside the plugin, so a theme restyles it with Bootstrap.
+- The pages of a delegation no longer repeat the breadcrumb with a link back to the page above.
+- The menu of the components of the permission editor lists them in alphabetical order and opens with a search field that keeps the components holding every word typed, whatever their case and accents.
+- A search field empties with a small button of its own, which shows the pointer and a soft tint under it, instead of the cross the browser draws.
+- The mark of a session opened through a delegation lives in the user of the session, as the login-as data of Moodle does, instead of the session itself; the sessions that are open when the plugin is updated end, and their people open their accounts again.
+- The count of each status of a list is read in one query, and the guided tours are updated with two queries for all of them, so a list costs the same whatever the number of statuses.
+- The open tab of a row of tabs is brought to the middle of the row by the plugin's own script instead of a script written in the page, and the icons that scripts add come through the templates of Moodle.
+
+### Fixed
+
+- The button that clears a search field no longer moves when the pointer is over it: it is centred with auto margins and keeps its place whatever the theme does to a button on hover.
+- The lists of the dialog to change or copy permissions sit right under their search, with no box around them and a fixed height, so the search never moves while one types.
+- A long name ends with an ellipsis in the user menu, in the cards of the accounts and in the fixed column of a list on a narrow screen, so nothing scrolls sideways.
+- An empty list keeps the height of the list and its pager, and the two people of a delegation show their pictures at the same size.
+- The dates of the dialogs keep even gaps on a narrow screen, and a clicked button, checkbox or switch shows no halo.
+- The cards of "My delegated accounts" stay inside a narrow screen, whatever the length of an email, with even gaps between them.
+- The list of the dialog that copies the permissions of another delegation takes the room of the dialog, with no empty space under it.
+- A select drawn as a menu stays open after the press that opens it, and Escape in the menu closes it without an error of Bootstrap in the console.
+- A menu that opens above its select stays next to it when its search makes it shorter.
+- The menus grouped in Filters on a narrow screen take the same width, and the search field beside them gives up its width instead of running under them.
+- Closing a menu when the window changes size or scrolls no longer raises an error in the console.
 
 ## [1.2.0-m503] - 2026-11-11
 
@@ -64,7 +91,6 @@ Line for Moodle 4.5 to 5.2. The same delivery for Moodle 5.3 is 1.1.0-m503.
 - The permission editor scrolls inside a box of fixed height, with the name of each component as the head of its group.
 - The dialogs of the plugin are drawn with the design system.
 - The management page is called "Delegated accounts" in the administration.
-
 - New "Delegated session capabilities" tab in the plugin settings, next to the existing settings. Administrators set Allow, Prohibit or Not set for each capability in delegated sessions and can add any capability. Editing the own profile is prohibited by default. The rules apply only to sessions opened through a delegation and change no role.
 - Two guided tours for Moodle's User Tours, imported automatically on install and upgrade from the `tour_*.json` files. They are shown once, only to people who have an active delegation, and explain the "Delegated accounts" user menu entry and the "My delegated accounts" page.
 

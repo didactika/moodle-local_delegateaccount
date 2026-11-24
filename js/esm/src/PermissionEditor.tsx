@@ -15,7 +15,9 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import type {ReactElement} from 'react';
 import Pending from '@moodle/lms/core/pending';
-import {Chips, Empty, ListBody, Pager, SearchBox, Segmented, SelectMenu} from './components/ui';
+import {Empty, Icon, ListBody, Pager, SearchBox, Segmented, SelectMenu} from './components/ui';
+import StatusMenu from './components/StatusMenu';
+import FilterGroup from './components/FilterGroup';
 import {CopyFromDialog} from './BulkPermissions';
 import type {Source} from './BulkPermissions';
 import {useDebounced} from './hooks/useList';
@@ -27,9 +29,8 @@ import {getPermissions, savePermissions} from './services/api';
 import type {Capability, PermissionEditorProps, Text} from './types';
 
 
-/** Chips of the editor, by the filter each one applies. */
-const CHIPS = [
-    {key: '', label: 'perm_filter_all'},
+/** The options of the menu of the permission, by the filter each one applies. */
+const FILTERS = [
     {key: 'overridden', label: 'perm_filter_overridden'},
     {key: '1', label: 'permissionallow'},
     {key: '-1', label: 'perm_prevent'},
@@ -96,7 +97,9 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
     }, []);
 
     const names = useMemo(() => Object.fromEntries(PERMISSIONS.map(({value, key}) => [value, text(key)])), [text]);
-    const components = useMemo(() => Array.from(new Set((capabilities ?? []).map((capability) => capability.componentlabel))),
+    // The components in alphabetical order, so the menu reads like an index.
+    const components = useMemo(() => Array.from(new Set((capabilities ?? []).map((capability) => capability.componentlabel)))
+        .sort((a, b) => a.localeCompare(b)),
         [capabilities]);
     const visible = (chip: string): Capability[] => (capabilities ?? []).filter((capability) => {
         if (component && capability.componentlabel !== component) {
@@ -115,7 +118,7 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
         return chip === '' || permission === Number(chip);
     });
     const shown = visible(filter);
-    const counts = Object.fromEntries(CHIPS.map(({key}) => [key || 'all', visible(key).length]));
+    const counts = Object.fromEntries(FILTERS.map(({key}) => [key, visible(key).length]));
     const {lastpage, start, end} = pageRange(page, perpage, shown.length);
     const at = Math.min(page, lastpage);
     const rows = shown.slice(start, end);
@@ -183,7 +186,7 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
             onChange={(value) => setCurrent((before) => new Map(before).set(capability.name, value))} />);
     });
     const skeleton = <ul className="list-group list-group-flush" aria-busy="true">
-        {[0, 1, 2].map((key) => <li key={key} className="list-group-item"><span className="dd-skeleton w-50" /></li>)}
+        {[0, 1, 2].map((key) => <li key={key} className="list-group-item"><span className="placeholder w-50" /></li>)}
     </ul>;
     const empty = <Empty filtered icon="a/search" title="" message="" text={text} strings={strings}
         onClear={() => reset(() => {
@@ -193,32 +196,40 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
         })} />;
 
     return <div ref={root} className="lda pb-5 ignoredirty">
-        <p className="dd-page-subtitle mb-0">{text(site ? 'perm_intro_site' : 'perm_intro_delegation')}</p>
-        <ul className="row list-unstyled small text-muted mb-0" aria-label={text('perm_legend')}>
-            {legend.map(([name, description]) => <li key={name} className="col-sm-6 col-lg-3 mb-2">
+        <div className="d-flex flex-wrap align-items-start">
+            <p className="text-muted mb-0 me-3">{text(site ? 'perm_intro_site' : 'perm_intro_delegation')}</p>
+            {!site && canedit && <button type="button" className="btn btn-outline-secondary btn-sm ms-auto" onClick={() => setCopying(true)}>
+                <Icon name="t/copy" strings={strings} /> {text('copy_from_delegation')}
+            </button>}
+        </div>
+        <ul className="row list-unstyled small text-muted mb-0" data-region="legend" aria-label={text('perm_legend')}>
+            {legend.map(([name, description]) => <li key={name} className="col-sm-6 col-lg-3">
                 <b className="d-block text-body">{text(name)}</b>{text(description)}
             </li>)}
         </ul>
         {capabilities && !canedit && <div className="alert alert-info mb-0">{text('perm_readonly')}</div>}
         {notice && <div className="alert alert-info mb-0" role="status">{notice}</div>}
         <div className="card">
-            <div className="table-toolbar">
-                <div className="table-toolbar-start">
+            <div className="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom" data-region="filters">
+                <div className="d-flex align-items-center gap-2 flex-grow-1">
                     <SearchBox strings={strings} value={search} label={text('perm_search')}
                         placeholder={text('perm_search_placeholder')} onChange={(value) => reset(() => setSearch(value))} />
-                    <SelectMenu label={text('perm_component_all')} value={component} options={componentoptions}
-                        className={component ? 'border-primary' : ''} onChange={(value) => reset(() => setComponent(value))} />
+                    <FilterGroup count={(component ? 1 : 0) + (filter ? 1 : 0)} text={text} strings={strings}>
+                        <SelectMenu clearable searchable text={text} strings={strings} label={text('perm_component_all')} value={component}
+                            options={componentoptions} onChange={(value) => reset(() => setComponent(value))} />
+                        <StatusMenu single name="permission" label={text('perm_filter')} chosen={filter ? [filter] : []} text={text}
+                            strings={strings} onChange={(chosen) => reset(() => setFilter(chosen[0] ?? ''))}
+                            options={FILTERS.map(({key, label}) => ({key, label: text(label), count: capabilities ? counts[key] : undefined}))} />
+                    </FilterGroup>
                 </div>
-                {!site && canedit && <div className="table-toolbar-end">
-                    <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setCopying(true)}>
-                        {text('copy_from_delegation')}
-                    </button>
-                </div>}
-            </div>
-            <div className="table-toolbar">
-                <Chips label={text('perm_search')} value={filter} counts={capabilities ? counts : undefined}
-                    chips={CHIPS.map(({key, label}) => ({key, label: text(label)}))}
-                    onChange={(chip) => reset(() => setFilter(chip))} />
+                <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                    <button type="button" className="btn btn-link btn-icon" disabled={!search && !component && !filter}
+                        title={text('clear_filters')} aria-label={text('clear_filters')} onClick={() => reset(() => {
+                            setSearch('');
+                            setComponent('');
+                            setFilter('');
+                        })}><Icon name="i/reload" strings={strings} /></button>
+                </div>
             </div>
             <div ref={box} className="overflow-auto" data-region="capabilities">
                 <ListBody error={error} onRetry={() => setReload((count) => count + 1)} text={text} empty={empty}
@@ -234,10 +245,10 @@ export default function PermissionEditor({strings, delegationid, site}: Permissi
                     setPage(next.page ?? 0);
                 }} />}
         </div>
-        {changes.length > 0 && <div className="dd-savebar" role="region" aria-live="polite" data-region="savebar"
+        {changes.length > 0 && <div className="card" role="region" aria-live="polite" data-region="savebar"
             aria-label={text('session_permissions')}>
-            <span className="dd-savebar-text">{text('perm_unsaved', changes.length)}</span>
-            <span className="dd-savebar-actions">
+            <span className="fw-bold text-nowrap">{text('perm_unsaved', changes.length)}</span>
+            <span className="d-flex flex-wrap gap-2">
                 <button type="button" className="btn btn-outline-secondary" onClick={() => {
                     setCurrent(new Map(saved));
                     setNotice('');
@@ -283,10 +294,10 @@ function CapabilityRow({capability, permission, changed, canedit, names, siteper
             <span className="font-weight-bold fw-bold">{capability.label}</span>
             <span className="small text-muted">
                 <span className="me-2">{capability.name}</span>
-                {capability.risks.map((risk) => <span key={risk} className="badge badge-outline text-bg-warning">
+                {capability.risks.map((risk) => <span key={risk} className="badge border text-bg-warning">
                     {text(`core:risk${risk}short`)}
                 </span>)}
-                {site && <span className="badge badge-soft text-bg-secondary">
+                {site && <span className="badge text-bg-secondary">
                     {text('perm_site_value', names[sitepermission as number])}
                 </span>}
             </span>

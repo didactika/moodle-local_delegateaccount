@@ -105,7 +105,9 @@ export function CopyFromDialog({exclude, onChoose, onClose, strings}: {
             onClose();
         }}>{text('bulk_mode_copy')}</button>
     </>}>
-        <SourcePicker chosen={chosen?.id ?? 0} onChoose={setChosen} exclude={exclude} strings={strings} />
+        <div data-region="bulk"><div data-region="copy">
+            <SourcePicker chosen={chosen?.id ?? 0} onChoose={setChosen} exclude={exclude} strings={strings} />
+        </div></div>
     </Dialog>;
 }
 
@@ -229,11 +231,11 @@ export function BulkPermissions({selection, count, onClose, onApplied, strings}:
                                     <Segmented label={capability?.label ?? name} value={permission}
                                         onChange={(value) => setChanges((before) => new Map(before).set(name, value))}
                                         options={[
-                                            {value: ALLOW, tone: 'allow', label: text('permissionallow'),
+                                            {value: ALLOW, tone: 'success', label: text('permissionallow'),
                                                 disabled: !capability?.canallow,
                                                 title: capability?.canallow ? undefined : text('cannotallow_hint')},
-                                            {value: PREVENT, tone: 'prevent', label: text('perm_prevent')},
-                                            {value: PROHIBIT, tone: 'prohibit', label: text('permissionprohibit')},
+                                            {value: PREVENT, tone: 'warning', label: text('perm_prevent')},
+                                            {value: PROHIBIT, tone: 'danger', label: text('permissionprohibit')},
                                             {value: INHERIT, label: text('bulk_remove')},
                                         ]} />
                                     <button type="button" className="btn btn-link btn-icon btn-sm" title={text('bulk_remove')}

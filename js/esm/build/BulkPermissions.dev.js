@@ -137,7 +137,15 @@ function CopyFromDialog({ exclude, onChoose, onClose, strings }) {
     fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
     lineNumber: 99,
     columnNumber: 83
-  }, this), children: /* @__PURE__ */ jsxDEV(SourcePicker, { chosen: chosen?.id ?? 0, onChoose: setChosen, exclude, strings }, void 0, false, {
+  }, this), children: /* @__PURE__ */ jsxDEV("div", { "data-region": "bulk", children: /* @__PURE__ */ jsxDEV("div", { "data-region": "copy", children: /* @__PURE__ */ jsxDEV(SourcePicker, { chosen: chosen?.id ?? 0, onChoose: setChosen, exclude, strings }, void 0, false, {
+    fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
+    lineNumber: 109,
+    columnNumber: 13
+  }, this) }, void 0, false, {
+    fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
+    lineNumber: 108,
+    columnNumber: 33
+  }, this) }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
     lineNumber: 108,
     columnNumber: 9
@@ -199,17 +207,17 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
   return /* @__PURE__ */ jsxDEV(Dialog, { title: text("bulk_permissions_title", count), onClose, footer: /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-secondary", onClick: onClose, children: text("core:cancel") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-      lineNumber: 180,
+      lineNumber: 182,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-primary", disabled: !ready || working, onClick: () => void apply(), children: text("apply_to_count", count) }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-      lineNumber: 181,
+      lineNumber: 183,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-    lineNumber: 179,
+    lineNumber: 181,
     columnNumber: 92
   }, this), children: /* @__PURE__ */ jsxDEV("div", { "data-region": "bulk", children: [
     /* @__PURE__ */ jsxDEV(Segmented, { label: text("bulk_mode"), value: mode, onChange: setMode, options: [
@@ -217,14 +225,14 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
       { value: "copy", label: text("bulk_mode_copy") }
     ] }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-      lineNumber: 186,
+      lineNumber: 188,
       columnNumber: 13
     }, this),
     mode === "change" ? /* @__PURE__ */ jsxDEV("div", { "data-region": "change", children: [
       /* @__PURE__ */ jsxDEV("div", { children: [
         /* @__PURE__ */ jsxDEV("label", { className: "font-weight-bold fw-bold d-block mb-2", children: text("bulk_add_capability") }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-          lineNumber: 192,
+          lineNumber: 194,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "mb-2", children: /* @__PURE__ */ jsxDEV(
@@ -241,13 +249,13 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
           false,
           {
             fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-            lineNumber: 194,
+            lineNumber: 196,
             columnNumber: 25
           },
           this
         ) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-          lineNumber: 193,
+          lineNumber: 195,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV(
@@ -261,7 +269,7 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
             children: [
               !found.length && /* @__PURE__ */ jsxDEV("li", { className: "list-group-item text-muted text-center", children: text("bulk_search_noresults") }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                lineNumber: 199,
+                lineNumber: 201,
                 columnNumber: 43
               }, this),
               found.map((capability) => /* @__PURE__ */ jsxDEV("li", { role: "presentation", children: /* @__PURE__ */ jsxDEV(
@@ -275,7 +283,7 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
                     /* @__PURE__ */ jsxDEV("span", { className: "d-flex flex-column", children: [
                       /* @__PURE__ */ jsxDEV("span", { children: capability.label }, void 0, false, {
                         fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                        lineNumber: 206,
+                        lineNumber: 208,
                         columnNumber: 37
                       }, this),
                       /* @__PURE__ */ jsxDEV("small", { children: [
@@ -284,17 +292,17 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
                         capability.componentlabel
                       ] }, void 0, true, {
                         fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                        lineNumber: 207,
+                        lineNumber: 209,
                         columnNumber: 37
                       }, this)
                     ] }, void 0, true, {
                       fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                      lineNumber: 205,
+                      lineNumber: 207,
                       columnNumber: 33
                     }, this),
                     /* @__PURE__ */ jsxDEV("span", { className: "small font-weight-bold fw-bold text-primary", children: text(changes.has(capability.name) ? "bulk_added" : "bulk_add") }, void 0, false, {
                       fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                      lineNumber: 209,
+                      lineNumber: 211,
                       columnNumber: 33
                     }, this)
                   ]
@@ -303,13 +311,13 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
                 true,
                 {
                   fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                  lineNumber: 203,
+                  lineNumber: 205,
                   columnNumber: 29
                 },
                 this
               ) }, capability.name, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                lineNumber: 202,
+                lineNumber: 204,
                 columnNumber: 52
               }, this))
             ]
@@ -318,14 +326,14 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
           true,
           {
             fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-            lineNumber: 197,
+            lineNumber: 199,
             columnNumber: 21
           },
           this
         )
       ] }, void 0, true, {
         fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-        lineNumber: 191,
+        lineNumber: 193,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("div", { children: [
@@ -338,17 +346,17 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
             ")"
           ] }, void 0, true, {
             fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-            lineNumber: 218,
+            lineNumber: 220,
             columnNumber: 69
           }, this)
         ] }, void 0, true, {
           fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-          lineNumber: 217,
+          lineNumber: 219,
           columnNumber: 21
         }, this),
         changes.size === 0 ? /* @__PURE__ */ jsxDEV("p", { className: "text-muted mb-0", children: text("bulk_changes_empty") }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-          lineNumber: 220,
+          lineNumber: 222,
           columnNumber: 43
         }, this) : /* @__PURE__ */ jsxDEV("ul", { className: "list-group", children: Array.from(changes, ([name, permission]) => {
           const capability = byname.get(name);
@@ -356,17 +364,17 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
             /* @__PURE__ */ jsxDEV("span", { className: "d-flex flex-column", children: [
               /* @__PURE__ */ jsxDEV("span", { className: "font-weight-bold fw-bold", children: capability?.label ?? name }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                lineNumber: 226,
+                lineNumber: 228,
                 columnNumber: 41
               }, this),
               /* @__PURE__ */ jsxDEV("span", { className: "small text-muted", children: name }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                lineNumber: 227,
+                lineNumber: 229,
                 columnNumber: 41
               }, this)
             ] }, void 0, true, {
               fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-              lineNumber: 225,
+              lineNumber: 227,
               columnNumber: 37
             }, this),
             /* @__PURE__ */ jsxDEV(
@@ -378,13 +386,13 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
                 options: [
                   {
                     value: ALLOW,
-                    tone: "allow",
+                    tone: "success",
                     label: text("permissionallow"),
                     disabled: !capability?.canallow,
                     title: capability?.canallow ? void 0 : text("cannotallow_hint")
                   },
-                  { value: PREVENT, tone: "prevent", label: text("perm_prevent") },
-                  { value: PROHIBIT, tone: "prohibit", label: text("permissionprohibit") },
+                  { value: PREVENT, tone: "warning", label: text("perm_prevent") },
+                  { value: PROHIBIT, tone: "danger", label: text("permissionprohibit") },
                   { value: INHERIT, label: text("bulk_remove") }
                 ]
               },
@@ -392,7 +400,7 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
               false,
               {
                 fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                lineNumber: 229,
+                lineNumber: 231,
                 columnNumber: 37
               },
               this
@@ -407,7 +415,7 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
                 onClick: () => toggle(name),
                 children: /* @__PURE__ */ jsxDEV(Icon, { name: "e/cancel", strings }, void 0, false, {
                   fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                  lineNumber: 242,
+                  lineNumber: 244,
                   columnNumber: 41
                 }, this)
               },
@@ -415,99 +423,99 @@ function BulkPermissions({ selection, count, onClose, onApplied, strings }) {
               false,
               {
                 fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-                lineNumber: 239,
+                lineNumber: 241,
                 columnNumber: 37
               },
               this
             )
           ] }, name, true, {
             fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-            lineNumber: 224,
+            lineNumber: 226,
             columnNumber: 40
           }, this);
         }) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-          lineNumber: 221,
+          lineNumber: 223,
           columnNumber: 27
         }, this)
       ] }, void 0, true, {
         fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-        lineNumber: 216,
+        lineNumber: 218,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-      lineNumber: 190,
+      lineNumber: 192,
       columnNumber: 34
     }, this) : /* @__PURE__ */ jsxDEV("div", { "data-region": "copy", children: [
       /* @__PURE__ */ jsxDEV(SourcePicker, { chosen: source?.id ?? 0, onChoose: setSource, exclude: 0, strings }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-        lineNumber: 249,
+        lineNumber: 251,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("div", { children: [
         /* @__PURE__ */ jsxDEV("p", { className: "font-weight-bold fw-bold d-block mb-2", children: text("bulk_copy_how") }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-          lineNumber: 251,
+          lineNumber: 253,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("ul", { className: "row list-unstyled mb-0", children: [false, true].map((value) => /* @__PURE__ */ jsxDEV("li", { className: "col-sm-6 mb-2", children: /* @__PURE__ */ jsxDEV("label", { className: "card card-body flex-row h-100 mb-0", children: [
           /* @__PURE__ */ jsxDEV("input", { type: "radio", name: "replace", checked: replace === value, onChange: () => setReplace(value) }, void 0, false, {
             fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-            lineNumber: 255,
+            lineNumber: 257,
             columnNumber: 33
           }, this),
           /* @__PURE__ */ jsxDEV("span", { className: "ms-3", children: [
             /* @__PURE__ */ jsxDEV("b", { className: "d-block", children: text(value ? "bulk_copy_replace" : "bulk_copy_merge") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-              lineNumber: 257,
+              lineNumber: 259,
               columnNumber: 37
             }, this),
             /* @__PURE__ */ jsxDEV("small", { className: "text-muted", children: text(value ? "bulk_copy_replace_desc" : "bulk_copy_merge_desc") }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-              lineNumber: 258,
+              lineNumber: 260,
               columnNumber: 37
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-            lineNumber: 256,
+            lineNumber: 258,
             columnNumber: 33
           }, this)
         ] }, void 0, true, {
           fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-          lineNumber: 254,
+          lineNumber: 256,
           columnNumber: 29
         }, this) }, String(value), false, {
           fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-          lineNumber: 253,
+          lineNumber: 255,
           columnNumber: 55
         }, this)) }, void 0, false, {
           fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-          lineNumber: 252,
+          lineNumber: 254,
           columnNumber: 21
         }, this)
       ] }, void 0, true, {
         fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-        lineNumber: 250,
+        lineNumber: 252,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-      lineNumber: 248,
+      lineNumber: 250,
       columnNumber: 22
     }, this),
     error && /* @__PURE__ */ jsxDEV("div", { className: "alert alert-danger mt-3 mb-0", role: "alert", children: error }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-      lineNumber: 267,
+      lineNumber: 269,
       columnNumber: 23
     }, this)
   ] }, void 0, true, {
     fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-    lineNumber: 185,
+    lineNumber: 187,
     columnNumber: 9
   }, this) }, void 0, false, {
     fileName: "public/local/delegateaccount/js/esm/src/BulkPermissions.tsx",
-    lineNumber: 179,
+    lineNumber: 181,
     columnNumber: 12
   }, this);
 }

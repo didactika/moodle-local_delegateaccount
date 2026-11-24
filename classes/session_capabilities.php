@@ -275,9 +275,9 @@ final class session_capabilities {
      * @return bool
      */
     public static function is_delegated_session(): bool {
-        global $SESSION;
+        global $USER;
 
-        return !empty($SESSION->local_delegateaccount_delegated) && \core\session\manager::is_loggedinas();
+        return !empty($USER->local_delegateaccount_delegated) && \core\session\manager::is_loggedinas();
     }
 
     /**
@@ -286,12 +286,12 @@ final class session_capabilities {
      * @return int Delegation identifier.
      */
     public static function get_session_delegation_id(): int {
-        global $SESSION, $USER;
+        global $USER;
 
         if (!self::is_delegated_session()) {
             return 0;
         }
-        $marker = $SESSION->local_delegateaccount_delegated;
+        $marker = $USER->local_delegateaccount_delegated;
         if (is_int($marker) && $marker > 0) {
             return $marker;
         }

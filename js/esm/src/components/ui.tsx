@@ -11,7 +11,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
-import type {KeyboardEvent as ReactKeyboardEvent, ReactNode} from 'react';
+import type {KeyboardEvent as ReactKeyboardEvent, ReactNode, RefObject} from 'react';
 import {createPortal} from 'react-dom';
 import type {Counts, Person as PersonData, Strings, Text} from '../types';
 import {fitPageSizes, pageRange} from '../engine/paging';
@@ -55,27 +55,6 @@ export function Person({user}: {user: PersonData}) {
 }
 
 /**
- * The filter chips of a list, with the rows each one leaves.
- *
- * @param props The chips, the one pressed, the counts and what to do when one is pressed.
- * @returns The chips.
- */
-export function Chips({chips, value, counts, label, onChange}: {
-    chips: Array<{key: string; label: string}>;
-    value: string;
-    counts?: Counts;
-    label: string;
-    onChange: (key: string) => void;
-}) {
-    return <div className="dd-chips" role="group" aria-label={label}>
-        {chips.map((chip) => <button key={chip.key} type="button" className="dd-chip" aria-pressed={chip.key === value}
-            onClick={() => onChange(chip.key)}>
-            {chip.label} <span className="dd-chip-count">{counts?.[chip.key || 'all'] ?? ' '}</span>
-        </button>)}
-    </div>;
-}
-
-/**
  * The search of a list: the magnifier inside the field.
  *
  * @param props The text, what to do as it changes, the label and the texts of the page.
@@ -90,14 +69,42 @@ export function SearchBox({value, onChange, label, placeholder, strings, wide = 
     wide?: boolean;
 }) {
     const id = useId();
-    return <div className={`dd-searchbox${wide ? ' mw-100' : ''}`} role="search">
+    const field = useRef<HTMLInputElement>(null);
+    return <div className={`position-relative d-flex align-items-center${wide ? ' mw-100' : ''}`} role="search">
         <Icon name="a/search" strings={strings} />
         <label className="visually-hidden" htmlFor={id}>{label}</label>
-        <input className="form-control" type="search" id={id} value={value} placeholder={placeholder ?? label} autoComplete="off"
-            onChange={(event) => onChange(event.target.value)}
+        <input ref={field} className="form-control" type="search" id={id} value={value} placeholder={placeholder ?? label}
+            autoComplete="off" onChange={(event) => onChange(event.target.value)}
             onKeyDown={(event) => event.key === 'Enter' && event.preventDefault()} />
+        {value !== '' && <ClearSearch strings={strings} onClear={() => {
+            onChange('');
+            field.current?.focus();
+        }} />}
     </div>;
 }
+
+/**
+ * The button that empties a search field: a round icon button, as the actions of a row, and not the cross the browser draws,
+ * which neither looks like a button nor follows the theme.
+ *
+ * @param props The texts of the page and what to do.
+ * @returns The button.
+ */
+export function ClearSearch({strings, onClear}: {strings: Strings; onClear: () => void}) {
+    const label = strings['core:clear'] ?? '';
+    return <button type="button" className="btn btn-link btn-icon btn-sm" data-action="clear-search" title={label}
+        aria-label={label} onClick={onClear}>
+        <Icon name="e/cancel" strings={strings} />
+    </button>;
+}
+
+/**
+ * A text as the search of a menu compares it: in small letters and without accents.
+ *
+ * @param value The text.
+ * @returns The text to compare.
+ */
+const fold = (value: string): string => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
 /** An option of a select. */
 export interface Option {
@@ -112,22 +119,38 @@ export interface Option {
  * Keyboard: Enter, Space and the arrows open it; the arrows, Home and End move, Enter chooses, a letter jumps to the next
  * option that starts with it, Escape and Tab close it.
  *
- * @param props The options, the value, what to do when it changes, the label and the classes.
+ * A select that filters a list (clearable) does not offer its base state, the option with the empty value, as one more
+ * choice: the select says it while nothing is chosen, and once something is, its arrow becomes a cross that goes back to it.
+ *
+ * A select with many options (searchable) opens with a search field at the top of its menu, which keeps the options that hold
+ * every word typed, whatever their case and accents; the arrow down goes from the field to the options.
+ *
+ * @param props The options, the value, what to do when it changes, the label, the classes and whether it filters.
  * @returns The select.
  */
-export function SelectMenu({options, value, onChange, label, className = '', small = false}: {
+export function SelectMenu({options: all, value, onChange, label, className = '', small = false, clearable = false,
+    searchable = false, text, strings}: {
     options: Option[];
     value: string;
     onChange: (value: string) => void;
     label: string;
     className?: string;
     small?: boolean;
+    clearable?: boolean;
+    searchable?: boolean;
+    text?: Text;
+    strings?: Strings;
 }) {
+    const [query, setQuery] = useState('');
+    const words = fold(query).split(/\s+/).filter(Boolean);
+    const options = (clearable ? all.filter((option) => option.value !== '') : all)
+        .filter((option) => words.every((word) => fold(option.label).includes(word)));
+    const set = clearable && value !== '';
     const select = useRef<HTMLSelectElement>(null);
     const menu = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState(false);
     const [active, setActive] = useState(0);
-    const [place, setPlace] = useState<{top: number; left: number; width: number; height: number} | null>(null);
+    const [place, setPlace] = useState<{top: number; bottom: number | null; left: number; width: number; height: number} | null>(null);
     const id = useId();
 
     useLayoutEffect(() => {
@@ -140,30 +163,65 @@ export function SelectMenu({options, value, onChange, label, className = '', sma
         const height = menu.current.scrollHeight;
         const up = height > below && above > below;
         const max = Math.max(120, Math.min(272, up ? above : below));
-        const shown = Math.min(height, max);
+        // A menu that opens above is held by its foot, next to the select, so it stays there when a search makes it shorter.
         setPlace({
-            top: up ? box.top - shown - 2 : box.bottom + 2,
+            top: box.bottom + 2,
+            bottom: up ? window.innerHeight - box.top + 2 : null,
             left: Math.max(8, Math.min(box.left, window.innerWidth - Math.max(box.width, 160) - 8)),
             width: box.width,
             height: max,
         });
-        (menu.current.querySelector<HTMLElement>('[aria-selected="true"]') ?? menu.current.querySelector<HTMLElement>('button'))
-            ?.focus();
+    }, [open]);
+
+    // Once the menu is in its place, the focus goes to its search field or to the chosen option, without scrolling the page:
+    // a scroll closes the menu.
+    useEffect(() => {
+        if (!open || !place || !menu.current) {
+            return;
+        }
+        (menu.current.querySelector<HTMLElement>('input')
+            ?? menu.current.querySelector<HTMLElement>('[aria-selected="true"]')
+            ?? menu.current.querySelector<HTMLElement>('[role="option"]'))?.focus({preventScroll: true});
+    }, [open, place]);
+
+    // Each time the menu opens it shows every option again.
+    useEffect(() => {
+        if (!open) {
+            setQuery('');
+            setActive(0);
+        }
     }, [open]);
 
     useEffect(() => {
         if (!open) {
             return undefined;
         }
+        // The select opens and closes the menu by itself; the press that opened it reaches the document too, and is not a press
+        // outside the menu.
         const close = (event: Event): void => {
-            if (!menu.current?.contains(event.target as Node)) {
+            // A resize or a scroll of the page comes from the window, which is no node and is never inside the menu.
+            const target = event.target instanceof Node ? event.target : null;
+            if (!menu.current?.contains(target) && !select.current?.contains(target)) {
                 setOpen(false);
             }
         };
+        // Escape in the menu closes it here, on the window and before anything else: Bootstrap listens to the keys of every
+        // dropdown menu on the document, before the menu, takes this one for a dropdown of its own and fails to find its button.
+        const node = menu.current;
+        const escape = (event: KeyboardEvent): void => {
+            if (event.key === 'Escape' && node && event.composedPath().includes(node)) {
+                event.preventDefault();
+                event.stopPropagation();
+                setOpen(false);
+                select.current?.focus();
+            }
+        };
+        window.addEventListener('keydown', escape, true);
         window.addEventListener('resize', close);
         window.addEventListener('scroll', close, {capture: true, passive: true});
         document.addEventListener('mousedown', close);
         return () => {
+            window.removeEventListener('keydown', escape, true);
             window.removeEventListener('resize', close);
             window.removeEventListener('scroll', close, {capture: true});
             document.removeEventListener('mousedown', close);
@@ -181,11 +239,28 @@ export function SelectMenu({options, value, onChange, label, className = '', sma
     const focus = (index: number): void => {
         const at = (index + options.length) % options.length;
         setActive(at);
-        menu.current?.querySelectorAll<HTMLElement>('button')[at]?.focus();
+        menu.current?.querySelectorAll<HTMLElement>('[role="option"]')[at]?.focus();
     };
 
     const keys = (event: ReactKeyboardEvent): void => {
-        const at = Array.from(menu.current?.querySelectorAll('button') ?? []).indexOf(document.activeElement as HTMLButtonElement);
+        const entries = Array.from(menu.current?.querySelectorAll('[role="option"]') ?? []);
+        const at = entries.indexOf(document.activeElement as HTMLButtonElement);
+        // In the search field the keys write; the arrow down goes to the options and Enter chooses the first one.
+        if (event.target instanceof HTMLInputElement && !['ArrowDown', 'Escape', 'Tab', 'Enter'].includes(event.key)) {
+            return;
+        }
+        if (event.target instanceof HTMLInputElement && event.key === 'Enter') {
+            event.preventDefault();
+            if (options.length > 0) {
+                choose(0);
+            }
+            return;
+        }
+        if (event.key === 'ArrowUp' && at === 0 && searchable) {
+            event.preventDefault();
+            menu.current?.querySelector<HTMLElement>('input')?.focus();
+            return;
+        }
         if (event.key === 'ArrowDown') {
             event.preventDefault();
             focus(at + 1);
@@ -217,10 +292,13 @@ export function SelectMenu({options, value, onChange, label, className = '', sma
 
     const scope = select.current?.closest('.lda, .modal') ?? document.body;
     const position = place
-        ? {top: place.top, left: place.left, minWidth: place.width, maxHeight: place.height}
+        ? {...(place.bottom === null ? {top: place.top} : {top: 'auto', bottom: place.bottom}), left: place.left, minWidth: place.width,
+            maxHeight: place.height}
         : {visibility: 'hidden' as const};
-    return <>
-        <select ref={select} className={`form-select dd-select${small ? ' form-select-sm' : ''} ${className}`} value={value}
+    const classes = ['form-select', small ? 'form-select-sm' : '', set ? 'border-primary' : '', className]
+        .filter(Boolean).join(' ');
+    const control = <>
+        <select ref={select} className={classes} value={value}
             aria-label={label} aria-expanded={open || undefined} aria-controls={open ? id : undefined}
             onChange={(event) => onChange(event.target.value)}
             onMouseDown={(event) => {
@@ -234,15 +312,45 @@ export function SelectMenu({options, value, onChange, label, className = '', sma
                     setOpen(true);
                 }
             }}>
-            {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            {all.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
-        {open && createPortal(<div ref={menu} id={id} className="dropdown-menu show dd-select-menu" role="listbox" tabIndex={-1}
+        {open && createPortal(<div ref={menu} id={id} className="dropdown-menu show" role="listbox" tabIndex={-1}
             onKeyDown={keys} style={position}>
+            {searchable && <div className="position-relative d-flex align-items-center p-1" role="search">
+                {strings && <Icon name="a/search" strings={strings} />}
+                <input className="form-control form-control-sm" type="search" value={query} autoComplete="off"
+                    aria-label={text ? `${text('core:search')}: ${label}` : label} placeholder={text ? text('core:search') : label}
+                    onChange={(event) => {
+                        setQuery(event.target.value);
+                        setActive(0);
+                    }} />
+                {query !== '' && strings && <ClearSearch strings={strings} onClear={() => {
+                    setQuery('');
+                    setActive(0);
+                    menu.current?.querySelector<HTMLElement>('input')?.focus();
+                }} />}
+            </div>}
             {options.map((option, index) => <button key={option.value} type="button" role="option"
                 className={`dropdown-item${index === active ? ' active' : ''}`} aria-selected={option.value === value}
                 onClick={() => choose(index)}>{option.label}</button>)}
+            {searchable && options.length === 0 && <p className="text-muted small px-3 py-2 mb-0" role="status">
+                {text ? text('core:noresults') : ''}
+            </p>}
         </div>, scope)}
     </>;
+    if (!clearable) {
+        return control;
+    }
+    const clear = text ? `${text('core:clear')}: ${label}` : label;
+    return <span className="dropdown d-inline-flex">
+        {control}
+        {set && <button type="button" className="btn btn-link p-0" data-menu-clear title={clear} aria-label={clear} onClick={() => {
+            onChange('');
+            select.current?.focus();
+        }}>
+            {strings && <Icon name="e/cancel" strings={strings} />}
+        </button>}
+    </span>;
 }
 
 /**
@@ -262,17 +370,17 @@ export function Pager({page, perpage, total, onChange, text, strings}: {
     const {from, to} = pageRange(page, perpage, total);
     // Only the sizes smaller than the list are offered, besides all of it, and the select always shows one of them.
     const {sizes, shown} = fitPageSizes(perpage, total);
-    return <div className="table-foot">
-        <div className="dd-pager">
-            <div className="dd-pager-size">
+    return <div className="px-3 py-2 border-top" data-region="foot">
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 small text-muted">
+            <div className="d-none d-sm-flex align-items-center gap-2">
                 <span>{text('rows_per_page')}</span>
                 <SelectMenu small label={text('rows_per_page')} value={String(shown)}
                     options={sizes.map((size) => ({value: String(size), label: size ? String(size) : text('core:all')}))}
                     onChange={(size) => onChange({perpage: Number(size), page: 0})} />
             </div>
-            <div className="dd-pager-end">
-                <span className="dd-pager-range" role="status">{text('pager_range', {from, to, total})}</span>
-                <div className="dd-pager-arrows">
+            <div className="d-flex flex-wrap align-items-center gap-3 ms-auto">
+                <span className="text-body text-nowrap" role="status">{text('pager_range', {from, to, total})}</span>
+                <div className="d-flex gap-1">
                     <button type="button" className="btn btn-outline-secondary btn-sm btn-icon" disabled={page === 0}
                         title={text('previous_page')} aria-label={text('previous_page')} onClick={() => onChange({page: page - 1})}>
                         <Icon name="i/previous" strings={strings} />
@@ -302,10 +410,10 @@ export function Empty({filtered, icon, title, message, onClear, text, strings}: 
     text: Text;
     strings: Strings;
 }) {
-    return <div className="dd-empty">
-        <span className="dd-tile dd-tile-lg"><Icon name={filtered ? 'a/search' : icon} strings={strings} /></span>
-        <p className="dd-empty-title">{filtered ? text('empty_search_title') : title}</p>
-        <p className="dd-empty-text">{filtered ? text('empty_search_text') : message}</p>
+    return <div className="d-flex flex-column align-items-center gap-2 px-4 py-5 text-center" data-region="empty">
+        <span className="icon-box"><Icon name={filtered ? 'a/search' : icon} strings={strings} /></span>
+        <p className="fw-bold mb-0">{filtered ? text('empty_search_title') : title}</p>
+        <p className="text-muted mb-0">{filtered ? text('empty_search_text') : message}</p>
         {filtered && onClear && <button type="button" className="btn btn-outline-secondary" onClick={onClear}>
             {text('clear_filters')}
         </button>}
@@ -363,7 +471,7 @@ export function SortHeader({column, label, sort, direction, onSort, numeric = fa
     const sorted = sort === column;
     const ariasort = direction === 'desc' ? 'descending' : 'ascending';
     return <th scope="col" className={numeric ? 'text-end' : undefined} aria-sort={sorted ? ariasort : undefined}>
-        <button type="button" className="table-sort"
+        <button type="button" className="btn btn-link"
             onClick={() => onSort(column, sorted && direction === 'asc' ? 'desc' : 'asc')}>{label}</button>
     </th>;
 }
@@ -376,7 +484,7 @@ export function SortHeader({column, label, sort, direction, onSort, numeric = fa
  */
 export function SkeletonRows({columns, rows = 5}: {columns: number; rows?: number}) {
     return <>{Array.from({length: rows}, (_, row) => <tr key={row} aria-hidden="true">
-        {Array.from({length: columns}, (__, cell) => <td key={cell}><span className="dd-skeleton" /></td>)}
+        {Array.from({length: columns}, (__, cell) => <td key={cell}><span className="placeholder" /></td>)}
     </tr>)}</>;
 }
 
@@ -405,9 +513,10 @@ export function Segmented<T extends string | number>({options, value, onChange, 
         onChange(next.value);
         window.requestAnimationFrame(() => group.current?.querySelector<HTMLElement>('[aria-checked="true"]')?.focus());
     };
-    return <span ref={group} className="dd-segmented" role="radiogroup" aria-label={label} onKeyDown={keys}>
+    return <span ref={group} className="btn-group btn-group-sm" role="radiogroup" aria-label={label} onKeyDown={keys}>
         {options.map((option) => <button key={String(option.value)} type="button" role="radio"
-            data-permission={option.value} data-tone={option.tone}
+            className={`btn btn-${option.tone ?? 'light'}`}
+            data-permission={option.value}
             aria-checked={option.value === value} tabIndex={option.value === value ? 0 : -1} disabled={option.disabled}
             title={option.title} onClick={() => onChange(option.value)}>{option.label}</button>)}
     </span>;
@@ -433,13 +542,13 @@ export function FloatBar({count, offerAll, total, onAll, onClear, label, childre
     if (count === 0) {
         return null;
     }
-    return <div className="dd-floatbar" role="region" aria-label={label} data-region="floatbar">
-        <span className="dd-floatbar-count" role="status">{text('selected_count', count)}</span>
-        {offerAll && <button type="button" className="btn btn-link dd-floatbar-all" onClick={onAll}>
+    return <div className="card" role="region" aria-label={label} data-region="floatbar">
+        <span className="fw-bold text-nowrap" role="status">{text('selected_count', count)}</span>
+        {offerAll && <button type="button" className="btn btn-link btn-sm fw-bold text-nowrap p-0" onClick={onAll}>
             {text('select_all_matching', total)}
         </button>}
-        <div className="dd-floatbar-actions">{children}</div>
-        <button type="button" className="dd-floatbar-clear" title={text('clear_selection')} aria-label={text('clear_selection')}
+        <div className="d-flex flex-wrap gap-2">{children}</div>
+        <button type="button" className="btn-close" title={text('clear_selection')} aria-label={text('clear_selection')}
             onClick={onClear} />
     </div>;
 }
@@ -546,9 +655,95 @@ export function ConfirmDialog({title, message, button, onConfirm, onClose, text,
         <button type="button" className="btn btn-danger" disabled={working} onClick={confirm}>{button}</button>
     </>}>
         <div className="d-flex align-items-start">
-            <span className="dd-tile dd-tile-danger me-3"><Icon name="t/delete" strings={strings} /></span>
+            <span className="icon-box text-danger me-3"><Icon name="t/delete" strings={strings} /></span>
             <p className="mb-0">{message}</p>
         </div>
         {error && <div className="alert alert-danger mt-3 mb-0" role="alert">{error}</div>}
     </Dialog>;
+}
+
+/** The least height of the box of a table, in pixels (18rem), however short the window is. */
+const TABLE_MIN = 288;
+
+/** The room left under the box of a table, in pixels, for the margin of the page. */
+const TABLE_ROOM = 24;
+
+/**
+ * The height of the box of a table: what is left of the window from where the box starts, less what comes under it in its card
+ * (the pager), so on a computer the filters, the table and the pager fit the window without scrolling the page. It is one height
+ * whatever the table holds, measured again when the window changes size or what is above it moves it.
+ *
+ * @param box The box of the table.
+ */
+export function useFitHeight(box: RefObject<HTMLElement | null>): void {
+    useLayoutEffect(() => {
+        const fit = (): void => {
+            const element = box.current;
+            if (!element) {
+                return;
+            }
+            const rect = element.getBoundingClientRect();
+            const top = rect.top + window.scrollY;
+            // What comes under the box inside its card, such as the pager, wherever it sits.
+            const card = element.closest('.card')?.getBoundingClientRect();
+            const below = card ? Math.max(0, card.bottom - rect.bottom) : 0;
+            const height = Math.max(TABLE_MIN, window.innerHeight - top - below - TABLE_ROOM);
+            // On the card, so the empty state that may take the place of the table and of its pager has the same height.
+            const holder = (element.closest('.card') as HTMLElement | null) ?? element;
+            holder.style.setProperty('--dd-table-h', height + 'px');
+            holder.style.setProperty('--dd-foot-h', below + 'px');
+        };
+        fit();
+        // Measured again when the window changes size, or when what is above the box finishes drawing and moves it.
+        const observer = new ResizeObserver(() => fit());
+        observer.observe(document.body);
+        const card = box.current?.closest('.card');
+        if (card) {
+            observer.observe(card);
+        }
+        window.addEventListener('resize', fit);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', fit);
+        };
+    }, []);
+}
+
+/**
+ * Keeps the columns of a table still: once the table has rows, the width the browser gives each column is measured and kept, so a
+ * filter, a sort or another page never moves them. They are measured again only when the box of the table changes width.
+ *
+ * @param table The table.
+ * @param ready Whether the table has its first rows.
+ */
+export function useStableColumns(table: RefObject<HTMLTableElement | null>, ready: boolean): void {
+    useLayoutEffect(() => {
+        const element = table.current;
+        const box = element?.parentElement;
+        if (!element || !box || !ready) {
+            return undefined;
+        }
+        const freeze = (): void => {
+            const heads = Array.from(element.tHead?.rows[0]?.cells ?? []);
+            element.style.tableLayout = '';
+            heads.forEach((head) => {
+                head.style.width = '';
+            });
+            const widths = heads.map((head) => head.getBoundingClientRect().width);
+            heads.forEach((head, index) => {
+                head.style.width = `${widths[index]}px`;
+            });
+            element.style.tableLayout = 'fixed';
+        };
+        freeze();
+        let width = box.clientWidth;
+        const observer = new ResizeObserver(() => {
+            if (Math.abs(box.clientWidth - width) > 1) {
+                width = box.clientWidth;
+                freeze();
+            }
+        });
+        observer.observe(box);
+        return () => observer.disconnect();
+    }, [ready]);
 }

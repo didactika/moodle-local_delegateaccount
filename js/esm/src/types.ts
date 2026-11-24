@@ -36,6 +36,14 @@ export interface PersonRow {
     user: Person;
     activecount: number;
     scheduledcount: number;
+    /** The first accounts the person is using now, with the size of their pictures. */
+    accounts: Array<Person & {size: number}>;
+    /** How many more accounts the person is using now. */
+    moreaccounts: number;
+    /** The names of every account the person is using now. */
+    accountnames: string;
+    /** The next end or start of a delegation of the person: kind is empty when none is planned. */
+    next: {kind: string; label: string; relative: string; tone: string};
     url: string;
     cancreate: boolean;
     openlabel: string;

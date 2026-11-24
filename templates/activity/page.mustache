@@ -25,7 +25,6 @@
 
     Example context (json):
     {
-        "backurl": "https://moodle.example/local/delegateaccount/pages/delegation.php?realuserid=7&delegationid=3",
         "subtitle": "What Jane Doe did as John Smith",
         "period": "From 1 November 2026 to No end date",
         "delegateduser": {
@@ -40,14 +39,13 @@
     }
 }}
 <div class="lda">
-    <a class="btn btn-link px-0" href="{{backurl}}">{{#pix}}i/previous, core{{/pix}} {{#str}}delegation_details, local_delegateaccount{{/str}}</a>
-    <header class="dd-page-header">
-        <div class="dd-page-header-row">
-            <div class="dd-page-header-main">
+    <header class="d-grid gap-3 pb-3 border-bottom">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
                 {{#delegateduser}}{{> local_delegateaccount/shared/avatar }}{{/delegateduser}}
                 <div>
-                    <p class="dd-page-title">{{subtitle}}</p>
-                    <p class="dd-page-subtitle">{{period}}</p>
+                    <p class="h5 fw-bold mb-0">{{subtitle}}</p>
+                    <p class="text-muted mb-0">{{period}}</p>
                 </div>
             </div>
         </div>

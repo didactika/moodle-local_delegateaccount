@@ -2,10 +2,13 @@
 /* Moodle 4.0 and later cores disagree on decimal formatting; use the current leading-zero style. */
 /* stylelint-disable number-leading-zero */
 
+/* stylelint-disable max-line-length */
+
 .lda,
 .path-local-delegateaccount .modal,
 .path-admin-local-delegateaccount .modal,
-#page-admin-setting-local_delegateaccount_settings .modal {
+#page-admin-setting-local_delegateaccount_settings .modal,
+#page-admin-setting-local_delegateaccount_settings #region-main {
     --dd-primary: var(--bs-primary, var(--primary, #0f6cbf));
     --dd-secondary: var(--bs-secondary, var(--secondary, #6a737b));
     --dd-success: var(--bs-success, var(--success, #357a32));
@@ -39,64 +42,73 @@
 
 .lda .btn,
 .lda .badge,
-.lda .dd-tile,
+.lda .icon-box,
 .path-local-delegateaccount .modal .btn,
 .path-local-delegateaccount .modal .badge,
-.path-local-delegateaccount .modal .dd-tile,
+.path-local-delegateaccount .modal .icon-box,
 .path-admin-local-delegateaccount .modal .btn,
 .path-admin-local-delegateaccount .modal .badge,
-.path-admin-local-delegateaccount .modal .dd-tile,
+.path-admin-local-delegateaccount .modal .icon-box,
 #page-admin-setting-local_delegateaccount_settings .modal .btn,
 #page-admin-setting-local_delegateaccount_settings .modal .badge,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-tile {
+#page-admin-setting-local_delegateaccount_settings .modal .icon-box,
+#page-admin-setting-local_delegateaccount_settings #region-main .btn,
+#page-admin-setting-local_delegateaccount_settings #region-main .badge,
+#page-admin-setting-local_delegateaccount_settings #region-main .icon-box {
     --dd-c: var(--dd-primary);
 }
 
 .lda [class*=-primary],
 .path-local-delegateaccount .modal [class*=-primary],
 .path-admin-local-delegateaccount .modal [class*=-primary],
-#page-admin-setting-local_delegateaccount_settings .modal [class*=-primary] {
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-primary],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-primary] {
     --dd-c: var(--dd-primary);
 }
 
 .lda [class*=-secondary],
 .path-local-delegateaccount .modal [class*=-secondary],
 .path-admin-local-delegateaccount .modal [class*=-secondary],
-#page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary] {
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-secondary] {
     --dd-c: var(--dd-secondary);
 }
 
 .lda [class*=-success],
 .path-local-delegateaccount .modal [class*=-success],
 .path-admin-local-delegateaccount .modal [class*=-success],
-#page-admin-setting-local_delegateaccount_settings .modal [class*=-success] {
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-success],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-success] {
     --dd-c: var(--dd-success);
 }
 
 .lda [class*=-info],
 .path-local-delegateaccount .modal [class*=-info],
 .path-admin-local-delegateaccount .modal [class*=-info],
-#page-admin-setting-local_delegateaccount_settings .modal [class*=-info] {
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-info],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-info] {
     --dd-c: var(--dd-info);
 }
 
 .lda [class*=-warning],
 .path-local-delegateaccount .modal [class*=-warning],
 .path-admin-local-delegateaccount .modal [class*=-warning],
-#page-admin-setting-local_delegateaccount_settings .modal [class*=-warning] {
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-warning],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-warning] {
     --dd-c: var(--dd-warning);
 }
 
 .lda [class*=-danger],
 .path-local-delegateaccount .modal [class*=-danger],
 .path-admin-local-delegateaccount .modal [class*=-danger],
-#page-admin-setting-local_delegateaccount_settings .modal [class*=-danger] {
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-danger],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-danger] {
     --dd-c: var(--dd-danger);
 }
 
 .lda .btn,
 .lda .badge,
-.lda .dd-tile,
+.lda .icon-box,
 .lda [class*=-primary],
 .lda [class*=-secondary],
 .lda [class*=-success],
@@ -105,7 +117,7 @@
 .lda [class*=-danger],
 .path-local-delegateaccount .modal .btn,
 .path-local-delegateaccount .modal .badge,
-.path-local-delegateaccount .modal .dd-tile,
+.path-local-delegateaccount .modal .icon-box,
 .path-local-delegateaccount .modal [class*=-primary],
 .path-local-delegateaccount .modal [class*=-secondary],
 .path-local-delegateaccount .modal [class*=-success],
@@ -114,7 +126,7 @@
 .path-local-delegateaccount .modal [class*=-danger],
 .path-admin-local-delegateaccount .modal .btn,
 .path-admin-local-delegateaccount .modal .badge,
-.path-admin-local-delegateaccount .modal .dd-tile,
+.path-admin-local-delegateaccount .modal .icon-box,
 .path-admin-local-delegateaccount .modal [class*=-primary],
 .path-admin-local-delegateaccount .modal [class*=-secondary],
 .path-admin-local-delegateaccount .modal [class*=-success],
@@ -123,13 +135,22 @@
 .path-admin-local-delegateaccount .modal [class*=-danger],
 #page-admin-setting-local_delegateaccount_settings .modal .btn,
 #page-admin-setting-local_delegateaccount_settings .modal .badge,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-tile,
+#page-admin-setting-local_delegateaccount_settings .modal .icon-box,
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-primary],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-success],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-info],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-warning],
-#page-admin-setting-local_delegateaccount_settings .modal [class*=-danger] {
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-danger],
+#page-admin-setting-local_delegateaccount_settings #region-main .btn,
+#page-admin-setting-local_delegateaccount_settings #region-main .badge,
+#page-admin-setting-local_delegateaccount_settings #region-main .icon-box,
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-primary],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-secondary],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-success],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-info],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-warning],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-danger] {
     --dd-c-soft: color-mix(in srgb, var(--dd-c) 10%, var(--dd-surface));
     --dd-c-soft-2: color-mix(in srgb, var(--dd-c) 18%, var(--dd-surface));
     --dd-c-ink: color-mix(in srgb, var(--dd-c) 55%, var(--dd-ink));
@@ -138,7 +159,8 @@
 .lda [class*=-secondary],
 .path-local-delegateaccount .modal [class*=-secondary],
 .path-admin-local-delegateaccount .modal [class*=-secondary],
-#page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary] {
+#page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary],
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-secondary] {
     --dd-c-soft: color-mix(in srgb, var(--dd-c) 24%, var(--dd-surface));
     --dd-c-soft-2: color-mix(in srgb, var(--dd-c) 36%, var(--dd-surface));
     --dd-c-ink: color-mix(in srgb, var(--dd-c) 18%, var(--dd-ink));
@@ -146,139 +168,174 @@
 
 .lda {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.25rem;
     min-width: 0;
 }
 
-.lda .dd-page-header {
+.lda .d-grid {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.lda > [data-region=cards].row {
     display: grid;
-    gap: 0.75rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--dd-hairline);
-}
-
-.lda .dd-page-header-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1.5rem;
-}
-
-.lda .dd-page-header-main {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
-    min-width: 0;
-}
-
-.lda .dd-page-title {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
     margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 1.25;
-    color: var(--dd-ink);
 }
 
-.lda .dd-page-subtitle {
+.lda > [data-region=cards].row > [class*=col-] {
+    width: auto;
+    max-width: none;
     margin: 0;
-    color: var(--dd-muted);
-    font-size: 0.9375rem;
+    padding: 0;
 }
 
-.lda .dd-page-actions {
-    display: flex;
-    flex-wrap: wrap;
+@media (min-width: 992px) {
+
+    .lda > [data-region=cards].row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.lda [data-region=account-cards].row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    margin: 0;
+}
+
+.lda [data-region=account-cards].row > li {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 576px) {
+
+    .lda [data-region=account-cards].row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1200px) {
+
+    .lda [data-region=account-cards].row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.lda > [data-region=legend].row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+}
+
+.lda > [data-region=legend].row > [class*=col-] {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 576px) {
+
+    .lda > [data-region=legend].row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 992px) {
+
+    .lda > [data-region=legend].row {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.lda [data-region=accounts][data-region=accounts] {
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
 }
 
-.lda .nav-tabs {
+.lda [data-region=accounts][data-region=accounts] > .userinitials,
+.lda [data-region=accounts][data-region=accounts] > .userpicture {
+    flex: none;
+    margin: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--dd-surface);
+}
+
+.lda [data-region=accounts][data-region=accounts] > * + .userinitials,
+.lda [data-region=accounts][data-region=accounts] > * + .userpicture {
+    margin-inline-start: -0.25rem;
+}
+
+.lda .nav-tabs.nav-tabs {
+    flex-wrap: nowrap;
     gap: 0.25rem;
-    border-bottom: 1px solid var(--dd-hairline);
-}
-
-.lda .nav-tabs .nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: -1px;
-    padding: 0.625rem 1rem;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
     border: 0;
-    border-bottom: 2px solid transparent;
-    border-radius: var(--dd-radius-sm) var(--dd-radius-sm) 0 0;
-    background: none;
-    color: var(--dd-muted);
-    font-weight: 500;
-    transition: border-color var(--dd-ease), background-color var(--dd-ease), color var(--dd-ease);
+    background-color: transparent;
+    box-shadow: inset 0 -1px 0 var(--dd-hairline);
+    scrollbar-width: none;
 }
 
-.lda .nav-tabs .nav-link:hover {
-    border-bottom-color: var(--dd-line);
-    color: var(--dd-ink);
+.lda .nav-tabs.nav-tabs::-webkit-scrollbar {
+    display: none;
 }
 
-.lda .nav-tabs .nav-link.active {
-    border-bottom-color: var(--dd-primary);
-    background-color: var(--dd-primary-soft);
-    color: var(--dd-primary-ink);
-    font-weight: 600;
+.lda .nav-tabs.nav-tabs .nav-item {
+    flex: none;
 }
 
-.lda .dd-chips {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.lda .dd-chip {
+.lda .nav-tabs.nav-tabs .nav-link.nav-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.4375rem;
-    min-height: 2rem;
-    padding: 0.1875rem 0.75rem;
-    border: 1px solid var(--dd-line);
-    border-radius: 999px;
-    background: var(--dd-surface);
-    color: var(--dd-ink);
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.4;
-    cursor: pointer;
-    transition: background-color var(--dd-ease), border-color var(--dd-ease), color var(--dd-ease);
-}
-
-.lda .dd-chip:hover {
-    border-color: var(--dd-line-hover);
-    background: var(--dd-surface-2);
-}
-
-.lda .dd-chip:focus-visible {
-    outline: 0;
-    box-shadow: 0 0 0 3px var(--dd-ring);
-}
-
-.lda .dd-chip[aria-pressed=true] {
-    border-color: var(--dd-primary);
-    background: var(--dd-primary-soft);
-    color: var(--dd-primary-ink);
-    font-weight: 600;
-}
-
-.lda .dd-chip[aria-pressed=true] .dd-chip-count {
-    background: var(--dd-primary);
-    color: #fff;
-}
-
-.lda .dd-chip-count {
-    padding: 0 0.4rem;
-    border-radius: 999px;
-    background: var(--dd-surface-3);
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
     color: var(--dd-muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: box-shadow var(--dd-ease), color var(--dd-ease);
+}
+
+.lda .nav-tabs.nav-tabs .nav-link.nav-link:hover {
+    box-shadow: inset 0 -2px 0 var(--dd-line);
+    color: var(--dd-ink);
+}
+
+.lda .nav-tabs.nav-tabs .nav-link.nav-link:is(:focus, :focus-visible, :active, .focus):not(.active) {
+    /* stylelint-disable-next-line declaration-no-important */
+    outline: 0 !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    background: none !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    box-shadow: inset 0 -2px 0 var(--dd-line) !important;
+    color: var(--dd-ink);
+}
+
+.lda .nav-tabs.nav-tabs .nav-link.nav-link.active,
+.lda .nav-tabs.nav-tabs .nav-link.nav-link.active:is(:hover, :focus, :focus-visible, :active, .focus) {
+    /* stylelint-disable-next-line declaration-no-important */
+    border: 0 !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    outline: 0 !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    background: none !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    box-shadow: inset 0 -3px 0 var(--dd-primary) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--dd-primary-ink) !important;
 }
 
 .lda .card {
@@ -300,26 +357,30 @@
     font-weight: 700;
 }
 
-.lda .table-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1rem;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--dd-hairline);
+.lda [data-region=filters] {
+    flex-wrap: nowrap;
 }
 
-.lda .table-toolbar-start,
-.lda .table-toolbar-end {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
+.lda [data-region=filters] > :first-child {
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    min-width: 0;
 }
 
-.lda .table-toolbar-start {
-    flex: 1 1 18rem;
+.lda [data-region=filters] > :first-child > [role=search] {
+    flex: 1 1 10rem;
+    min-width: 10rem;
+}
+
+.lda [data-region=filters] > :last-child:not(:first-child) {
+    flex: none;
+}
+
+@media (max-width: 400px) {
+
+    .lda [data-region=filters] > :first-child > [role=search] {
+        min-width: 7rem;
+    }
 }
 
 .lda .table-responsive {
@@ -334,6 +395,7 @@
 .lda .table-responsive[data-region=tablewrap] {
     block-size: var(--dd-table-h);
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .lda .table-responsive[data-region=tablewrap] thead th {
@@ -346,7 +408,7 @@
 .lda [data-region=empty]:not([hidden]),
 .lda [data-region=error]:not([hidden]) {
     display: grid;
-    min-block-size: var(--dd-table-h);
+    min-block-size: calc(var(--dd-table-h) + var(--dd-foot-h, 0px));
     place-content: center;
 }
 
@@ -378,24 +440,25 @@
     font-weight: 600;
 }
 
-.lda .table tbody tr:last-child > * {
-    border-bottom: 0;
-}
-
 .lda .table tbody tr:hover > * {
     background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
 }
 
-.lda .table tbody tr.table-active > * {
-    background-color: var(--dd-primary-soft);
+.lda .table tbody tr:last-child > * {
+    border-bottom: 1px solid var(--dd-hairline);
 }
 
-.lda .table .table-select {
+.lda .table tbody tr.table-active > * {
+    background-color: var(--dd-primary-soft);
+    box-shadow: none;
+}
+
+.lda .table [data-column=select] {
     width: 2.75rem;
     padding-right: 0;
 }
 
-.lda .table .table-select .form-check-input {
+.lda .table [data-column=select] .form-check-input {
     position: static;
     display: block;
     width: 1.125rem;
@@ -404,7 +467,7 @@
     cursor: pointer;
 }
 
-.lda .table .table-actions {
+.lda .table [data-column=actions] {
     width: 1%;
     text-align: right;
     white-space: nowrap;
@@ -420,7 +483,7 @@
     max-width: 16rem;
 }
 
-.lda .table-sort {
+.lda thead th > .btn.btn-link {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
@@ -434,7 +497,7 @@
     cursor: pointer;
 }
 
-.lda .table-sort::after {
+.lda thead th > .btn.btn-link::after {
     content: "";
     flex: none;
     width: 0.4375rem;
@@ -446,15 +509,15 @@
     transition: transform 200ms cubic-bezier(0.2, 0, 0, 1), opacity 150ms;
 }
 
-.lda .table-sort:hover {
+.lda thead th > .btn.btn-link:hover {
     color: var(--dd-ink);
 }
 
-.lda .table-sort:hover::after {
+.lda thead th > .btn.btn-link:hover::after {
     opacity: 0.8;
 }
 
-.lda .table-sort:focus-visible {
+.lda thead th > .btn.btn-link:focus-visible {
     outline: 0;
     border-radius: 0.25rem;
     box-shadow: 0 0 0 3px var(--dd-ring);
@@ -464,104 +527,29 @@
     color: var(--dd-ink);
 }
 
-.lda th[aria-sort] .table-sort {
+.lda th[aria-sort] > .btn.btn-link {
     color: var(--dd-primary-ink);
 }
 
-.lda th[aria-sort] .table-sort::after {
+.lda th[aria-sort] > .btn.btn-link::after {
     opacity: 1;
     color: var(--dd-primary);
 }
 
-.lda th[aria-sort=ascending] .table-sort::after {
+.lda th[aria-sort=ascending] > .btn.btn-link::after {
     transform: translateY(2px) rotate(-135deg);
 }
 
-.lda .table-foot {
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--dd-hairline);
-}
-
-.lda .dd-pager {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1.5rem;
-    color: var(--dd-muted);
-    font-size: 0.875rem;
-}
-
-.lda .dd-pager-size {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-}
-
-.lda .dd-pager-size select {
-    width: auto;
-}
-
-.lda .dd-pager-end {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1rem;
-}
-
-.lda .dd-pager-range {
-    color: var(--dd-ink);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-}
-
-.lda .dd-pager-arrows {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.lda .dd-skeleton {
+.lda .placeholder {
     display: block;
+    min-height: 0;
+    opacity: 1;
+    cursor: default;
     height: 0.875rem;
     border-radius: 0.375rem;
     background: linear-gradient(90deg, var(--dd-hairline) 0%, var(--dd-surface-3) 50%, var(--dd-hairline) 100%);
     background-size: 200% 100%;
     animation: lda-shimmer 1.4s linear infinite;
-}
-
-.lda .dd-empty {
-    display: grid;
-    justify-items: center;
-    gap: 0.5rem;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-}
-
-.lda .dd-empty .dd-tile {
-    width: 3.5rem;
-    height: 3.5rem;
-    margin-bottom: 0.5rem;
-    border-radius: 1rem;
-    font-size: 1.5rem;
-}
-
-.lda .dd-empty .btn {
-    margin-top: 0.75rem;
-}
-
-.lda .dd-empty-title {
-    margin: 0;
-    color: var(--dd-ink);
-    font-size: 1.0625rem;
-    font-weight: 700;
-}
-
-.lda .dd-empty-text {
-    max-width: 28rem;
-    margin: 0;
-    color: var(--dd-muted);
-    font-size: 0.9375rem;
-    line-height: 1.5;
 }
 
 .lda .card > .alert {
@@ -581,26 +569,88 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .lda .dd-skeleton {
+    .lda .placeholder {
         animation: none;
     }
 }
 
 @media (max-width: 576px) {
 
-    .lda .dd-searchbox {
+    .lda [role=search] {
         max-width: none;
-    }
-
-    .lda .dd-pager-size {
-        display: none;
     }
 }
 
-.lda .dd-searchbox,
-.path-local-delegateaccount .modal .dd-searchbox,
-.path-admin-local-delegateaccount .modal .dd-searchbox,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox {
+@media (max-width: 767.98px) {
+
+    .lda {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lda .table-responsive .table th,
+    .lda .table-responsive .table td {
+        white-space: nowrap;
+    }
+
+    .lda .table-responsive .table th:first-child,
+    .lda .table-responsive .table td:first-child {
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 1;
+        background-color: var(--dd-surface);
+        box-shadow: inset -1px 0 0 var(--dd-hairline, rgba(0, 0, 0, 0.08));
+    }
+
+    .lda .table-responsive .table thead th:first-child {
+        z-index: 2;
+    }
+
+    .lda .table-responsive .table th[data-column=select],
+    .lda .table-responsive .table td[data-column=select] {
+        width: 2.75rem;
+        min-width: 2.75rem;
+        max-width: 2.75rem;
+        box-shadow: none;
+    }
+
+    .lda .table-responsive .table :is(th, td)[data-column=select] + :is(th, td) {
+        position: sticky;
+        inset-inline-start: 2.75rem;
+        z-index: 1;
+        padding-inline-start: 0.5rem;
+        background-color: var(--dd-surface);
+        box-shadow: inset -1px 0 0 var(--dd-hairline, rgba(0, 0, 0, 0.08));
+    }
+
+    .lda .table-responsive .table thead th[data-column=select] + th {
+        z-index: 2;
+    }
+
+    .lda .table-responsive .table th:first-child:not([data-column=select]),
+    .lda .table-responsive .table td:first-child:not([data-column=select]),
+    .lda .table-responsive .table :is(th, td)[data-column=select] + :is(th, td) {
+        max-width: 12rem;
+        overflow: hidden;
+    }
+
+    .lda .table-responsive .table th:first-child:not([data-column=select]) .d-flex.flex-column,
+    .lda .table-responsive .table td:first-child:not([data-column=select]) .d-flex.flex-column,
+    .lda .table-responsive .table :is(th, td)[data-column=select] + :is(th, td) .d-flex.flex-column {
+        min-width: 0;
+    }
+
+    .lda .table-responsive .table th:first-child:not([data-column=select]) .d-flex.flex-column > *,
+    .lda .table-responsive .table td:first-child:not([data-column=select]) .d-flex.flex-column > *,
+    .lda .table-responsive .table :is(th, td)[data-column=select] + :is(th, td) .d-flex.flex-column > * {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.lda [role=search],
+.path-local-delegateaccount .modal [role=search],
+.path-admin-local-delegateaccount .modal [role=search],
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] {
     position: relative;
     display: flex;
     align-items: center;
@@ -608,17 +658,17 @@
     max-width: 22rem;
 }
 
-.lda .dd-searchbox.mw-100,
-.path-local-delegateaccount .modal .dd-searchbox.mw-100,
-.path-admin-local-delegateaccount .modal .dd-searchbox.mw-100,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox.mw-100 {
+.lda [role=search].mw-100,
+.path-local-delegateaccount .modal [role=search].mw-100,
+.path-admin-local-delegateaccount .modal [role=search].mw-100,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search].mw-100 {
     max-width: 100%;
 }
 
-.lda .dd-searchbox .icon,
-.path-local-delegateaccount .modal .dd-searchbox .icon,
-.path-admin-local-delegateaccount .modal .dd-searchbox .icon,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox .icon {
+.lda [role=search] .icon,
+.path-local-delegateaccount .modal [role=search] .icon,
+.path-admin-local-delegateaccount .modal [role=search] .icon,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] .icon {
     position: absolute;
     left: 0.75rem;
     margin: 0;
@@ -626,22 +676,101 @@
     pointer-events: none;
 }
 
-.lda .dd-searchbox .form-control,
-.path-local-delegateaccount .modal .dd-searchbox .form-control,
-.path-admin-local-delegateaccount .modal .dd-searchbox .form-control,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox .form-control {
+.lda [role=search] .form-control,
+.path-local-delegateaccount .modal [role=search] .form-control,
+.path-admin-local-delegateaccount .modal [role=search] .form-control,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] .form-control {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
     min-height: var(--dd-h);
     padding-left: 2.25rem;
     border-color: var(--dd-line);
     border-radius: 999px;
 }
 
-.lda .dd-select,
-.path-local-delegateaccount .modal .dd-select,
-.path-admin-local-delegateaccount .modal .dd-select,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-select {
+.lda [role=search] input[type=search]::-webkit-search-cancel-button,
+.path-local-delegateaccount .modal [role=search] input[type=search]::-webkit-search-cancel-button,
+.path-admin-local-delegateaccount .modal [role=search] input[type=search]::-webkit-search-cancel-button,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] input[type=search]::-webkit-search-cancel-button {
+    display: none;
+    appearance: none;
+}
+
+.lda [role=search] input[type=search]:has(~ [data-action=clear-search]:not([hidden])),
+.path-local-delegateaccount .modal [role=search] input[type=search]:has(~ [data-action=clear-search]:not([hidden])),
+.path-admin-local-delegateaccount .modal [role=search] input[type=search]:has(~ [data-action=clear-search]:not([hidden])),
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] input[type=search]:has(~ [data-action=clear-search]:not([hidden])) {
+    padding-right: 2.5rem;
+}
+
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0.375rem;
+    margin-block: auto;
+    width: 1.5rem;
+    min-width: 0;
+    height: 1.5rem;
+    padding: 0;
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--dd-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transform: none;
+}
+
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon:active,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:active,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:active,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:active {
+    transform: none;
+}
+
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover {
+    background-color: color-mix(in srgb, var(--dd-ink) 10%, transparent);
+    color: var(--dd-ink);
+}
+
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon:focus-visible,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus-visible,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus-visible {
+    box-shadow: 0 0 0 2px var(--dd-ring);
+}
+
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon .icon,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon .icon,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon .icon,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon .icon {
+    position: static;
+    margin: 0;
+    color: inherit;
+    pointer-events: none;
+}
+
+.lda :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select),
+.path-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select),
+.path-admin-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select),
+#page-admin-setting-local_delegateaccount_settings .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select) {
     width: auto;
-    min-width: 12rem;
+    min-width: 0;
     max-width: 20rem;
     min-height: var(--dd-h);
     padding-left: 1rem;
@@ -654,30 +783,111 @@
     transition: border-color var(--dd-ease), box-shadow var(--dd-ease);
 }
 
-.lda .dd-select:hover,
-.path-local-delegateaccount .modal .dd-select:hover,
-.path-admin-local-delegateaccount .modal .dd-select:hover,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-select:hover {
+.lda :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(select):not(.form-select-sm),
+.path-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(select):not(.form-select-sm),
+.path-admin-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(select):not(.form-select-sm),
+#page-admin-setting-local_delegateaccount_settings .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(select):not(.form-select-sm) {
+    min-width: 12rem;
+}
+
+.lda :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):hover,
+.path-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):hover,
+.path-admin-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):hover,
+#page-admin-setting-local_delegateaccount_settings .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):hover {
     border-color: var(--dd-line-hover);
 }
 
-.lda .dd-select:focus,
-.path-local-delegateaccount .modal .dd-select:focus,
-.path-admin-local-delegateaccount .modal .dd-select:focus,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-select:focus {
+.lda :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):focus,
+.path-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):focus,
+.path-admin-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):focus,
+#page-admin-setting-local_delegateaccount_settings .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):focus {
     border-color: var(--dd-primary);
     outline: 0;
     box-shadow: 0 0 0 3px var(--dd-ring);
 }
 
-.lda .dd-select.border-primary,
-.path-local-delegateaccount .modal .dd-select.border-primary,
-.path-admin-local-delegateaccount .modal .dd-select.border-primary,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-select.border-primary {
+.lda :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary,
+.path-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary,
+.path-admin-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary,
+#page-admin-setting-local_delegateaccount_settings .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary {
     border-color: var(--dd-primary);
     background-color: var(--dd-primary-soft);
     color: var(--dd-primary-ink);
     font-weight: 600;
+}
+
+.lda :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary,
+.path-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary,
+.path-admin-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary,
+#page-admin-setting-local_delegateaccount_settings .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary {
+    padding-right: 2.5rem;
+    background-image: none;
+}
+
+.lda :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(button),
+.path-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(button),
+.path-admin-local-delegateaccount .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(button),
+#page-admin-setting-local_delegateaccount_settings .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(button) {
+    display: block;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lda .dropdown,
+.path-local-delegateaccount .modal .dropdown,
+.path-admin-local-delegateaccount .modal .dropdown,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+}
+
+.lda [data-menu-clear],
+.path-local-delegateaccount .modal [data-menu-clear],
+.path-admin-local-delegateaccount .modal [data-menu-clear],
+#page-admin-setting-local_delegateaccount_settings .modal [data-menu-clear] {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--dd-primary-ink);
+    transform: translateY(-50%);
+    transition: background-color var(--dd-ease);
+}
+
+.lda [data-menu-clear] .icon,
+.path-local-delegateaccount .modal [data-menu-clear] .icon,
+.path-admin-local-delegateaccount .modal [data-menu-clear] .icon,
+#page-admin-setting-local_delegateaccount_settings .modal [data-menu-clear] .icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.lda [data-menu-clear]:hover,
+.path-local-delegateaccount .modal [data-menu-clear]:hover,
+.path-admin-local-delegateaccount .modal [data-menu-clear]:hover,
+#page-admin-setting-local_delegateaccount_settings .modal [data-menu-clear]:hover {
+    background-color: color-mix(in srgb, var(--dd-primary) 14%, transparent);
+}
+
+.lda [data-menu-clear]:focus-visible,
+.path-local-delegateaccount .modal [data-menu-clear]:focus-visible,
+.path-admin-local-delegateaccount .modal [data-menu-clear]:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal [data-menu-clear]:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
 }
 
 .lda .btn-icon,
@@ -797,101 +1007,49 @@
     pointer-events: auto;
 }
 
-.lda .table-actions,
-.path-local-delegateaccount .modal .table-actions,
-.path-admin-local-delegateaccount .modal .table-actions,
-#page-admin-setting-local_delegateaccount_settings .modal .table-actions {
+.lda [data-column=actions],
+.path-local-delegateaccount .modal [data-column=actions],
+.path-admin-local-delegateaccount .modal [data-column=actions],
+#page-admin-setting-local_delegateaccount_settings .modal [data-column=actions] {
     white-space: nowrap;
 }
 
-.lda .table-actions .btn-icon + .btn-icon,
-.path-local-delegateaccount .modal .table-actions .btn-icon + .btn-icon,
-.path-admin-local-delegateaccount .modal .table-actions .btn-icon + .btn-icon,
-#page-admin-setting-local_delegateaccount_settings .modal .table-actions .btn-icon + .btn-icon {
+.lda [data-column=actions] .btn-icon + .btn-icon,
+.path-local-delegateaccount .modal [data-column=actions] .btn-icon + .btn-icon,
+.path-admin-local-delegateaccount .modal [data-column=actions] .btn-icon + .btn-icon,
+#page-admin-setting-local_delegateaccount_settings .modal [data-column=actions] .btn-icon + .btn-icon {
     margin-left: 0.25rem;
 }
 
-.lda .btn.btn-tonal,
-.path-local-delegateaccount .modal .btn.btn-tonal,
-.path-admin-local-delegateaccount .modal .btn.btn-tonal,
-#page-admin-setting-local_delegateaccount_settings .modal .btn.btn-tonal {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    border-color: transparent;
-    background-color: var(--dd-c-soft);
-    box-shadow: none;
-    color: var(--dd-c-ink);
-}
-
-.lda .btn.btn-tonal:hover,
-.lda .btn.btn-tonal:focus-visible,
-.path-local-delegateaccount .modal .btn.btn-tonal:hover,
-.path-local-delegateaccount .modal .btn.btn-tonal:focus-visible,
-.path-admin-local-delegateaccount .modal .btn.btn-tonal:hover,
-.path-admin-local-delegateaccount .modal .btn.btn-tonal:focus-visible,
-#page-admin-setting-local_delegateaccount_settings .modal .btn.btn-tonal:hover,
-#page-admin-setting-local_delegateaccount_settings .modal .btn.btn-tonal:focus-visible {
+.lda .icon-box,
+.path-local-delegateaccount .modal .icon-box,
+.path-admin-local-delegateaccount .modal .icon-box,
+#page-admin-setting-local_delegateaccount_settings .modal .icon-box {
+    flex: none;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    border-radius: 1rem;
     background-color: var(--dd-c-soft-2);
     color: var(--dd-c-ink);
-}
-
-.lda .btn.btn-tonal .icon,
-.path-local-delegateaccount .modal .btn.btn-tonal .icon,
-.path-admin-local-delegateaccount .modal .btn.btn-tonal .icon,
-#page-admin-setting-local_delegateaccount_settings .modal .btn.btn-tonal .icon {
-    margin: 0;
-    color: inherit;
-}
-
-.lda .badge-dot::before,
-.path-local-delegateaccount .modal .badge-dot::before,
-.path-admin-local-delegateaccount .modal .badge-dot::before,
-#page-admin-setting-local_delegateaccount_settings .modal .badge-dot::before {
-    content: "";
-    flex: none;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background-color: var(--dd-c);
-}
-
-.lda .dd-tile,
-.path-local-delegateaccount .modal .dd-tile,
-.path-admin-local-delegateaccount .modal .dd-tile,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-tile {
-    display: inline-grid;
-    flex: none;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 0.75rem;
-    background-color: var(--dd-c-soft-2);
-    color: var(--dd-c-ink);
-    font-size: 1.0625rem;
+    font-size: 1.375rem;
     line-height: 1;
 }
 
-.lda .dd-tile .icon,
-.path-local-delegateaccount .modal .dd-tile .icon,
-.path-admin-local-delegateaccount .modal .dd-tile .icon,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-tile .icon {
+.lda .icon-box .icon,
+.path-local-delegateaccount .modal .icon-box .icon,
+.path-admin-local-delegateaccount .modal .icon-box .icon,
+#page-admin-setting-local_delegateaccount_settings .modal .icon-box .icon {
+    width: auto;
+    height: auto;
     margin: 0;
     color: inherit;
+    font-size: inherit;
 }
 
-.lda .dd-tile-lg,
-.path-local-delegateaccount .modal .dd-tile-lg,
-.path-admin-local-delegateaccount .modal .dd-tile-lg,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-tile-lg {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 1rem;
-    font-size: 1.375rem;
-}
-
-.lda .dd-floatbar {
+.lda [data-region=floatbar].card {
     position: fixed;
+    flex-direction: row;
     bottom: 1.5rem;
     left: 50%;
     z-index: 1030;
@@ -908,69 +1066,8 @@
     animation: lda-rise 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-.lda .dd-floatbar[hidden] {
+.lda [data-region=floatbar].card[hidden] {
     display: none;
-}
-
-.lda .dd-floatbar .dd-floatbar-count {
-    color: var(--dd-ink);
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.lda .dd-floatbar .dd-floatbar-all {
-    padding: 0;
-    font-size: 0.875rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.lda .dd-floatbar .dd-floatbar-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-}
-
-.lda .dd-floatbar .dd-floatbar-clear {
-    position: relative;
-    display: inline-grid;
-    flex: none;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
-    padding: 0;
-    border: 0;
-    border-radius: 0.5rem;
-    background: transparent;
-    color: var(--dd-muted);
-    transition: background-color var(--dd-ease), color var(--dd-ease);
-}
-
-.lda .dd-floatbar .dd-floatbar-clear::before,
-.lda .dd-floatbar .dd-floatbar-clear::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0.75rem;
-    height: 2px;
-    border-radius: 2px;
-    background: currentColor;
-}
-
-.lda .dd-floatbar .dd-floatbar-clear::before {
-    transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.lda .dd-floatbar .dd-floatbar-clear::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-.lda .dd-floatbar .dd-floatbar-clear:hover,
-.lda .dd-floatbar .dd-floatbar-clear:focus-visible {
-    outline: 0;
-    background-color: var(--dd-primary-soft);
-    color: var(--dd-primary-ink);
 }
 
 @keyframes lda-rise {
@@ -988,24 +1085,29 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .lda .dd-floatbar {
+    .lda [data-region=floatbar].card {
         animation: none;
     }
 }
 
 @media (max-width: 576px) {
 
-    .lda .dd-floatbar {
+    .lda [data-region=floatbar].card {
+        right: 0.75rem;
+        left: 0.75rem;
         flex-wrap: wrap;
         justify-content: center;
+        max-width: none;
         border-radius: var(--dd-radius-lg);
+        transform: none;
+        animation: none;
     }
 }
 
-.lda .dropdown-menu.dd-select-menu,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu {
+.lda .dropdown-menu.show,
+.path-local-delegateaccount .modal .dropdown-menu.show,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show {
     position: fixed;
     z-index: 1060;
     display: block;
@@ -1022,10 +1124,10 @@
     animation: lda-pop 140ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-.lda .dropdown-menu.dd-select-menu .dropdown-header,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-header,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-header,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-header {
+.lda .dropdown-menu.show .dropdown-header,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-header,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-header,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-header {
     padding: 0.5rem 0.75rem 0.25rem;
     color: var(--dd-muted);
     font-size: 0.75rem;
@@ -1034,10 +1136,10 @@
     text-transform: uppercase;
 }
 
-.lda .dropdown-menu.dd-select-menu .dropdown-item,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item {
+.lda .dropdown-menu.show .dropdown-item,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1054,43 +1156,43 @@
     transition: background-color var(--dd-ease), color var(--dd-ease);
 }
 
-.lda .dropdown-menu.dd-select-menu .dropdown-item + .dropdown-item,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item + .dropdown-item,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item + .dropdown-item,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item + .dropdown-item {
+.lda .dropdown-menu.show .dropdown-item + .dropdown-item,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item + .dropdown-item,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item + .dropdown-item,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item + .dropdown-item {
     margin-top: 2px;
 }
 
-.lda .dropdown-menu.dd-select-menu .dropdown-item:hover,
-.lda .dropdown-menu.dd-select-menu .dropdown-item:focus,
-.lda .dropdown-menu.dd-select-menu .dropdown-item.active,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item:hover,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item:focus,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item.active,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item:hover,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item:focus,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item.active,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item:hover,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item:focus,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item.active {
+.lda .dropdown-menu.show .dropdown-item:hover,
+.lda .dropdown-menu.show .dropdown-item:focus,
+.lda .dropdown-menu.show .dropdown-item.active,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item:hover,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item:focus,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item.active,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item:hover,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item:focus,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item.active,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item:focus,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item.active {
     outline: 0;
     background-color: var(--dd-surface-2);
     color: var(--dd-ink);
 }
 
-.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true],
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true],
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true],
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true] {
+.lda .dropdown-menu.show .dropdown-item[aria-selected=true],
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true],
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true],
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item[aria-selected=true] {
     background-color: var(--dd-primary-soft);
     color: var(--dd-primary-ink);
     font-weight: 600;
 }
 
-.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::after,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::after,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::after,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::after {
+.lda .dropdown-menu.show .dropdown-item[aria-selected=true]::after,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true]::after,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true]::after,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item[aria-selected=true]::after {
     content: "";
     flex: none;
     width: 0.3rem;
@@ -1101,29 +1203,29 @@
     transform: rotate(45deg) translateY(-1px);
 }
 
-.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]:focus,
-.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true].active,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]:focus,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true].active,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]:focus,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true].active,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]:focus,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true].active {
+.lda .dropdown-menu.show .dropdown-item[aria-selected=true]:focus,
+.lda .dropdown-menu.show .dropdown-item[aria-selected=true].active,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true]:focus,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true].active,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true]:focus,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true].active,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item[aria-selected=true]:focus,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item[aria-selected=true].active {
     background-color: var(--dd-primary-soft-2);
 }
 
-.lda .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::before,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::before,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::before,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item[aria-selected=true]::before {
+.lda .dropdown-menu.show .dropdown-item[aria-selected=true]::before,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true]::before,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item[aria-selected=true]::before,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item[aria-selected=true]::before {
     content: none;
     display: none;
 }
 
-.lda .dropdown-menu.dd-select-menu .dropdown-item.disabled,
-.path-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item.disabled,
-.path-admin-local-delegateaccount .modal .dropdown-menu.dd-select-menu .dropdown-item.disabled,
-#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.dd-select-menu .dropdown-item.disabled {
+.lda .dropdown-menu.show .dropdown-item.disabled,
+.path-local-delegateaccount .modal .dropdown-menu.show .dropdown-item.disabled,
+.path-admin-local-delegateaccount .modal .dropdown-menu.show .dropdown-item.disabled,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu.show .dropdown-item.disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -1151,15 +1253,15 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .lda .dd-select-menu,
-    .path-local-delegateaccount .modal .dd-select-menu,
-    .path-admin-local-delegateaccount .modal .dd-select-menu,
-    #page-admin-setting-local_delegateaccount_settings .modal .dd-select-menu {
+    .lda .dropdown-menu,
+    .path-local-delegateaccount .modal .dropdown-menu,
+    .path-admin-local-delegateaccount .modal .dropdown-menu,
+    #page-admin-setting-local_delegateaccount_settings .modal .dropdown-menu {
         animation: none;
     }
 }
 
-.lda .dd-select.form-select-sm {
+.lda :is(.form-select, .custom-select).form-select-sm {
     min-width: 4.75rem;
     min-height: var(--dd-h-sm);
     padding-top: 0.125rem;
@@ -1169,10 +1271,10 @@
 
 /* stylelint-disable declaration-no-important */
 
-.lda .badge.badge-soft,
-.path-local-delegateaccount .modal .badge.badge-soft,
-.path-admin-local-delegateaccount .modal .badge.badge-soft,
-#page-admin-setting-local_delegateaccount_settings .modal .badge.badge-soft {
+.lda .badge,
+.path-local-delegateaccount .modal .badge,
+.path-admin-local-delegateaccount .modal .badge,
+#page-admin-setting-local_delegateaccount_settings .modal .badge {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
@@ -1185,39 +1287,30 @@
     line-height: 1.2;
 }
 
-.lda .badge.badge-outline,
-.path-local-delegateaccount .modal .badge.badge-outline,
-.path-admin-local-delegateaccount .modal .badge.badge-outline,
-#page-admin-setting-local_delegateaccount_settings .modal .badge.badge-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.35em 0.8em;
-    border-radius: 999px;
+.lda .badge.border,
+.path-local-delegateaccount .modal .badge.border,
+.path-admin-local-delegateaccount .modal .badge.border,
+#page-admin-setting-local_delegateaccount_settings .modal .badge.border {
+    border-color: var(--dd-c) !important;
     background-color: transparent !important;
-    box-shadow: inset 0 0 0 1px var(--dd-c);
-    color: var(--dd-c-ink) !important;
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1.2;
 }
 
 /* stylelint-enable declaration-no-important */
 
-.lda .dd-searchbox > span[aria-hidden=true],
-.path-local-delegateaccount .modal .dd-searchbox > span[aria-hidden=true],
-.path-admin-local-delegateaccount .modal .dd-searchbox > span[aria-hidden=true],
-#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox > span[aria-hidden=true] {
+.lda [role=search] > span[aria-hidden=true],
+.path-local-delegateaccount .modal [role=search] > span[aria-hidden=true],
+.path-admin-local-delegateaccount .modal [role=search] > span[aria-hidden=true],
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > span[aria-hidden=true] {
     position: absolute;
     left: 0.75rem;
     color: var(--dd-muted);
     pointer-events: none;
 }
 
-.lda .dd-searchbox > span[aria-hidden=true] .icon,
-.path-local-delegateaccount .modal .dd-searchbox > span[aria-hidden=true] .icon,
-.path-admin-local-delegateaccount .modal .dd-searchbox > span[aria-hidden=true] .icon,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-searchbox > span[aria-hidden=true] .icon {
+.lda [role=search] > span[aria-hidden=true] .icon,
+.path-local-delegateaccount .modal [role=search] > span[aria-hidden=true] .icon,
+.path-admin-local-delegateaccount .modal [role=search] > span[aria-hidden=true] .icon,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > span[aria-hidden=true] .icon {
     position: static;
     margin: 0;
 }
@@ -1256,7 +1349,7 @@
     gap: 0.75rem;
 }
 
-.lda [data-region=filters] label {
+.lda [data-region=filters] label:not(.dropdown-item) {
     display: block;
     margin-bottom: 0.375rem;
     font-size: 0.8125rem;
@@ -1264,124 +1357,17 @@
 }
 
 .lda [data-region=filters] .form-control {
-    min-width: 10rem;
     border-color: var(--dd-line);
 }
 
-.lda .dd-dl {
-    display: grid;
-    grid-template-columns: minmax(7rem, 11rem) 1fr;
-    margin: 0;
+.lda [data-region=filters] .form-control:not([type=search]) {
+    min-width: 10rem;
 }
 
-.lda .dd-dl dt,
-.lda .dd-dl dd {
-    margin: 0;
-    padding: 0.625rem 0;
-    border-bottom: 1px solid var(--dd-hairline);
-}
-
-.lda .dd-dl dt {
-    padding-right: 1rem;
-    color: var(--dd-muted);
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.lda .dd-dl dd {
-    color: var(--dd-ink);
-    font-size: 0.9375rem;
-    overflow-wrap: anywhere;
-}
-
-.lda .dd-dl dt:last-of-type,
-.lda .dd-dl dd:last-of-type {
-    border-bottom: 0;
-}
-
-.lda .dd-timeline {
-    position: relative;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.lda .dd-timeline-item {
-    position: relative;
-    display: grid;
-    gap: 0.125rem;
-    padding: 0 0 1.25rem 1.75rem;
-}
-
-.lda .dd-timeline-item::before {
-    content: "";
-    position: absolute;
-    top: 0.3125rem;
-    left: 0.1875rem;
-    width: 0.75rem;
-    height: 0.75rem;
-    border: 2px solid var(--dd-primary);
-    border-radius: 50%;
-    background: var(--dd-surface);
-}
-
-.lda .dd-timeline-item::after {
-    content: "";
-    position: absolute;
-    top: 1.25rem;
-    bottom: 0.25rem;
-    left: 0.5rem;
-    width: 2px;
-    border-radius: 2px;
-    background: var(--dd-hairline);
-}
-
-.lda .dd-timeline-item:last-child {
-    padding-bottom: 0;
-}
-
-.lda .dd-timeline-item:last-child::after {
-    display: none;
-}
-
-.lda .dd-timeline-item.is-success::before {
-    border-color: var(--dd-success);
-    background: var(--dd-success);
-}
-
-.lda .dd-timeline-item.is-danger::before {
-    border-color: var(--dd-danger);
-    background: var(--dd-danger);
-}
-
-.lda .dd-timeline-title {
-    color: var(--dd-ink);
-    font-size: 0.9375rem;
-    font-weight: 600;
-}
-
-.lda .dd-timeline-meta {
-    color: var(--dd-muted);
-    font-size: 0.8125rem;
-}
-
-@media (max-width: 480px) {
-
-    .lda .dd-dl {
-        grid-template-columns: 1fr;
-    }
-
-    .lda .dd-dl dt {
-        padding-bottom: 0;
-        border-bottom: 0;
-    }
-}
-
-.lda .dd-segmented,
-.path-local-delegateaccount .modal .dd-segmented,
-.path-admin-local-delegateaccount .modal .dd-segmented,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented {
-    display: inline-flex;
+.lda .btn-group.btn-group[role=radiogroup],
+.path-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup],
+.path-admin-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup],
+#page-admin-setting-local_delegateaccount_settings .modal .btn-group.btn-group[role=radiogroup] {
     flex-wrap: wrap;
     gap: 0.125rem;
     padding: 0.1875rem;
@@ -1389,83 +1375,65 @@
     background-color: var(--dd-surface-3);
 }
 
-.lda .dd-segmented button,
-.path-local-delegateaccount .modal .dd-segmented button,
-.path-admin-local-delegateaccount .modal .dd-segmented button,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button {
+.lda .btn-group.btn-group[role=radiogroup] > .btn.btn,
+.path-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn,
+.path-admin-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-group.btn-group[role=radiogroup] > .btn.btn {
+    flex: none;
     display: inline-flex;
     align-items: center;
     gap: 0.4375rem;
     min-height: 1.875rem;
+    margin: 0;
     padding: 0.25rem 0.75rem;
     border: 0;
     border-radius: calc(var(--dd-radius-sm) - 2px);
     background: none;
+    box-shadow: none;
     color: var(--dd-muted);
     font-size: 0.8125rem;
     font-weight: 600;
-    cursor: pointer;
     transition: background-color var(--dd-ease), color var(--dd-ease), box-shadow var(--dd-ease);
 }
 
-.lda .dd-segmented button:hover,
-.path-local-delegateaccount .modal .dd-segmented button:hover,
-.path-admin-local-delegateaccount .modal .dd-segmented button:hover,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button:hover {
+.lda .btn-group.btn-group[role=radiogroup] > .btn.btn:hover,
+.path-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:hover,
+.path-admin-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:hover {
     color: var(--dd-ink);
 }
 
-.lda .dd-segmented button:focus-visible,
-.path-local-delegateaccount .modal .dd-segmented button:focus-visible,
-.path-admin-local-delegateaccount .modal .dd-segmented button:focus-visible,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button:focus-visible {
+.lda .btn-group.btn-group[role=radiogroup] > .btn.btn:focus-visible,
+.path-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:focus-visible,
+.path-admin-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:focus-visible {
     outline: 0;
     box-shadow: 0 0 0 3px var(--dd-ring);
 }
 
-.lda .dd-segmented button:disabled,
-.path-local-delegateaccount .modal .dd-segmented button:disabled,
-.path-admin-local-delegateaccount .modal .dd-segmented button:disabled,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button:disabled {
+.lda .btn-group.btn-group[role=radiogroup] > .btn.btn:disabled,
+.path-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:disabled,
+.path-admin-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:disabled,
+#page-admin-setting-local_delegateaccount_settings .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:disabled {
     cursor: not-allowed;
     opacity: 0.5;
 }
 
-.lda .dd-segmented button[aria-checked=true],
-.lda .dd-segmented button[aria-pressed=true],
-.path-local-delegateaccount .modal .dd-segmented button[aria-checked=true],
-.path-local-delegateaccount .modal .dd-segmented button[aria-pressed=true],
-.path-admin-local-delegateaccount .modal .dd-segmented button[aria-checked=true],
-.path-admin-local-delegateaccount .modal .dd-segmented button[aria-pressed=true],
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[aria-checked=true],
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[aria-pressed=true] {
+.lda .btn-group.btn-group[role=radiogroup] > .btn.btn[aria-checked=true],
+.path-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn[aria-checked=true],
+.path-admin-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn[aria-checked=true],
+#page-admin-setting-local_delegateaccount_settings .modal .btn-group.btn-group[role=radiogroup] > .btn.btn[aria-checked=true] {
     background-color: var(--dd-surface);
     box-shadow: var(--dd-shadow-sm);
     color: var(--dd-ink);
 }
 
-.lda .dd-segmented button[data-tone=allow][aria-checked=true],
-.path-local-delegateaccount .modal .dd-segmented button[data-tone=allow][aria-checked=true],
-.path-admin-local-delegateaccount .modal .dd-segmented button[data-tone=allow][aria-checked=true],
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[data-tone=allow][aria-checked=true] {
-    background-color: color-mix(in srgb, var(--dd-success) 16%, var(--dd-surface));
-    color: color-mix(in srgb, var(--dd-success) 60%, var(--dd-ink));
-}
-
-.lda .dd-segmented button[data-tone=prevent][aria-checked=true],
-.path-local-delegateaccount .modal .dd-segmented button[data-tone=prevent][aria-checked=true],
-.path-admin-local-delegateaccount .modal .dd-segmented button[data-tone=prevent][aria-checked=true],
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[data-tone=prevent][aria-checked=true] {
-    background-color: color-mix(in srgb, var(--dd-warning) 22%, var(--dd-surface));
-    color: color-mix(in srgb, var(--dd-warning) 45%, var(--dd-ink));
-}
-
-.lda .dd-segmented button[data-tone=prohibit][aria-checked=true],
-.path-local-delegateaccount .modal .dd-segmented button[data-tone=prohibit][aria-checked=true],
-.path-admin-local-delegateaccount .modal .dd-segmented button[data-tone=prohibit][aria-checked=true],
-#page-admin-setting-local_delegateaccount_settings .modal .dd-segmented button[data-tone=prohibit][aria-checked=true] {
-    background-color: color-mix(in srgb, var(--dd-danger) 16%, var(--dd-surface));
-    color: color-mix(in srgb, var(--dd-danger) 65%, var(--dd-ink));
+.lda .btn-group.btn-group[role=radiogroup] > .btn.btn:is(.btn-success, .btn-warning, .btn-danger)[aria-checked=true],
+.path-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:is(.btn-success, .btn-warning, .btn-danger)[aria-checked=true],
+.path-admin-local-delegateaccount .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:is(.btn-success, .btn-warning, .btn-danger)[aria-checked=true],
+#page-admin-setting-local_delegateaccount_settings .modal .btn-group.btn-group[role=radiogroup] > .btn.btn:is(.btn-success, .btn-warning, .btn-danger)[aria-checked=true] {
+    background-color: var(--dd-c-soft-2);
+    color: var(--dd-c-ink);
 }
 
 .lda .list-group-flush > .list-group-item,
@@ -1551,7 +1519,6 @@
     overscroll-behavior: contain;
     border-top: 1px solid var(--dd-hairline);
     border-bottom: 1px solid var(--dd-hairline);
-    scrollbar-gutter: stable;
 }
 
 .lda [data-region=capabilities] > [data-region=empty]:not([hidden]),
@@ -1560,14 +1527,6 @@
 #page-admin-setting-local_delegateaccount_settings .modal [data-region=capabilities] > [data-region=empty]:not([hidden]) {
     display: grid;
     place-items: center;
-    min-height: 100%;
-}
-
-.lda [data-region=capabilities] > .dd-empty,
-.path-local-delegateaccount .modal [data-region=capabilities] > .dd-empty,
-.path-admin-local-delegateaccount .modal [data-region=capabilities] > .dd-empty,
-#page-admin-setting-local_delegateaccount_settings .modal [data-region=capabilities] > .dd-empty {
-    justify-content: center;
     min-height: 100%;
 }
 
@@ -1588,10 +1547,10 @@
     border-radius: 0;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border-top: 1px solid var(--dd-line);
-    border-bottom: 1px solid var(--dd-line);
-    background-color: color-mix(in srgb, var(--dd-ink) 14%, var(--dd-surface));
-    color: var(--dd-ink);
+    border-top: 1px solid var(--dd-hairline);
+    border-bottom: 1px solid var(--dd-hairline);
+    background-color: color-mix(in srgb, var(--dd-primary) 8%, var(--dd-surface));
+    color: var(--dd-primary-ink);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -1641,11 +1600,12 @@
     line-height: 1.45;
 }
 
-.lda .dd-savebar,
-.path-local-delegateaccount .modal .dd-savebar,
-.path-admin-local-delegateaccount .modal .dd-savebar,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-savebar {
+.lda [data-region=savebar].card,
+.path-local-delegateaccount .modal [data-region=savebar].card,
+.path-admin-local-delegateaccount .modal [data-region=savebar].card,
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=savebar].card {
     position: fixed;
+    flex-direction: row;
     bottom: 1.5rem;
     left: 50%;
     z-index: 1030;
@@ -1663,29 +1623,11 @@
     animation: lda-rise 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-.lda .dd-savebar[hidden],
-.path-local-delegateaccount .modal .dd-savebar[hidden],
-.path-admin-local-delegateaccount .modal .dd-savebar[hidden],
-#page-admin-setting-local_delegateaccount_settings .modal .dd-savebar[hidden] {
+.lda [data-region=savebar].card[hidden],
+.path-local-delegateaccount .modal [data-region=savebar].card[hidden],
+.path-admin-local-delegateaccount .modal [data-region=savebar].card[hidden],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=savebar].card[hidden] {
     display: none;
-}
-
-.lda .dd-savebar-text,
-.path-local-delegateaccount .modal .dd-savebar-text,
-.path-admin-local-delegateaccount .modal .dd-savebar-text,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-savebar-text {
-    color: var(--dd-ink);
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.lda .dd-savebar-actions,
-.path-local-delegateaccount .modal .dd-savebar-actions,
-.path-admin-local-delegateaccount .modal .dd-savebar-actions,
-#page-admin-setting-local_delegateaccount_settings .modal .dd-savebar-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
 }
 
 .path-local-delegateaccount .modal .modal-body:has([data-region=bulk]),
@@ -1716,11 +1658,11 @@
 .path-admin-local-delegateaccount .modal .list-group[role=listbox],
 #page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] {
     height: 12.5rem;
-    padding: 0.25rem;
+    padding: 0;
     overflow-y: auto;
-    border: 1px solid var(--dd-hairline);
-    border-radius: var(--dd-radius-lg);
-    background: var(--dd-surface);
+    border: 0;
+    border-radius: 0;
+    background: none;
 }
 
 .path-local-delegateaccount .modal .list-group[role=listbox] > li,
@@ -1773,6 +1715,67 @@
 .path-admin-local-delegateaccount .modal .list-group[role=listbox] .list-group-item,
 #page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] .list-group-item {
     border: 0;
+}
+
+.path-local-delegateaccount .modal .modal-body:has([data-region=bulk]),
+.path-admin-local-delegateaccount .modal .modal-body:has([data-region=bulk]),
+#page-admin-setting-local_delegateaccount_settings .modal .modal-body:has([data-region=bulk]) {
+    display: flex;
+    flex-direction: column;
+}
+
+.path-local-delegateaccount .modal [data-region=bulk],
+.path-admin-local-delegateaccount .modal [data-region=bulk],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+.path-local-delegateaccount .modal [data-region=bulk] > [data-region=copy],
+.path-local-delegateaccount .modal [data-region=copy] > :first-child,
+.path-admin-local-delegateaccount .modal [data-region=bulk] > [data-region=copy],
+.path-admin-local-delegateaccount .modal [data-region=copy] > :first-child,
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] > [data-region=copy],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=copy] > :first-child {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+.path-local-delegateaccount .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child),
+.path-admin-local-delegateaccount .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child),
+#page-admin-setting-local_delegateaccount_settings .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child) {
+    height: 32rem;
+    min-height: 0;
+    max-height: calc(100vh - 10rem);
+}
+
+.path-local-delegateaccount .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child) > [data-region=bulk],
+.path-local-delegateaccount .modal [data-region=bulk] > [data-region=copy]:first-child,
+.path-local-delegateaccount .modal [data-region=bulk] > [data-region=copy]:first-child > :first-child,
+.path-admin-local-delegateaccount .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child) > [data-region=bulk],
+.path-admin-local-delegateaccount .modal [data-region=bulk] > [data-region=copy]:first-child,
+.path-admin-local-delegateaccount .modal [data-region=bulk] > [data-region=copy]:first-child > :first-child,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child) > [data-region=bulk],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] > [data-region=copy]:first-child,
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] > [data-region=copy]:first-child > :first-child {
+    flex-basis: 0;
+    min-height: 0;
+}
+
+.path-local-delegateaccount .modal [data-region=bulk] [role=search],
+.path-admin-local-delegateaccount .modal [data-region=bulk] [role=search],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] [role=search] {
+    flex: none;
+}
+
+.path-local-delegateaccount .modal [data-region=copy] .list-group[role=listbox],
+.path-admin-local-delegateaccount .modal [data-region=copy] .list-group[role=listbox],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=copy] .list-group[role=listbox] {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 12.5rem;
 }
 
 .path-local-delegateaccount .modal label.card,
@@ -1829,26 +1832,211 @@
 
 @media (max-width: 576px) {
 
-    .lda .list-group-item .dd-segmented,
-    .path-local-delegateaccount .modal .list-group-item .dd-segmented,
-    .path-admin-local-delegateaccount .modal .list-group-item .dd-segmented,
-    #page-admin-setting-local_delegateaccount_settings .modal .list-group-item .dd-segmented {
+    .lda .list-group-item .btn-group[role=radiogroup],
+    .path-local-delegateaccount .modal .list-group-item .btn-group[role=radiogroup],
+    .path-admin-local-delegateaccount .modal .list-group-item .btn-group[role=radiogroup],
+    #page-admin-setting-local_delegateaccount_settings .modal .list-group-item .btn-group[role=radiogroup] {
         width: 100%;
     }
 
-    .lda .list-group-item .dd-segmented button,
-    .path-local-delegateaccount .modal .list-group-item .dd-segmented button,
-    .path-admin-local-delegateaccount .modal .list-group-item .dd-segmented button,
-    #page-admin-setting-local_delegateaccount_settings .modal .list-group-item .dd-segmented button {
+    .lda .list-group-item .btn-group[role=radiogroup] > .btn.btn,
+    .path-local-delegateaccount .modal .list-group-item .btn-group[role=radiogroup] > .btn.btn,
+    .path-admin-local-delegateaccount .modal .list-group-item .btn-group[role=radiogroup] > .btn.btn,
+    #page-admin-setting-local_delegateaccount_settings .modal .list-group-item .btn-group[role=radiogroup] > .btn.btn {
         flex: 1 1 auto;
         justify-content: center;
     }
 
-    .lda .dd-savebar {
+    .lda [data-region=savebar].card {
+        right: 0.75rem;
+        left: 0.75rem;
         flex-wrap: wrap;
         justify-content: center;
+        width: auto;
+        max-width: none;
         border-radius: var(--dd-radius-lg);
+        transform: none;
+        animation: none;
     }
+}
+
+.lda .dropdown > .dropdown-menu {
+    position: fixed;
+    z-index: 1060;
+    display: block;
+    min-width: 10rem;
+    margin: 0;
+    padding: 0.375rem;
+    overflow-y: auto;
+    border: 1px solid var(--dd-hairline);
+    border-radius: var(--dd-radius);
+    background-color: var(--dd-surface);
+    box-shadow: var(--dd-shadow-md);
+    color: var(--dd-ink);
+    font-size: 0.9375rem;
+    animation: lda-pop 140ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.lda .dropdown > .dropdown-menu .dropdown-header {
+    padding: 0.5rem 0.75rem 0.25rem;
+    color: var(--dd-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.lda .dropdown > .dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.625rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: none;
+    color: var(--dd-ink);
+    line-height: 1.5;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--dd-ease), color var(--dd-ease);
+}
+
+.lda .dropdown > .dropdown-menu .dropdown-item + .dropdown-item {
+    margin-top: 2px;
+}
+
+.lda .dropdown > .dropdown-menu .dropdown-item:hover,
+.lda .dropdown > .dropdown-menu .dropdown-item:focus,
+.lda .dropdown > .dropdown-menu .dropdown-item.active {
+    outline: 0;
+    background-color: var(--dd-surface-2);
+    color: var(--dd-ink);
+}
+
+.lda .dropdown > .dropdown-menu .dropdown-item[aria-selected=true] {
+    background-color: var(--dd-primary-soft);
+    color: var(--dd-primary-ink);
+    font-weight: 600;
+}
+
+.lda .dropdown > .dropdown-menu .dropdown-item[aria-selected=true]::after {
+    content: "";
+    flex: none;
+    width: 0.3rem;
+    height: 0.6rem;
+    margin-right: 0.25rem;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translateY(-1px);
+}
+
+.lda .dropdown > .dropdown-menu .dropdown-item[aria-selected=true]:focus,
+.lda .dropdown > .dropdown-menu .dropdown-item[aria-selected=true].active {
+    background-color: var(--dd-primary-soft-2);
+}
+
+.lda .dropdown > .dropdown-menu .dropdown-item[aria-selected=true]::before {
+    content: none;
+    display: none;
+}
+
+.lda .dropdown > .dropdown-menu .dropdown-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lda .dropdown {
+    position: relative;
+    display: inline-flex;
+}
+
+.lda button:is(.form-select, .custom-select) {
+    display: block;
+    min-width: 0;
+    max-width: 18rem;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lda .dropdown > .dropdown-menu {
+    position: absolute;
+    inset: calc(100% + 2px) auto auto 0;
+    width: max-content;
+    min-width: 100%;
+    max-width: 22rem;
+    max-height: 20rem;
+}
+
+.lda .dropdown > .dropdown-menu-end {
+    inset: calc(100% + 2px) 0 auto auto;
+}
+
+.lda .dropup > .dropdown-menu {
+    inset: auto auto calc(100% + 2px) 0;
+}
+
+.lda .dropdown-menu label.dropdown-item {
+    margin: 0;
+    font-weight: 400;
+}
+
+.lda .dropdown-menu .dropdown-item .form-check-input {
+    position: static;
+    flex: none;
+    margin: 0;
+}
+
+.lda .dropdown-menu .dropdown-item > span:first-of-type {
+    flex: 1 1 auto;
+}
+
+.lda .dropdown-menu hr {
+    margin: 0.375rem 0;
+    border-color: var(--dd-hairline);
+}
+
+.lda [data-region=filter-menus] {
+    display: flex;
+    flex: none;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lda [data-region=filter-menus] button:is(.form-select, .custom-select) {
+    max-width: 14rem;
+}
+
+.lda [data-menu=filters] > button:is(.form-select, .custom-select) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-width: 0;
+}
+
+.lda [data-menu=filters] > .dropdown-menu {
+    width: 17rem;
+    min-width: 0;
+    max-width: calc(100vw - 2rem);
+    max-height: none;
+    overflow: visible;
+}
+
+.lda [data-region=filter-panel] {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.lda [data-region=filter-panel] .dropdown,
+.lda [data-region=filter-panel] :is(button, select):is(.form-select, .custom-select) {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
 }
 
 .path-local-delegateaccount .modal .modal-dialog.modal-lg,
@@ -1864,8 +2052,9 @@
 #page-admin-setting-local_delegateaccount_settings .modal .fdate_time_selector,
 #page-admin-setting-local_delegateaccount_settings .modal .fdate_selector {
     align-items: center;
-    column-gap: 0.5rem;
+    column-gap: 0;
     row-gap: 0.5rem;
+    font-size: 0;
 }
 
 .path-local-delegateaccount .modal .fdate_time_selector > .fitem,
@@ -1874,9 +2063,17 @@
 .path-admin-local-delegateaccount .modal .fdate_selector > .fitem,
 #page-admin-setting-local_delegateaccount_settings .modal .fdate_time_selector > .fitem,
 #page-admin-setting-local_delegateaccount_settings .modal .fdate_selector > .fitem {
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
+    margin: 0 0.5rem 0 0;
+    font-size: 0.9375rem;
+}
+
+.path-local-delegateaccount .modal .fdate_time_selector > .fitem:has(input[type=checkbox]),
+.path-local-delegateaccount .modal .fdate_selector > .fitem:has(input[type=checkbox]),
+.path-admin-local-delegateaccount .modal .fdate_time_selector > .fitem:has(input[type=checkbox]),
+.path-admin-local-delegateaccount .modal .fdate_selector > .fitem:has(input[type=checkbox]),
+#page-admin-setting-local_delegateaccount_settings .modal .fdate_time_selector > .fitem:has(input[type=checkbox]),
+#page-admin-setting-local_delegateaccount_settings .modal .fdate_selector > .fitem:has(input[type=checkbox]) {
+    flex-basis: 100%;
 }
 
 .path-local-delegateaccount .modal .fdate_time_selector select,
@@ -1887,8 +2084,6 @@
 #page-admin-setting-local_delegateaccount_settings .modal .fdate_selector select {
     min-width: 0;
 }
-
-/* stylelint-disable max-line-length */
 
 body:has(#carousel-item-delegatedaccounts, template[data-region=local-delegateaccount-usermenu-source]):has(#user-menu-toggle[data-flexitour=highlight],
 a[data-carousel-target-id=carousel-item-delegatedaccounts][data-flexitour=highlight],
@@ -2031,4 +2226,406 @@ a[data-carousel-target-id=carousel-item-delegatedaccounts][data-flexitour=highli
     #page-admin-setting-local_delegateaccount_settings .modal.show .modal-dialog {
         animation: none;
     }
+}
+
+#carousel-item-delegatedaccounts .items {
+    overflow-x: hidden;
+}
+
+#carousel-item-delegatedaccounts .items > .dropdown-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lda .btn.btn:focus:not(:focus-visible),
+.lda .btn.btn:active:focus:not(:focus-visible),
+.lda .page-link.page-link:focus:not(:focus-visible),
+.lda .page-link.page-link:active:focus:not(:focus-visible),
+.lda .dropdown-item.dropdown-item:focus:not(:focus-visible),
+.lda .dropdown-item.dropdown-item:active:focus:not(:focus-visible),
+.lda .list-group-item-action.list-group-item-action:focus:not(:focus-visible),
+.lda .list-group-item-action.list-group-item-action:active:focus:not(:focus-visible),
+.lda button:is(.form-select, .custom-select):focus:not(:focus-visible),
+.lda button:is(.form-select, .custom-select):active:focus:not(:focus-visible),
+.lda [data-menu-clear][data-menu-clear]:focus:not(:focus-visible),
+.lda [data-menu-clear][data-menu-clear]:active:focus:not(:focus-visible),
+.lda select.custom-select:focus:not(:focus-visible),
+.lda select.custom-select:active:focus:not(:focus-visible),
+.lda select.form-select:focus:not(:focus-visible),
+.lda select.form-select:active:focus:not(:focus-visible),
+.path-local-delegateaccount .modal .btn.btn:focus:not(:focus-visible),
+.path-local-delegateaccount .modal .btn.btn:active:focus:not(:focus-visible),
+.path-local-delegateaccount .modal .page-link.page-link:focus:not(:focus-visible),
+.path-local-delegateaccount .modal .page-link.page-link:active:focus:not(:focus-visible),
+.path-local-delegateaccount .modal .dropdown-item.dropdown-item:focus:not(:focus-visible),
+.path-local-delegateaccount .modal .dropdown-item.dropdown-item:active:focus:not(:focus-visible),
+.path-local-delegateaccount .modal .list-group-item-action.list-group-item-action:focus:not(:focus-visible),
+.path-local-delegateaccount .modal .list-group-item-action.list-group-item-action:active:focus:not(:focus-visible),
+.path-local-delegateaccount .modal button:is(.form-select, .custom-select):focus:not(:focus-visible),
+.path-local-delegateaccount .modal button:is(.form-select, .custom-select):active:focus:not(:focus-visible),
+.path-local-delegateaccount .modal [data-menu-clear][data-menu-clear]:focus:not(:focus-visible),
+.path-local-delegateaccount .modal [data-menu-clear][data-menu-clear]:active:focus:not(:focus-visible),
+.path-local-delegateaccount .modal select.custom-select:focus:not(:focus-visible),
+.path-local-delegateaccount .modal select.custom-select:active:focus:not(:focus-visible),
+.path-local-delegateaccount .modal select.form-select:focus:not(:focus-visible),
+.path-local-delegateaccount .modal select.form-select:active:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal .btn.btn:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal .btn.btn:active:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal .page-link.page-link:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal .page-link.page-link:active:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal .dropdown-item.dropdown-item:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal .dropdown-item.dropdown-item:active:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal .list-group-item-action.list-group-item-action:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal .list-group-item-action.list-group-item-action:active:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal button:is(.form-select, .custom-select):focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal button:is(.form-select, .custom-select):active:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal [data-menu-clear][data-menu-clear]:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal [data-menu-clear][data-menu-clear]:active:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal select.custom-select:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal select.custom-select:active:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal select.form-select:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal select.form-select:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal .page-link.page-link:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal .page-link.page-link:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-item.dropdown-item:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-item.dropdown-item:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-item-action.list-group-item-action:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-item-action.list-group-item-action:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal button:is(.form-select, .custom-select):focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal button:is(.form-select, .custom-select):active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal [data-menu-clear][data-menu-clear]:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal [data-menu-clear][data-menu-clear]:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal select.custom-select:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal select.custom-select:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal select.form-select:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal select.form-select:active:focus:not(:focus-visible) {
+    outline: 0;
+    box-shadow: none;
+}
+
+.lda .btn.btn:focus-visible,
+.lda .page-link.page-link:focus-visible,
+.lda .dropdown-item.dropdown-item:focus-visible,
+.lda .list-group-item-action.list-group-item-action:focus-visible,
+.lda button:is(.form-select, .custom-select):focus-visible,
+.lda [data-menu-clear][data-menu-clear]:focus-visible,
+.lda select.custom-select:focus-visible,
+.lda select.form-select:focus-visible,
+.path-local-delegateaccount .modal .btn.btn:focus-visible,
+.path-local-delegateaccount .modal .page-link.page-link:focus-visible,
+.path-local-delegateaccount .modal .dropdown-item.dropdown-item:focus-visible,
+.path-local-delegateaccount .modal .list-group-item-action.list-group-item-action:focus-visible,
+.path-local-delegateaccount .modal button:is(.form-select, .custom-select):focus-visible,
+.path-local-delegateaccount .modal [data-menu-clear][data-menu-clear]:focus-visible,
+.path-local-delegateaccount .modal select.custom-select:focus-visible,
+.path-local-delegateaccount .modal select.form-select:focus-visible,
+.path-admin-local-delegateaccount .modal .btn.btn:focus-visible,
+.path-admin-local-delegateaccount .modal .page-link.page-link:focus-visible,
+.path-admin-local-delegateaccount .modal .dropdown-item.dropdown-item:focus-visible,
+.path-admin-local-delegateaccount .modal .list-group-item-action.list-group-item-action:focus-visible,
+.path-admin-local-delegateaccount .modal button:is(.form-select, .custom-select):focus-visible,
+.path-admin-local-delegateaccount .modal [data-menu-clear][data-menu-clear]:focus-visible,
+.path-admin-local-delegateaccount .modal select.custom-select:focus-visible,
+.path-admin-local-delegateaccount .modal select.form-select:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .page-link.page-link:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .dropdown-item.dropdown-item:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .list-group-item-action.list-group-item-action:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal button:is(.form-select, .custom-select):focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal [data-menu-clear][data-menu-clear]:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal select.custom-select:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal select.form-select:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.lda select.custom-select:focus:not(:focus-visible),
+.lda select.form-select:focus:not(:focus-visible),
+.lda button:is(.form-select, .custom-select):focus:not(:focus-visible),
+.path-local-delegateaccount .modal select.custom-select:focus:not(:focus-visible),
+.path-local-delegateaccount .modal select.form-select:focus:not(:focus-visible),
+.path-local-delegateaccount .modal button:is(.form-select, .custom-select):focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal select.custom-select:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal select.form-select:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal button:is(.form-select, .custom-select):focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal select.custom-select:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal select.form-select:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal button:is(.form-select, .custom-select):focus:not(:focus-visible) {
+    border-color: var(--dd-line-hover);
+}
+
+.lda .btn.btn:is([class*=btn-outline-], .btn-link):active:not(:disabled):not(.disabled),
+.lda .btn.btn:is([class*=btn-outline-], .btn-link).active:not(:disabled):not(.disabled),
+.path-local-delegateaccount .modal .btn.btn:is([class*=btn-outline-], .btn-link):active:not(:disabled):not(.disabled),
+.path-local-delegateaccount .modal .btn.btn:is([class*=btn-outline-], .btn-link).active:not(:disabled):not(.disabled),
+.path-admin-local-delegateaccount .modal .btn.btn:is([class*=btn-outline-], .btn-link):active:not(:disabled):not(.disabled),
+.path-admin-local-delegateaccount .modal .btn.btn:is([class*=btn-outline-], .btn-link).active:not(:disabled):not(.disabled),
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn:is([class*=btn-outline-], .btn-link):active:not(:disabled):not(.disabled),
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn:is([class*=btn-outline-], .btn-link).active:not(:disabled):not(.disabled) {
+    border-color: var(--dd-c);
+    background-color: var(--dd-c-soft-2);
+    box-shadow: none;
+    color: var(--dd-c-ink);
+}
+
+.lda .btn.btn.btn-link:active:not(:disabled):not(.disabled),
+.path-local-delegateaccount .modal .btn.btn.btn-link:active:not(:disabled):not(.disabled),
+.path-admin-local-delegateaccount .modal .btn.btn.btn-link:active:not(:disabled):not(.disabled),
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn.btn-link:active:not(:disabled):not(.disabled) {
+    border-color: transparent;
+}
+
+.lda .btn.btn:is(.btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-warning, .btn-info):active:not(:disabled):not(.disabled),
+.path-local-delegateaccount .modal .btn.btn:is(.btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-warning, .btn-info):active:not(:disabled):not(.disabled),
+.path-admin-local-delegateaccount .modal .btn.btn:is(.btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-warning, .btn-info):active:not(:disabled):not(.disabled),
+#page-admin-setting-local_delegateaccount_settings .modal .btn.btn:is(.btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-warning, .btn-info):active:not(:disabled):not(.disabled) {
+    box-shadow: none;
+    filter: brightness(0.94);
+}
+
+.lda input.form-check-input[type]:focus:not(:focus-visible),
+.lda input[type=checkbox].form-check-input:focus:not(:focus-visible),
+.lda input[type=radio].form-check-input:focus:not(:focus-visible),
+.path-local-delegateaccount .modal input.form-check-input[type]:focus:not(:focus-visible),
+.path-local-delegateaccount .modal input[type=checkbox].form-check-input:focus:not(:focus-visible),
+.path-local-delegateaccount .modal input[type=radio].form-check-input:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal input.form-check-input[type]:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal input[type=checkbox].form-check-input:focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal input[type=radio].form-check-input:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal input.form-check-input[type]:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal input[type=checkbox].form-check-input:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal input[type=radio].form-check-input:focus:not(:focus-visible) {
+    outline: 0;
+    box-shadow: none;
+}
+
+.lda input.form-check-input[type]:not(:checked):focus:not(:focus-visible),
+.lda input[type=checkbox].form-check-input:not(:checked):focus:not(:focus-visible),
+.lda input[type=radio].form-check-input:not(:checked):focus:not(:focus-visible),
+.path-local-delegateaccount .modal input.form-check-input[type]:not(:checked):focus:not(:focus-visible),
+.path-local-delegateaccount .modal input[type=checkbox].form-check-input:not(:checked):focus:not(:focus-visible),
+.path-local-delegateaccount .modal input[type=radio].form-check-input:not(:checked):focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal input.form-check-input[type]:not(:checked):focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal input[type=checkbox].form-check-input:not(:checked):focus:not(:focus-visible),
+.path-admin-local-delegateaccount .modal input[type=radio].form-check-input:not(:checked):focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal input.form-check-input[type]:not(:checked):focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal input[type=checkbox].form-check-input:not(:checked):focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings .modal input[type=radio].form-check-input:not(:checked):focus:not(:focus-visible) {
+    border-color: var(--dd-line-hover);
+}
+
+.lda input.form-check-input[type]:active,
+.lda input[type=checkbox].form-check-input:active,
+.lda input[type=radio].form-check-input:active,
+.path-local-delegateaccount .modal input.form-check-input[type]:active,
+.path-local-delegateaccount .modal input[type=checkbox].form-check-input:active,
+.path-local-delegateaccount .modal input[type=radio].form-check-input:active,
+.path-admin-local-delegateaccount .modal input.form-check-input[type]:active,
+.path-admin-local-delegateaccount .modal input[type=checkbox].form-check-input:active,
+.path-admin-local-delegateaccount .modal input[type=radio].form-check-input:active,
+#page-admin-setting-local_delegateaccount_settings .modal input.form-check-input[type]:active,
+#page-admin-setting-local_delegateaccount_settings .modal input[type=checkbox].form-check-input:active,
+#page-admin-setting-local_delegateaccount_settings .modal input[type=radio].form-check-input:active {
+    filter: none;
+}
+
+.lda input.form-check-input[type]:focus-visible,
+.lda input[type=checkbox].form-check-input:focus-visible,
+.lda input[type=radio].form-check-input:focus-visible,
+.path-local-delegateaccount .modal input.form-check-input[type]:focus-visible,
+.path-local-delegateaccount .modal input[type=checkbox].form-check-input:focus-visible,
+.path-local-delegateaccount .modal input[type=radio].form-check-input:focus-visible,
+.path-admin-local-delegateaccount .modal input.form-check-input[type]:focus-visible,
+.path-admin-local-delegateaccount .modal input[type=checkbox].form-check-input:focus-visible,
+.path-admin-local-delegateaccount .modal input[type=radio].form-check-input:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal input.form-check-input[type]:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal input[type=checkbox].form-check-input:focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal input[type=radio].form-check-input:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.lda .custom-control-input:focus:not(:focus-visible) ~ .custom-control-label::before,
+.path-local-delegateaccount .modal .custom-control-input:focus:not(:focus-visible) ~ .custom-control-label::before,
+.path-admin-local-delegateaccount .modal .custom-control-input:focus:not(:focus-visible) ~ .custom-control-label::before,
+#page-admin-setting-local_delegateaccount_settings .modal .custom-control-input:focus:not(:focus-visible) ~ .custom-control-label::before {
+    box-shadow: none;
+}
+
+.lda .custom-control-input:not(:checked):focus:not(:focus-visible) ~ .custom-control-label::before,
+.path-local-delegateaccount .modal .custom-control-input:not(:checked):focus:not(:focus-visible) ~ .custom-control-label::before,
+.path-admin-local-delegateaccount .modal .custom-control-input:not(:checked):focus:not(:focus-visible) ~ .custom-control-label::before,
+#page-admin-setting-local_delegateaccount_settings .modal .custom-control-input:not(:checked):focus:not(:focus-visible) ~ .custom-control-label::before {
+    border-color: var(--dd-line-hover);
+}
+
+.lda .custom-control-input:not(:disabled):active ~ .custom-control-label::before,
+.path-local-delegateaccount .modal .custom-control-input:not(:disabled):active ~ .custom-control-label::before,
+.path-admin-local-delegateaccount .modal .custom-control-input:not(:disabled):active ~ .custom-control-label::before,
+#page-admin-setting-local_delegateaccount_settings .modal .custom-control-input:not(:disabled):active ~ .custom-control-label::before {
+    border-color: var(--dd-primary);
+    background-color: var(--dd-primary-soft);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .nav-tabs.nav-tabs {
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 0;
+    background-color: transparent;
+    box-shadow: inset 0 -1px 0 var(--dd-hairline);
+    scrollbar-width: none;
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .nav-tabs.nav-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .nav-tabs.nav-tabs .nav-item {
+    flex: none;
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .nav-tabs.nav-tabs .nav-link.nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--dd-muted);
+    font-weight: 500;
+    white-space: nowrap;
+    transition: box-shadow var(--dd-ease), color var(--dd-ease);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .nav-tabs.nav-tabs .nav-link.nav-link:hover {
+    box-shadow: inset 0 -2px 0 var(--dd-line);
+    color: var(--dd-ink);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .nav-tabs.nav-tabs .nav-link.nav-link:is(:focus, :focus-visible, :active, .focus):not(.active) {
+    /* stylelint-disable-next-line declaration-no-important */
+    outline: 0 !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    background: none !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    box-shadow: inset 0 -2px 0 var(--dd-line) !important;
+    color: var(--dd-ink);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .nav-tabs.nav-tabs .nav-link.nav-link.active,
+#page-admin-setting-local_delegateaccount_settings #region-main .nav-tabs.nav-tabs .nav-link.nav-link.active:is(:hover, :focus, :focus-visible, :active, .focus) {
+    /* stylelint-disable-next-line declaration-no-important */
+    border: 0 !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    outline: 0 !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    background: none !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    box-shadow: inset 0 -3px 0 var(--dd-primary) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--dd-primary-ink) !important;
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .btn.btn:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main .btn.btn:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main .page-link.page-link:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main .page-link.page-link:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main .dropdown-item.dropdown-item:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main .dropdown-item.dropdown-item:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main .list-group-item-action.list-group-item-action:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main .list-group-item-action.list-group-item-action:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main button:is(.form-select, .custom-select):focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main button:is(.form-select, .custom-select):active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main [data-menu-clear][data-menu-clear]:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main [data-menu-clear][data-menu-clear]:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main select.custom-select:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main select.custom-select:active:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main select.form-select:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main select.form-select:active:focus:not(:focus-visible) {
+    outline: 0;
+    box-shadow: none;
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .btn.btn:focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main .page-link.page-link:focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main .dropdown-item.dropdown-item:focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main .list-group-item-action.list-group-item-action:focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main button:is(.form-select, .custom-select):focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main [data-menu-clear][data-menu-clear]:focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main select.custom-select:focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main select.form-select:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main select.custom-select:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main select.form-select:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main button:is(.form-select, .custom-select):focus:not(:focus-visible) {
+    border-color: var(--dd-line-hover);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .btn.btn:is([class*=btn-outline-], .btn-link):active:not(:disabled):not(.disabled),
+#page-admin-setting-local_delegateaccount_settings #region-main .btn.btn:is([class*=btn-outline-], .btn-link).active:not(:disabled):not(.disabled) {
+    border-color: var(--dd-c);
+    background-color: var(--dd-c-soft-2);
+    box-shadow: none;
+    color: var(--dd-c-ink);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .btn.btn.btn-link:active:not(:disabled):not(.disabled) {
+    border-color: transparent;
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .btn.btn:is(.btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-warning, .btn-info):active:not(:disabled):not(.disabled) {
+    box-shadow: none;
+    filter: brightness(0.94);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main input.form-check-input[type]:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main input[type=checkbox].form-check-input:focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main input[type=radio].form-check-input:focus:not(:focus-visible) {
+    outline: 0;
+    box-shadow: none;
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main input.form-check-input[type]:not(:checked):focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main input[type=checkbox].form-check-input:not(:checked):focus:not(:focus-visible),
+#page-admin-setting-local_delegateaccount_settings #region-main input[type=radio].form-check-input:not(:checked):focus:not(:focus-visible) {
+    border-color: var(--dd-line-hover);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main input.form-check-input[type]:active,
+#page-admin-setting-local_delegateaccount_settings #region-main input[type=checkbox].form-check-input:active,
+#page-admin-setting-local_delegateaccount_settings #region-main input[type=radio].form-check-input:active {
+    filter: none;
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main input.form-check-input[type]:focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main input[type=checkbox].form-check-input:focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main input[type=radio].form-check-input:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .custom-control-input:focus:not(:focus-visible) ~ .custom-control-label::before {
+    box-shadow: none;
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .custom-control-input:not(:checked):focus:not(:focus-visible) ~ .custom-control-label::before {
+    border-color: var(--dd-line-hover);
+}
+
+#page-admin-setting-local_delegateaccount_settings #region-main .custom-control-input:not(:disabled):active ~ .custom-control-label::before {
+    border-color: var(--dd-primary);
+    background-color: var(--dd-primary-soft);
 }

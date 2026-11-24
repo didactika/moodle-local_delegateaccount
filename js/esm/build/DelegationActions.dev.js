@@ -28,7 +28,7 @@ function DelegationActions(props) {
   const { strings, delegationid, realuserid, canupdate, canrevoke, activityurl } = props;
   const text = useText(strings);
   const [revoking, setRevoking] = useState(false);
-  return /* @__PURE__ */ jsxDEV("div", { className: "dd-page-actions", children: [
+  return /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap align-items-center gap-2", children: [
     activityurl && /* @__PURE__ */ jsxDEV("a", { className: "btn btn-outline-secondary", href: activityurl, children: [
       /* @__PURE__ */ jsxDEV(Icon, { name: "i/log", strings }, void 0, false, {
         fileName: "public/local/delegateaccount/js/esm/src/DelegationActions.tsx",

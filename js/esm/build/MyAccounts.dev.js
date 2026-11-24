@@ -34,7 +34,7 @@ function MyAccounts({ strings, id, initial }) {
     list.update({ search: typed });
   }, [typed]);
   return /* @__PURE__ */ jsxDEV("section", { id, className: "d-grid gap-3", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar px-0 border-0", children: /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: /* @__PURE__ */ jsxDEV(SearchBox, { strings, value: search, onChange: setSearch, label: text("search_accounts") }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom px-0 border-0", children: /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center gap-2 flex-grow-1", children: /* @__PURE__ */ jsxDEV(SearchBox, { strings, value: search, onChange: setSearch, label: text("search_accounts") }, void 0, false, {
       fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
       lineNumber: 45,
       columnNumber: 17
@@ -78,20 +78,20 @@ function MyAccounts({ strings, id, initial }) {
           lineNumber: 49,
           columnNumber: 20
         }, this),
-        children: /* @__PURE__ */ jsxDEV("ul", { className: "row list-unstyled mb-0", "aria-busy": list.busy || void 0, children: (page?.rows ?? []).map((row) => /* @__PURE__ */ jsxDEV("li", { className: "col-sm-6 col-xl-4 mb-3", children: /* @__PURE__ */ jsxDEV("div", { className: "card h-100", children: /* @__PURE__ */ jsxDEV("div", { className: "card-body d-flex flex-column", children: [
+        children: /* @__PURE__ */ jsxDEV("ul", { className: "row list-unstyled mb-0", "data-region": "account-cards", "aria-busy": list.busy || void 0, children: (page?.rows ?? []).map((row) => /* @__PURE__ */ jsxDEV("li", { className: "col-sm-6 col-xl-4", children: /* @__PURE__ */ jsxDEV("div", { className: "card h-100", children: /* @__PURE__ */ jsxDEV("div", { className: "card-body d-flex flex-column", children: [
           /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center mb-3", children: [
             /* @__PURE__ */ jsxDEV(Avatar, { user: row.user, size: 50 }, void 0, false, {
               fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
               lineNumber: 56,
               columnNumber: 33
             }, this),
-            /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-column", children: [
-              /* @__PURE__ */ jsxDEV("p", { className: "card-title mb-0 text-truncate", children: row.user.fullname }, void 0, false, {
+            /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-column overflow-hidden", children: [
+              /* @__PURE__ */ jsxDEV("p", { className: "card-title mb-0 text-truncate", title: row.user.fullname, children: row.user.fullname }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
                 lineNumber: 58,
                 columnNumber: 37
               }, this),
-              /* @__PURE__ */ jsxDEV("span", { className: "small text-muted text-truncate", children: row.user.email }, void 0, false, {
+              /* @__PURE__ */ jsxDEV("span", { className: "small text-muted text-truncate", title: row.user.email, children: row.user.email }, void 0, false, {
                 fileName: "public/local/delegateaccount/js/esm/src/MyAccounts.tsx",
                 lineNumber: 59,
                 columnNumber: 37
@@ -121,7 +121,7 @@ function MyAccounts({ strings, id, initial }) {
           /* @__PURE__ */ jsxDEV(
             "a",
             {
-              className: "btn btn-primary btn-tonal mt-auto align-self-start",
+              className: "btn btn-outline-primary mt-auto align-self-start",
               href: row.loginurl,
               title: row.loginlabel,
               children: [

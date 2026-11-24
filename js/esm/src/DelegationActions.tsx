@@ -37,7 +37,7 @@ export default function DelegationActions(props: DelegationActionsProps) {
     const {strings, delegationid, realuserid, canupdate, canrevoke, activityurl} = props;
     const text = useText(strings);
     const [revoking, setRevoking] = useState(false);
-    return <div className="dd-page-actions">
+    return <div className="d-flex flex-wrap align-items-center gap-2">
         {activityurl && <a className="btn btn-outline-secondary" href={activityurl}>
             <Icon name="i/log" strings={strings} /> {text('view_delegated_activity')}
         </a>}

@@ -149,5 +149,13 @@ function xmldb_local_delegateaccount_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2026110701, 'local', 'delegateaccount');
     }
 
+    if ($oldversion < 2026111104) {
+        // The mark of a delegated session moved from the session to the user of the session. The sessions that are open through a
+        // delegation do not carry the new mark, so they end here and their people open their accounts again.
+        \local_delegateaccount\manager::end_sessions(array_map('intval', $DB->get_fieldset('local_delegateaccount', 'id')));
+
+        upgrade_plugin_savepoint(true, 2026111104, 'local', 'delegateaccount');
+    }
+
     return true;
 }

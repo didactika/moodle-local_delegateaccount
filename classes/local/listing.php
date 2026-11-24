@@ -42,6 +42,9 @@ final class listing {
     /** People who keep delegations but may not use them any more. */
     public const SCOPE_HISTORICAL = 'historical';
 
+    /** The next change of a person with nothing planned: later than any date, so it sorts last. */
+    public const NO_CHANGE = 9999999999;
+
     /** Fields of a user that a row needs to show a name and a picture. */
     private const USER_FIELDS = ['id', 'firstname', 'lastname', 'middlename', 'alternatename', 'firstnamephonetic',
         'lastnamephonetic', 'email', 'picture', 'imagealt'];
@@ -51,8 +54,9 @@ final class listing {
      *
      * @param string $scope self::SCOPE_AUTHORISED or self::SCOPE_HISTORICAL.
      * @param string $search Name, username, email or ID number fragment.
-     * @param string $status A status of self::STATUSES, 'none' for people without delegations, or '' for everyone.
-     * @param string $sort name, email, active or scheduled.
+     * @param string $status Statuses of self::STATUSES or 'none' for people without delegations, separated by commas, or '' for
+     *                       everyone; a person matches when one of them does.
+     * @param string $sort name, email, accounts (or active), scheduled or next.
      * @param string $direction asc or desc.
      * @param int $page Zero-based page.
      * @param int $perpage Rows per page, 0 for all.
@@ -71,24 +75,33 @@ final class listing {
 
         $now = time();
         [$basewhere, $baseparams] = self::user_scope_sql($scope, $search);
-        $counts = ['all' => $DB->count_records_sql("SELECT COUNT(1) FROM {user} u WHERE $basewhere", $baseparams)];
+        $conditions = [];
         foreach (array_merge(self::STATUSES, ['none']) as $chip) {
-            [$statussql, $statusparams] = self::user_status_sql($chip, $now);
-            $counts[$chip] = $DB->count_records_sql(
-                "SELECT COUNT(1) FROM {user} u WHERE $basewhere AND $statussql",
-                $baseparams + $statusparams
-            );
+            $conditions[$chip] = self::user_status_sql($chip, $now);
         }
+        $counts = self::counts('{user} u', $basewhere, $baseparams, $conditions);
 
-        [$statussql, $statusparams] = $status === '' ? ['1 = 1', []] : self::user_status_sql($status, $now);
+        $statussql = '1 = 1';
+        $statusparams = [];
+        $statuses = array_values(array_unique(array_filter(explode(',', $status))));
+        if ($statuses) {
+            $parts = [];
+            foreach ($statuses as $one) {
+                [$onesql, $oneparams] = self::user_status_sql($one, $now);
+                $parts[] = $onesql;
+                $statusparams += $oneparams;
+            }
+            $statussql = '(' . implode(' OR ', $parts) . ')';
+        }
         $where = "$basewhere AND $statussql";
         $params = $baseparams + $statusparams;
         $total = $DB->count_records_sql("SELECT COUNT(1) FROM {user} u WHERE $where", $params);
 
         $order = match ($sort) {
             'email' => 'u.email',
-            'active' => 'activecount',
+            'active', 'accounts' => 'activecount',
             'scheduled' => 'scheduledcount',
+            'next' => 'nexttime',
             default => 'u.lastname %1$s, u.firstname',
         };
         $direction = $direction === 'desc' ? 'DESC' : 'ASC';
@@ -100,14 +113,45 @@ final class listing {
                       WHERE da.realuserid = u.id AND da.activekey = 0 AND da.timestart <= :activefrom
                         AND (da.timeend = 0 OR da.timeend > :activeto)) AS activecount,
                     (SELECT COUNT(1) FROM {local_delegateaccount} da
-                      WHERE da.realuserid = u.id AND da.activekey = 0 AND da.timestart > :scheduledfrom) AS scheduledcount
+                      WHERE da.realuserid = u.id AND da.activekey = 0 AND da.timestart > :scheduledfrom) AS scheduledcount,
+                    (SELECT MIN(da.timestart) FROM {local_delegateaccount} da
+                      WHERE da.realuserid = u.id AND da.activekey = 0 AND da.timestart > :nextstartfrom) AS nextstart,
+                    COALESCE((SELECT MIN(CASE WHEN da.timestart > :nextcase THEN da.timestart ELSE da.timeend END)
+                                FROM {local_delegateaccount} da
+                               WHERE da.realuserid = u.id AND da.activekey = 0
+                                 AND (da.timestart > :nextscheduled OR da.timeend > :nextend)), :nextnone) AS nexttime
                FROM {user} u
               WHERE $where
            ORDER BY $order",
-            $params + ['activefrom' => $now, 'activeto' => $now, 'scheduledfrom' => $now],
+            $params + ['activefrom' => $now, 'activeto' => $now, 'scheduledfrom' => $now, 'nextstartfrom' => $now,
+                'nextcase' => $now, 'nextscheduled' => $now, 'nextend' => $now, 'nextnone' => self::NO_CHANGE],
             $page * $perpage,
             $perpage
         );
+
+        // The accounts each person is using now, in one query for the whole page.
+        foreach ($rows as $row) {
+            $row->accounts = [];
+        }
+        if ($rows) {
+            [$insql, $inparams] = $DB->get_in_or_equal(array_keys($rows), SQL_PARAMS_NAMED, 'accountsof');
+            $fields = [];
+            foreach (self::USER_FIELDS as $field) {
+                $fields[] = "du.$field AS delegated_$field";
+            }
+            $accounts = $DB->get_records_sql(
+                "SELECT da.id, da.realuserid, " . implode(', ', $fields) . "
+                   FROM {local_delegateaccount} da
+                   JOIN {user} du ON du.id = da.delegateduserid AND du.deleted = 0
+                  WHERE da.realuserid $insql AND da.activekey = 0 AND da.timestart <= :accountsfrom
+                    AND (da.timeend = 0 OR da.timeend > :accountsto)
+               ORDER BY du.lastname, du.firstname, da.id",
+                $inparams + ['accountsfrom' => $now, 'accountsto' => $now]
+            );
+            foreach ($accounts as $account) {
+                $rows[$account->realuserid]->accounts[] = self::user_from_row($account, 'delegated');
+            }
+        }
 
         return ['total' => $total, 'counts' => $counts, 'rows' => array_values($rows)];
     }
@@ -128,11 +172,11 @@ final class listing {
         $now = time();
         $base = ['status' => ''] + $filters;
         [$from, $where, $params] = self::delegation_sql($base, $now);
-        $counts = ['all' => $DB->count_records_sql("SELECT COUNT(1) FROM $from WHERE $where", $params)];
+        $conditions = [];
         foreach (self::STATUSES as $status) {
-            [$from, $where, $params] = self::delegation_sql(['status' => $status] + $filters, $now);
-            $counts[$status] = $DB->count_records_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
+            $conditions[$status] = self::status_sql('da', $status, $now, 'count' . $status);
         }
+        $counts = self::counts($from, $where, $params, $conditions);
 
         [$from, $where, $params] = self::delegation_sql($filters, $now);
         $total = $DB->count_records_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
@@ -160,6 +204,35 @@ final class listing {
         );
 
         return ['total' => $total, 'counts' => $counts, 'rows' => array_values($rows)];
+    }
+
+    /**
+     * How many rows match each condition, in one query: all the rows of the list and, for each condition, the ones that meet it.
+     *
+     * @param string $from FROM clause.
+     * @param string $where Condition every row meets.
+     * @param array $params Parameters of the condition.
+     * @param array $conditions SQL condition and its parameters, by the name it is counted under.
+     * @return int[] Count of all the rows (key all) and of each condition.
+     */
+    private static function counts(string $from, string $where, array $params, array $conditions): array {
+        global $DB;
+
+        $columns = ['COUNT(1) AS countall'];
+        $names = [];
+        foreach (array_keys($conditions) as $index => $name) {
+            [$sql, $conditionparams] = $conditions[$name];
+            $columns[] = "SUM(CASE WHEN $sql THEN 1 ELSE 0 END) AS count$index";
+            $names[$index] = $name;
+            $params += $conditionparams;
+        }
+        $row = $DB->get_record_sql("SELECT " . implode(', ', $columns) . " FROM $from WHERE $where", $params);
+        $counts = ['all' => (int)$row->countall];
+        foreach ($names as $index => $name) {
+            $counts[$name] = (int)$row->{"count$index"};
+        }
+
+        return $counts;
     }
 
     /**
@@ -299,10 +372,15 @@ final class listing {
             $where .= " AND da.id $insql";
             $params += $inparams;
         }
-        if (($filters['status'] ?? '') !== '') {
-            [$statussql, $statusparams] = self::status_sql('da', $filters['status'], $now, 'list');
-            $where .= " AND $statussql";
-            $params += $statusparams;
+        $statuses = array_values(array_unique(array_filter(explode(',', (string)($filters['status'] ?? '')))));
+        if ($statuses) {
+            $parts = [];
+            foreach ($statuses as $one) {
+                [$onesql, $oneparams] = self::status_sql('da', $one, $now, 'list' . $one);
+                $parts[] = "($onesql)";
+                $params += $oneparams;
+            }
+            $where .= ' AND (' . implode(' OR ', $parts) . ')';
         }
         $search = trim((string)($filters['search'] ?? ''));
         if ($search !== '') {
