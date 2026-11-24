@@ -49,7 +49,7 @@
                 "statustone": "success",
                 "start": "1/11/26, 10:00",
                 "end": "No end date",
-                "lastaccess": "No delegated access recorded",
+                "lastaccess": "Never",
                 "overrides": 2,
                 "overrideslabel": "Overrides: 2",
                 "detailsurl": "https://moodle.example/local/delegateaccount/pages/delegation.php?realuserid=7&delegationid=3",
@@ -69,26 +69,26 @@
     <thead>
         <tr>
             {{#canselect}}
-                <th scope="col" class="table-select">
+                <th scope="col" class="align-middle" data-column="select">
                     <input type="checkbox" class="form-check-input" data-region="selectpage" data-focuskey="selectpage" aria-label="{{#str}}select_page, local_delegateaccount{{/str}}">
                 </th>
             {{/canselect}}
-            <th scope="col" data-sort="account"><button type="button" class="table-sort" data-focuskey="sort-account">{{#str}}delegateduser, local_delegateaccount{{/str}}</button></th>
+            <th scope="col" data-sort="account"><button type="button" class="btn btn-link" data-focuskey="sort-account">{{#str}}delegateduser, local_delegateaccount{{/str}}</button></th>
             {{#showrealuser}}
-                <th scope="col" data-sort="user"><button type="button" class="table-sort" data-focuskey="sort-user">{{#str}}authoriseduser, local_delegateaccount{{/str}}</button></th>
+                <th scope="col" data-sort="user"><button type="button" class="btn btn-link" data-focuskey="sort-user">{{#str}}authoriseduser, local_delegateaccount{{/str}}</button></th>
             {{/showrealuser}}
             <th scope="col">{{#str}}delegation_status, local_delegateaccount{{/str}}</th>
-            <th scope="col" data-sort="start"><button type="button" class="table-sort" data-focuskey="sort-start">{{#str}}delegation_period, local_delegateaccount{{/str}}</button></th>
+            <th scope="col" data-sort="start"><button type="button" class="btn btn-link" data-focuskey="sort-start">{{#str}}delegation_period, local_delegateaccount{{/str}}</button></th>
             <th scope="col">{{#str}}last_access, local_delegateaccount{{/str}}</th>
             <th scope="col">{{#str}}session_permissions, local_delegateaccount{{/str}}</th>
-            <th scope="col" class="table-actions"><span class="sr-only visually-hidden">{{#str}}actions{{/str}}</span></th>
+            <th scope="col" class="text-end text-nowrap" data-column="actions"><span class="sr-only visually-hidden">{{#str}}actions{{/str}}</span></th>
         </tr>
     </thead>
     <tbody>
         {{#rows}}
             <tr data-id="{{id}}"{{#isselected}} class="table-active"{{/isselected}}>
                 {{#canselect}}
-                    <td class="table-select">
+                    <td class="align-middle" data-column="select">
                         {{#selectable}}<input type="checkbox" class="form-check-input" data-region="selectrow" value="{{id}}" aria-label="{{#str}}select_row, local_delegateaccount, {{label}}{{/str}}"{{#isselected}} checked{{/isselected}}>{{/selectable}}
                     </td>
                 {{/canselect}}
@@ -98,14 +98,14 @@
                 {{#showrealuser}}
                     <td>{{#realuser}}{{> local_delegateaccount/shared/person }}{{/realuser}}</td>
                 {{/showrealuser}}
-                <td><span class="badge badge-soft badge-dot text-bg-{{statustone}}">{{statuslabel}}</span></td>
-                <td><span class="d-flex flex-column">{{start}}<small>{{end}}</small></span></td>
-                <td><span class="d-flex flex-column"><small>{{lastaccess}}</small></span></td>
+                <td><span class="badge text-bg-{{statustone}}">{{statuslabel}}</span></td>
+                <td class="text-nowrap"><span class="d-flex flex-column">{{start}}<small class="text-muted">{{end}}</small></span></td>
+                <td class="text-nowrap"><small class="text-muted">{{lastaccess}}</small></td>
                 <td>
-                    {{#overrides}}<a class="badge badge-outline text-bg-primary" href="{{permissionsurl}}">{{overrideslabel}}</a>{{/overrides}}
+                    {{#overrides}}<a class="badge border text-bg-primary" href="{{permissionsurl}}">{{overrideslabel}}</a>{{/overrides}}
                     {{^overrides}}<span class="small text-muted text-truncate">{{#str}}overrides_none, local_delegateaccount{{/str}}</span>{{/overrides}}
                 </td>
-                <td class="table-actions">
+                <td class="text-end text-nowrap" data-column="actions">
                     <button type="button" class="btn btn-link btn-icon btn-sm text-primary" data-action="edit" data-id="{{id}}" title="{{#str}}edit_period_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}edit_period_of, local_delegateaccount, {{label}}{{/str}}"{{^canupdate}} disabled{{/canupdate}}>{{#pix}}t/edit, core{{/pix}}</button>
                     <a class="btn btn-link btn-icon btn-sm text-info" href="{{permissionsurl}}" title="{{#str}}session_permissions_of, local_delegateaccount, {{label}}{{/str}}" aria-label="{{#str}}session_permissions_of, local_delegateaccount, {{label}}{{/str}}">{{#pix}}i/permissions, core{{/pix}}</a>
                     {{#canviewactivity}}

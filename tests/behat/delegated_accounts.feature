@@ -64,7 +64,8 @@ Feature: Delegate access to an account
     When I click on "Revoke Ada Authorised as Tom Target" "button" in the "Tom Target" "table_row"
     And I click on "Revoke delegation" "button" in the ".modal-dialog" "css_element"
     Then I should see "Delegations revoked: 1."
-    And I click on "Revoked" "button" in the "region-main" "region"
+    And I click on "Status" "button" in the "region-main" "region"
+    And I click on "Revoked" "checkbox" in the "[data-menu=status]" "css_element"
     And I should see "Revoked" in the "Tom Target" "table_row"
 
   Scenario: Revoking a delegation ends the session that is using it
@@ -114,7 +115,8 @@ Feature: Delegate access to an account
     Then I should see "Session permissions saved."
     And I reload the page
     And I click on "Session permissions" "link" in the "region-main" "region"
-    And I click on "Overridden" "button" in the "region-main" "region"
+    And I click on "Permission" "button" in the "region-main" "region"
+    And I click on "Overridden" "button" in the "[data-menu=permission]" "css_element"
     And I should see "moodle/user:editownprofile"
 
   Scenario: An administrator changes the session permissions of several delegations at once

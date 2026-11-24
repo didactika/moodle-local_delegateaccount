@@ -23,6 +23,7 @@
 
 import {getString} from 'core/str';
 import List from 'local_delegateaccount/local/list';
+import {init as fitTables} from 'local_delegateaccount/fit_tables';
 
 /**
  * Starts the list of accounts.
@@ -31,6 +32,8 @@ import List from 'local_delegateaccount/local/list';
  * @returns {Promise<List>}
  */
 export const init = async(selector) => {
+    // The box of the table takes the height the window leaves it.
+    fitTables();
     const root = document.querySelector(selector);
     const [emptytitle, emptytext] = await Promise.all([
         getString('empty_mine_title', 'local_delegateaccount'),

@@ -17,7 +17,8 @@
 {{!
     @template local_delegateaccount/list/people_table
 
-    One page of the people of the management page. A row is opened by the name of the person.
+    One page of the people of the management page: each person, the accounts they are using now and the next change of their
+    delegations. A row is opened by the name of the person.
 
     @copyright  2026 Didactika.org
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,6 +28,7 @@
         "rows": [
             {
                 "user": {
+                    "id": 7,
                     "fullname": "Jane Doe",
                     "email": "jane@example.com",
                     "hasimage": false,
@@ -34,8 +36,12 @@
                     "url": "https://moodle.example/local/delegateaccount/pages/delegations.php?realuserid=7",
                     "linklabel": "Open the delegations of Jane Doe"
                 },
-                "activecount": 2,
-                "scheduledcount": 1,
+                "accounts": [
+                    {"id": 8, "fullname": "John Roe", "hasimage": false, "initials": "JR", "size": 30}
+                ],
+                "moreaccounts": 0,
+                "accountnames": "John Roe",
+                "next": {"kind": "ends", "label": "Ends on 26 December 2026", "relative": "in 34 days", "tone": "secondary"},
                 "cancreate": true,
                 "addlabel": "Create delegations for Jane Doe"
             }
@@ -46,19 +52,36 @@
     <caption class="sr-only visually-hidden">{{#str}}list_caption_people, local_delegateaccount{{/str}}</caption>
     <thead>
         <tr>
-            <th scope="col" data-sort="name"><button type="button" class="table-sort" data-focuskey="sort-name">{{#str}}authoriseduser, local_delegateaccount{{/str}}</button></th>
-            <th scope="col" class="text-right text-end" data-sort="active"><button type="button" class="table-sort" data-focuskey="sort-active">{{#str}}active_delegations, local_delegateaccount{{/str}}</button></th>
-            <th scope="col" class="text-right text-end" data-sort="scheduled"><button type="button" class="table-sort" data-focuskey="sort-scheduled">{{#str}}scheduled_delegations, local_delegateaccount{{/str}}</button></th>
-            <th scope="col" class="table-actions"><span class="sr-only visually-hidden">{{#str}}actions{{/str}}</span></th>
+            <th scope="col" data-sort="name"><button type="button" class="btn btn-link" data-focuskey="sort-name">{{#str}}authoriseduser, local_delegateaccount{{/str}}</button></th>
+            <th scope="col" data-sort="accounts"><button type="button" class="btn btn-link" data-focuskey="sort-accounts">{{#str}}current_accounts, local_delegateaccount{{/str}}</button></th>
+            <th scope="col" data-sort="next"><button type="button" class="btn btn-link" data-focuskey="sort-next">{{#str}}next_change, local_delegateaccount{{/str}}</button></th>
+            <th scope="col" class="text-end text-nowrap" data-column="actions"><span class="sr-only visually-hidden">{{#str}}actions{{/str}}</span></th>
         </tr>
     </thead>
     <tbody>
         {{#rows}}
             <tr>
                 <th scope="row">{{#user}}{{> local_delegateaccount/shared/person }}{{/user}}</th>
-                <td class="text-right text-end">{{activecount}}</td>
-                <td class="text-right text-end">{{scheduledcount}}</td>
-                <td class="table-actions">
+                <td>
+                    {{#accounts.0}}
+                        <span class="d-inline-flex align-items-center" data-region="accounts" title="{{accountnames}}">
+                            {{#accounts}}{{> local_delegateaccount/shared/avatar }}{{/accounts}}
+                            {{#moreaccounts}}<span class="userinitials size-30">{{#str}}current_accounts_more, local_delegateaccount, {{moreaccounts}}{{/str}}</span>{{/moreaccounts}}
+                            <span class="sr-only visually-hidden">{{accountnames}}</span>
+                        </span>
+                    {{/accounts.0}}
+                    {{^accounts.0}}<span class="text-muted">{{#str}}current_accounts_none, local_delegateaccount{{/str}}</span>{{/accounts.0}}
+                </td>
+                <td>
+                    {{#next.kind}}
+                        <span class="d-flex flex-column">
+                            <span class="badge rounded-pill text-bg-{{next.tone}} align-self-start">{{next.label}}</span>
+                            <span class="small text-muted">{{next.relative}}</span>
+                        </span>
+                    {{/next.kind}}
+                    {{^next.kind}}<span class="text-muted">{{next.label}}</span>{{/next.kind}}
+                </td>
+                <td class="text-end text-nowrap" data-column="actions">
                     {{#cancreate}}
                         <button type="button" class="btn btn-link btn-icon btn-sm text-primary" data-action="create" data-id="{{user.id}}" title="{{addlabel}}" aria-label="{{addlabel}}">{{#pix}}t/add, core{{/pix}}</button>
                     {{/cancreate}}

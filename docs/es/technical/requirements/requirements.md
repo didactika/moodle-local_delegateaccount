@@ -18,6 +18,7 @@ sourceOfTruth: code
 | RF-005 | Una administradora puede permitir, evitar o prohibir capacidades en las sesiones delegadas, para una delegación o para todas. | Debería | `session_capabilities` | UC-003 |
 | RF-006 | La actividad hecha mediante una delegación se puede revisar con filtros. | Debería | `pages/activity.php`, `manager::get_delegation_activity_page` | UC-005 |
 | RF-007 | Las personas implicadas reciben una notificación al crear o revocar una delegación, en su idioma. | Podría | `notification_manager` | UC-001 |
+| RF-008 | La página de gestión lista a los usuarios autorizados con las cuentas que usa cada uno y el próximo cambio de sus delegaciones (el final más cercano de una en uso o el inicio de una programada), y cada lista de personas o de delegaciones puede acotarse a uno o varios estados a la vez. | Debería | `locallisting::users`, `externalget_user_list`, `externallist_service` | UC-001, UC-004 |
 
 ## No funcionales
 

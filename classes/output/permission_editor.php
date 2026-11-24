@@ -18,7 +18,6 @@ namespace local_delegateaccount\output;
 
 use local_delegateaccount\session_capabilities;
 
-
 /**
  * The permission editor: every capability of the site with Not set, Allow, Prevent and Prohibit, searchable, filtered and
  * paged, and a floating bar that saves what changed.

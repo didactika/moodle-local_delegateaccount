@@ -20,6 +20,7 @@ use core_external\external_api;
 use local_delegateaccount\external\get_delegation_list;
 use local_delegateaccount\external\get_user_list;
 use local_delegateaccount\external\list_service;
+use local_delegateaccount\local\listing;
 use local_delegateaccount\permission;
 
 /**
@@ -35,18 +36,23 @@ final class page {
      *
      * @param string $scope authorised or historical.
      * @param string $id Identifier of the element of the list.
+     * @param bool $start Whether the page starts the list; the tabs of the management page start the list of the open tab.
      * @return array Context of local_delegateaccount/list/people.
      */
-    public static function people_list(string $scope, string $id): array {
+    public static function people_list(string $scope, string $id, bool $start = true): array {
         global $PAGE;
 
-        $PAGE->requires->js_call_amd('local_delegateaccount/people', 'init', ['#' . $id]);
+        if ($start) {
+            $PAGE->requires->js_call_amd('local_delegateaccount/people', 'init', ['#' . $id]);
+        }
 
         return [
             'id' => $id,
             'config' => json_encode(['scope' => $scope]),
             'initial' => self::first(get_user_list::class, ['scope' => $scope]),
             'searchlabel' => get_string('search_people', 'local_delegateaccount'),
+            'hasstatuses' => true,
+            'statuses' => self::statuses(array_merge(listing::STATUSES, ['none'])),
         ];
     }
 
@@ -55,16 +61,19 @@ final class page {
      *
      * @param int $realuserid The authorised user, or zero for everyone.
      * @param string $id Identifier of the element of the list.
+     * @param bool $start Whether the page starts the list; the tabs of the management page start the list of the open tab.
      * @return array Context of local_delegateaccount/list/delegations.
      */
-    public static function delegation_list(int $realuserid, string $id): array {
+    public static function delegation_list(int $realuserid, string $id, bool $start = true): array {
         global $PAGE;
 
         $canupdate = permission::has(permission::UPDATE);
         $canrevoke = permission::has(permission::REVOKE);
         $canpermissions = has_capability(list_service::MANAGE_PERMISSIONS, \context_system::instance());
         $canbulk = $canupdate || $canrevoke || $canpermissions;
-        $PAGE->requires->js_call_amd('local_delegateaccount/delegations', 'init', ['#' . $id]);
+        if ($start) {
+            $PAGE->requires->js_call_amd('local_delegateaccount/delegations', 'init', ['#' . $id]);
+        }
 
         return [
             'id' => $id,
@@ -81,6 +90,8 @@ final class page {
                 'search' => '',
             ]]),
             'searchlabel' => get_string($realuserid > 0 ? 'search_accounts' : 'search_delegations', 'local_delegateaccount'),
+            'hasstatuses' => true,
+            'statuses' => self::statuses(listing::STATUSES),
             'canbulk' => $canbulk,
             'canupdate' => $canupdate,
             'canrevoke' => $canrevoke,
@@ -112,5 +123,18 @@ final class page {
             // The list asks for its rows itself, and shows the error there.
             return '';
         }
+    }
+
+    /**
+     * The statuses a list is narrowed to, for its menu.
+     *
+     * @param string[] $keys Statuses of listing::STATUSES, and none for the people without delegations.
+     * @return array[] The key and the name of each.
+     */
+    private static function statuses(array $keys): array {
+        return array_map(fn(string $key): array => [
+            'key' => $key,
+            'label' => get_string($key === 'none' ? 'no_delegations' : 'delegation_status_' . $key, 'local_delegateaccount'),
+        ], $keys);
     }
 }

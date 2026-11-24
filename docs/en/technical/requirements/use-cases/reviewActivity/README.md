@@ -48,8 +48,8 @@ Whoever allows access has to be able to see how it was used. The report lists th
 
 | Step | Actor | System |
 | --- | --- | --- |
-| 1 | Opens the **Activity** of a delegation. | Shows the filters and the period of the delegation. |
-| 2 | Sets dates, component and action. | Reads the events of the account inside the period. |
+| 1 | Opens the **Activity** of a delegation. | Shows the search, the menu of the date and the period of the delegation. |
+| 2 | Types words, or chooses a period in the menu of the date. | Reads the events of the account inside the period whose component, action or event has every word. |
 | 3 |  | Lists them page by page, newest first. |
 
 ## Alternative flows
@@ -64,6 +64,7 @@ Whoever allows access has to be able to see how it was used. The report lists th
 | ID | Rule |
 | --- | --- |
 | RN-012 | The results are limited to the start and the end of the delegation. |
+| RN-013 | The periods of the menu of the date stay inside the delegation, and its two days never go the wrong way round: a day that passes the other moves the other one to it. |
 
 ## Specification
 

@@ -1,15 +1,15 @@
 @startsalt
 {
-  {* Delegated accounts | Session permissions }
+  {* Summary | Session permissions }
   ==
   Session permissions - Marta Ruiz as Carmen Vidal
   --
+  { "Name or capability    " | ^All components^ | ^Permission^ }
   {#
-    Capability | Role gives | This delegation
-    moodle/course:delete | Allow | ^Prevent^
-    moodle/user:update | Allow | ^Inherit^
-    mod/forum:post | Allow | ^Inherit^
+    Capability | Permission
+    moodle/course:delete | (X) Not set ( ) Allow ( ) Prevent ( ) Prohibit
+    moodle/user:update | ( ) Not set ( ) Allow (X) Prevent ( ) Prohibit
   }
-  [ Save ] | [ Cancel ]
+  Unsaved changes: 1 | [ Discard ] | [ Save changes ]
 }
 @endsalt

@@ -14,11 +14,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * A list people work with, as the design system describes it: search, filter chips, sortable headers, a pager, a selection
+ * A list people work with, as the design system describes it: search, a menu of statuses, sortable headers, a pager, a selection
  * with its floating bar, and a designed state for loading, empty, error and results.
  *
  * The rows come from a web service and are drawn with a template, so a list never reloads the page. Its state (search,
- * chip, sort, page and rows per page) is kept in the address, so a link or a reload comes back to the same list.
+ * statuses, sort, page and rows per page) is kept in the address, so a link or a reload comes back to the same list.
  *
  * @module     local_delegateaccount/local/list
  * @copyright  2026 Didactika.org
@@ -49,7 +49,7 @@ export default class List {
      * @param {string} [options.prefix] Prefix of its parameters in the address.
      * @param {Function} [options.empty] Returns the context of the empty state, given whether filters are applied.
      * @param {Function} [options.onRender] Called after the rows are drawn.
-     * @param {Function} [options.isFiltered] Whether the state has filters applied, when they are not the search and the chip.
+     * @param {Function} [options.isFiltered] Whether filters other than the search and the statuses are applied.
      * @param {Object} [options.cleared] The state that clears every filter.
      * @param {Function} [options.onClear] Called with that state, to empty the fields of the filters.
      * @param {Function} [options.filters] Turns the state into the filters of an action on every row.
@@ -123,6 +123,22 @@ export default class List {
         }
         this.root.addEventListener('click', (event) => this.click(event));
         this.root.addEventListener('change', (event) => this.change(event));
+        // The menu of the statuses closes with a click outside it or with Escape.
+        const menu = this.root.querySelector('[data-menu="status"]');
+        if (menu) {
+            document.addEventListener('pointerdown', (event) => {
+                if (!menu.contains(event.target)) {
+                    this.openStatusMenu(false);
+                }
+            });
+            menu.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !menu.querySelector('.dropdown-menu').hidden) {
+                    event.preventDefault();
+                    this.openStatusMenu(false);
+                    menu.querySelector('[data-menu-toggle]').focus();
+                }
+            });
+        }
         const perpage = this.region('perpage');
         if (perpage) {
             perpage.value = String(this.state.perpage);
@@ -197,6 +213,29 @@ export default class List {
      * @param {Object} response What the web service returned.
      * @returns {Promise<void>}
      */
+    /**
+     * Keeps the columns of the table still: the first time the table has rows, the width the browser gives each column is measured,
+     * and every table drawn after it takes the same widths, so a filter, a sort or another page never moves them. They are
+     * measured again when the box of the table has changed width.
+     */
+    keepColumns() {
+        const box = this.region('tablewrap');
+        const table = box?.querySelector('table');
+        const heads = Array.from(table?.tHead?.rows[0]?.cells ?? []);
+        if (!table || heads.length === 0) {
+            return;
+        }
+        const same = this.columns && this.columns.widths.length === heads.length
+            && Math.abs(this.columns.box - box.clientWidth) <= 1;
+        if (!same) {
+            this.columns = {box: box.clientWidth, widths: heads.map((head) => head.getBoundingClientRect().width)};
+        }
+        heads.forEach((head, index) => {
+            head.style.width = `${this.columns.widths[index]}px`;
+        });
+        table.style.tableLayout = 'fixed';
+    }
+
     async render(response) {
         this.region('tablewrap')?.removeAttribute('aria-busy');
         this.total = response.total;
@@ -214,6 +253,9 @@ export default class List {
         this.region('error').hidden = true;
         const empty = response.total === 0;
         this.region('tablewrap').hidden = empty;
+        if (!empty) {
+            this.keepColumns();
+        }
         this.region('foot').hidden = empty;
         await this.renderEmpty(empty);
         this.renderCounts(response.counts || {});
@@ -229,13 +271,24 @@ export default class List {
     showSkeleton() {
         const wrap = this.region('tablewrap');
         const columns = wrap.querySelectorAll('thead th').length || 4;
-        const cells = '<td><span class="dd-skeleton"></span></td>'.repeat(columns);
-        const body = `<tr aria-hidden="true">${cells}</tr>`.repeat(Math.min(this.state.perpage || 6, 6));
+        const rows = Array.from({length: Math.min(this.state.perpage || 6, 6)}, () => {
+            const row = document.createElement('tr');
+            row.setAttribute('aria-hidden', 'true');
+            for (let column = 0; column < columns; column++) {
+                const placeholder = document.createElement('span');
+                placeholder.className = 'placeholder';
+                row.insertCell().append(placeholder);
+            }
+            return row;
+        });
         const table = wrap.querySelector('table');
         if (table && table.tBodies[0]) {
-            table.tBodies[0].innerHTML = body;
+            table.tBodies[0].replaceChildren(...rows);
         } else {
-            wrap.innerHTML = `<table class="table"><tbody>${body}</tbody></table>`;
+            const skeleton = document.createElement('table');
+            skeleton.className = 'table';
+            skeleton.createTBody().append(...rows);
+            wrap.replaceChildren(skeleton);
         }
         wrap.hidden = false;
         this.region('empty').hidden = true;
@@ -251,7 +304,7 @@ export default class List {
         const region = this.region('empty');
         region.hidden = !empty;
         if (!empty) {
-            region.innerHTML = '';
+            region.replaceChildren();
             return;
         }
         const filtered = this.options.isFiltered
@@ -280,19 +333,62 @@ export default class List {
     }
 
     /**
-     * Writes the counts on the chips and the number of results.
+     * The statuses chosen in the menu.
+     *
+     * @returns {string[]} Their keys.
+     */
+    chosenStatuses() {
+        return String(this.state.status || '').split(',').filter(Boolean);
+    }
+
+    /**
+     * Opens or closes the menu of the statuses.
+     *
+     * @param {boolean} show Whether it opens.
+     */
+    openStatusMenu(show) {
+        const menu = this.root.querySelector('[data-menu="status"]');
+        if (!menu) {
+            return;
+        }
+        menu.querySelector('.dropdown-menu').hidden = !show;
+        menu.querySelector('[data-menu-toggle]').setAttribute('aria-expanded', show ? 'true' : 'false');
+    }
+
+    /**
+     * Writes the counts of the menu of the statuses, what the menu says, and the number of results.
      *
      * @param {Object} counts Rows of each status.
      */
     renderCounts(counts) {
-        this.root.querySelectorAll('[data-chip]').forEach((chip) => {
-            const key = chip.dataset.chip || 'all';
-            const count = chip.querySelector('.dd-chip-count');
-            if (count && counts[key] !== undefined) {
-                count.textContent = counts[key];
+        const chosen = this.chosenStatuses();
+        const menu = this.root.querySelector('[data-menu="status"]');
+        if (menu) {
+            menu.querySelectorAll('[data-status]').forEach((box) => {
+                box.checked = chosen.includes(box.dataset.status);
+            });
+            menu.querySelectorAll('[data-status-count]').forEach((count) => {
+                if (counts[count.dataset.statusCount] !== undefined) {
+                    count.textContent = counts[count.dataset.statusCount];
+                }
+            });
+            // The button says what it filters, the one status chosen, or how many are.
+            const label = menu.querySelector('[data-region="menu-label"]');
+            let text = label.dataset.label;
+            if (chosen.length === 1) {
+                text = menu.querySelector(`[data-status="${chosen[0]}"]`)?.nextElementSibling?.textContent.trim() || text;
+            } else if (chosen.length > 1) {
+                text = `${label.dataset.label}: ${chosen.length}`;
             }
-            chip.setAttribute('aria-pressed', String((this.state.status || '') === chip.dataset.chip));
-        });
+            label.textContent = text;
+            const toggle = menu.querySelector('[data-menu-toggle]');
+            toggle.classList.toggle('border-primary', chosen.length > 0);
+            menu.querySelector('[data-menu-clear]').hidden = chosen.length === 0;
+        }
+        const reset = this.root.querySelector('[data-region="filters"] [data-action="clearfilters"]');
+        if (reset) {
+            reset.disabled = !this.state.search && chosen.length === 0;
+        }
         const count = this.region('count');
         if (count) {
             getString('results_count', 'local_delegateaccount', this.total).then((text) => {
@@ -343,12 +439,18 @@ export default class List {
      * @param {Event} event The click.
      */
     click(event) {
-        const chip = event.target.closest('[data-chip]');
-        if (chip) {
-            this.update({status: chip.dataset.chip, page: 0});
+        const menu = event.target.closest('[data-menu="status"]');
+        if (menu && event.target.closest('[data-menu-toggle]')) {
+            this.openStatusMenu(menu.querySelector('.dropdown-menu').hidden);
             return;
         }
-        const sort = event.target.closest('.table-sort');
+        if (menu && event.target.closest('[data-menu-clear]')) {
+            this.openStatusMenu(false);
+            this.update({status: '', page: 0});
+            menu.querySelector('[data-menu-toggle]').focus();
+            return;
+        }
+        const sort = event.target.closest('th[data-sort] > .btn');
         if (sort) {
             const key = sort.closest('th').dataset.sort;
             const direction = this.state.sort === key && this.state.direction === 'asc' ? 'desc' : 'asc';
@@ -384,7 +486,11 @@ export default class List {
      * @param {Event} event The change.
      */
     change(event) {
-        if (event.target.matches('[data-region="perpage"]')) {
+        if (event.target.matches('[data-status]')) {
+            const chosen = Array.from(this.root.querySelectorAll('[data-status]'))
+                .filter((box) => box.checked).map((box) => box.dataset.status);
+            this.update({status: chosen.join(','), page: 0});
+        } else if (event.target.matches('[data-region="perpage"]')) {
             this.update({perpage: Number(event.target.value), page: 0});
         } else if (event.target.matches('[data-region="selectpage"]')) {
             this.rows.filter((row) => row.selectable).forEach((row) => {

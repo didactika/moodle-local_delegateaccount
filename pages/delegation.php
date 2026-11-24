@@ -121,16 +121,18 @@ $tones = [
 $PAGE->requires->js_call_amd('local_delegateaccount/delegation', 'init', ['[data-region="delegation"]']);
 $editor = $tab === 'permissions' ? $OUTPUT->render(new permission_editor($delegationid)) : '';
 
+$PAGE->requires->js_call_amd('local_delegateaccount/tab_scroll', 'init');
+
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/delegation/page', [
     'id' => $delegationid,
     'realuserid' => $realuserid,
-    'backurl' => (new moodle_url('/local/delegateaccount/pages/delegations.php', ['realuserid' => $realuserid]))->out(false),
     'label' => $label,
     'statuslabel' => get_string('delegation_status_' . $status, 'local_delegateaccount'),
     'statustone' => $tones[$status],
     'realuser' => $real,
-    'delegateduser' => $delegated + ['size' => 50],
+    'headuser' => $delegated + ['size' => 50],
+    'delegateduser' => $delegated,
     'canupdate' => $open && permission::has(permission::UPDATE),
     'canrevoke' => $open && permission::has(permission::REVOKE),
     'activityurl' => permission::has(permission::VIEWACTIVITY)

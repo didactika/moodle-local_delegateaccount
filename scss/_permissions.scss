@@ -2,35 +2,38 @@
 // Moodle is free software under the GNU General Public License, version 3 or later.
 
 // The permission editor and the dialog of many delegations, as overrides of the Bootstrap pieces they are made of (list-group,
-// card) and of the design system's segmented control and save bar. Nothing is folded away: the search, the chips, the
-// component and the pager narrow the list instead.
+// card, btn-group). Nothing is folded away: the search, the menus of the component and of the permission, and the pager narrow
+// the list instead.
 // @copyright 2026 Didactika.org
 // @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 .lda,
 #{$lda-modal} {
-    // A segmented control: one choice among a few, with the chosen one raised.
-    & .dd-segmented {
-        display: inline-flex;
+    // One choice among a few: a group of Bootstrap buttons (btn-group) on a quiet track, each a radio, with the chosen one raised.
+    // A permission keeps the class of its colour (btn-success, btn-warning, btn-danger) and shows it only when chosen, as a tint;
+    // the others are btn-light. The selectors are doubled to weigh more than the rules of Bootstrap for a group of buttons.
+    & .btn-group.btn-group[role="radiogroup"] {
         flex-wrap: wrap;
         gap: 0.125rem;
         padding: 0.1875rem;
         border-radius: var(--dd-radius-sm);
         background-color: var(--dd-surface-3);
 
-        & button {
+        & > .btn.btn {
+            flex: none;
             display: inline-flex;
             align-items: center;
             gap: 0.4375rem;
             min-height: 1.875rem;
+            margin: 0;
             padding: 0.25rem 0.75rem;
             border: 0;
             border-radius: calc(var(--dd-radius-sm) - 2px);
             background: none;
+            box-shadow: none;
             color: var(--dd-muted);
             font-size: 0.8125rem;
             font-weight: 600;
-            cursor: pointer;
             transition: background-color var(--dd-ease), color var(--dd-ease), box-shadow var(--dd-ease);
 
             &:hover {
@@ -47,27 +50,15 @@
                 opacity: 0.5;
             }
 
-            &[aria-checked="true"],
-            &[aria-pressed="true"] {
+            &[aria-checked="true"] {
                 background-color: var(--dd-surface);
                 box-shadow: var(--dd-shadow-sm);
                 color: var(--dd-ink);
             }
 
-            // The chosen permission takes the colour of its meaning, and says it in words too.
-            &[data-tone="allow"][aria-checked="true"] {
-                background-color: color-mix(in srgb, var(--dd-success) 16%, var(--dd-surface));
-                color: color-mix(in srgb, var(--dd-success) 60%, var(--dd-ink));
-            }
-
-            &[data-tone="prevent"][aria-checked="true"] {
-                background-color: color-mix(in srgb, var(--dd-warning) 22%, var(--dd-surface));
-                color: color-mix(in srgb, var(--dd-warning) 45%, var(--dd-ink));
-            }
-
-            &[data-tone="prohibit"][aria-checked="true"] {
-                background-color: color-mix(in srgb, var(--dd-danger) 16%, var(--dd-surface));
-                color: color-mix(in srgb, var(--dd-danger) 65%, var(--dd-ink));
+            &:is(.btn-success, .btn-warning, .btn-danger)[aria-checked="true"] {
+                background-color: var(--dd-c-soft-2);
+                color: var(--dd-c-ink);
             }
         }
     }
@@ -117,22 +108,16 @@
         overscroll-behavior: contain;
         border-top: 1px solid var(--dd-hairline);
         border-bottom: 1px solid var(--dd-hairline);
-        scrollbar-gutter: stable;
 
         & > [data-region="empty"]:not([hidden]) {
             display: grid;
             place-items: center;
             min-height: 100%;
         }
-
-        & > .dd-empty {
-            justify-content: center;
-            min-height: 100%;
-        }
     }
 
-    // The name of a component above its capabilities: a darker band, like the head of a category, kept in sight while the
-    // box scrolls.
+    // The name of a component above its capabilities: a soft band of the primary colour, with its text in a dark tone of it, that
+    // stands apart from the rows without weighing on the page, kept in sight while the box scrolls.
     & .list-group-flush:not([role]) > .list-group-item-light,
     & .list-group-flush:not([role]) > .list-group-item-light:hover {
         position: sticky;
@@ -144,10 +129,10 @@
         border-radius: 0;
         gap: 0.5rem;
         padding: 0.5rem 1rem;
-        border-top: 1px solid var(--dd-line);
-        border-bottom: 1px solid var(--dd-line);
-        background-color: color-mix(in srgb, var(--dd-ink) 14%, var(--dd-surface));
-        color: var(--dd-ink);
+        border-top: 1px solid var(--dd-hairline);
+        border-bottom: 1px solid var(--dd-hairline);
+        background-color: color-mix(in srgb, var(--dd-primary) 8%, var(--dd-surface));
+        color: var(--dd-primary-ink);
         font-size: 0.75rem;
         font-weight: 700;
         letter-spacing: 0.06em;
@@ -182,8 +167,9 @@
 
     // The bar of the unsaved changes: it floats at the foot of the window from the first change until they are saved or
     // discarded, like the bar of a selection, so it is always at hand however long the list is.
-    & .dd-savebar {
+    & [data-region="savebar"].card {
         position: fixed;
+        flex-direction: row;
         bottom: 1.5rem;
         left: 50%;
         z-index: 1030;
@@ -205,17 +191,7 @@
         }
     }
 
-    & .dd-savebar-text {
-        color: var(--dd-ink);
-        font-weight: 600;
-        white-space: nowrap;
-    }
 
-    & .dd-savebar-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
 }
 
 // The dialog of many delegations keeps one size whatever it shows, so nothing jumps while one searches or switches mode.
@@ -233,14 +209,15 @@
         }
     }
 
-    // The lists to choose from: always on screen, with a fixed height, narrowed as one types.
+    // The lists to choose from sit right under their search, with no box of their own and a fixed height, so the search never
+    // moves while one types and the list narrows.
     & .list-group[role="listbox"] {
         height: 12.5rem;
-        padding: 0.25rem;
+        padding: 0;
         overflow-y: auto;
-        border: 1px solid var(--dd-hairline);
-        border-radius: var(--dd-radius-lg);
-        background: var(--dd-surface);
+        border: 0;
+        border-radius: 0;
+        background: none;
 
         & > li {
             list-style: none;
@@ -279,6 +256,52 @@
         & .list-group-item {
             border: 0;
         }
+    }
+
+    // The dialog keeps the size of its body, the search stays at the top of it and the list takes all the room that is left under it,
+    // with a scroll bar of its own when it holds more.
+    & .modal-body:has([data-region="bulk"]) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    & [data-region="bulk"] {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+    }
+
+    & [data-region="bulk"] > [data-region="copy"],
+    & [data-region="copy"] > :first-child {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+    }
+
+    // The dialog to copy from has only the search and its list: the size of its body does not depend on how many results there are, and
+    // the list scrolls inside it.
+    & .modal-body:has([data-region="bulk"] > [data-region="copy"]:first-child) {
+        height: 32rem;
+        min-height: 0;
+        max-height: calc(100vh - 10rem);
+    }
+
+    & .modal-body:has([data-region="bulk"] > [data-region="copy"]:first-child) > [data-region="bulk"],
+    & [data-region="bulk"] > [data-region="copy"]:first-child,
+    & [data-region="bulk"] > [data-region="copy"]:first-child > :first-child {
+        flex-basis: 0;
+        min-height: 0;
+    }
+
+    // The search keeps its own height whatever the dialog holds, so it never moves while one types.
+    & [data-region="bulk"] [role="search"] {
+        flex: none;
+    }
+
+    & [data-region="copy"] .list-group[role="listbox"] {
+        flex: 1 1 0;
+        height: auto;
+        min-height: 12.5rem;
     }
 
     // Options shown as cards: the whole card is the choice, and the focus rings the card, not the small circle.
@@ -324,19 +347,26 @@
 @media (max-width: 576px) {
     .lda,
     #{$lda-modal} {
-        & .list-group-item .dd-segmented {
+        & .list-group-item .btn-group[role="radiogroup"] {
             width: 100%;
 
-            & button {
+            & > .btn.btn {
                 flex: 1 1 auto;
                 justify-content: center;
             }
         }
     }
 
-    .lda .dd-savebar {
+    // On a phone the bar takes the width of the screen, as the bar of a selection.
+    .lda [data-region="savebar"].card {
+        right: 0.75rem;
+        left: 0.75rem;
         flex-wrap: wrap;
         justify-content: center;
+        width: auto;
+        max-width: none;
         border-radius: var(--dd-radius-lg);
+        transform: none;
+        animation: none;
     }
 }

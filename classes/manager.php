@@ -313,15 +313,15 @@ class manager {
      * @param int $targetuserid Target account identifier, already checked with get_delegated_access_error().
      */
     public static function start_delegated_session(int $targetuserid): void {
-        global $SESSION, $USER;
+        global $USER;
 
         $delegationid = self::get_current_delegation_id((int)$USER->id, $targetuserid);
         \core\session\manager::loginas($targetuserid, \context_system::instance());
-        // The login-as session has a fresh $SESSION, so the marker only exists inside the delegated session.
-        // A session cache cannot hold it: Moodle keeps session caches in $SESSION, bound to the object that
-        // existed before loginas() replaced it, so a value cached in this request would be lost.
+        // The login-as session has a fresh user object, so the marker only exists inside the delegated session, as the
+        // loginascontext of Moodle does. A session cache cannot hold it: Moodle keeps session caches in the session
+        // object that existed before loginas() replaced it, so a value cached in this request would be lost.
         // It holds the delegation, whose permission overrides apply to the session.
-        $SESSION->local_delegateaccount_delegated = $delegationid > 0 ? $delegationid : true;
+        $USER->local_delegateaccount_delegated = $delegationid > 0 ? $delegationid : true;
         if ($delegationid > 0) {
             self::remember_session($delegationid, session_id());
         }
@@ -369,13 +369,13 @@ class manager {
      * @return bool Whether the current session was ended.
      */
     public static function end_invalid_delegated_session(): bool {
-        global $SESSION, $USER;
+        global $USER;
 
-        if (empty($SESSION->local_delegateaccount_delegated)) {
+        if (empty($USER->local_delegateaccount_delegated)) {
             return false;
         }
         if (!\core\session\manager::is_loggedinas()) {
-            unset($SESSION->local_delegateaccount_delegated);
+            unset($USER->local_delegateaccount_delegated);
             return false;
         }
 
@@ -956,6 +956,7 @@ class manager {
      * @param int $timeuntil Optional exclusive timestamp filter.
      * @param string $component Optional component fragment.
      * @param string $action Optional action fragment.
+     * @param string $search Optional words, each found in the component, the action or the name of the event.
      * @return array{total: int, events: array} Activity page and total count.
      */
     public static function get_delegation_activity_page(
@@ -965,7 +966,8 @@ class manager {
         int $timefrom = 0,
         int $timeuntil = 0,
         string $component = '',
-        string $action = ''
+        string $action = '',
+        string $search = ''
     ): array {
         global $DB;
 
@@ -991,6 +993,16 @@ class manager {
         if ($action !== '') {
             $where .= ' AND ' . $DB->sql_like('action', ':action', false);
             $params['action'] = '%' . $DB->sql_like_escape($action) . '%';
+        }
+        // Every word of the search is in the component, the action or the name of the event.
+        foreach (array_values(array_filter(preg_split('/\s+/', trim($search)))) as $index => $word) {
+            $like = '%' . $DB->sql_like_escape($word) . '%';
+            $where .= ' AND (' . $DB->sql_like('component', ":searchc{$index}", false) . ' OR '
+                . $DB->sql_like('action', ":searcha{$index}", false) . ' OR '
+                . $DB->sql_like('eventname', ":searche{$index}", false) . ')';
+            $params["searchc{$index}"] = $like;
+            $params["searcha{$index}"] = $like;
+            $params["searche{$index}"] = $like;
         }
 
         $total = $reader->get_events_select_count($where, $params);

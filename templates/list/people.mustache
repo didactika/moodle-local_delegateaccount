@@ -17,7 +17,7 @@
 {{!
     @template local_delegateaccount/list/people
 
-    The people of the management page: chips by the status of their delegations, search, the table and the pager. The rows
+    The people of the management page: search and the menu of the statuses of their delegations, the table and the pager. The rows
     are loaded by local_delegateaccount/people.
 
     @copyright  2026 Didactika.org
@@ -31,23 +31,15 @@
     }
 }}
 <section id="{{id}}" data-region="list" data-config="{{config}}" data-initial="{{initial}}">
-    <div class="dd-chips" role="group" aria-label="{{#str}}filter_by_status, local_delegateaccount{{/str}}">
-        <button type="button" class="dd-chip" data-chip="" aria-pressed="true">{{#str}}perm_filter_all, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
-        <button type="button" class="dd-chip" data-chip="active" aria-pressed="false">{{#str}}delegation_status_active, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
-        <button type="button" class="dd-chip" data-chip="scheduled" aria-pressed="false">{{#str}}delegation_status_scheduled, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
-        <button type="button" class="dd-chip" data-chip="expired" aria-pressed="false">{{#str}}delegation_status_expired, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
-        <button type="button" class="dd-chip" data-chip="revoked" aria-pressed="false">{{#str}}delegation_status_revoked, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
-        <button type="button" class="dd-chip" data-chip="none" aria-pressed="false">{{#str}}no_delegations, local_delegateaccount{{/str}} <span class="dd-chip-count">&nbsp;</span></button>
-    </div>
     <div class="card">
         {{> local_delegateaccount/list/toolbar }}
         <div class="table-responsive" data-region="tablewrap" aria-busy="true">
             <table class="table">
                 <caption class="sr-only visually-hidden">{{#str}}list_caption_people, local_delegateaccount{{/str}}</caption>
                 <tbody>
-                    <tr aria-hidden="true"><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td></tr>
-                    <tr aria-hidden="true"><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td></tr>
-                    <tr aria-hidden="true"><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td><td><span class="dd-skeleton"></span></td></tr>
+                    <tr aria-hidden="true"><td><span class="placeholder"></span></td><td><span class="placeholder"></span></td><td><span class="placeholder"></span></td></tr>
+                    <tr aria-hidden="true"><td><span class="placeholder"></span></td><td><span class="placeholder"></span></td><td><span class="placeholder"></span></td></tr>
+                    <tr aria-hidden="true"><td><span class="placeholder"></span></td><td><span class="placeholder"></span></td><td><span class="placeholder"></span></td></tr>
                 </tbody>
             </table>
         </div>

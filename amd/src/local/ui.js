@@ -29,6 +29,10 @@ import Templates from 'core/templates';
 import {add as addToast} from 'core/toast';
 import {getString} from 'core/str';
 import {normalise} from 'local_delegateaccount/form_layout';
+import {init as initSearchClear} from 'local_delegateaccount/local/search_clear';
+
+// Every page of the plugin loads this module, so its search fields get the button that empties them.
+initSearchClear();
 
 /**
  * Calls a function once the calls to the returned one stop for a while.

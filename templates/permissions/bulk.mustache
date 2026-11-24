@@ -32,14 +32,14 @@
 }}
 <div data-region="bulk">
     {{^copyonly}}
-        <div class="dd-segmented" role="radiogroup" aria-label="{{#str}}bulk_mode, local_delegateaccount{{/str}}">
-            <button type="button" role="radio" aria-checked="true" tabindex="0" data-mode="change">{{#str}}bulk_mode_change, local_delegateaccount{{/str}}</button>
-            <button type="button" role="radio" aria-checked="false" tabindex="-1" data-mode="copy">{{#str}}bulk_mode_copy, local_delegateaccount{{/str}}</button>
+        <div class="btn-group btn-group-sm" role="radiogroup" aria-label="{{#str}}bulk_mode, local_delegateaccount{{/str}}">
+            <button type="button" class="btn btn-light" role="radio" aria-checked="true" tabindex="0" data-mode="change">{{#str}}bulk_mode_change, local_delegateaccount{{/str}}</button>
+            <button type="button" class="btn btn-light" role="radio" aria-checked="false" tabindex="-1" data-mode="copy">{{#str}}bulk_mode_copy, local_delegateaccount{{/str}}</button>
         </div>
         <div data-region="change">
             <div>
                 <label class="font-weight-bold fw-bold d-block mb-2" for="{{id}}-capability">{{#str}}bulk_add_capability, local_delegateaccount{{/str}}</label>
-                <div class="dd-searchbox mw-100 mb-2">
+                <div class="position-relative d-flex align-items-center mw-100 mb-2" role="search">
                     {{#pix}}a/search, core{{/pix}}
                     <input class="form-control" type="search" id="{{id}}-capability" data-region="capsearch" autocomplete="off"
                         aria-controls="{{id}}-capresults" placeholder="{{#str}}perm_search_placeholder, local_delegateaccount{{/str}}">
@@ -57,7 +57,7 @@
     <div data-region="copy"{{^copyonly}} hidden{{/copyonly}}>
         <div class="mb-3">
             <label class="font-weight-bold fw-bold d-block mb-2" for="{{id}}-source">{{#str}}bulk_copy_source, local_delegateaccount{{/str}}</label>
-            <div class="dd-searchbox mw-100 mb-2">
+            <div class="position-relative d-flex align-items-center mw-100 mb-2" role="search">
                 {{#pix}}a/search, core{{/pix}}
                 <input class="form-control" type="search" id="{{id}}-source" data-region="sourcesearch" autocomplete="off"
                     aria-controls="{{id}}-sourceresults" placeholder="{{#str}}search_delegations, local_delegateaccount{{/str}}">

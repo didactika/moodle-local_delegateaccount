@@ -50,14 +50,14 @@
         }
     }
 }}
-<div class="lda">
-    <header class="dd-page-header">
-        <div class="dd-page-header-row">
-            <div class="dd-page-header-main">
-                <span class="dd-tile dd-tile-lg">{{#pix}}i/switch, core{{/pix}}</span>
-                <p class="dd-page-subtitle">{{#str}}manage_accounts_subtitle, local_delegateaccount{{/str}}</p>
+<div class="lda" data-region="lda-manage">
+    <header class="d-grid gap-3 pb-3 border-bottom">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <span class="icon-box">{{#pix}}i/switch, core{{/pix}}</span>
+                <p class="text-muted mb-0">{{#str}}manage_accounts_subtitle, local_delegateaccount{{/str}}</p>
             </div>
-            <div class="dd-page-actions">
+            <div class="d-flex flex-wrap align-items-center gap-2">
                 {{#settingsurl}}
                     <a class="btn btn-outline-secondary" href="{{settingsurl}}">{{#pix}}i/settings, core{{/pix}} {{#str}}settings{{/str}}</a>
                 {{/settingsurl}}
@@ -68,15 +68,27 @@
         </div>
     </header>
     <nav aria-label="{{#str}}manage_accounts, local_delegateaccount{{/str}}">
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs" role="tablist">
             {{#tabs}}
-                <li class="nav-item">
-                    <a class="nav-link{{#active}} active{{/active}}" href="{{url}}"{{#active}} aria-current="page"{{/active}}>{{label}}</a>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link{{#active}} active{{/active}}" href="{{url}}" role="tab" data-tab="{{key}}" aria-controls="lda-tabpanel"
+                        aria-selected="{{#active}}true{{/active}}{{^active}}false{{/active}}">{{label}}</a>
                 </li>
             {{/tabs}}
         </ul>
     </nav>
-    <p class="dd-page-subtitle mb-0">{{description}} {{{helpicon}}}</p>
-    {{#people}}{{> local_delegateaccount/list/people }}{{/people}}
-    {{#delegations}}{{> local_delegateaccount/list/delegations }}{{/delegations}}
+    <div id="lda-tabpanel" class="lda" role="tabpanel" data-region="tabpanel">
+        {{#tabs}}{{#active}}
+            <p class="text-muted mb-0">{{description}} {{{helpicon}}}</p>
+            {{#people}}{{> local_delegateaccount/list/people }}{{/people}}
+            {{#delegations}}{{> local_delegateaccount/list/delegations }}{{/delegations}}
+        {{/active}}{{/tabs}}
+    </div>
+    {{#tabs}}
+        <template data-tab-panel="{{key}}">
+            <p class="text-muted mb-0">{{description}} {{{helpicon}}}</p>
+            {{#people}}{{> local_delegateaccount/list/people }}{{/people}}
+            {{#delegations}}{{> local_delegateaccount/list/delegations }}{{/delegations}}
+        </template>
+    {{/tabs}}
 </div>

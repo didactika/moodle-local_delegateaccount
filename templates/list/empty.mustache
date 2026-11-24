@@ -31,16 +31,16 @@
         "text": "Create delegations to let people open other accounts for a period."
     }
 }}
-<div class="dd-empty">
+<div class="d-flex flex-column align-items-center gap-2 px-4 py-5 text-center">
     {{#filtered}}
-        <span class="dd-tile dd-tile-lg">{{#pix}}a/search, core{{/pix}}</span>
-        <p class="dd-empty-title">{{#str}}empty_search_title, local_delegateaccount{{/str}}</p>
-        <p class="dd-empty-text">{{#str}}empty_search_text, local_delegateaccount{{/str}}</p>
+        <span class="icon-box">{{#pix}}a/search, core{{/pix}}</span>
+        <p class="fw-bold mb-0">{{#str}}empty_search_title, local_delegateaccount{{/str}}</p>
+        <p class="text-muted mb-0">{{#str}}empty_search_text, local_delegateaccount{{/str}}</p>
         <button type="button" class="btn btn-outline-secondary" data-action="clearfilters">{{#str}}clear_filters, local_delegateaccount{{/str}}</button>
     {{/filtered}}
     {{^filtered}}
-        <span class="dd-tile dd-tile-lg">{{#pix}}{{icon}}{{^icon}}i/users{{/icon}}, core{{/pix}}</span>
-        <p class="dd-empty-title">{{title}}</p>
-        <p class="dd-empty-text">{{text}}</p>
+        <span class="icon-box">{{#pix}}{{icon}}{{^icon}}i/users{{/icon}}, core{{/pix}}</span>
+        <p class="fw-bold mb-0">{{title}}</p>
+        <p class="text-muted mb-0">{{text}}</p>
     {{/filtered}}
 </div>

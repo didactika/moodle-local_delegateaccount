@@ -36,10 +36,10 @@ export const PROHIBIT = -1000;
 
 /** The permissions in the order they are offered, with the class that colours each one. */
 export const PERMISSIONS = [
-    {value: INHERIT, key: 'perm_notset', tone: 'notset'},
-    {value: ALLOW, key: 'permissionallow', tone: 'allow'},
-    {value: PREVENT, key: 'perm_prevent', tone: 'prevent'},
-    {value: PROHIBIT, key: 'permissionprohibit', tone: 'prohibit'},
+    {value: INHERIT, key: 'perm_notset', tone: 'light'},
+    {value: ALLOW, key: 'permissionallow', tone: 'success'},
+    {value: PREVENT, key: 'perm_prevent', tone: 'warning'},
+    {value: PROHIBIT, key: 'permissionprohibit', tone: 'danger'},
 ];
 
 let names = null;

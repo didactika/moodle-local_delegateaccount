@@ -27,6 +27,7 @@ import {getString} from 'core/str';
 import List from 'local_delegateaccount/local/list';
 import {confirmDanger, describeError, openForm, toast} from 'local_delegateaccount/local/ui';
 import {openBulkPermissions} from 'local_delegateaccount/bulk_permissions';
+import {init as fitTables} from 'local_delegateaccount/fit_tables';
 
 /**
  * The delegations an action on the selection reaches. When every matching delegation was chosen, the server says which ones
@@ -130,6 +131,8 @@ const editPeriod = async(list, config, ids, trigger) => {
  * @returns {Promise<List>}
  */
 export const init = async(selector) => {
+    // The box of the table takes the height the window leaves it.
+    fitTables();
     const root = document.querySelector(selector);
     const config = JSON.parse(root.dataset.config);
     const filters = (state) => ({realuserid: config.realuserid, status: state.status, search: state.search});
@@ -193,7 +196,8 @@ export const init = async(selector) => {
     });
 
     // A delegation created from the header of the page appears at once.
-    document.addEventListener('local_delegateaccount:created', () => list.load());
+    // A list that the tabs took off the page is not read again.
+    document.addEventListener('local_delegateaccount:created', () => root.isConnected && list.load());
     await list.init();
     return list;
 };

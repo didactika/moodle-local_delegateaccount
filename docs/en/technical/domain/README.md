@@ -36,7 +36,7 @@ The vertical position of an entity expresses its importance to the project objec
 | AuthorisedUser | 2 | A person who may open delegated accounts: a site administrator or someone holding `local/delegateaccount:use`. | Moodle user, capability | It is Moodle's `user`, not a table of the plugin. |
 | DelegatedAccount | 2 | The account that is opened. It must exist, be active and, by default, not be a site administrator. | Moodle user | It is Moodle's `user`, not a table of the plugin. |
 | SessionPermission | 2 | An override of one capability for delegated sessions: allow, prevent or prohibit. It applies to one delegation or, with `delegationid` 0, to every delegated session of the site. | `delegationid`, `capability`, `permission` | |
-| DelegatedSession | 3 | A Moodle login-as session started through a delegation, marked in `$SESSION`. | the delegation id | It lives in the session, not in a table. |
+| DelegatedSession | 3 | A Moodle login-as session started through a delegation, marked in the user of the session (`$USER`). | the delegation id | It lives in the session, not in a table. |
 | Notification | 3 | The message sent to the authorised user, the delegated account or both when a delegation is created or revoked. | action, recipient language | The templates are plugin settings. |
 | SiteLimits | 4 | The site settings that bound delegations: maximum per person, maximum duration, maximum per bulk action, protection of administrators. | `maxdelegationsperuser`, `maximumdurationdays`, `maxbulkoperations`, `protectprivilegedtargets` | |
 | ActivityRecord | 4 | An event of Moodle's standard log written while a delegated session was open, read back by the activity report. | Moodle log row | It is Moodle's log, not a table of the plugin. |
@@ -55,6 +55,7 @@ The vertical position of an entity expresses its importance to the project objec
 | RN-010 | A revoked delegation stays as history and can never be used again; the same pair can be delegated again. | Delegation | `manager::revoke_delegations` |
 | RN-011 | Revoking ends the sessions that are open through the delegation at once. | DelegatedSession | `manager::end_sessions` |
 | RN-012 | The activity of a delegation is limited to its start and its end. | ActivityRecord | `manager::get_delegation_activity_page` |
+| RN-013 | The activity of a delegation is searched by words, each in the component, the action or the name of the event, and limited to a period inside the delegation whose two days never go the wrong way round. | ActivityRecord | `manager::get_delegation_activity_page`, `amd/src/activity.js` |
 
 ## Lifecycles
 

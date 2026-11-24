@@ -36,7 +36,7 @@ La posición vertical de una entidad expresa su importancia para el objetivo del
 | AuthorisedUser | 2 | Una persona que puede abrir cuentas delegadas: administradora del sitio o con `local/delegateaccount:use`. | usuario de Moodle, capacidad | Es el `user` de Moodle, no una tabla del plugin. |
 | DelegatedAccount | 2 | La cuenta que se abre. Debe existir, estar activa y, por defecto, no ser administradora del sitio. | usuario de Moodle | Es el `user` de Moodle, no una tabla del plugin. |
 | SessionPermission | 2 | Una sobrescritura de una capacidad en las sesiones delegadas: permitir, evitar o prohibir. Se aplica a una delegación o, con `delegationid` 0, a todas las sesiones delegadas del sitio. | `delegationid`, `capability`, `permission` | |
-| DelegatedSession | 3 | Una sesión de acceso como otro usuario de Moodle iniciada por una delegación, marcada en `$SESSION`. | el id de la delegación | Vive en la sesión, no en una tabla. |
+| DelegatedSession | 3 | Una sesión de acceso como otro usuario de Moodle iniciada por una delegación, marcada en el usuario de la sesión (`$USER`). | el id de la delegación | Vive en la sesión, no en una tabla. |
 | Notification | 3 | El mensaje enviado a la persona autorizada, a la cuenta delegada o a ambas al crear o revocar una delegación. | acción, idioma del destinatario | Las plantillas son ajustes del plugin. |
 | SiteLimits | 4 | Los ajustes del sitio que acotan las delegaciones: máximo por persona, duración máxima, máximo por acción masiva, protección de administradores. | `maxdelegationsperuser`, `maximumdurationdays`, `maxbulkoperations`, `protectprivilegedtargets` | |
 | ActivityRecord | 4 | Un evento del registro estándar de Moodle escrito mientras había una sesión delegada abierta, que lee el informe de actividad. | fila del registro de Moodle | Es el registro de Moodle, no una tabla del plugin. |
@@ -55,6 +55,7 @@ La posición vertical de una entidad expresa su importancia para el objetivo del
 | RN-010 | Una delegación revocada queda como historial y no puede volver a usarse; el mismo par puede delegarse de nuevo. | Delegation | `manager::revoke_delegations` |
 | RN-011 | Revocar termina al instante las sesiones que están abiertas por la delegación. | DelegatedSession | `manager::end_sessions` |
 | RN-012 | La actividad de una delegación se limita a su inicio y a su fin. | ActivityRecord | `manager::get_delegation_activity_page` |
+| RN-013 | La actividad de una delegación se busca por palabras, cada una en el componente, la acción o el nombre del evento, y se limita a un periodo dentro de la delegación cuyos dos días nunca quedan al revés. | ActivityRecord | `manager::get_delegation_activity_page`, `amd/src/activity.js` |
 
 ## Ciclos de vida
 

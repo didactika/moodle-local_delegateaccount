@@ -41,19 +41,19 @@
         ]
     }
 }}
-<ul class="row list-unstyled mb-0">
+<ul class="row list-unstyled mb-0" data-region="account-cards">
     {{#rows}}
-        <li class="col-sm-6 col-xl-4 mb-3">
+        <li class="col-sm-6 col-xl-4">
             <div class="card h-100"><div class="card-body d-flex flex-column">
             <div class="d-flex align-items-center mb-3">
                 {{#user}}{{> local_delegateaccount/shared/avatar }}{{/user}}
-                <div class="d-flex flex-column">
-                    <p class="card-title mb-0 text-truncate">{{user.fullname}}</p>
-                    <span class="small text-muted text-truncate">{{user.email}}</span>
+                <div class="d-flex flex-column overflow-hidden">
+                    <p class="card-title mb-0 text-truncate" title="{{user.fullname}}">{{user.fullname}}</p>
+                    <span class="small text-muted text-truncate" title="{{user.email}}">{{user.email}}</span>
                 </div>
             </div>
             <span class="d-flex flex-column mb-3"><small class="text-muted">{{#str}}delegation_end, local_delegateaccount{{/str}}</small>{{end}}</span>
-            <a class="btn btn-primary btn-tonal mt-auto align-self-start" href="{{loginurl}}" title="{{loginlabel}}">{{#pix}}i/switch, core{{/pix}} {{#str}}open_account, local_delegateaccount{{/str}}</a>
+            <a class="btn btn-outline-primary mt-auto align-self-start" href="{{loginurl}}" title="{{loginlabel}}">{{#pix}}i/switch, core{{/pix}} {{#str}}open_account, local_delegateaccount{{/str}}</a>
             </div></div>
         </li>
     {{/rows}}

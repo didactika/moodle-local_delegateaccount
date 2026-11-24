@@ -35,18 +35,18 @@
     }
 }}
 <div class="lda">
-    <header class="dd-page-header">
-        <div class="dd-page-header-row">
-            <div class="dd-page-header-main">
-                <span class="dd-tile dd-tile-lg">{{#pix}}i/switch, core{{/pix}}</span>
-                <p class="dd-page-subtitle">{{#str}}my_accounts_subtitle, local_delegateaccount{{/str}}</p>
+    <header class="d-grid gap-3 pb-3 border-bottom">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <span class="icon-box">{{#pix}}i/switch, core{{/pix}}</span>
+                <p class="text-muted mb-0">{{#str}}my_accounts_subtitle, local_delegateaccount{{/str}}</p>
             </div>
         </div>
     </header>
     <section id="{{id}}" data-region="list" data-config="{}" data-initial="{{initial}}">
-        <div class="table-toolbar px-0">
-            <div class="table-toolbar-start">
-                <form class="dd-searchbox" role="search" data-region="searchform" aria-label="{{searchlabel}}">
+        <div class="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom px-0">
+            <div class="d-flex align-items-center gap-2 flex-grow-1">
+                <form class="position-relative d-flex align-items-center" role="search" data-region="searchform" aria-label="{{searchlabel}}">
                     {{#pix}}a/search, core{{/pix}}
                     <label class="sr-only visually-hidden" for="{{id}}-search">{{searchlabel}}</label>
                     <input class="form-control" type="search" id="{{id}}-search" data-region="search" placeholder="{{searchlabel}}" autocomplete="off">

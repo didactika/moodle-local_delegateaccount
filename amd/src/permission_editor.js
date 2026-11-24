@@ -42,6 +42,7 @@ import {
 } from 'local_delegateaccount/local/capabilities';
 import {chooseDelegation} from 'local_delegateaccount/bulk_permissions';
 import {init as initSelectMenus} from 'local_delegateaccount/local/select_menu';
+import {init as filterGroup} from 'local_delegateaccount/local/filter_group';
 
 /** Risks of Moodle, in the order they are shown. */
 const RISKS = ['managetrust', 'config', 'xss', 'personal', 'spam', 'dataloss'];
@@ -133,17 +134,25 @@ class Editor {
     }
 
     /**
-     * Offers the components that define capabilities, in the order Moodle lists them.
+     * Offers the components that define capabilities, in alphabetical order, so the menu reads like an index.
      */
     fillComponents() {
         const select = this.region('component');
-        const seen = new Set();
-        this.capabilities.forEach((capability) => {
-            if (!seen.has(capability.componentlabel)) {
-                seen.add(capability.componentlabel);
-                select.append(new Option(capability.componentlabel, capability.componentlabel));
-            }
-        });
+        const names = Array.from(new Set(this.capabilities.map((capability) => capability.componentlabel)));
+        names.sort((a, b) => a.localeCompare(b)).forEach((name) => select.append(new Option(name, name)));
+    }
+
+    /**
+     * Narrows the list to one component, or to none: the select shows it, and its arrow becomes the cross that clears it.
+     *
+     * @param {string} value The component, empty for all of them.
+     */
+    setComponent(value) {
+        const select = this.region('component');
+        this.component = value;
+        select.value = value;
+        select.classList.toggle('border-primary', value !== '');
+        this.root.querySelector('[data-action="clearcomponent"]').hidden = value === '';
     }
 
     /**
@@ -157,8 +166,7 @@ class Editor {
             this.render();
         }, 200));
         this.region('component').addEventListener('change', (event) => {
-            this.component = event.target.value;
-            event.target.classList.toggle('border-primary', this.component !== '');
+            this.setComponent(event.target.value);
             this.page = 0;
             this.render();
         });
@@ -169,6 +177,22 @@ class Editor {
         });
         this.root.addEventListener('click', (event) => this.click(event));
         this.root.addEventListener('keydown', (event) => this.keydown(event));
+        // The menus are grouped in one, Filters, when they do not fit beside the search.
+        this.group = filterGroup(this.root.querySelector('[data-region="filters"]'));
+        // The menu of the permission closes with a click outside it or with Escape.
+        const menu = this.root.querySelector('[data-menu="permission"]');
+        document.addEventListener('pointerdown', (event) => {
+            if (!menu.contains(event.target)) {
+                this.openFilterMenu(false);
+            }
+        });
+        menu.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !menu.querySelector('.dropdown-menu').hidden) {
+                event.preventDefault();
+                this.openFilterMenu(false);
+                menu.querySelector('[data-menu-toggle]').focus();
+            }
+        });
         // A search field inside a form would send the form on Enter.
         search.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
@@ -281,14 +305,38 @@ class Editor {
     }
 
     /**
-     * Writes how many capabilities each chip leaves, and which chip is pressed.
+     * Writes how many capabilities each option of the menu of the permission leaves, what the menu says, and whether there is
+     * anything to clear.
      */
     renderChips() {
-        this.root.querySelectorAll('[data-filter]').forEach((chip) => {
-            const filter = chip.dataset.filter;
-            chip.setAttribute('aria-pressed', String(filter === this.filter));
-            chip.querySelector('.dd-chip-count').textContent = this.visible(filter).length;
+        const menu = this.root.querySelector('[data-menu="permission"]');
+        let label = '';
+        menu.querySelectorAll('[data-filter]').forEach((option) => {
+            const chosen = option.dataset.filter === this.filter;
+            option.setAttribute('aria-selected', String(chosen));
+            option.querySelector('.badge').textContent = this.visible(option.dataset.filter).length;
+            if (chosen) {
+                label = option.querySelector('span').textContent.trim();
+            }
         });
+        const text = menu.querySelector('[data-region="menu-label"]');
+        text.textContent = label || text.dataset.label;
+        const toggle = menu.querySelector('[data-menu-toggle]');
+        toggle.classList.toggle('border-primary', this.filter !== '');
+        menu.querySelector('[data-action="clearfilter"]').hidden = this.filter === '';
+        this.root.querySelector('[data-action="resetfilters"]').disabled = !this.filter && !this.component && !this.search;
+        this.group?.count((this.filter ? 1 : 0) + (this.component ? 1 : 0));
+    }
+
+    /**
+     * Opens or closes the menu of the permission.
+     *
+     * @param {boolean} show Whether it opens.
+     */
+    openFilterMenu(show) {
+        const menu = this.root.querySelector('[data-menu="permission"]');
+        menu.querySelector('.dropdown-menu').hidden = !show;
+        menu.querySelector('[data-menu-toggle]').setAttribute('aria-expanded', show ? 'true' : 'false');
     }
 
     /**
@@ -349,10 +397,16 @@ class Editor {
             await this.choose(option);
             return;
         }
+        if (event.target.closest('[data-menu="permission"] [data-menu-toggle]')) {
+            this.openFilterMenu(this.root.querySelector('[data-menu="permission"] .dropdown-menu').hidden);
+            return;
+        }
         const chip = event.target.closest('[data-filter]');
         if (chip) {
             this.filter = chip.dataset.filter;
             this.page = 0;
+            this.openFilterMenu(false);
+            this.root.querySelector('[data-menu="permission"] [data-menu-toggle]').focus();
             await this.render();
             return;
         }
@@ -366,14 +420,26 @@ class Editor {
                 this.page += 1;
                 await this.render();
                 break;
+            case 'clearfilter':
+                this.filter = '';
+                this.page = 0;
+                this.root.querySelector('[data-menu="permission"] [data-menu-toggle]').focus();
+                await this.render();
+                break;
             case 'clearfilters':
+            case 'resetfilters':
                 this.filter = '';
                 this.component = '';
                 this.search = '';
                 this.page = 0;
                 this.region('search').value = '';
-                this.region('component').value = '';
-                this.region('component').classList.remove('border-primary');
+                this.setComponent('');
+                await this.render();
+                break;
+            case 'clearcomponent':
+                this.setComponent('');
+                this.page = 0;
+                this.region('component').focus();
                 await this.render();
                 break;
             case 'discard':

@@ -67,7 +67,6 @@ echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_delegateaccount/activity/page', [
     'id' => 'lda-activity',
     'config' => json_encode(['delegationid' => $delegationid]),
-    'backurl' => (new moodle_url('/local/delegateaccount/pages/delegation.php', $params))->out(false),
     'subtitle' => get_string('activity_subtitle', 'local_delegateaccount', $names),
     'period' => get_string('activity_period', 'local_delegateaccount', (object)[
         'timestart' => userdate((int)$delegation->timestart),

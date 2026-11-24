@@ -85,13 +85,13 @@
                     <span class="font-weight-bold fw-bold">{{label}}</span>
                     <span class="small text-muted">
                         <span class="mr-2 me-2">{{name}}</span>
-                        {{#risks}}<span class="badge badge-outline text-bg-warning">{{label}}</span>{{/risks}}
-                        {{#sitelabel}}<span class="badge badge-soft text-bg-secondary">{{sitelabel}}</span>{{/sitelabel}}
+                        {{#risks}}<span class="badge border text-bg-warning">{{label}}</span>{{/risks}}
+                        {{#sitelabel}}<span class="badge text-bg-secondary">{{sitelabel}}</span>{{/sitelabel}}
                     </span>
                 </span>
-                <span class="dd-segmented" role="radiogroup" aria-label="{{grouplabel}}">
+                <span class="btn-group btn-group-sm" role="radiogroup" aria-label="{{grouplabel}}">
                     {{#options}}
-                        <button type="button" role="radio" data-permission="{{value}}" data-tone="{{tone}}" aria-checked="{{#checked}}true{{/checked}}{{^checked}}false{{/checked}}" tabindex="{{#checked}}0{{/checked}}{{^checked}}-1{{/checked}}"{{#disabled}} disabled{{/disabled}}{{#hint}} title="{{hint}}"{{/hint}}>{{label}}</button>
+                        <button type="button" class="btn btn-{{tone}}" role="radio" data-permission="{{value}}" aria-checked="{{#checked}}true{{/checked}}{{^checked}}false{{/checked}}" tabindex="{{#checked}}0{{/checked}}{{^checked}}-1{{/checked}}"{{#disabled}} disabled{{/disabled}}{{#hint}} title="{{hint}}"{{/hint}}>{{label}}</button>
                     {{/options}}
                 </span>
             </li>

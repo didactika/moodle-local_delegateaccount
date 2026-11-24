@@ -50,7 +50,7 @@ The authorised user needs to see or do something as another person. The plugin l
 | --- | --- | --- |
 | 1 | Opens **Delegated accounts** in the user menu. | Lists the accounts the user may open, from their active delegations. |
 | 2 | Chooses an account. | Re-checks the use right, the delegation, the state of the account and the administrator protection. |
-| 3 | | Starts Moodle's login-as, marks `$SESSION` with the delegation id and applies the session permissions. |
+| 3 | | Starts Moodle's login-as, marks the user of the session (`$USER`) with the delegation id and applies the session permissions. |
 | 4 | Works in the account. | On each request verifies the delegation and re-applies the permissions. |
 | 5 | Chooses **Return to my account**. | Ends the login-as session. |
 
