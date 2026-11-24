@@ -837,8 +837,10 @@
 .path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon,
 #page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon {
     position: absolute;
-    top: 50%;
+    top: 0;
+    bottom: 0;
     right: 0.375rem;
+    margin-block: auto;
     width: 1.5rem;
     min-width: 0;
     height: 1.5rem;
@@ -848,7 +850,22 @@
     color: var(--dd-muted);
     font-size: 0.75rem;
     cursor: pointer;
-    transform: translateY(-50%);
+    transform: none;
+}
+
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+.lda [role=search] > [data-action=clear-search].btn-link.btn-icon:active,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+.path-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:active,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+.path-admin-local-delegateaccount .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:active,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+#page-admin-setting-local_delegateaccount_settings .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:active {
+    transform: none;
 }
 
 .lda [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
@@ -1769,11 +1786,11 @@
 .path-admin-local-delegateaccount .modal .list-group[role=listbox],
 #page-admin-setting-local_delegateaccount_settings .modal .list-group[role=listbox] {
     height: 12.5rem;
-    padding: 0.25rem;
+    padding: 0;
     overflow-y: auto;
-    border: 1px solid var(--dd-hairline);
-    border-radius: var(--dd-radius-lg);
-    background: var(--dd-surface);
+    border: 0;
+    border-radius: 0;
+    background: none;
 }
 
 .path-local-delegateaccount .modal .list-group[role=listbox] > li,
@@ -1854,12 +1871,17 @@
     flex-direction: column;
 }
 
+.path-local-delegateaccount .modal [data-region=bulk] [role=search],
+.path-admin-local-delegateaccount .modal [data-region=bulk] [role=search],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] [role=search] {
+    flex: none;
+}
+
 .path-local-delegateaccount .modal [data-region=copy] .list-group[role=listbox],
 .path-admin-local-delegateaccount .modal [data-region=copy] .list-group[role=listbox],
 #page-admin-setting-local_delegateaccount_settings .modal [data-region=copy] .list-group[role=listbox] {
-    flex: 1 1 auto;
-    height: auto;
-    min-height: 12.5rem;
+    flex: none;
+    height: 12.5rem;
 }
 
 .path-local-delegateaccount .modal label.card,

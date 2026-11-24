@@ -209,14 +209,15 @@
         }
     }
 
-    // The lists to choose from: always on screen, with a fixed height, narrowed as one types.
+    // The lists to choose from sit right under their search, with no box of their own and a fixed height, so the search never
+    // moves while one types and the list narrows.
     & .list-group[role="listbox"] {
         height: 12.5rem;
-        padding: 0.25rem;
+        padding: 0;
         overflow-y: auto;
-        border: 1px solid var(--dd-hairline);
-        border-radius: var(--dd-radius-lg);
-        background: var(--dd-surface);
+        border: 0;
+        border-radius: 0;
+        background: none;
 
         & > li {
             list-style: none;
@@ -257,7 +258,7 @@
         }
     }
 
-    // The list of the delegations to copy from takes the room the dialog leaves it, so a tall dialog has no empty space under it.
+    // The dialog keeps the size of its body and the search stays at the top of it; the room that is left stays under the list.
     & .modal-body:has([data-region="bulk"]) {
         display: flex;
         flex-direction: column;
@@ -276,10 +277,14 @@
         flex-direction: column;
     }
 
+    // The search keeps its own height whatever the dialog holds, so it never moves while one types.
+    & [data-region="bulk"] [role="search"] {
+        flex: none;
+    }
+
     & [data-region="copy"] .list-group[role="listbox"] {
-        flex: 1 1 auto;
-        height: auto;
-        min-height: 12.5rem;
+        flex: none;
+        height: 12.5rem;
     }
 
     // Options shown as cards: the whole card is the choice, and the focus rings the card, not the small circle.
