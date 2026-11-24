@@ -29,6 +29,7 @@ require_once($CFG->libdir . '/adminlib.php');
 use local_delegateaccount\manager;
 use local_delegateaccount\output\exporter;
 use local_delegateaccount\output\permission_editor;
+use local_delegateaccount\output\page;
 use local_delegateaccount\permission;
 use local_delegateaccount\session_capabilities;
 
