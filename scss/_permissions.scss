@@ -258,7 +258,8 @@
         }
     }
 
-    // The dialog keeps the size of its body and the search stays at the top of it; the room that is left stays under the list.
+    // The dialog keeps the size of its body, the search stays at the top of it and the list takes all the room that is left under it,
+    // with a scroll bar of its own when it holds more.
     & .modal-body:has([data-region="bulk"]) {
         display: flex;
         flex-direction: column;
@@ -277,14 +278,30 @@
         flex-direction: column;
     }
 
+    // The dialog to copy from has only the search and its list: the size of its body does not depend on how many results there are, and
+    // the list scrolls inside it.
+    & .modal-body:has([data-region="bulk"] > [data-region="copy"]:first-child) {
+        height: 32rem;
+        min-height: 0;
+        max-height: calc(100vh - 10rem);
+    }
+
+    & .modal-body:has([data-region="bulk"] > [data-region="copy"]:first-child) > [data-region="bulk"],
+    & [data-region="bulk"] > [data-region="copy"]:first-child,
+    & [data-region="bulk"] > [data-region="copy"]:first-child > :first-child {
+        flex-basis: 0;
+        min-height: 0;
+    }
+
     // The search keeps its own height whatever the dialog holds, so it never moves while one types.
     & [data-region="bulk"] [role="search"] {
         flex: none;
     }
 
     & [data-region="copy"] .list-group[role="listbox"] {
-        flex: none;
-        height: 12.5rem;
+        flex: 1 1 0;
+        height: auto;
+        min-height: 12.5rem;
     }
 
     // Options shown as cards: the whole card is the choice, and the focus rings the card, not the small circle.

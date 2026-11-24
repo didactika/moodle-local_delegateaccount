@@ -1743,6 +1743,27 @@
     flex-direction: column;
 }
 
+.path-local-delegateaccount .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child),
+.path-admin-local-delegateaccount .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child),
+#page-admin-setting-local_delegateaccount_settings .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child) {
+    height: 32rem;
+    min-height: 0;
+    max-height: calc(100vh - 10rem);
+}
+
+.path-local-delegateaccount .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child) > [data-region=bulk],
+.path-local-delegateaccount .modal [data-region=bulk] > [data-region=copy]:first-child,
+.path-local-delegateaccount .modal [data-region=bulk] > [data-region=copy]:first-child > :first-child,
+.path-admin-local-delegateaccount .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child) > [data-region=bulk],
+.path-admin-local-delegateaccount .modal [data-region=bulk] > [data-region=copy]:first-child,
+.path-admin-local-delegateaccount .modal [data-region=bulk] > [data-region=copy]:first-child > :first-child,
+#page-admin-setting-local_delegateaccount_settings .modal .modal-body:has([data-region=bulk] > [data-region=copy]:first-child) > [data-region=bulk],
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] > [data-region=copy]:first-child,
+#page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] > [data-region=copy]:first-child > :first-child {
+    flex-basis: 0;
+    min-height: 0;
+}
+
 .path-local-delegateaccount .modal [data-region=bulk] [role=search],
 .path-admin-local-delegateaccount .modal [data-region=bulk] [role=search],
 #page-admin-setting-local_delegateaccount_settings .modal [data-region=bulk] [role=search] {
@@ -1752,8 +1773,9 @@
 .path-local-delegateaccount .modal [data-region=copy] .list-group[role=listbox],
 .path-admin-local-delegateaccount .modal [data-region=copy] .list-group[role=listbox],
 #page-admin-setting-local_delegateaccount_settings .modal [data-region=copy] .list-group[role=listbox] {
-    flex: none;
-    height: 12.5rem;
+    flex: 1 1 0;
+    height: auto;
+    min-height: 12.5rem;
 }
 
 .path-local-delegateaccount .modal label.card,
