@@ -9,6 +9,7 @@
 
 .lda {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.25rem;
     min-width: 0;
 
