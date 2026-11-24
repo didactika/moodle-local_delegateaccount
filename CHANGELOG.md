@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The button that clears a search field no longer moves when the pointer is over it: it is centred with auto margins and keeps its place whatever the theme does to a button on hover.
+- The lists of the dialog to change or copy permissions sit right under their search, with no box around them and a fixed height, so the search never moves while one types.
 - A long name ends with an ellipsis in the user menu, in the cards of the accounts and in the fixed column of a list on a narrow screen, so nothing scrolls sideways.
 - An empty list keeps the height of the list and its pager, and the two people of a delegation show their pictures at the same size.
 - The dates of the dialogs keep even gaps on a narrow screen, and a clicked button, checkbox or switch shows no halo.
