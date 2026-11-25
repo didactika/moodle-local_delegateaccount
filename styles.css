@@ -137,7 +137,8 @@
 .path-local-delegateaccount .modal,
 .path-admin-local-delegateaccount .modal,
 #page-admin-setting-local_delegateaccount_settings .modal,
-#page-admin-setting-local_delegateaccount_settings #region-main {
+#page-admin-setting-local_delegateaccount_settings #region-main,
+.path-local-delegateaccount #region-main {
     --dd-primary: var(--bs-primary, var(--primary, #0f6cbf));
     --dd-secondary: var(--bs-secondary, var(--secondary, #6a737b));
     --dd-success: var(--bs-success, var(--success, #357a32));
@@ -166,6 +167,9 @@
     --dd-primary-soft: color-mix(in srgb, var(--dd-primary) 10%, var(--dd-surface));
     --dd-primary-soft-2: color-mix(in srgb, var(--dd-primary) 18%, var(--dd-surface));
     --dd-primary-ink: color-mix(in srgb, var(--dd-primary) 78%, var(--dd-ink));
+    --dd-check: url([[pix:local_delegateaccount|mark_check]]);
+    --dd-dot: url([[pix:local_delegateaccount|mark_dot]]);
+    --dd-dash: url([[pix:local_delegateaccount|mark_dash]]);
     color: var(--dd-ink);
 }
 
@@ -183,7 +187,10 @@
 #page-admin-setting-local_delegateaccount_settings .modal .icon-box,
 #page-admin-setting-local_delegateaccount_settings #region-main .btn,
 #page-admin-setting-local_delegateaccount_settings #region-main .badge,
-#page-admin-setting-local_delegateaccount_settings #region-main .icon-box {
+#page-admin-setting-local_delegateaccount_settings #region-main .icon-box,
+.path-local-delegateaccount #region-main .btn,
+.path-local-delegateaccount #region-main .badge,
+.path-local-delegateaccount #region-main .icon-box {
     --dd-c: var(--dd-primary);
 }
 
@@ -191,7 +198,8 @@
 .path-local-delegateaccount .modal [class*=-primary],
 .path-admin-local-delegateaccount .modal [class*=-primary],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-primary],
-#page-admin-setting-local_delegateaccount_settings #region-main [class*=-primary] {
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-primary],
+.path-local-delegateaccount #region-main [class*=-primary] {
     --dd-c: var(--dd-primary);
 }
 
@@ -199,7 +207,8 @@
 .path-local-delegateaccount .modal [class*=-secondary],
 .path-admin-local-delegateaccount .modal [class*=-secondary],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary],
-#page-admin-setting-local_delegateaccount_settings #region-main [class*=-secondary] {
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-secondary],
+.path-local-delegateaccount #region-main [class*=-secondary] {
     --dd-c: var(--dd-secondary);
 }
 
@@ -207,7 +216,8 @@
 .path-local-delegateaccount .modal [class*=-success],
 .path-admin-local-delegateaccount .modal [class*=-success],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-success],
-#page-admin-setting-local_delegateaccount_settings #region-main [class*=-success] {
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-success],
+.path-local-delegateaccount #region-main [class*=-success] {
     --dd-c: var(--dd-success);
 }
 
@@ -215,7 +225,8 @@
 .path-local-delegateaccount .modal [class*=-info],
 .path-admin-local-delegateaccount .modal [class*=-info],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-info],
-#page-admin-setting-local_delegateaccount_settings #region-main [class*=-info] {
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-info],
+.path-local-delegateaccount #region-main [class*=-info] {
     --dd-c: var(--dd-info);
 }
 
@@ -223,7 +234,8 @@
 .path-local-delegateaccount .modal [class*=-warning],
 .path-admin-local-delegateaccount .modal [class*=-warning],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-warning],
-#page-admin-setting-local_delegateaccount_settings #region-main [class*=-warning] {
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-warning],
+.path-local-delegateaccount #region-main [class*=-warning] {
     --dd-c: var(--dd-warning);
 }
 
@@ -231,7 +243,8 @@
 .path-local-delegateaccount .modal [class*=-danger],
 .path-admin-local-delegateaccount .modal [class*=-danger],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-danger],
-#page-admin-setting-local_delegateaccount_settings #region-main [class*=-danger] {
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-danger],
+.path-local-delegateaccount #region-main [class*=-danger] {
     --dd-c: var(--dd-danger);
 }
 
@@ -279,7 +292,16 @@
 #page-admin-setting-local_delegateaccount_settings #region-main [class*=-success],
 #page-admin-setting-local_delegateaccount_settings #region-main [class*=-info],
 #page-admin-setting-local_delegateaccount_settings #region-main [class*=-warning],
-#page-admin-setting-local_delegateaccount_settings #region-main [class*=-danger] {
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-danger],
+.path-local-delegateaccount #region-main .btn,
+.path-local-delegateaccount #region-main .badge,
+.path-local-delegateaccount #region-main .icon-box,
+.path-local-delegateaccount #region-main [class*=-primary],
+.path-local-delegateaccount #region-main [class*=-secondary],
+.path-local-delegateaccount #region-main [class*=-success],
+.path-local-delegateaccount #region-main [class*=-info],
+.path-local-delegateaccount #region-main [class*=-warning],
+.path-local-delegateaccount #region-main [class*=-danger] {
     --dd-c-soft: color-mix(in srgb, var(--dd-c) 10%, var(--dd-surface));
     --dd-c-soft-2: color-mix(in srgb, var(--dd-c) 18%, var(--dd-surface));
     --dd-c-ink: color-mix(in srgb, var(--dd-c) 55%, var(--dd-ink));
@@ -289,7 +311,8 @@
 .path-local-delegateaccount .modal [class*=-secondary],
 .path-admin-local-delegateaccount .modal [class*=-secondary],
 #page-admin-setting-local_delegateaccount_settings .modal [class*=-secondary],
-#page-admin-setting-local_delegateaccount_settings #region-main [class*=-secondary] {
+#page-admin-setting-local_delegateaccount_settings #region-main [class*=-secondary],
+.path-local-delegateaccount #region-main [class*=-secondary] {
     --dd-c-soft: color-mix(in srgb, var(--dd-c) 24%, var(--dd-surface));
     --dd-c-soft-2: color-mix(in srgb, var(--dd-c) 36%, var(--dd-surface));
     --dd-c-ink: color-mix(in srgb, var(--dd-c) 18%, var(--dd-ink));
@@ -2365,6 +2388,459 @@ a[data-carousel-target-id=carousel-item-delegatedaccounts][data-flexitour=highli
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.path-local-delegateaccount #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file]),
+.path-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file]),
+.path-admin-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file]),
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(.form-control, .form-select, .custom-select):not([type=file]),
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file]),
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(.form-control, .form-select, .custom-select):not([type=file]) {
+    min-height: var(--dd-h);
+    border-color: var(--dd-line);
+    border-radius: var(--dd-radius-sm);
+    background-color: var(--dd-surface);
+    box-shadow: none;
+    color: var(--dd-ink);
+    font-size: 0.9375rem;
+    transition: border-color var(--dd-ease), box-shadow var(--dd-ease);
+}
+
+.path-local-delegateaccount #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file]):hover:not(:disabled):not([readonly]),
+.path-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file]):hover:not(:disabled):not([readonly]),
+.path-admin-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file]):hover:not(:disabled):not([readonly]),
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(.form-control, .form-select, .custom-select):not([type=file]):hover:not(:disabled):not([readonly]),
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file]):hover:not(:disabled):not([readonly]),
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(.form-control, .form-select, .custom-select):not([type=file]):hover:not(:disabled):not([readonly]) {
+    border-color: var(--dd-line-hover);
+}
+
+.path-local-delegateaccount #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file]):focus,
+.path-local-delegateaccount #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file])[aria-expanded=true],
+.path-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file]):focus,
+.path-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file])[aria-expanded=true],
+.path-admin-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file]):focus,
+.path-admin-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file])[aria-expanded=true],
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(.form-control, .form-select, .custom-select):not([type=file]):focus,
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(.form-control, .form-select, .custom-select):not([type=file])[aria-expanded=true],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file]):focus,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file])[aria-expanded=true],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(.form-control, .form-select, .custom-select):not([type=file]):focus,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(.form-control, .form-select, .custom-select):not([type=file])[aria-expanded=true] {
+    border-color: var(--dd-primary);
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.path-local-delegateaccount #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file])::placeholder,
+.path-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file])::placeholder,
+.path-admin-local-delegateaccount .modal :is(.form-control, .form-select, .custom-select):not([type=file])::placeholder,
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(.form-control, .form-select, .custom-select):not([type=file])::placeholder,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(.form-control, .form-select, .custom-select):not([type=file])::placeholder,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(.form-control, .form-select, .custom-select):not([type=file])::placeholder {
+    color: var(--dd-muted);
+}
+
+.path-local-delegateaccount #region-main .mform select:is(.form-select, .custom-select),
+.path-local-delegateaccount .modal select:is(.form-select, .custom-select),
+.path-admin-local-delegateaccount .modal select:is(.form-select, .custom-select),
+#page-admin-setting-local_delegateaccount_settings .modal .mform select:is(.form-select, .custom-select),
+#page-admin-setting-local_delegateaccount_settings #region-main .mform select:is(.form-select, .custom-select),
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings select:is(.form-select, .custom-select) {
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.path-local-delegateaccount #region-main .mform textarea.form-control,
+.path-local-delegateaccount .modal textarea.form-control,
+.path-admin-local-delegateaccount .modal textarea.form-control,
+#page-admin-setting-local_delegateaccount_settings .modal .mform textarea.form-control,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform textarea.form-control,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings textarea.form-control {
+    padding: 0.625rem 0.75rem;
+    line-height: 1.5;
+}
+
+.path-local-delegateaccount #region-main .mform fieldset,
+.path-local-delegateaccount .modal fieldset,
+.path-admin-local-delegateaccount .modal fieldset,
+#page-admin-setting-local_delegateaccount_settings .modal .mform fieldset,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform fieldset,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings fieldset {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
+.path-local-delegateaccount #region-main .mform legend,
+.path-local-delegateaccount #region-main .mform .ftoggler .fheader,
+.path-local-delegateaccount .modal legend,
+.path-local-delegateaccount .modal .ftoggler .fheader,
+.path-admin-local-delegateaccount .modal legend,
+.path-admin-local-delegateaccount .modal .ftoggler .fheader,
+#page-admin-setting-local_delegateaccount_settings .modal .mform legend,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .ftoggler .fheader,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform legend,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .ftoggler .fheader,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings legend,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .ftoggler .fheader {
+    color: var(--dd-ink);
+    font-weight: 700;
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]),
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]),
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]),
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]),
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]),
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]) {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.1875rem;
+    border: 1.5px solid var(--dd-line);
+    border-radius: 0.3rem;
+    background-color: var(--dd-surface);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    appearance: none;
+    transition: background-color var(--dd-ease), border-color var(--dd-ease), box-shadow var(--dd-ease);
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox])[type=radio],
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox])[type=radio],
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox])[type=radio],
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox])[type=radio],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox])[type=radio],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox])[type=radio] {
+    border-radius: 50%;
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):hover:not(:disabled),
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):hover:not(:disabled),
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):hover:not(:disabled),
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):hover:not(:disabled),
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):hover:not(:disabled),
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):hover:not(:disabled) {
+    border-color: var(--dd-line-hover);
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus,
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus,
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus,
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus {
+    outline: 0;
+    box-shadow: none;
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus-visible,
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus-visible,
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus-visible,
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus-visible,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):focus-visible {
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked,
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate,
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked,
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate,
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked,
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate,
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked,
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate {
+    border-color: var(--dd-primary);
+    background-color: var(--dd-primary);
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=checkbox],
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=checkbox],
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=checkbox],
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=checkbox],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=checkbox],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=checkbox] {
+    background-image: var(--dd-check);
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate[type=checkbox],
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate[type=checkbox],
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate[type=checkbox],
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate[type=checkbox],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate[type=checkbox],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):indeterminate[type=checkbox] {
+    background-image: var(--dd-dash);
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=radio],
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=radio],
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=radio],
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=radio],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=radio],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):checked[type=radio] {
+    background-image: var(--dd-dot);
+}
+
+.path-local-delegateaccount #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):disabled,
+.path-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):disabled,
+.path-admin-local-delegateaccount .modal :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):disabled,
+#page-admin-setting-local_delegateaccount_settings .modal .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):disabled,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):disabled,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings :is(:not(.form-switch) > .form-check-input, .form-checkbox > input[type=checkbox]):disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.path-local-delegateaccount #region-main .mform .form-checkbox > input[type=checkbox],
+.path-local-delegateaccount .modal .form-checkbox > input[type=checkbox],
+.path-admin-local-delegateaccount .modal .form-checkbox > input[type=checkbox],
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-checkbox > input[type=checkbox],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-checkbox > input[type=checkbox],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-checkbox > input[type=checkbox] {
+    margin: 0 0.5rem 0 0;
+    vertical-align: middle;
+}
+
+.path-local-delegateaccount #region-main .mform .form-check-label,
+.path-local-delegateaccount .modal .form-check-label,
+.path-admin-local-delegateaccount .modal .form-check-label,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-check-label,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-check-label,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-check-label {
+    color: var(--dd-ink);
+    cursor: pointer;
+}
+
+.path-local-delegateaccount #region-main .mform .form-check:not(.form-switch):not(.form-check-inline),
+.path-local-delegateaccount .modal .form-check:not(.form-switch):not(.form-check-inline),
+.path-admin-local-delegateaccount .modal .form-check:not(.form-switch):not(.form-check-inline),
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-check:not(.form-switch):not(.form-check-inline),
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-check:not(.form-switch):not(.form-check-inline),
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-check:not(.form-switch):not(.form-check-inline) {
+    padding-left: 1.75rem;
+}
+
+.path-local-delegateaccount #region-main .mform .form-check:not(.form-switch):not(.form-check-inline) > .form-check-input,
+.path-local-delegateaccount .modal .form-check:not(.form-switch):not(.form-check-inline) > .form-check-input,
+.path-admin-local-delegateaccount .modal .form-check:not(.form-switch):not(.form-check-inline) > .form-check-input,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-check:not(.form-switch):not(.form-check-inline) > .form-check-input,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-check:not(.form-switch):not(.form-check-inline) > .form-check-input,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-check:not(.form-switch):not(.form-check-inline) > .form-check-input {
+    margin-left: -1.75rem;
+}
+
+.path-local-delegateaccount #region-main .mform .form-check:not(.form-switch):not(.form-check-inline).d-flex,
+.path-local-delegateaccount .modal .form-check:not(.form-switch):not(.form-check-inline).d-flex,
+.path-admin-local-delegateaccount .modal .form-check:not(.form-switch):not(.form-check-inline).d-flex,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-check:not(.form-switch):not(.form-check-inline).d-flex,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-check:not(.form-switch):not(.form-check-inline).d-flex,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-check:not(.form-switch):not(.form-check-inline).d-flex {
+    gap: 0.5rem;
+    padding-left: 0;
+}
+
+.path-local-delegateaccount #region-main .mform .form-check:not(.form-switch):not(.form-check-inline).d-flex > .form-check-input,
+.path-local-delegateaccount .modal .form-check:not(.form-switch):not(.form-check-inline).d-flex > .form-check-input,
+.path-admin-local-delegateaccount .modal .form-check:not(.form-switch):not(.form-check-inline).d-flex > .form-check-input,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-check:not(.form-switch):not(.form-check-inline).d-flex > .form-check-input,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-check:not(.form-switch):not(.form-check-inline).d-flex > .form-check-input,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-check:not(.form-switch):not(.form-check-inline).d-flex > .form-check-input {
+    position: static;
+    margin-left: 0;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-selection,
+.path-local-delegateaccount .modal .form-autocomplete-selection,
+.path-admin-local-delegateaccount .modal .form-autocomplete-selection,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-selection,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-selection,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-selection {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 0;
+    margin-bottom: 0.5rem;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-selection > span:not([role=option]),
+.path-local-delegateaccount .modal .form-autocomplete-selection > span:not([role=option]),
+.path-admin-local-delegateaccount .modal .form-autocomplete-selection > span:not([role=option]),
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-selection > span:not([role=option]),
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-selection > span:not([role=option]),
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-selection > span:not([role=option]) {
+    /* stylelint-disable-next-line declaration-no-important */
+    margin: 0 !important;
+    color: var(--dd-muted);
+    font-size: 0.875rem;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-selection > [role=option],
+.path-local-delegateaccount .modal .form-autocomplete-selection > [role=option],
+.path-admin-local-delegateaccount .modal .form-autocomplete-selection > [role=option],
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-selection > [role=option],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-selection > [role=option],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-selection > [role=option] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    /* stylelint-disable-next-line declaration-no-important */
+    margin: 0 !important;
+    padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+    border-radius: 999px;
+    /* stylelint-disable-next-line declaration-no-important */
+    background-color: var(--dd-primary-soft) !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    color: var(--dd-primary-ink) !important;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-selection > [role=option][data-active-selection=true],
+.path-local-delegateaccount .modal .form-autocomplete-selection > [role=option][data-active-selection=true],
+.path-admin-local-delegateaccount .modal .form-autocomplete-selection > [role=option][data-active-selection=true],
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-selection > [role=option][data-active-selection=true],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-selection > [role=option][data-active-selection=true],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-selection > [role=option][data-active-selection=true] {
+    box-shadow: none;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-selection:focus-visible > [role=option][data-active-selection=true],
+.path-local-delegateaccount .modal .form-autocomplete-selection:focus-visible > [role=option][data-active-selection=true],
+.path-admin-local-delegateaccount .modal .form-autocomplete-selection:focus-visible > [role=option][data-active-selection=true],
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-selection:focus-visible > [role=option][data-active-selection=true],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-selection:focus-visible > [role=option][data-active-selection=true],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-selection:focus-visible > [role=option][data-active-selection=true] {
+    box-shadow: 0 0 0 2px var(--dd-ring);
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-input > .form-control,
+.path-local-delegateaccount .modal .form-autocomplete-input > .form-control,
+.path-admin-local-delegateaccount .modal .form-autocomplete-input > .form-control,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-input > .form-control,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-input > .form-control,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-input > .form-control {
+    min-width: 14rem;
+    padding-right: 2.5rem;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-downarrow,
+.path-local-delegateaccount .modal .form-autocomplete-downarrow,
+.path-admin-local-delegateaccount .modal .form-autocomplete-downarrow,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-downarrow,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-downarrow,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-downarrow {
+    /* stylelint-disable-next-line declaration-no-important */
+    top: 50% !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    right: 1rem !important;
+    width: 0.5rem;
+    height: 0.5rem;
+    /* stylelint-disable-next-line declaration-no-important */
+    padding: 0 !important;
+    border-right: 2px solid var(--dd-muted);
+    border-bottom: 2px solid var(--dd-muted);
+    color: transparent;
+    font-size: 0;
+    transform: translateY(-70%) rotate(45deg);
+    cursor: pointer;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-suggestions,
+.path-local-delegateaccount .modal .form-autocomplete-suggestions,
+.path-admin-local-delegateaccount .modal .form-autocomplete-suggestions,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-suggestions,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-suggestions,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-suggestions {
+    z-index: 1060;
+    min-width: 14rem;
+    max-height: 17rem;
+    margin-top: 2px;
+    padding: 0.25rem;
+    border: 1px solid var(--dd-hairline);
+    border-radius: var(--dd-radius);
+    background-color: var(--dd-surface);
+    box-shadow: var(--dd-shadow-md);
+    list-style: none;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-suggestions > li,
+.path-local-delegateaccount .modal .form-autocomplete-suggestions > li,
+.path-admin-local-delegateaccount .modal .form-autocomplete-suggestions > li,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-suggestions > li,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-suggestions > li,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-suggestions > li {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--dd-ink);
+    cursor: pointer;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-suggestions > li + li,
+.path-local-delegateaccount .modal .form-autocomplete-suggestions > li + li,
+.path-admin-local-delegateaccount .modal .form-autocomplete-suggestions > li + li,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-suggestions > li + li,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-suggestions > li + li,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-suggestions > li + li {
+    margin-top: 2px;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-suggestions > li:hover,
+.path-local-delegateaccount #region-main .mform .form-autocomplete-suggestions > li[aria-selected=true],
+.path-local-delegateaccount .modal .form-autocomplete-suggestions > li:hover,
+.path-local-delegateaccount .modal .form-autocomplete-suggestions > li[aria-selected=true],
+.path-admin-local-delegateaccount .modal .form-autocomplete-suggestions > li:hover,
+.path-admin-local-delegateaccount .modal .form-autocomplete-suggestions > li[aria-selected=true],
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-suggestions > li:hover,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-suggestions > li[aria-selected=true],
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-suggestions > li:hover,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-suggestions > li[aria-selected=true],
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-suggestions > li:hover,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-suggestions > li[aria-selected=true] {
+    outline: 0;
+    box-shadow: none;
+    background-color: var(--dd-surface-2);
+    color: var(--dd-ink);
+    font-weight: inherit;
+}
+
+.path-local-delegateaccount #region-main .mform .form-autocomplete-suggestions > li:empty,
+.path-local-delegateaccount .modal .form-autocomplete-suggestions > li:empty,
+.path-admin-local-delegateaccount .modal .form-autocomplete-suggestions > li:empty,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .form-autocomplete-suggestions > li:empty,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .form-autocomplete-suggestions > li:empty,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .form-autocomplete-suggestions > li:empty {
+    display: none;
+}
+
+.path-local-delegateaccount #region-main .mform .filepicker-filelist,
+.path-local-delegateaccount #region-main .mform .fp-content-center,
+.path-local-delegateaccount #region-main .mform .dndupload-target,
+.path-local-delegateaccount .modal .filepicker-filelist,
+.path-local-delegateaccount .modal .fp-content-center,
+.path-local-delegateaccount .modal .dndupload-target,
+.path-admin-local-delegateaccount .modal .filepicker-filelist,
+.path-admin-local-delegateaccount .modal .fp-content-center,
+.path-admin-local-delegateaccount .modal .dndupload-target,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .filepicker-filelist,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .fp-content-center,
+#page-admin-setting-local_delegateaccount_settings .modal .mform .dndupload-target,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .filepicker-filelist,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .fp-content-center,
+#page-admin-setting-local_delegateaccount_settings #region-main .mform .dndupload-target,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .filepicker-filelist,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .fp-content-center,
+#page-admin-setting-local_delegateaccount_settings #region-main #adminsettings .dndupload-target {
+    border-color: var(--dd-line);
+    border-radius: var(--dd-radius);
 }
 
 .lda .btn.btn:focus:not(:focus-visible),
