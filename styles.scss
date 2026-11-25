@@ -25,6 +25,7 @@ $lda-settings: "#page-admin-setting-local_delegateaccount_settings #region-main"
 @import 'scss/menus';
 @import 'scss/moodle';
 @import 'scss/states';
+@import 'scss/forms';
 
 .lda,
 #{$lda-modal} {

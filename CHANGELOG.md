@@ -5,6 +5,12 @@ All notable changes to this plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1-m503] - 2026-11-25
+
+### Changed
+
+- The forms of the plugin (the dialogs that create and edit delegations, the test of the notification and the settings page) are drawn as the Didactika design system draws its controls: fields, selects, checkboxes, radios and the autocomplete with its tags and menu, all as overrides of Bootstrap and Moodle classes inside the plugin.
+
 ## [1.3.0-m503] - 2026-11-23
 
 ### Changed
