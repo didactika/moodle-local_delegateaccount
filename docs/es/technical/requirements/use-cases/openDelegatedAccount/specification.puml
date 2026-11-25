@@ -1,0 +1,27 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+state "openDelegatedAccount" as openDelegatedAccount {
+  state " " as Menu
+  state " " as Checking
+  state " " as Working
+  state " " as Ended
+
+  [*] --> Menu
+  Menu --> Checking : Authorised user chooses an account
+  Checking --> Menu : System refuses and says why
+  Checking --> Working : System starts login-as and applies the session permissions
+  Working --> Working : System verifies the delegation on every request
+  Working --> Ended : Authorised user returns to their account
+  Working --> Ended : System ends a session that is no longer valid
+  Ended --> [*]
+
+  note on link
+    Authorised user: chooses an account
+    System: checks use right, delegation, state of the account
+  end note
+}
+
+@enduml

@@ -1,0 +1,14 @@
+@startsalt
+{
+  {* Cuentas delegadas | Usuarios autorizados | Actividad }
+  ==
+  Lo que Marta Ruiz hizo como Carmen Vidal
+  --
+  { "Buscar eventos        " | ^Últimos 7 días^ }
+  {#
+    Hora | Evento | Componente
+    11 nov 09:12 | Curso visto | Curso
+    11 nov 09:14 | Usuario actualizado | Usuario
+  }
+}
+@endsalt

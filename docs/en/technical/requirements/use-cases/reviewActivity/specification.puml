@@ -1,0 +1,24 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+state "reviewActivity" as reviewActivity {
+  state " " as Filters
+  state " " as Reading
+  state " " as Results
+
+  [*] --> Filters : Administrator opens the activity of a delegation
+  Filters --> Reading : Administrator sets dates, component and action
+  Reading --> Filters : System explains that there is no log to read
+  Reading --> Results : System reads the events of the delegation
+  Results --> Filters : Administrator changes the filters
+  Results --> [*] : Administrator leaves the report
+
+  note on link
+    Administrator: filters
+    System: selects the events of the delegation
+  end note
+}
+
+@enduml

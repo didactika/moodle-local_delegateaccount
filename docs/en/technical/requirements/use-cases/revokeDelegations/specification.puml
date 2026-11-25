@@ -1,0 +1,26 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+state "revokeDelegations" as revokeDelegations {
+  state " " as List
+  state " " as Confirming
+  state " " as Revoking
+  state " " as Done
+
+  [*] --> List : Administrator opens the delegations
+  List --> Confirming : Administrator chooses Revoke on one or many
+  Confirming --> List : Administrator cancels
+  Confirming --> Revoking : Administrator confirms
+  Revoking --> List : System refuses, for instance when the bulk limit is exceeded
+  Revoking --> Done : System marks them revoked, keeps them as history and ends their open sessions
+  Done --> [*] : System notifies the people involved and shows how many were revoked
+
+  note on link
+    Administrator: confirms
+    System: revokes, ends sessions, notifies
+  end note
+}
+
+@enduml

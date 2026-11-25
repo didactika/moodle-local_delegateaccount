@@ -9,7 +9,8 @@
 
 .lda,
 #{$lda-modal},
-#{$lda-settings} {
+#{$lda-settings},
+.path-local-delegateaccount #region-main {
     --dd-primary: var(--bs-primary, var(--primary, #0f6cbf));
     --dd-secondary: var(--bs-secondary, var(--secondary, #6a737b));
     --dd-success: var(--bs-success, var(--success, #357a32));
@@ -38,6 +39,9 @@
     --dd-primary-soft: color-mix(in srgb, var(--dd-primary) 10%, var(--dd-surface));
     --dd-primary-soft-2: color-mix(in srgb, var(--dd-primary) 18%, var(--dd-surface));
     --dd-primary-ink: color-mix(in srgb, var(--dd-primary) 78%, var(--dd-ink));
+    --dd-check: url([[pix:local_delegateaccount|mark_check]]);
+    --dd-dot: url([[pix:local_delegateaccount|mark_dot]]);
+    --dd-dash: url([[pix:local_delegateaccount|mark_dash]]);
 
     color: var(--dd-ink);
 
