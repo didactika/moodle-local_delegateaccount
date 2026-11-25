@@ -1,0 +1,15 @@
+@startsalt
+{
+  {* Resumen | Permisos de sesión }
+  ==
+  Permisos de sesión - Marta Ruiz como Carmen Vidal
+  --
+  { "Nombre o capacidad    " | ^Todos los componentes^ | ^Permiso^ }
+  {#
+    Capacidad | Permiso
+    moodle/course:delete | (X) No establecido ( ) Permitir ( ) Impedir ( ) Prohibir
+    moodle/user:update | ( ) No establecido ( ) Permitir (X) Impedir ( ) Prohibir
+  }
+  Cambios sin guardar: 1 | [ Descartar ] | [ Guardar cambios ]
+}
+@endsalt

@@ -1,0 +1,23 @@
+@startuml
+!theme plain
+hide empty members
+hide circle
+skinparam linetype polyline
+top to bottom direction
+
+class AuthorisedUser
+class DelegatedAccount
+class Delegation
+class SessionPermission
+class DelegatedSession
+class Notification
+class ActivityRecord
+
+AuthorisedUser "1" -- "0..*" Delegation
+DelegatedAccount "1" -- "0..*" Delegation
+Delegation "1" o-- "0..*" SessionPermission
+Delegation "1" o-- "0..*" DelegatedSession
+Delegation "1" o-- "0..*" Notification
+DelegatedSession "1" -- "0..*" ActivityRecord
+
+@enduml

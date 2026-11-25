@@ -1,0 +1,21 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Authorised user" as user <<actor>>
+class "My accounts page" as screen <<boundary>>
+class "Delegation manager" as manager <<control>>
+class "Session guard" as guard <<control>>
+class "Session permissions" as permissions <<control>>
+class "Delegation" as delegation <<entity>>
+
+user --> screen : 1: chooses an account
+screen --> manager : 2: open(account)
+manager --> delegation : 3: checks right, delegation and account
+manager --> permissions : 4: applies the overrides
+guard --> manager : 5: verifies on every request
+guard --> permissions : 6: re-applies the overrides
+
+@enduml

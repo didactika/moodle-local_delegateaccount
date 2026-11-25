@@ -1,0 +1,37 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+top to bottom direction
+
+package "Moodle core" {
+  component "Hooks (after_config, extend_user_menu)" as hooks
+  component "Login-as and sessions" as loginas
+  component "Capabilities and roles" as caps
+  component "Event log" as log
+  component "Messaging" as messaging
+  database "Database" as db
+}
+
+package "local_delegateaccount" {
+  component "Pages and AMD screens" as screens
+  component "Web services" as services
+  component "manager" as manager
+  component "session_capabilities" as sessioncaps
+  component "notification_manager" as notifier
+  component "permission" as permission
+}
+
+screens --> services : AJAX
+services --> manager
+services --> sessioncaps
+manager --> permission
+manager --> notifier
+manager --> loginas : starts and ends sessions
+manager --> log : triggers events
+manager --> db : local_delegateaccount
+sessioncaps --> db : local_delegateaccount_caps
+sessioncaps --> caps : edits the access data of the session
+notifier --> messaging
+hooks --> manager : verifies on every request
+
+@enduml

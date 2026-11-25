@@ -1,0 +1,14 @@
+@startsalt
+{
+  {* Delegated accounts | Authorised users | Activity }
+  ==
+  What Marta Ruiz did as Carmen Vidal
+  --
+  { "Search events         " | ^Last 7 days^ }
+  {#
+    Time | Event | Component
+    11 Nov 09:12 | Course viewed | Course
+    11 Nov 09:14 | User updated | User
+  }
+}
+@endsalt

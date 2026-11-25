@@ -1,0 +1,28 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+state "createDelegations" as createDelegations {
+  state " " as Start
+  state " " as Dialog
+  state " " as Checking
+  state " " as Limits
+  state " " as Saved
+
+  [*] --> Start
+  Start --> Dialog : Administrator chooses Create delegations
+  Dialog --> Checking : Administrator confirms users, period and notification mode
+  Checking --> Dialog : System reports a period or user error
+  Checking --> Limits : System accepts them and skips existing pairs
+  Limits --> Dialog : System reports a limit that would be exceeded
+  Limits --> Saved : System inserts the records in one transaction and notifies
+  Saved --> [*]
+
+  note on link
+    Administrator: submits the dialog
+    System: validates, limits, saves, notifies
+  end note
+}
+
+@enduml

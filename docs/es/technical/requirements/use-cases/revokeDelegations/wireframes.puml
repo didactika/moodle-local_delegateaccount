@@ -1,0 +1,13 @@
+@startsalt
+{
+  {* Usuarios autorizados | Usuarios sin permiso | Todas las delegaciones }
+  ==
+  { "Buscar personas y cuentas" | ^Activa^ }
+  {#
+    [X] | Cuenta delegada | Usuario autorizado | Estado
+    [X] | Carmen Vidal | Marta Ruiz | Activa
+    [X] | Pablo Soler | Marta Ruiz | Activa
+  }
+  2 seleccionadas | [ Editar periodo ] | [ Permisos de sesión ] | [ Revocar ]
+}
+@endsalt
