@@ -1,0 +1,21 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+[*] --> Scheduled : created with a start in the future
+[*] --> Active : created, start reached
+Scheduled --> Active : start time reached
+Active --> Expired : end time reached
+Scheduled --> Revoked : revoked
+Active --> Revoked : revoked
+Expired --> [*]
+Revoked --> [*]
+
+note right of Revoked
+  A revoked delegation stays in the table
+  as history; its activekey becomes its own id,
+  so the same pair can be delegated again.
+end note
+
+@enduml

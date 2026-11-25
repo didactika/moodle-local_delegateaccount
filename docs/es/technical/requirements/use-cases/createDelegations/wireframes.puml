@@ -1,0 +1,22 @@
+@startsalt
+{
+  {* Usuarios autorizados | Usuarios sin permiso | Todas las delegaciones }
+  ==
+  { "Buscar personas       " | ^Estado^ }
+  {#
+    Usuario autorizado | Cuentas en uso | Próximo cambio
+    Marta Ruiz | CV  PS | Termina el 26 de diciembre de 2026 (dentro de 33 días)
+    Javier Soto | LM | Empieza el 1 de diciembre de 2026 (dentro de 8 días)
+  }
+  --
+  Crear delegaciones
+  {
+    Usuarios autorizados | "Buscar personas...      "
+    Cuentas | "Buscar personas...      "
+    El acceso empieza | "2026-11-11 09:00"
+    El acceso termina | "2026-12-11 09:00"
+    Notificar a los usuarios afectados | ^Enviar una notificación^
+  }
+  [ Guardar cambios ] | [ Cancelar ]
+}
+@endsalt

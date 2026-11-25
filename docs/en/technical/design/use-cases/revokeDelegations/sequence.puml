@@ -1,0 +1,23 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Administrator" as actor
+participant "revoke_delegations" as service
+participant "manager" as manager
+database "local_delegateaccount" as table
+participant "Moodle sessions" as sessions
+participant "notification_manager" as notifier
+
+actor -> service : delegation ids, confirm
+service -> manager : revoke_delegations(ids)
+manager -> manager : validate the bulk limit
+manager -> table : mark revoked, keep as history (transaction)
+manager -> manager : trigger delegation_revoked
+manager -> sessions : end the sessions remembered for them
+manager -> notifier : notify(revoked)
+manager --> service : how many were revoked
+service --> actor : confirmation
+
+@enduml

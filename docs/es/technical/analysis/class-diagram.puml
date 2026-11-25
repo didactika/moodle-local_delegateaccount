@@ -1,0 +1,34 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Delegations page" as ManageScreen <<boundary>>
+class "My accounts page" as AccountsScreen <<boundary>>
+class "Permission editor" as PermissionScreen <<boundary>>
+class "User menu" as UserMenu <<boundary>>
+
+class "Delegation manager" as DelegationManager <<control>>
+class "Session guard" as SessionGuard <<control>>
+class "Permission policy" as PermissionPolicy <<control>>
+class "Session permissions" as SessionPermissions <<control>>
+class "Notifier" as Notifier <<control>>
+
+class Delegation <<entity>>
+class SessionPermission <<entity>>
+class "Moodle user" as MoodleUser <<entity>>
+
+ManageScreen --> DelegationManager
+AccountsScreen --> DelegationManager
+UserMenu --> DelegationManager
+PermissionScreen --> SessionPermissions
+DelegationManager --> PermissionPolicy
+DelegationManager --> Delegation
+DelegationManager --> Notifier
+DelegationManager --> SessionGuard
+SessionGuard --> SessionPermissions
+SessionPermissions --> SessionPermission
+Delegation --> MoodleUser
+
+@enduml

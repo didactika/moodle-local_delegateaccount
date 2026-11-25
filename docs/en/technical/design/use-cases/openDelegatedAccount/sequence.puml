@@ -1,0 +1,32 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Authorised user" as actor
+participant "pages/loginas.php" as page
+participant "manager" as manager
+participant "Moodle session" as session
+participant "session_capabilities" as caps
+participant "hook after_config" as hook
+
+actor -> page : choose an account
+page -> manager : get_delegated_access_error(real, target)
+manager --> page : null (allowed)
+page -> manager : start_delegated_session(target)
+manager -> session : loginas(target)
+manager -> caps : apply()
+caps --> manager : overrides applied
+manager --> page : done
+page --> actor : redirect as the account
+
+== every later request ==
+hook -> manager : end_invalid_delegated_session()
+alt delegation still valid
+  manager --> hook : false
+else revoked, expired or account unavailable
+  manager -> session : require_logout()
+  manager --> hook : true (login page explains why)
+end
+
+@enduml
